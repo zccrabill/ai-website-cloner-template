@@ -10,8 +10,6 @@ export default function AuthCallbackPage() {
   useEffect(() => {
     const handleAuthCallback = async () => {
       try {
-        // Supabase automatically picks up the token from the URL hash
-        // and establishes the session when we call getSession
         const { data: { session }, error } = await supabase.auth.getSession();
 
         if (error) {
@@ -20,20 +18,33 @@ export default function AuthCallbackPage() {
           return;
         }
 
+        const routeUser = async (userId: string) => {
+          // Check if user has completed onboarding
+          const { data: profile } = await supabase
+            .from("members")
+            .select("onboarding_complete")
+            .eq("user_id", userId)
+            .single();
+
+          if (profile?.onboarding_complete) {
+            router.push("/dashboard");
+          } else {
+            router.push("/onboarding");
+          }
+        };
+
         if (session) {
-          router.push("/dashboard");
+          await routeUser(session.user.id);
         } else {
-          // No session yet — listen for auth state change
           const { data: { subscription } } = supabase.auth.onAuthStateChange(
-            (event, session) => {
+            async (event, session) => {
               if (event === "SIGNED_IN" && session) {
                 subscription.unsubscribe();
-                router.push("/dashboard");
+                await routeUser(session.user.id);
               }
             }
           );
 
-          // Timeout fallback — if no session after 5s, redirect to login
           setTimeout(() => {
             subscription.unsubscribe();
             router.push("/login?error=timeout");
@@ -41,7 +52,8 @@ export default function AuthCallbackPage() {
         }
       } catch (err) {
         console.error("Auth callback exception:", err);
-        router.push("/login?error=exception");
+        // If members table doesn't exist yet, just go to onboarding
+        router.push("/onboarding");
       }
     };
 
@@ -49,10 +61,10 @@ export default function AuthCallbackPage() {
   }, [router]);
 
   return (
-    <div className="h-screen bg-[#0f0f14] flex items-center justify-center">
+    <div className="h-screen bg-[#FAF8F5] flex items-center justify-center">
       <div className="text-center">
-        <div className="w-12 h-12 border-4 border-[#f59e0b]/20 border-t-[#f59e0b] rounded-full animate-spin mx-auto mb-4" />
-        <p className="text-[#a1a1aa]">Signing you in...</p>
+        <div className="w-12 h-12 border-4 border-[#C17832]/20 border-t-[#C17832] rounded-full animate-spin mx-auto mb-4" />
+        <p className="text-[#6B5B4E]">Signing you in...</p>
       </div>
     </div>
   );

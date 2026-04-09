@@ -60,9 +60,14 @@ export default function SchedulePage() {
                 <span className="text-xs text-[#A89279]">{type.duration}</span>
               </div>
               <p className="text-sm text-[#6B5B4E] mb-4">{type.description}</p>
-              <button className="w-full py-2.5 px-4 border border-[#C17832] text-[#C17832] rounded-lg text-sm font-medium hover:bg-[#C17832] hover:text-white transition-all">
+              <a
+                href="https://calendly.com/availablelaw/30min"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block w-full py-2.5 px-4 border border-[#C17832] text-[#C17832] rounded-lg text-sm font-medium hover:bg-[#C17832] hover:text-white transition-all text-center"
+              >
                 Book Now
-              </button>
+              </a>
             </div>
           );
         })}
