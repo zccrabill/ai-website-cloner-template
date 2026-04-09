@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function CTASection() {
   return (
     <section className="relative w-full bg-[#FAF8F5] py-[120px] px-8 overflow-hidden">
@@ -28,12 +30,12 @@ export default function CTASection() {
         </p>
 
         {/* CTA Button */}
-        <button
+        <Link
+          href="/login"
           className="inline-block px-8 py-4 bg-[#1F1810] text-white font-medium rounded-full transition-all duration-300 hover:bg-[#C17832] focus:outline-none focus:ring-2 focus:ring-[#C17832] focus:ring-offset-2 focus:ring-offset-[#FAF8F5]"
-          aria-label="Get started free"
         >
           Get Started Free →
-        </button>
+        </Link>
       </div>
     </section>
   );

@@ -4,14 +4,14 @@ export default function Footer() {
   return (
     <footer className="w-full bg-[#FAF8F5] border-t border-[#1F1810]/8">
       {/* Main footer body */}
-      <div className="max-w-[1200px] mx-auto px-8 py-20 grid grid-cols-[2fr_1fr_1fr_1fr] gap-12">
+      <div className="max-w-[1200px] mx-auto px-8 py-20 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-[2fr_1fr_1fr_1fr] gap-12">
         {/* Brand Column */}
         <div>
           <p className="font-heading text-lg mb-4 text-[#1F1810]">
             Av<span className="text-[#C17832]">{"{"}</span>ai<span className="text-[#C17832]">{"}"}</span>lable Law
           </p>
           <p className="text-sm text-[#6B5B4E] leading-relaxed max-w-xs">
-            AI-powered legal solutions for Colorado businesses. Practical advice from an attorney who builds with AI.
+            AI-powered legal solutions for Colorado businesses. Practical advice from attorneys who build with AI.
           </p>
         </div>
 
@@ -108,7 +108,7 @@ export default function Footer() {
             © 2026 Available Legal Solutions, LLC. All rights reserved.
           </p>
           <p className="text-xs text-[#6B5B4E] leading-relaxed max-w-md">
-            Information on this site is for general informational purposes only and does not constitute legal advice. AI Disclosure: Some content may be AI-assisted and reviewed by a licensed attorney.
+            Information on this site is for general informational purposes only and does not constitute legal advice. AI Disclosure: Some content may be AI-assisted and reviewed by our licensed attorneys.
           </p>
         </div>
       </div>

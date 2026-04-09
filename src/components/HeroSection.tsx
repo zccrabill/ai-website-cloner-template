@@ -74,13 +74,13 @@ export default function HeroSection() {
 
             {/* Subtitle */}
             <p className="text-lg text-[#6B5B4E] max-w-md leading-relaxed">
-              Practical legal advice from an attorney who builds with AI. We combine human expertise with intelligent automation.
+              A team of attorneys who build with AI — not just advise on it. We combine legal expertise with intelligent automation to deliver practical, affordable guidance for Colorado businesses.
             </p>
 
             {/* CTAs */}
             <div className="flex flex-col sm:flex-row gap-4 pt-4">
               <Link
-                href="/#plans"
+                href="/#pricing"
                 className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-[#1F1810] text-white rounded-lg font-medium transition-all duration-200 hover:bg-[#C17832] group"
               >
                 Explore Plans

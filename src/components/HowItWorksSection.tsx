@@ -16,7 +16,7 @@ export default function HowItWorksSection() {
       number: "03",
       title: "Attorney When You Need One",
       description:
-        "Every AI output is reviewed by a licensed Colorado attorney. Upgrade for dedicated consultation time as your needs grow.",
+        "Every AI output is reviewed by our licensed Colorado attorneys. Upgrade for dedicated consultation time as your needs grow.",
     },
   ];
 

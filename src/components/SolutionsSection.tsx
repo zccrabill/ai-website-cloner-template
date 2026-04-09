@@ -3,38 +3,38 @@ export default function SolutionsSection() {
     {
       icon: "📋",
       title: "AI Contract Review",
-      description: "Intelligent analysis of contracts with key risk identification and attorney verification.",
+      description: "Our AI analyzes your contracts for risk, flags problematic clauses, and suggests revisions — all reviewed by a licensed attorney.",
       iconBg: "#C17832",
     },
     {
       icon: "🔍",
       title: "AI Liability Audits",
-      description: "Comprehensive audits of your legal exposure with actionable recommendations.",
+      description: "Identify legal exposure in your AI systems before regulators do. Our team delivers comprehensive audits of your AI tools and data practices.",
       iconBg: "#7A8B6F",
     },
     {
       icon: "🔐",
       title: "Data Privacy Assessments",
-      description: "Ensure compliance with privacy regulations and protect customer data.",
+      description: "We ensure your data collection, storage, and processing meets Colorado Privacy Act requirements and industry best practices.",
       iconBg: "#FAF8F5",
       iconColor: "#1F1810",
     },
     {
       icon: "⚖️",
       title: "Fractional AI General Counsel",
-      description: "On-demand legal strategy and guidance integrated with AI insights.",
+      description: "Ongoing legal support without the full-time cost. Our attorneys provide strategic guidance on AI governance, compliance, and business decisions.",
       iconBg: "#C17832",
     },
     {
       icon: "📄",
       title: "Transactional Legal Work",
-      description: "Efficient handling of contracts, agreements, and legal documentation.",
+      description: "Business formation, contract drafting, and deal structuring with AI-assisted efficiency and attorney oversight.",
       iconBg: "#7A8B6F",
     },
     {
       icon: "💬",
       title: "Allora AI Assistant",
-      description: "Conversational AI that answers legal questions and provides guidance.",
+      description: "Your always-on legal assistant. Ask questions, get guidance, and access resources — with attorney escalation built in.",
       iconBg: "#FAF8F5",
       iconColor: "#1F1810",
     },
@@ -61,7 +61,7 @@ export default function SolutionsSection() {
           {solutions.map((solution, idx) => (
             <div
               key={idx}
-              className="group bg-white rounded-[20px] p-8 border border-[#F5F0EB] transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
+              className="group relative bg-white rounded-[20px] p-8 border border-[#F5F0EB] transition-all duration-300 hover:-translate-y-1 hover:shadow-xl overflow-hidden"
             >
               {/* Accent top line on hover */}
               <div
@@ -92,10 +92,10 @@ export default function SolutionsSection() {
 
               {/* Learn more link */}
               <a
-                href="#"
+                href="/#pricing"
                 className="inline-flex items-center gap-2 text-[#C17832] font-medium transition-all duration-200 group-hover:gap-3"
               >
-                Learn more
+                Get started
                 <span>→</span>
               </a>
             </div>

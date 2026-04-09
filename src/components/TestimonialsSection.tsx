@@ -18,7 +18,7 @@ export default function TestimonialsSection() {
         {/* Main quote */}
         <blockquote className="text-center mb-12">
           <p className="text-3xl md:text-4xl font-heading text-[#1F1810] leading-tight">
-            Zachariah doesn't just understand AI law — he builds with it. That practical experience makes all the difference when you're a startup trying to move fast without breaking things.
+            The team at Available Law doesn't just understand AI law — they build with it. That practical experience makes all the difference when you're a startup trying to move fast without breaking things.
           </p>
         </blockquote>
 
