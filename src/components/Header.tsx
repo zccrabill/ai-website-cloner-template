@@ -4,8 +4,13 @@ import Image from "next/image";
 import Link from "next/link";
 import { XIcon, LinkedInIcon } from "./icons";
 
-export default function Header() {
+interface HeaderProps {
+  onFaiirOpen?: () => void;
+}
+
+export default function Header({ onFaiirOpen }: HeaderProps) {
   const [scrolled, setScrolled] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     const handler = () => setScrolled(window.scrollY > 50);
@@ -13,15 +18,30 @@ export default function Header() {
     return () => window.removeEventListener("scroll", handler);
   }, []);
 
+  // Handle smooth scroll for anchor links
+  const handleAnchorClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    if (href.startsWith("#")) {
+      e.preventDefault();
+      const target = document.querySelector(href);
+      if (target) {
+        target.scrollIntoView({ behavior: "smooth" });
+        setMobileMenuOpen(false);
+      }
+    }
+  };
+
   return (
     <>
       {/* Announcement banner */}
       <div className="announcement-banner w-full text-center py-2 px-4">
         <p className="text-[13px] text-[#f59e0b] font-medium tracking-wide">
-          🚀 Now offering AI Legal Risk Consulting for Colorado tech companies —{" "}
-          <a href="#" className="underline underline-offset-2 hover:text-[#fbbf24] transition-colors">
-            Book a free consult →
-          </a>
+          Now offering AI Legal Risk Consulting for Colorado Businesses —{" "}
+          <button
+            onClick={onFaiirOpen}
+            className="underline underline-offset-2 hover:text-[#fbbf24] transition-colors cursor-pointer"
+          >
+            Learn more about FAIIR →
+          </button>
         </p>
       </div>
 
@@ -46,30 +66,39 @@ export default function Header() {
             />
           </Link>
 
-          {/* Nav links — center */}
+          {/* Nav links — center (desktop) */}
           <nav className="hidden md:flex items-center gap-1">
-            {[
-              { label: "Home", href: "/", active: true },
-              { label: "About", href: "/about" },
-              { label: "Blog", href: "/blog" },
-              { label: "Solutions", href: "/solutions" },
-            ].map((item) => (
-              <Link
-                key={item.label}
-                href={item.href}
-                className={`px-4 py-2 rounded-md text-[14px] transition-all ${
-                  item.active
-                    ? "bg-white/[0.07] text-white font-medium"
-                    : "text-[#a1a1aa] hover:text-white hover:bg-white/[0.04]"
-                }`}
-              >
-                {item.label}
-              </Link>
-            ))}
+            <a
+              href="#hero"
+              onClick={(e) => handleAnchorClick(e, "#hero")}
+              className="px-4 py-2 rounded-md text-[14px] text-[#a1a1aa] hover:text-white hover:bg-white/[0.04] transition-all cursor-pointer"
+            >
+              Home
+            </a>
+            <a
+              href="#about"
+              onClick={(e) => handleAnchorClick(e, "#about")}
+              className="px-4 py-2 rounded-md text-[14px] text-[#a1a1aa] hover:text-white hover:bg-white/[0.04] transition-all cursor-pointer"
+            >
+              About
+            </a>
+            <a
+              href="#solutions"
+              onClick={(e) => handleAnchorClick(e, "#solutions")}
+              className="px-4 py-2 rounded-md text-[14px] text-[#a1a1aa] hover:text-white hover:bg-white/[0.04] transition-all cursor-pointer"
+            >
+              Solutions
+            </a>
+            <Link
+              href="/blog"
+              className="px-4 py-2 rounded-md text-[14px] text-[#a1a1aa] hover:text-white hover:bg-white/[0.04] transition-all"
+            >
+              Blog
+            </Link>
           </nav>
 
-          {/* Right side: social + CTA */}
-          <div className="flex items-center gap-3">
+          {/* Right side: social + CTA buttons (desktop) */}
+          <div className="hidden md:flex items-center gap-3">
             <a
               href="https://x.com/availablelaw"
               target="_blank"
@@ -89,13 +118,80 @@ export default function Header() {
               <LinkedInIcon className="w-3.5 h-3.5 text-[#a1a1aa]" />
             </a>
             <Link
-              href="/contact"
-              className="btn-al btn-al-primary ml-1 text-[13px] px-4 py-2"
+              href="/login"
+              className="btn-al btn-al-outline ml-4 text-[13px] px-4 py-2"
             >
-              Free Consultation
+              Member Login
             </Link>
+            <a
+              href="#pricing"
+              onClick={(e) => handleAnchorClick(e, "#pricing")}
+              className="btn-al btn-al-primary text-[13px] px-4 py-2 cursor-pointer"
+            >
+              Get Started
+            </a>
           </div>
+
+          {/* Mobile menu toggle */}
+          <button
+            className="md:hidden w-8 h-8 rounded-md border border-white/10 flex items-center justify-center hover:border-white/20 hover:bg-white/[0.04] transition-all"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            aria-label="Toggle menu"
+          >
+            <svg className="w-4 h-4 text-[#a1a1aa]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
         </div>
+
+        {/* Mobile menu */}
+        {mobileMenuOpen && (
+          <div className="md:hidden border-t border-white/[0.04] bg-[#09090b]/95 backdrop-blur-md">
+            <div className="max-w-[1280px] mx-auto px-6 py-4 flex flex-col gap-2">
+              <a
+                href="#hero"
+                onClick={(e) => handleAnchorClick(e, "#hero")}
+                className="px-4 py-2 rounded-md text-[14px] text-[#a1a1aa] hover:text-white hover:bg-white/[0.04] transition-all cursor-pointer block"
+              >
+                Home
+              </a>
+              <a
+                href="#about"
+                onClick={(e) => handleAnchorClick(e, "#about")}
+                className="px-4 py-2 rounded-md text-[14px] text-[#a1a1aa] hover:text-white hover:bg-white/[0.04] transition-all cursor-pointer block"
+              >
+                About
+              </a>
+              <a
+                href="#solutions"
+                onClick={(e) => handleAnchorClick(e, "#solutions")}
+                className="px-4 py-2 rounded-md text-[14px] text-[#a1a1aa] hover:text-white hover:bg-white/[0.04] transition-all cursor-pointer block"
+              >
+                Solutions
+              </a>
+              <Link
+                href="/blog"
+                className="px-4 py-2 rounded-md text-[14px] text-[#a1a1aa] hover:text-white hover:bg-white/[0.04] transition-all block"
+              >
+                Blog
+              </Link>
+              <hr className="border-white/[0.06] my-2" />
+              <Link
+                href="/login"
+                className="px-4 py-2 rounded-md text-[14px] text-[#a1a1aa] hover:text-white hover:bg-white/[0.04] transition-all block"
+              >
+                Member Login
+              </Link>
+              <a
+                href="#pricing"
+                onClick={(e) => handleAnchorClick(e, "#pricing")}
+                className="btn-al btn-al-primary text-[13px] px-4 py-2 cursor-pointer block text-center"
+              >
+                Get Started
+              </a>
+            </div>
+          </div>
+        )}
       </header>
     </>
   );

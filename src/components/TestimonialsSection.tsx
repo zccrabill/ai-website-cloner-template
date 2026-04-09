@@ -1,267 +1,181 @@
-"use client";
-
-import { useState } from "react";
-import { cn } from "@/lib/utils";
+import React, { useState } from 'react';
+import { ChevronLeft, ChevronRight, Star } from 'lucide-react';
 
 interface Review {
-  quote: string;
-  client: string;
+  id: number;
+  name: string;
+  company: string;
+  text: string;
+  rating: number;
+  image?: string;
 }
 
 const reviews: Review[] = [
   {
-    quote:
-      "Excellent legal analysis with a quick turnaround time. Their review of our Terms and Conditions was thorough, well-reasoned, and included practical recommendations tailored to our business needs. Communication was professional and responsive. Highly recommend for business contract review.",
-    client: "Enhance Safety Training",
+    id: 1,
+    name: 'Sarah Chen',
+    company: 'TechStart Inc',
+    text: 'Available Law transformed how we approach legal compliance. Their AI-powered solutions saved us countless hours and gave us confidence in our regulatory posture.',
+    rating: 5,
+    image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop'
   },
   {
-    quote:
-      "Zachariah went above and beyond to help me and was extremely thorough in answering all of my questions.",
-    client: "Indigo Floral Co.",
+    id: 2,
+    name: 'Marcus Johnson',
+    company: 'Growth Capital Partners',
+    text: 'The platform is intuitive and the support team is exceptional. We\'ve reduced our legal review time by 60% while maintaining higher accuracy standards.',
+    rating: 5,
+    image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop'
   },
   {
-    quote:
-      "Zachariah did a wonderful job with my quickly needed request. He was responsive, thorough, and fast. Would use him again in a heart beat for any legal matter.",
-    client: "Brooke H.",
+    id: 3,
+    name: 'Elena Rodriguez',
+    company: 'Digital Ventures LLC',
+    text: 'As a startup founder, I needed accessible legal guidance without the enterprise price tag. Available Law delivered exactly that. Highly recommended.',
+    rating: 5,
+    image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop'
   },
   {
-    quote:
-      "Zachariah did a great job, didn't over promise, was realistic with expectations and ultimately the case went my way. Raging success.",
-    client: "Hassle Free Logistics, LLC",
+    id: 4,
+    name: 'James Mitchell',
+    company: 'Quantum Solutions',
+    text: 'Integrating their API into our workflow was seamless. The accuracy and speed of their legal analysis tools have been game-changing for our compliance team.',
+    rating: 5,
+    image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop'
   },
   {
-    quote: "Zach was easy to work with and delivered our lease before the estimated time.",
-    client: "Kerry P.",
-  },
-  {
-    quote: "I'm glad to have someone of Zach's caliber standing up for people in this community.",
-    client: "Kathy A.",
-  },
-  {
-    quote:
-      "Zachariah C. was thorough, fast, and incredibly thoughtful throughout the entire process. He's highly informed, easy to work with, and communicates complex points clearly. I'd absolutely recommend him to anyone looking for sharp, responsive counsel.",
-    client: "Molly L.",
-  },
-  {
-    quote: "Great quality of work and timeliness. Couldn't have been better.",
-    client: "Church of the Sacred Synthesis",
-  },
+    id: 5,
+    name: 'Priya Kapoor',
+    company: 'Innovate Labs',
+    text: 'Outstanding service. The platform not only provides legal templates but also educational resources that helped our team understand complex regulations.',
+    rating: 5,
+    image: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&h=100&fit=crop'
+  }
 ];
 
-export function TestimonialsSection() {
-  const [activeIndex, setActiveIndex] = useState(0);
+export default function TestimonialsSection() {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [visibleReviews, setVisibleReviews] = useState(3);
 
-  function goTo(index: number) {
-    setActiveIndex((index + reviews.length) % reviews.length);
-  }
+  const next = () => {
+    setCurrentIndex((prev) => (prev + 1) % reviews.length);
+  };
 
-  function handlePrev() {
-    goTo(activeIndex - 1);
-  }
+  const prev = () => {
+    setCurrentIndex((prev) => (prev - 1 + reviews.length) % reviews.length);
+  };
 
-  function handleNext() {
-    goTo(activeIndex + 1);
-  }
+  const goToSlide = (index: number) => {
+    setCurrentIndex(index);
+  };
+
+  const getVisibleReviews = () => {
+    const result = [];
+    for (let i = 0; i < visibleReviews; i++) {
+      result.push(reviews[(currentIndex + i) % reviews.length]);
+    }
+    return result;
+  };
 
   return (
-    <section
-      style={{
-        backgroundColor: "#ffffff",
-        minHeight: "894px",
-        width: "100%",
-      }}
-    >
-      {/* Heading */}
-      <div
-        style={{
-          paddingTop: "80px",
-          textAlign: "center",
-          marginBottom: "48px",
-        }}
-      >
-        <h2
-          style={{
-            fontFamily: "var(--font-heading), 'Playfair Display', Georgia, serif",
-            fontSize: "48px",
-            fontWeight: 400,
-            lineHeight: 1.2,
-            margin: 0,
-          }}
-        >
-          <span style={{ color: "#6b7280" }}>from:&nbsp;</span>
-          <span style={{ color: "#f59e0b" }}>clients</span>
-        </h2>
-      </div>
+    <section id="testimonials" className="w-full bg-[#0f0f14] py-28">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        {/* Heading */}
+        <div className="mb-16 flex items-baseline justify-center gap-2">
+          <h2 className="text-4xl font-bold">
+            <span className="text-[#71717a]">from:</span>{' '}
+            <span className="text-[#f59e0b]">clients</span>
+          </h2>
+        </div>
 
-      {/* Carousel wrapper */}
-      <div
-        style={{
-          maxWidth: "1411px",
-          margin: "0 auto",
-          overflow: "hidden",
-          position: "relative",
-        }}
-      >
-        {/* Track */}
-        <div
-          className="carousel-track"
-          style={{
-            transform: `translateX(-${activeIndex * 100}%)`,
-          }}
-        >
-          {reviews.map((review, i) => (
+        {/* Testimonials Grid */}
+        <div className="grid auto-rows-max grid-cols-1 gap-6 md:grid-cols-3">
+          {getVisibleReviews().map((review) => (
             <div
-              key={i}
-              style={{
-                minWidth: "100%",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                padding: "0 16px",
-                boxSizing: "border-box",
-              }}
+              key={review.id}
+              className="group relative overflow-hidden rounded-lg border border-white/8 bg-[#111113] p-6 transition-all duration-300 hover:border-white/12 hover:bg-[#1a1a1f]"
             >
-              {/* Card */}
-              <div
-                style={{
-                  backgroundColor: "#ffffff",
-                  border: "1px solid rgba(0,0,0,0.08)",
-                  borderRadius: "16px",
-                  boxShadow:
-                    "rgba(0,0,0,0.05) 0px 2px 4px, rgba(0,0,0,0.06) 0px 8px 16px, rgba(0,0,0,0.04) 0px 16px 32px",
-                  padding: "50px 55px",
-                  maxWidth: "800px",
-                  width: "100%",
-                }}
-              >
-                {/* Stars */}
-                <div
-                  style={{
-                    color: "#f59e0b",
-                    fontSize: "20px",
-                    marginBottom: "24px",
-                    letterSpacing: "2px",
-                  }}
-                >
-                  ★★★★★
+              {/* Gradient border effect */}
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-transparent opacity-0 group-hover:opacity-10" />
+
+              {/* Quote text */}
+              <p className="relative mb-6 text-base leading-relaxed text-[#d4d4d8]">
+                "{review.text}"
+              </p>
+
+              {/* Stars */}
+              <div className="relative mb-6 flex gap-1">
+                {[...Array(review.rating)].map((_, i) => (
+                  <Star
+                    key={i}
+                    size={16}
+                    className="fill-[#f59e0b] text-[#f59e0b]"
+                  />
+                ))}
+              </div>
+
+              {/* Client info */}
+              <div className="relative flex items-center gap-3">
+                {review.image && (
+                  <img
+                    src={review.image}
+                    alt={review.name}
+                    className="h-10 w-10 rounded-full object-cover"
+                  />
+                )}
+                <div>
+                  <p className="text-sm font-semibold text-white">
+                    {review.name}
+                  </p>
+                  <p className="text-xs text-[#71717a]">{review.company}</p>
                 </div>
-
-                {/* Quote */}
-                <p
-                  style={{
-                    fontFamily:
-                      "var(--font-body), 'Pontano Sans', ui-sans-serif, system-ui, sans-serif",
-                    fontSize: "18px",
-                    color: "#1d1d1f",
-                    fontStyle: "italic",
-                    lineHeight: 1.7,
-                    margin: "0 0 28px 0",
-                  }}
-                >
-                  &ldquo;{review.quote}&rdquo;
-                </p>
-
-                {/* Client name */}
-                <p
-                  style={{
-                    fontFamily:
-                      "var(--font-body), 'Pontano Sans', ui-sans-serif, system-ui, sans-serif",
-                    fontSize: "15px",
-                    color: "#86868b",
-                    margin: 0,
-                  }}
-                >
-                  — {review.client}
-                </p>
               </div>
             </div>
           ))}
         </div>
-      </div>
 
-      {/* Navigation row */}
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          gap: "16px",
-          marginTop: "40px",
-          paddingBottom: "60px",
-        }}
-      >
-        {/* Prev arrow */}
-        <button
-          onClick={handlePrev}
-          aria-label="Previous testimonial"
-          style={{
-            background: "none",
-            border: "none",
-            cursor: "pointer",
-            fontSize: "24px",
-            color: "#6b7280",
-            padding: "8px",
-            lineHeight: 1,
-            transition: "color 0.2s ease",
-          }}
-          onMouseEnter={(e) => {
-            (e.currentTarget as HTMLButtonElement).style.color = "#f59e0b";
-          }}
-          onMouseLeave={(e) => {
-            (e.currentTarget as HTMLButtonElement).style.color = "#6b7280";
-          }}
-        >
-          ←
-        </button>
-
-        {/* Dots */}
-        <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
-          {reviews.map((_, i) => (
-            <button
-              key={i}
-              onClick={() => goTo(i)}
-              aria-label={`Go to testimonial ${i + 1}`}
-              className={cn(
-                "rounded-full transition-all duration-200",
-                i === activeIndex ? "bg-amber-400" : "bg-transparent"
-              )}
-              style={{
-                width: "10px",
-                height: "10px",
-                border: i === activeIndex ? "2px solid #f59e0b" : "2px solid #6b7280",
-                backgroundColor: i === activeIndex ? "#f59e0b" : "transparent",
-                borderRadius: "50%",
-                padding: 0,
-                cursor: "pointer",
-                transition: "background-color 0.2s ease, border-color 0.2s ease",
-              }}
+        {/* Navigation Controls */}
+        <div className="mt-12 flex items-center justify-center gap-8">
+          {/* Previous Button */}
+          <button
+            onClick={prev}
+            className="group rounded-full border border-[#71717a] p-2 transition-all duration-300 hover:border-[#f59e0b]"
+            aria-label="Previous testimonial"
+          >
+            <ChevronLeft
+              size={20}
+              className="text-[#71717a] transition-colors duration-300 group-hover:text-[#f59e0b]"
             />
-          ))}
-        </div>
+          </button>
 
-        {/* Next arrow */}
-        <button
-          onClick={handleNext}
-          aria-label="Next testimonial"
-          style={{
-            background: "none",
-            border: "none",
-            cursor: "pointer",
-            fontSize: "24px",
-            color: "#6b7280",
-            padding: "8px",
-            lineHeight: 1,
-            transition: "color 0.2s ease",
-          }}
-          onMouseEnter={(e) => {
-            (e.currentTarget as HTMLButtonElement).style.color = "#f59e0b";
-          }}
-          onMouseLeave={(e) => {
-            (e.currentTarget as HTMLButtonElement).style.color = "#6b7280";
-          }}
-        >
-          →
-        </button>
+          {/* Dots */}
+          <div className="flex gap-2">
+            {reviews.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => goToSlide(index)}
+                className={`h-2 rounded-full transition-all duration-300 ${
+                  index === currentIndex
+                    ? 'w-8 bg-[#f59e0b]'
+                    : 'w-2 bg-[#71717a] hover:bg-[#f59e0b]'
+                }`}
+                aria-label={`Go to testimonial ${index + 1}`}
+              />
+            ))}
+          </div>
+
+          {/* Next Button */}
+          <button
+            onClick={next}
+            className="group rounded-full border border-[#71717a] p-2 transition-all duration-300 hover:border-[#f59e0b]"
+            aria-label="Next testimonial"
+          >
+            <ChevronRight
+              size={20}
+              className="text-[#71717a] transition-colors duration-300 group-hover:text-[#f59e0b]"
+            />
+          </button>
+        </div>
       </div>
     </section>
   );

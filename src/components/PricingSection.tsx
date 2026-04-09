@@ -1,172 +1,243 @@
-import { Check } from "lucide-react";
+"use client";
+import { useState } from "react";
 
-const plans = [
+interface PricingTier {
+  name: string;
+  description: string;
+  annualPrice: number;
+  monthlyPrice: number;
+  features: string[];
+  cta: string;
+  badge?: string;
+  featured?: boolean;
+  proUpgrade?: {
+    price: number;
+    label: string;
+  };
+}
+
+const pricingTiers: PricingTier[] = [
   {
-    price: "$150",
-    period: "/mo",
-    name: "Startup",
-    description: "For early-stage companies getting legal basics in order.",
+    name: "Explore",
+    description: "Get a taste of AI-powered legal solutions. No commitment required.",
+    annualPrice: 0,
+    monthlyPrice: 0,
     features: [
-      "Custom AI Agent for your business",
       "Monthly legal newsletter",
-      "2 attorney consultations/month",
-      "Legal templates & guides library",
+      "Limited dashboard access",
+      "Educational legal guides",
+      "Community resources",
     ],
-    featured: false,
+    cta: "Join Free",
   },
   {
-    price: "$300",
-    period: "/mo",
-    name: "Scale",
-    description: "For growing companies with active legal needs.",
+    name: "Build",
+    description: "Full AI legal assistant access for growing businesses.",
+    annualPrice: 25,
+    monthlyPrice: 50,
     features: [
-      "Everything in Startup, plus:",
-      "Document drafting with attorney review",
-      "Legal research on business questions",
-      "5 attorney consultations/month",
+      "Full Allora AI assistant access",
+      "Educational guides & checklists",
+      "Usage tracking dashboard",
+      "Member-rate attorney consultations",
     ],
+    cta: "Start Building",
+  },
+  {
+    name: "Grow",
+    description: "Priority legal support with dedicated attorney access.",
+    annualPrice: 100,
+    monthlyPrice: 150,
+    features: [
+      "Everything in Build, plus:",
+      "1 attorney consultation/month",
+      "Priority Allora responses",
+      "Document review credits",
+    ],
+    cta: "Start Growing",
+    badge: "Most Popular",
     featured: true,
+    proUpgrade: {
+      price: 200,
+      label: "Upgrade to Pro ($200/mo) for extra consultations",
+    },
   },
   {
-    price: "$750",
-    period: "/mo",
-    name: "Sustain",
-    description: "For companies needing ongoing strategic legal counsel.",
+    name: "Lead",
+    description: "Fractional AI General Counsel for established businesses.",
+    annualPrice: 300,
+    monthlyPrice: 300,
     features: [
-      "Everything in Scale, plus:",
-      "Unlimited attorney consultations",
-      "Executive business strategy",
+      "Everything in Grow, plus:",
+      "2-3 attorney consultations/month",
+      "Quarterly AI risk reviews",
+      "Priority support & all document reviews",
     ],
-    featured: false,
+    cta: "Start Leading",
   },
 ];
 
 export default function PricingSection() {
-  return (
-    <section className="w-full py-28" style={{ backgroundColor: "#0f0f14" }}>
-      <div className="max-w-[1200px] mx-auto px-8">
-        {/* Header */}
-        <div className="text-center mb-16">
-          <div className="flex justify-center mb-4">
-            <div className="section-divider mx-auto" style={{ width: "48px" }} />
-          </div>
-          <p className="text-[13px] font-medium text-[#f59e0b] tracking-widest uppercase mb-4">
-            Business Solutions
-          </p>
-          <h2
-            className="font-heading mb-4"
-            style={{
-              fontSize: "clamp(38px, 5vw, 62px)",
-              color: "#fafafa",
-              fontWeight: 400,
-              letterSpacing: "-0.02em",
-            }}
-          >
-            Subscription-Based Plans
-          </h2>
-          <p
-            style={{
-              fontSize: "17px",
-              color: "#a1a1aa",
-              fontFamily: "var(--font-body), 'Inter', sans-serif",
-              maxWidth: "480px",
-              margin: "0 auto",
-            }}
-          >
-            Predictable pricing that streamlines your legal needs.
-            No surprise bills, no minimum hours.
-          </p>
-        </div>
+  const [isAnnual, setIsAnnual] = useState(true);
 
-        {/* Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-          {plans.map((plan) => (
+  return (
+    <section
+      id="pricing"
+      className="w-full bg-[#0f0f14] flex flex-col items-center justify-center py-24 px-6"
+    >
+      {/* Header */}
+      <div className="max-w-[900px] text-center mb-16">
+        <h2
+          className="text-5xl font-bold text-white mb-6"
+          style={{ fontFamily: "var(--font-display), 'Playfair Display', serif" }}
+        >
+          Membership Plans
+        </h2>
+        <p className="text-[#a1a1aa] text-lg leading-relaxed">
+          AI-powered legal solutions at every stage of your business. Start free, scale as you grow.
+        </p>
+      </div>
+
+      {/* Billing Toggle */}
+      <div className="flex items-center justify-center gap-4 mb-16">
+        <button
+          onClick={() => setIsAnnual(true)}
+          className={`px-6 py-2 rounded-lg text-sm font-medium transition-all ${
+            isAnnual
+              ? "bg-[#f59e0b] text-black"
+              : "bg-white/[0.08] text-[#a1a1aa] hover:bg-white/[0.12]"
+          }`}
+        >
+          Annual
+        </button>
+        <button
+          onClick={() => setIsAnnual(false)}
+          className={`px-6 py-2 rounded-lg text-sm font-medium transition-all ${
+            !isAnnual
+              ? "bg-[#f59e0b] text-black"
+              : "bg-white/[0.08] text-[#a1a1aa] hover:bg-white/[0.12]"
+          }`}
+        >
+          Monthly
+        </button>
+        {isAnnual && (
+          <span className="ml-4 text-sm text-[#f59e0b]">
+            Save up to 50%
+          </span>
+        )}
+      </div>
+
+      {/* Pricing Cards */}
+      <div className="w-full max-w-[1280px] grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+        {pricingTiers.map((tier, idx) => {
+          const price = isAnnual ? tier.annualPrice : tier.monthlyPrice;
+          const billingNote = isAnnual
+            ? tier.annualPrice === 0
+              ? ""
+              : "billed annually"
+            : "billed monthly";
+          const altPrice = isAnnual ? tier.monthlyPrice : tier.annualPrice;
+
+          return (
             <div
-              key={plan.name}
-              className={`flex flex-col p-8 ${
-                plan.featured ? "card-featured" : "card-gradient-border"
+              key={idx}
+              className={`relative rounded-2xl p-8 border transition-all duration-300 ${
+                tier.featured
+                  ? "card-featured border-[#f59e0b]/30 bg-gradient-to-br from-[#1a1a1f] to-[#0f0f14]"
+                  : "card-gradient-border border-white/[0.12] bg-gradient-to-br from-[#1a1a1f] to-[#0f0f14] hover:border-white/[0.2] hover:shadow-lg hover:shadow-white/[0.05]"
               }`}
             >
-              {/* Featured badge */}
-              {plan.featured && (
-                <div className="inline-flex self-start mb-4">
-                  <span className="px-2.5 py-1 rounded-full bg-[#f59e0b]/20 border border-[#f59e0b]/30 text-[#f59e0b] text-[11px] font-semibold tracking-wide uppercase">
-                    Most Popular
-                  </span>
+              {/* Badge */}
+              {tier.badge && (
+                <div className="absolute -top-3 left-6 bg-[#f59e0b] text-black text-xs font-bold px-3 py-1 rounded-full">
+                  {tier.badge}
                 </div>
               )}
 
-              {/* Price */}
-              <div className="mb-1 flex items-end gap-1">
-                <span
-                  className="font-heading"
-                  style={{
-                    fontSize: "clamp(36px, 4vw, 52px)",
-                    color: plan.featured ? "#f59e0b" : "#fafafa",
-                    fontWeight: 400,
-                    lineHeight: 1,
-                  }}
-                >
-                  {plan.price}
-                </span>
-                <span className="text-[#71717a] text-[15px] mb-1.5">{plan.period}</span>
-              </div>
-
-              {/* Plan name */}
-              <h3
-                className="font-heading mb-2"
-                style={{ fontSize: "22px", color: "#fafafa", fontWeight: 500 }}
-              >
-                {plan.name}
+              {/* Tier Name */}
+              <h3 className="text-2xl font-bold text-white mb-2">
+                {tier.name}
               </h3>
 
+              {/* Price */}
+              <div className="mb-4">
+                {price === 0 ? (
+                  <div className="text-white">
+                    <span className="text-4xl font-bold">Free</span>
+                  </div>
+                ) : (
+                  <div className="text-white">
+                    <span className="text-4xl font-bold">${price}</span>
+                    <span className="text-lg text-[#a1a1aa]">/mo</span>
+                    {billingNote && (
+                      <div className="text-xs text-[#a1a1aa] mt-1">
+                        {billingNote}
+                      </div>
+                    )}
+                    {isAnnual && altPrice !== 0 && (
+                      <div className="text-xs text-[#a1a1aa] mt-1">
+                        ${altPrice}/mo monthly
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+
               {/* Description */}
-              <p className="text-[14px] text-[#71717a] mb-7 leading-relaxed">
-                {plan.description}
+              <p className="text-sm text-[#a1a1aa] mb-6 leading-relaxed">
+                {tier.description}
               </p>
 
-              {/* Divider */}
-              <div className="w-full h-px bg-white/[0.06] mb-7" />
-
-              {/* Features */}
-              <ul className="flex flex-col gap-3 mb-8 flex-1">
-                {plan.features.map((f) => (
-                  <li key={f} className="flex items-start gap-3">
-                    <Check
-                      size={15}
-                      className="flex-shrink-0 mt-0.5"
-                      style={{ color: plan.featured ? "#f59e0b" : "#52525b" }}
-                    />
-                    <span
-                      style={{
-                        fontSize: "14px",
-                        color: "#a1a1aa",
-                        lineHeight: 1.6,
-                        fontFamily: "var(--font-body), 'Inter', sans-serif",
-                      }}
-                    >
-                      {f}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-
-              {/* CTA */}
-              <a
-                href="#"
-                className={`btn-al text-center text-[14px] ${
-                  plan.featured ? "btn-al-primary" : "btn-al-dark"
+              {/* CTA Button */}
+              <button
+                className={`w-full py-2.5 px-4 rounded-lg text-sm font-semibold transition-all mb-6 ${
+                  tier.featured
+                    ? "bg-[#f59e0b] text-black hover:bg-[#fbbf24] shadow-lg shadow-[#f59e0b]/20"
+                    : "bg-white/[0.08] text-white border border-white/[0.12] hover:bg-white/[0.12] hover:border-white/[0.2]"
                 }`}
               >
-                Get Started
-              </a>
-            </div>
-          ))}
-        </div>
+                {tier.cta}
+              </button>
 
-        {/* Footer note */}
-        <p className="text-center text-[13px] text-[#52525b] mt-8">
-          All plans include a free onboarding call. Cancel anytime.
+              {/* Pro Upgrade Callout */}
+              {tier.proUpgrade && (
+                <div className="mb-6 p-3 bg-[#f59e0b]/10 border border-[#f59e0b]/20 rounded-lg">
+                  <p className="text-xs text-[#f59e0b] text-center">
+                    {tier.proUpgrade.label}
+                  </p>
+                </div>
+              )}
+
+              {/* Features */}
+              <div className="space-y-3">
+                {tier.features.map((feature, featureIdx) => (
+                  <div key={featureIdx} className="flex items-start gap-3">
+                    <svg
+                      className="w-4 h-4 text-[#f59e0b] flex-shrink-0 mt-0.5"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                    <span className="text-sm text-[#d4d4d8]">
+                      {feature}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Footer Note */}
+      <div className="max-w-[900px] text-center">
+        <p className="text-sm text-[#52525b]">
+          All paid plans include a free onboarding call. Cancel anytime. Annual plans save up to 50%.
         </p>
       </div>
     </section>

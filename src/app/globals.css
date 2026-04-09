@@ -76,6 +76,29 @@
   --sidebar-ring: #f59e0b;
 }
 
+.light {
+  --background: #ffffff;
+  --foreground: #1a1a1a;
+  --card: #f9f9f9;
+  --card-foreground: #1a1a1a;
+  --primary: #f59e0b;
+  --primary-foreground: #ffffff;
+  --secondary: #f3f4f6;
+  --secondary-foreground: #1a1a1a;
+  --muted: #f3f4f6;
+  --muted-foreground: #6b7280;
+  --accent: #f59e0b;
+  --accent-foreground: #ffffff;
+  --border: rgba(0,0,0,0.08);
+  --input: rgba(0,0,0,0.08);
+  --ring: #f59e0b;
+}
+
+.light body {
+  background-color: #ffffff;
+  color: #1a1a1a;
+}
+
 @layer base {
   * {
     @apply border-border;

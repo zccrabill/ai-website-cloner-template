@@ -10,8 +10,8 @@ const logos = [
 
 export default function FeaturedInSection() {
   return (
-    <section className="w-full bg-white flex flex-col items-center justify-center" style={{ minHeight: "591px" }}>
-      <p className="text-[#86868b] text-sm tracking-[0.2em] uppercase mb-16" style={{ fontFamily: "var(--font-body), 'Pontano Sans', sans-serif" }}>
+    <section id="featured" className="w-full bg-[#0f0f14] flex flex-col items-center justify-center py-20 border-t border-white/6">
+      <p className="text-[#52525b] text-sm tracking-[0.2em] uppercase mb-16" style={{ fontFamily: "var(--font-body), 'Pontano Sans', sans-serif" }}>
         Featured In
       </p>
       <div className="flex flex-row items-center justify-center gap-16 flex-wrap px-8">
@@ -19,13 +19,13 @@ export default function FeaturedInSection() {
           <div
             key={i}
             className="transition-all duration-300"
-            style={{ filter: "grayscale(1)", opacity: 0.7 }}
+            style={{ filter: "brightness(0.6)", opacity: 0.7 }}
             onMouseEnter={e => {
-              (e.currentTarget as HTMLElement).style.filter = "grayscale(0)";
+              (e.currentTarget as HTMLElement).style.filter = "brightness(1)";
               (e.currentTarget as HTMLElement).style.opacity = "1";
             }}
             onMouseLeave={e => {
-              (e.currentTarget as HTMLElement).style.filter = "grayscale(1)";
+              (e.currentTarget as HTMLElement).style.filter = "brightness(0.6)";
               (e.currentTarget as HTMLElement).style.opacity = "0.7";
             }}
           >
