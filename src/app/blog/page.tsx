@@ -1,5 +1,3 @@
-"use client";
-
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Link from "next/link";
@@ -105,11 +103,12 @@ export default function BlogPage() {
               Get personalized advice on AI compliance, vendor contracts, and risk management from a
               Colorado attorney who specializes in AI law.
             </p>
-            <button
-              className="btn-al btn-al-primary text-[13px] px-6 py-3"
+            <Link
+              href="/#pricing"
+              className="btn-al btn-al-primary text-[13px] px-6 py-3 inline-block"
             >
               Explore FAIIR Services
-            </button>
+            </Link>
           </div>
         </section>
       </main>

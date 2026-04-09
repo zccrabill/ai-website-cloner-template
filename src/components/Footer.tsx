@@ -1,6 +1,12 @@
+"use client";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { XIcon, LinkedInIcon } from "./icons";
-import { ThemeToggle } from "./ThemeProvider";
+
+const ThemeToggle = dynamic(
+  () => import("./ThemeProvider").then((mod) => ({ default: mod.ThemeToggle })),
+  { ssr: false }
+);
 
 export default function Footer() {
   return (

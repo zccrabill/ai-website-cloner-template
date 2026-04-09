@@ -1,0 +1,4054 @@
+From 1b8cb8588bd0a100f2eeb0b280a8cf44b3680421 Mon Sep 17 00:00:00 2001
+From: Zachariah Crabill <zachariah@availablelaw.com>
+Date: Thu, 9 Apr 2026 18:28:46 +0000
+Subject: [PATCH] Major site rebuild: 3-page architecture, 4-tier
+ subscriptions, Supabase auth, FAIIR integration
+
+- Restructured to 3 pages: Home (anchored sections), Blog, Member Login
+- New 4-tier subscription model: Explore (free), Build (5), Grow (00), Lead (00)
+- Added Supabase magic link authentication + member dashboard
+- FAIIR certification banner + modal popup on home page
+- Blog page with git-connected markdown posts for SEO content
+- AI concierge chat widget (Claude agent integration placeholder)
+- Light/dark mode toggle with ThemeProvider
+- Fixed testimonials and featured-in sections to match dark theme
+- Updated header with smooth-scroll anchor navigation + mobile menu
+- Updated footer navigation and copyright
+- Added @supabase/supabase-js dependency
+- Netlify env vars configured for Supabase
+---
+ content/blog/5-ai-vendor-contract-clauses.md |  77 ++++
+ package-lock.json                            | 137 ++++++-
+ package.json                                 |  29 +-
+ public/images/faiir-logo.png                 | Bin 0 -> 62973 bytes
+ src/app/blog/[slug]/page.tsx                 | 142 +++++++
+ src/app/blog/page.tsx                        | 119 ++++++
+ src/app/dashboard/page.tsx                   | 316 ++++++++++++++++
+ src/app/globals.css                          |  23 ++
+ src/app/layout.tsx                           |   9 +-
+ src/app/login/page.tsx                       | 151 ++++++++
+ src/app/page.tsx                             |  34 +-
+ src/components/ConciergeButton.tsx           | 131 +++++++
+ src/components/FaiirModal.tsx                | 205 ++++++++++
+ src/components/FeaturedInSection.tsx         |  10 +-
+ src/components/Footer.tsx                    |  42 ++-
+ src/components/Header.tsx                    | 154 ++++++--
+ src/components/PricingSection.tsx            | 331 +++++++++-------
+ src/components/TestimonialsSection.tsx       | 374 +++++++------------
+ src/components/ThemeProvider.tsx             | 118 ++++++
+ src/lib/supabase.ts                          |  17 +
+ 20 files changed, 1964 insertions(+), 455 deletions(-)
+ create mode 100644 content/blog/5-ai-vendor-contract-clauses.md
+ create mode 100644 public/images/faiir-logo.png
+ create mode 100644 src/app/blog/[slug]/page.tsx
+ create mode 100644 src/app/blog/page.tsx
+ create mode 100644 src/app/dashboard/page.tsx
+ create mode 100644 src/app/login/page.tsx
+ create mode 100644 src/components/ConciergeButton.tsx
+ create mode 100644 src/components/FaiirModal.tsx
+ create mode 100644 src/components/ThemeProvider.tsx
+ create mode 100644 src/lib/supabase.ts
+
+diff --git a/content/blog/5-ai-vendor-contract-clauses.md b/content/blog/5-ai-vendor-contract-clauses.md
+new file mode 100644
+index 0000000..438ab31
+--- /dev/null
++++ b/content/blog/5-ai-vendor-contract-clauses.md
+@@ -0,0 +1,77 @@
++---
++title: "5 AI Vendor Contract Clauses Your Company Is Missing"
++date: "2026-04-07"
++author: "Zachariah Crabill, JD"
++excerpt: "Most companies don't protect themselves adequately when contracting with AI vendors. Learn the critical clauses you need to include in your vendor agreements."
++slug: "5-ai-vendor-contract-clauses"
++---
++
++When Colorado businesses contract with AI vendors—whether for chatbots, document analysis, predictive analytics, or other AI services—they often overlook critical protective language. The rush to implement AI solutions frequently outpaces the legal review required to ensure adequate protections. This gap creates significant liability exposure that a few strategic contract clauses can substantially mitigate.
++
++## 1. AI Model Transparency and Documentation Obligations
++
++Most AI contracts are silent on how the vendor's models work or what data they were trained on. This is problematic when compliance regulators ask tough questions about decision-making or bias.
++
++**What to include:** Require your vendor to document:
++- Model architecture and training data sources
++- Performance metrics on relevant datasets, including demographic breakdowns for bias testing
++- Any third-party models or components embedded in the solution
++- Update frequency and notification protocols when models change
++
++This clause protects you in two ways. First, you gain insight into what's actually running in your systems. Second, if a regulatory inquiry arises about a decision the AI made, you have documentation showing good faith due diligence. Colorado businesses in regulated industries (financial services, healthcare) should treat this as non-negotiable.
++
++## 2. Liability Cap Exceptions for AI Output
++
++Standard vendor contracts often cap liability across the board. However, AI-generated outputs that cause harm—incorrect medical determinations, discriminatory lending recommendations, erroneous contract analysis—warrant broader liability exposure.
++
++**What to include:** Carve AI output liability out of the general cap. Language should specify that if the vendor's AI generates content that directly causes bodily injury, regulatory penalties, or contractual breach on your part, the vendor remains fully liable. Conversely, the vendor's liability for routine service failures (uptime issues, slow performance) can remain capped.
++
++This creates the right incentives: the vendor should invest heavily in AI accuracy and safety because they bear the risk if their model fails. Your company doesn't become the insurer of a vendor's negligence.
++
++## 3. Data Training and Model Improvement Rights
++
++Many vendors reserve the right to use your data—even anonymized data—to improve their AI models. For Colorado businesses handling sensitive client information, regulated data, or trade secrets, this is a dealbreaker.
++
++**What to include:** Explicitly prohibit the vendor from using your data to train, test, or improve their models without written consent. If the vendor offers a "common good" exception (training models to reduce bias, for example), require that:
++- All such training is fully anonymized and irreversibly de-identified
++- You retain the right to audit or halt the practice
++- Any improvements benefit you equally, not just the vendor's other customers
++
++This clause is especially critical for law firms, accountants, and other professional services handling client confidences, and for any company handling Colorado-regulated data.
++
++## 4. Indemnification for Third-Party Claims Related to AI Output
++
++If your company uses a vendor's AI system to generate content—a marketing email, a contract clause, a policy decision—and someone sues you for infringement, defamation, or copyright violation, who pays?
++
++**What to include:** The vendor should indemnify you for claims arising from:
++- Intellectual property infringement in the AI's output (e.g., the AI plagiarizes or reproduces protected material)
++- Defamatory or false statements the AI generates
++- Any third-party claims that the AI output violates someone else's rights
++
++Exclude only claims that arise from your misuse of the AI system (e.g., you deliberately prompt the AI to defame someone, or you use the output in violation of the vendor's terms).
++
++This protects your company from bearing the cost of the vendor's model training or design failures. Without this language, you're essentially self-insuring the vendor's intellectual property and accuracy risks.
++
++## 5. Audit Rights and AI Fairness Verification
++
++Colorado businesses are increasingly subject to fairness and bias auditing obligations—whether through industry regulation, contractual requirements with customers, or reputational necessity. You need contractual certainty that you can audit the AI vendor's system.
++
++**What to include:**
++- Right to audit the vendor's AI system and decision-making, on reasonable notice and frequency
++- Right to conduct or engage third parties to conduct fairness and bias testing
++- Vendor obligation to remediate any material biases identified in testing
++- Escalation path: if the vendor cannot fix bias issues within a reasonable timeframe, you have the right to terminate without penalty
++
++This clause gives you the tools to comply with emerging fairness regulations and to demonstrate to customers and regulators that you're serious about responsible AI use. It also creates accountability—the vendor knows they'll be tested, which incentivizes responsible development.
++
++## Implementation Strategy
++
++These five clauses are not boilerplate. Each should be tailored to your specific use case, the vendor's business model, and your industry's regulatory environment. A vendor handling personal financial data needs stricter controls than one providing translation services.
++
++Start your vendor negotiations with these five areas on the agenda. Many vendors will push back, and that's valuable information. A vendor unwilling to document their model, cap liability for AI output, or submit to fairness audits is signaling that they haven't thought seriously about responsible AI deployment. That's a vendor worth avoiding.
++
++For Colorado businesses building AI systems responsibly, strong vendor contracts aren't just legal hygiene—they're a competitive advantage and a foundation for customer trust.
++
++---
++
++*Zachariah Crabill is an attorney and AI consultant specializing in AI compliance and risk management for Colorado businesses. For questions about AI vendor contracts or AI liability, reach out through Av{ai}lable Law.*
+diff --git a/package-lock.json b/package-lock.json
+index b346d89..67ee9e5 100644
+--- a/package-lock.json
++++ b/package-lock.json
+@@ -1,15 +1,15 @@
+ {
+-  "name": "ai-website-clone-template",
+-  "version": "0.3.1",
++  "name": "availablelaw-site",
++  "version": "1.0.0",
+   "lockfileVersion": 3,
+   "requires": true,
+   "packages": {
+     "": {
+-      "name": "ai-website-clone-template",
+-      "version": "0.3.1",
+-      "license": "MIT",
++      "name": "availablelaw-site",
++      "version": "1.0.0",
+       "dependencies": {
+         "@base-ui/react": "^1.3.0",
++        "@supabase/supabase-js": "^2.49.0",
+         "class-variance-authority": "^0.7.1",
+         "clsx": "^2.1.1",
+         "lucide-react": "^1.6.0",
+@@ -1951,6 +1951,92 @@
+         "url": "https://github.com/sponsors/sindresorhus"
+       }
+     },
++    "node_modules/@supabase/auth-js": {
++      "version": "2.103.0",
++      "resolved": "https://registry.npmjs.org/@supabase/auth-js/-/auth-js-2.103.0.tgz",
++      "integrity": "sha512-6zAanO6c+6gpHOlt5Lb9TlBBkJdZiUWkWCJKAxzkywBDcwaHlLJKXnjQGX6GyVCyKRR1e7sTq4re/yRTH6U/9A==",
++      "license": "MIT",
++      "dependencies": {
++        "tslib": "2.8.1"
++      },
++      "engines": {
++        "node": ">=20.0.0"
++      }
++    },
++    "node_modules/@supabase/functions-js": {
++      "version": "2.103.0",
++      "resolved": "https://registry.npmjs.org/@supabase/functions-js/-/functions-js-2.103.0.tgz",
++      "integrity": "sha512-YrneV2NjskUkkmkZ2Jt2n3elBgbWzV4Y1M9MM370z2Zd5ZPFqFbY8KIoPwuNjtAGE9YrpKBxnbZqeF07BiN9Og==",
++      "license": "MIT",
++      "dependencies": {
++        "tslib": "2.8.1"
++      },
++      "engines": {
++        "node": ">=20.0.0"
++      }
++    },
++    "node_modules/@supabase/phoenix": {
++      "version": "0.4.0",
++      "resolved": "https://registry.npmjs.org/@supabase/phoenix/-/phoenix-0.4.0.tgz",
++      "integrity": "sha512-RHSx8bHS02xwfHdAbX5Lpbo6PXbgyf7lTaXTlwtFDPwOIw64NnVRwFAXGojHhjtVYI+PEPNSWwkL90f4agN3bw==",
++      "license": "MIT"
++    },
++    "node_modules/@supabase/postgrest-js": {
++      "version": "2.103.0",
++      "resolved": "https://registry.npmjs.org/@supabase/postgrest-js/-/postgrest-js-2.103.0.tgz",
++      "integrity": "sha512-rC3sRxYdPZymkp2CZR1MiNQgbOleD01bGsW8VxEKRR5nMkLZ1NgAS1QTQf78Wh30czFyk505ZYr9Od8/mWT2TA==",
++      "license": "MIT",
++      "dependencies": {
++        "tslib": "2.8.1"
++      },
++      "engines": {
++        "node": ">=20.0.0"
++      }
++    },
++    "node_modules/@supabase/realtime-js": {
++      "version": "2.103.0",
++      "resolved": "https://registry.npmjs.org/@supabase/realtime-js/-/realtime-js-2.103.0.tgz",
++      "integrity": "sha512-gcPtXzZ6izyyBVf2of7K3dEt8CScPJn8VcSlQq6oWL9QoE1kqfQl0oFrOMHd5qrcADewxI7OxxosLB8W4XqtIQ==",
++      "license": "MIT",
++      "dependencies": {
++        "@supabase/phoenix": "^0.4.0",
++        "@types/ws": "^8.18.1",
++        "tslib": "2.8.1",
++        "ws": "^8.18.2"
++      },
++      "engines": {
++        "node": ">=20.0.0"
++      }
++    },
++    "node_modules/@supabase/storage-js": {
++      "version": "2.103.0",
++      "resolved": "https://registry.npmjs.org/@supabase/storage-js/-/storage-js-2.103.0.tgz",
++      "integrity": "sha512-DHmlvdAXwtOmZNbkIZi4lkobPR3XjIzoOgzoz5duMf6G+sDeY015YrzMJCnqdccuYr7X5x4yYuSwF//RoN2dvQ==",
++      "license": "MIT",
++      "dependencies": {
++        "iceberg-js": "^0.8.1",
++        "tslib": "2.8.1"
++      },
++      "engines": {
++        "node": ">=20.0.0"
++      }
++    },
++    "node_modules/@supabase/supabase-js": {
++      "version": "2.103.0",
++      "resolved": "https://registry.npmjs.org/@supabase/supabase-js/-/supabase-js-2.103.0.tgz",
++      "integrity": "sha512-j/6q5+LtXbR/YOLSLhy7Na74RD1cV2v+KwIIuuqMEjk1JpLEEyu0ynwDHpGoxMncDQl+R5FogaVqZm+85lZvtw==",
++      "license": "MIT",
++      "dependencies": {
++        "@supabase/auth-js": "2.103.0",
++        "@supabase/functions-js": "2.103.0",
++        "@supabase/postgrest-js": "2.103.0",
++        "@supabase/realtime-js": "2.103.0",
++        "@supabase/storage-js": "2.103.0"
++      },
++      "engines": {
++        "node": ">=20.0.0"
++      }
++    },
+     "node_modules/@swc/helpers": {
+       "version": "0.5.15",
+       "resolved": "https://registry.npmjs.org/@swc/helpers/-/helpers-0.5.15.tgz",
+@@ -2342,7 +2428,6 @@
+       "version": "24.12.0",
+       "resolved": "https://registry.npmjs.org/@types/node/-/node-24.12.0.tgz",
+       "integrity": "sha512-GYDxsZi3ChgmckRT9HPU0WEhKLP08ev/Yfcq2AstjrDASOYCSXeyjDsHg4v5t4jOj7cyDX3vmprafKlWIG9MXQ==",
+-      "devOptional": true,
+       "license": "MIT",
+       "dependencies": {
+         "undici-types": "~7.16.0"
+@@ -2380,6 +2465,15 @@
+       "integrity": "sha512-lrpDziQipxCEeK5kWxvljWYhUvOiB2A9izZd9B2AFarYAkqZshb4lPbRs7zKEic6eGtH8V/2qJW+dPp9OtF6bw==",
+       "license": "MIT"
+     },
++    "node_modules/@types/ws": {
++      "version": "8.18.1",
++      "resolved": "https://registry.npmjs.org/@types/ws/-/ws-8.18.1.tgz",
++      "integrity": "sha512-ThVF6DCVhA8kUGy+aazFQ4kXQ7E1Ty7A3ypFOe0IcJV8O/M511G99AW24irKrW56Wt44yG9+ij8FaqoBGkuBXg==",
++      "license": "MIT",
++      "dependencies": {
++        "@types/node": "*"
++      }
++    },
+     "node_modules/@typescript-eslint/eslint-plugin": {
+       "version": "8.57.2",
+       "resolved": "https://registry.npmjs.org/@typescript-eslint/eslint-plugin/-/eslint-plugin-8.57.2.tgz",
+@@ -5602,6 +5696,15 @@
+         "node": ">=18.18.0"
+       }
+     },
++    "node_modules/iceberg-js": {
++      "version": "0.8.1",
++      "resolved": "https://registry.npmjs.org/iceberg-js/-/iceberg-js-0.8.1.tgz",
++      "integrity": "sha512-1dhVQZXhcHje7798IVM+xoo/1ZdVfzOMIc8/rgVSijRK38EDqOJoGula9N/8ZI5RD8QTxNQtK/Gozpr+qUqRRA==",
++      "license": "MIT",
++      "engines": {
++        "node": ">=20.0.0"
++      }
++    },
+     "node_modules/iconv-lite": {
+       "version": "0.7.2",
+       "resolved": "https://registry.npmjs.org/iconv-lite/-/iconv-lite-0.7.2.tgz",
+@@ -9277,7 +9380,6 @@
+       "version": "7.16.0",
+       "resolved": "https://registry.npmjs.org/undici-types/-/undici-types-7.16.0.tgz",
+       "integrity": "sha512-Zz+aZWSj8LE6zoxD+xrjh4VfkIG8Ya6LvYkZqtUQGJPZjYl53ypCaUwWqo7eI0x66KBGeRo+mlBEkMSeSZ38Nw==",
+-      "devOptional": true,
+       "license": "MIT"
+     },
+     "node_modules/unicorn-magic": {
+@@ -9611,6 +9713,27 @@
+       "integrity": "sha512-l4Sp/DRseor9wL6EvV2+TuQn63dMkPjZ/sp9XkghTEbV9KlPS1xUsZ3u7/IQO4wxtcFB4bgpQPRcR3QCvezPcQ==",
+       "license": "ISC"
+     },
++    "node_modules/ws": {
++      "version": "8.20.0",
++      "resolved": "https://registry.npmjs.org/ws/-/ws-8.20.0.tgz",
++      "integrity": "sha512-sAt8BhgNbzCtgGbt2OxmpuryO63ZoDk/sqaB/znQm94T4fCEsy/yV+7CdC1kJhOU9lboAEU7R3kquuycDoibVA==",
++      "license": "MIT",
++      "engines": {
++        "node": ">=10.0.0"
++      },
++      "peerDependencies": {
++        "bufferutil": "^4.0.1",
++        "utf-8-validate": ">=5.0.2"
++      },
++      "peerDependenciesMeta": {
++        "bufferutil": {
++          "optional": true
++        },
++        "utf-8-validate": {
++          "optional": true
++        }
++      }
++    },
+     "node_modules/wsl-utils": {
+       "version": "0.3.1",
+       "resolved": "https://registry.npmjs.org/wsl-utils/-/wsl-utils-0.3.1.tgz",
+diff --git a/package.json b/package.json
+index f282a09..c1ebaba 100644
+--- a/package.json
++++ b/package.json
+@@ -1,28 +1,8 @@
+ {
+-  "name": "ai-website-clone-template",
+-  "version": "0.3.1",
++  "name": "availablelaw-site",
++  "version": "1.0.0",
+   "private": true,
+-  "description": "Clone any website into a clean, modern Next.js codebase using AI coding agents",
+-  "author": "JCodesMore",
+-  "license": "MIT",
+-  "repository": {
+-    "type": "git",
+-    "url": "https://github.com/JCodesMore/ai-website-cloner-template.git"
+-  },
+-  "homepage": "https://github.com/JCodesMore/ai-website-cloner-template",
+-  "bugs": {
+-    "url": "https://github.com/JCodesMore/ai-website-cloner-template/issues"
+-  },
+-  "keywords": [
+-    "claude-code",
+-    "website-clone",
+-    "reverse-engineering",
+-    "nextjs",
+-    "ai",
+-    "template",
+-    "tailwindcss",
+-    "shadcn-ui"
+-  ],
++  "description": "Available Law - AI-powered legal solutions for Colorado businesses",
+   "engines": {
+     "node": ">=24"
+   },
+@@ -44,7 +24,8 @@
+     "react-dom": "19.2.4",
+     "shadcn": "^4.1.0",
+     "tailwind-merge": "^3.5.0",
+-    "tw-animate-css": "^1.4.0"
++    "tw-animate-css": "^1.4.0",
++    "@supabase/supabase-js": "^2.49.0"
+   },
+   "devDependencies": {
+     "@tailwindcss/postcss": "^4",
+diff --git a/public/images/faiir-logo.png b/public/images/faiir-logo.png
+new file mode 100644
+index 0000000000000000000000000000000000000000..84861430cd14b2035e6027e0780e8d40f9c7397b
+GIT binary patch
+literal 62973
+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
+
+literal 0
+HcmV?d00001
+
+diff --git a/src/app/blog/[slug]/page.tsx b/src/app/blog/[slug]/page.tsx
+new file mode 100644
+index 0000000..3b6ad60
+--- /dev/null
++++ b/src/app/blog/[slug]/page.tsx
+@@ -0,0 +1,142 @@
++"use client";
++
++import Header from "@/components/Header";
++import Footer from "@/components/Footer";
++import Link from "next/link";
++
++interface BlogPostPageProps {
++  params: {
++    slug: string;
++  };
++}
++
++export default function BlogPostPage({ params }: BlogPostPageProps) {
++  // Map slug to post metadata (in production, this would come from a CMS or database)
++  const postMetadata: Record<string, { title: string; date: string; author: string; excerpt: string }> = {
++    "5-ai-vendor-contract-clauses": {
++      title: "5 AI Vendor Contract Clauses Your Company Is Missing",
++      date: "April 7, 2026",
++      author: "Zachariah Crabill, JD",
++      excerpt:
++        "Most companies don't protect themselves adequately when contracting with AI vendors. Learn the critical clauses you need to include in your vendor agreements.",
++    },
++    "colorado-ai-act-2026": {
++      title: "Colorado's AI Act: What Businesses Need to Know in 2026",
++      date: "April 2, 2026",
++      author: "Zachariah Crabill, JD",
++      excerpt: "Colorado's new AI legislation sets a precedent for responsible AI use.",
++    },
++    "document-ai-decision-making": {
++      title: "How to Document AI Decision-Making for Compliance",
++      date: "March 28, 2026",
++      author: "Zachariah Crabill, JD",
++      excerpt:
++        "Documentation is critical for AI compliance. This guide walks you through building a practical system for tracking AI decisions.",
++    },
++  };
++
++  const post = postMetadata[params.slug];
++
++  if (!post) {
++    return (
++      <>
++        <Header />
++        <main className="bg-[#0f0f14] min-h-screen flex items-center justify-center">
++          <div className="text-center">
++            <h1 className="font-heading text-3xl text-[#f0f0f5] mb-4">Post not found</h1>
++            <Link href="/blog" className="text-[#f59e0b] hover:text-[#fbbf24]">
++              Back to blog
++            </Link>
++          </div>
++        </main>
++        <Footer />
++      </>
++    );
++  }
++
++  return (
++    <>
++      <Header />
++      <main className="bg-[#0f0f14] min-h-screen">
++        {/* Back link */}
++        <div className="w-full bg-[#0f0f14] border-b border-white/[0.06]">
++          <div className="max-w-[800px] mx-auto px-6 md:px-8 py-6">
++            <Link href="/blog" className="text-[#f59e0b] hover:text-[#fbbf24] text-[14px] font-medium">
++              ← Back to blog
++            </Link>
++          </div>
++        </div>
++
++        {/* Article header */}
++        <article className="w-full">
++          <div className="max-w-[800px] mx-auto px-6 md:px-8 py-16 md:py-24">
++            {/* Meta */}
++            <div className="mb-8">
++              <p className="text-[#f59e0b] text-[12px] font-semibold tracking-widest uppercase mb-3">
++                AI Legal
++              </p>
++              <h1
++                className="font-heading text-4xl md:text-5xl text-[#f0f0f5] mb-4 leading-tight"
++                style={{ fontWeight: 400 }}
++              >
++                {post.title}
++              </h1>
++              <div className="flex items-center gap-4 pt-4 border-t border-white/[0.06]">
++                <p className="text-[#9898a8] text-[14px]">
++                  <span className="text-[#f0f0f5] font-medium">{post.author}</span>
++                </p>
++                <span className="text-[#52525b]">•</span>
++                <p className="text-[#9898a8] text-[14px]">{post.date}</p>
++              </div>
++            </div>
++
++            {/* Article excerpt */}
++            <div className="bg-[#17171e] border border-white/[0.06] rounded-lg p-6 md:p-8 mb-12">
++              <p className="text-[#a1a1aa] text-lg leading-relaxed">{post.excerpt}</p>
++            </div>
++
++            {/* Article content placeholder */}
++            <div className="prose prose-invert max-w-none mb-16">
++              <div className="text-[#9898a8] leading-relaxed space-y-6 text-[15px]">
++                <p>
++                  Article content will be loaded from markdown files. The slug "<code className="text-[#f59e0b] bg-[#17171e] px-2 py-1 rounded">{params.slug}</code>" maps to the corresponding markdown file in <code className="text-[#f59e0b] bg-[#17171e] px-2 py-1 rounded">/content/blog/</code>.
++                </p>
++
++                <div className="bg-[#17171e] border border-white/[0.08] rounded-lg p-6 mt-8">
++                  <h3 className="font-heading text-[#f0f0f5] text-xl mb-3" style={{ fontWeight: 400 }}>
++                    Coming Soon
++                  </h3>
++                  <p className="text-[#a1a1aa] text-[14px]">
++                    The full article content for "{post.title}" will be displayed here. In a production environment, this page would:
++                  </p>
++                  <ul className="list-disc list-inside text-[#a1a1aa] text-[14px] mt-3 space-y-2">
++                    <li>Load markdown from <code className="text-[#f59e0b] bg-black/30 px-1">/content/blog/{params.slug}.md</code></li>
++                    <li>Parse frontmatter metadata (title, date, author, etc.)</li>
++                    <li>Render markdown content with proper styling</li>
++                    <li>Include suggested posts at the end</li>
++                  </ul>
++                </div>
++              </div>
++            </div>
++
++            {/* CTA section */}
++            <div className="bg-gradient-to-r from-[#17171e] to-[#1f1f28] border border-white/[0.06] rounded-lg p-8 md:p-12 text-center">
++              <h3 className="font-heading text-2xl text-[#f0f0f5] mb-3" style={{ fontWeight: 400 }}>
++                Need AI Legal Guidance?
++              </h3>
++              <p className="text-[#9898a8] mb-6 leading-relaxed">
++                Get personalized advice on AI compliance, contracts, and risk management from Zachariah Crabill, JD.
++              </p>
++              <button
++                className="btn-al btn-al-primary text-[13px] px-6 py-3"
++              >
++                Schedule a Consultation
++              </button>
++            </div>
++          </div>
++        </article>
++      </main>
++      <Footer />
++    </>
++  );
++}
+diff --git a/src/app/blog/page.tsx b/src/app/blog/page.tsx
+new file mode 100644
+index 0000000..64493c5
+--- /dev/null
++++ b/src/app/blog/page.tsx
+@@ -0,0 +1,119 @@
++"use client";
++
++import Header from "@/components/Header";
++import Footer from "@/components/Footer";
++import Link from "next/link";
++
++interface BlogPost {
++  slug: string;
++  title: string;
++  date: string;
++  excerpt: string;
++}
++
++const blogPosts: BlogPost[] = [
++  {
++    slug: "5-ai-vendor-contract-clauses",
++    title: "5 AI Vendor Contract Clauses Your Company Is Missing",
++    date: "April 7, 2026",
++    excerpt:
++      "Most companies don't protect themselves adequately when contracting with AI vendors. Learn the critical clauses you need to include in your vendor agreements.",
++  },
++  {
++    slug: "colorado-ai-act-2026",
++    title: "Colorado's AI Act: What Businesses Need to Know in 2026",
++    date: "April 2, 2026",
++    excerpt:
++      "Colorado's new AI legislation sets a precedent for responsible AI use. Discover what compliance means for your business and how to prepare.",
++  },
++  {
++    slug: "document-ai-decision-making",
++    title: "How to Document AI Decision-Making for Compliance",
++    date: "March 28, 2026",
++    excerpt:
++      "Documentation is critical for AI compliance. This guide walks you through building a practical system for tracking AI decisions and their outcomes.",
++  },
++];
++
++export default function BlogPage() {
++  return (
++    <>
++      <Header />
++      <main className="bg-[#0f0f14] min-h-screen">
++        {/* Blog header */}
++        <section className="w-full bg-gradient-to-b from-[#0f0f14] to-[#0f0f14] border-b border-white/[0.06]">
++          <div className="max-w-[1200px] mx-auto px-6 md:px-8 py-20 md:py-32">
++            <div className="section-divider"></div>
++            <h1
++              className="font-heading text-4xl md:text-5xl text-[#f0f0f5] mb-4 leading-tight"
++              style={{ fontWeight: 400 }}
++            >
++              AI Legal Insights
++            </h1>
++            <p className="text-[#9898a8] text-lg max-w-[600px] leading-relaxed">
++              Practical guidance on AI compliance, vendor contracts, and building responsible AI
++              systems for your business.
++            </p>
++          </div>
++        </section>
++
++        {/* Blog posts grid */}
++        <section className="w-full py-16 md:py-24">
++          <div className="max-w-[1200px] mx-auto px-6 md:px-8">
++            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
++              {blogPosts.map((post) => (
++                <Link
++                  key={post.slug}
++                  href={`/blog/${post.slug}`}
++                  className="group"
++                >
++                  <div className="card-gradient-border p-6 md:p-8 h-full flex flex-col justify-between transition-all duration-300 hover:bg-[#17171e] cursor-pointer">
++                    {/* Content */}
++                    <div className="flex-1">
++                      <p className="text-[#f59e0b] text-[12px] font-semibold tracking-widest uppercase mb-3">
++                        AI Legal
++                      </p>
++                      <h2 className="font-heading text-lg md:text-xl text-[#f0f0f5] mb-3 leading-snug group-hover:text-[#fbbf24] transition-colors">
++                        {post.title}
++                      </h2>
++                      <p className="text-[#9898a8] text-[14px] leading-relaxed mb-4">
++                        {post.excerpt}
++                      </p>
++                    </div>
++
++                    {/* Footer */}
++                    <div className="flex items-center justify-between pt-4 border-t border-white/[0.08]">
++                      <p className="text-[#52525b] text-[12px]">{post.date}</p>
++                      <span className="text-[#f59e0b] text-[14px] font-medium group-hover:translate-x-1 transition-transform">
++                        Read →
++                      </span>
++                    </div>
++                  </div>
++                </Link>
++              ))}
++            </div>
++          </div>
++        </section>
++
++        {/* CTA section */}
++        <section className="w-full py-16 md:py-24 border-t border-white/[0.06]">
++          <div className="max-w-[800px] mx-auto px-6 md:px-8 text-center">
++            <h2 className="font-heading text-3xl md:text-4xl text-[#f0f0f5] mb-4" style={{ fontWeight: 400 }}>
++              Need AI Legal Guidance?
++            </h2>
++            <p className="text-[#9898a8] text-lg mb-8 leading-relaxed">
++              Get personalized advice on AI compliance, vendor contracts, and risk management from a
++              Colorado attorney who specializes in AI law.
++            </p>
++            <button
++              className="btn-al btn-al-primary text-[13px] px-6 py-3"
++            >
++              Explore FAIIR Services
++            </button>
++          </div>
++        </section>
++      </main>
++      <Footer />
++    </>
++  );
++}
+diff --git a/src/app/dashboard/page.tsx b/src/app/dashboard/page.tsx
+new file mode 100644
+index 0000000..7fe195f
+--- /dev/null
++++ b/src/app/dashboard/page.tsx
+@@ -0,0 +1,316 @@
++"use client";
++
++import { useState, useEffect } from "react";
++import { useRouter } from "next/navigation";
++import Image from "next/image";
++import Link from "next/link";
++import { supabase } from "@/lib/supabase";
++import {
++  LayoutDashboard,
++  MessageSquare,
++  FileText,
++  Calendar,
++  User,
++  LogOut,
++  Menu,
++  X,
++  FileCheck,
++  Briefcase,
++  Shield,
++  CheckCircle,
++  Scale,
++  Users,
++} from "lucide-react";
++
++interface User {
++  id: string;
++  email?: string;
++  user_metadata?: {
++    full_name?: string;
++  };
++}
++
++interface Stats {
++  conversations: number;
++  consultations: number;
++  documents: number;
++  billingDate: string;
++}
++
++export default function DashboardPage() {
++  const router = useRouter();
++  const [user, setUser] = useState<User | null>(null);
++  const [isLoading, setIsLoading] = useState(true);
++  const [sidebarOpen, setSidebarOpen] = useState(true);
++  const [isMobile, setIsMobile] = useState(false);
++
++  useEffect(() => {
++    // Check if user is authenticated
++    const checkAuth = async () => {
++      try {
++        const {
++          data: { session },
++        } = await supabase.auth.getSession();
++
++        if (!session) {
++          router.push("/login");
++          return;
++        }
++
++        setUser(session.user as User);
++        setIsLoading(false);
++      } catch (error) {
++        console.error("Auth error:", error);
++        router.push("/login");
++      }
++    };
++
++    checkAuth();
++
++    // Check screen size for mobile
++    const handleResize = () => {
++      setIsMobile(window.innerWidth < 768);
++      if (window.innerWidth < 768) {
++        setSidebarOpen(false);
++      }
++    };
++
++    handleResize();
++    window.addEventListener("resize", handleResize);
++    return () => window.removeEventListener("resize", handleResize);
++  }, [router]);
++
++  const handleLogout = async () => {
++    await supabase.auth.signOut();
++    router.push("/");
++  };
++
++  if (isLoading) {
++    return (
++      <div className="h-screen bg-[#0f0f14] flex items-center justify-center">
++        <div className="text-center">
++          <div className="w-12 h-12 border-4 border-[#f59e0b]/20 border-t-[#f59e0b] rounded-full animate-spin mx-auto mb-4" />
++          <p className="text-[#a1a1aa]">Loading dashboard...</p>
++        </div>
++      </div>
++    );
++  }
++
++  if (!user) {
++    return null;
++  }
++
++  const userName = user.user_metadata?.full_name || user.email?.split("@")[0] || "User";
++  const userTier: string = "Grow"; // Placeholder - would be fetched from user subscription data
++  const isFreeTier = userTier === "Explore";
++
++  const stats: Stats = {
++    conversations: 0,
++    consultations: userTier === "Build" ? 0 : userTier === "Grow" ? 1 : userTier === "Lead" ? 2 : 0,
++    documents: 0,
++    billingDate: "May 9, 2026",
++  };
++
++  const quickActions = [
++    { icon: FileCheck, label: "Review a Contract", color: "text-blue-400" },
++    { icon: Briefcase, label: "Form a Business", color: "text-purple-400" },
++    { icon: Shield, label: "Protect My IP", color: "text-green-400" },
++    { icon: CheckCircle, label: "Check Compliance", color: "text-amber-400" },
++    { icon: Scale, label: "Employment Law", color: "text-red-400" },
++    { icon: Users, label: "Book Attorney", color: "text-pink-400" },
++  ];
++
++  const sidebarItems = [
++    { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard" },
++    { icon: MessageSquare, label: "Chat with Allora", href: "/chat" },
++    { icon: FileText, label: "Documents", href: "/documents" },
++    { icon: Calendar, label: "Schedule", href: "/schedule" },
++    { icon: User, label: "My Account", href: "/account" },
++  ];
++
++  return (
++    <div className="h-screen bg-[#0f0f14] flex">
++      {/* Sidebar */}
++      <div
++        className={`fixed md:relative z-40 h-screen bg-white/[0.02] border-r border-white/[0.08] transition-all duration-300 ${
++          sidebarOpen ? "w-64" : "w-0 md:w-64"
++        } ${isMobile && !sidebarOpen ? "hidden" : ""}`}
++      >
++        {/* Sidebar Header */}
++        <div className="h-16 flex items-center justify-between px-6 border-b border-white/[0.08]">
++          <Link href="/dashboard" className="flex items-center gap-2">
++            <Image
++              src="/images/logo-arrow.png"
++              alt="Av{ai}lable Law"
++              width={32}
++              height={32}
++              className="object-contain"
++            />
++          </Link>
++          {isMobile && (
++            <button
++              onClick={() => setSidebarOpen(false)}
++              className="p-1 hover:bg-white/[0.08] rounded-lg transition-colors"
++            >
++              <X className="w-5 h-5 text-[#a1a1aa]" />
++            </button>
++          )}
++        </div>
++
++        {/* Sidebar Nav */}
++        <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
++          {sidebarItems.map((item) => {
++            const IconComponent = item.icon;
++            const isActive = item.href === "/dashboard";
++            return (
++              <Link
++                key={item.href}
++                href={item.href}
++                className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all ${
++                  isActive
++                    ? "bg-[#f59e0b]/10 text-[#f59e0b] border border-[#f59e0b]/20"
++                    : "text-[#a1a1aa] hover:bg-white/[0.04] hover:text-white"
++                }`}
++              >
++                <IconComponent className="w-5 h-5" />
++                <span>{item.label}</span>
++              </Link>
++            );
++          })}
++        </nav>
++
++        {/* Sidebar Footer */}
++        <div className="p-4 border-t border-white/[0.08] space-y-2">
++          <button className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-[#a1a1aa] hover:bg-white/[0.04] hover:text-white transition-all">
++            <User className="w-5 h-5" />
++            <span>Profile Settings</span>
++          </button>
++          <button
++            onClick={handleLogout}
++            className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-[#a1a1aa] hover:bg-white/[0.04] hover:text-red-400 transition-all"
++          >
++            <LogOut className="w-5 h-5" />
++            <span>Sign Out</span>
++          </button>
++        </div>
++      </div>
++
++      {/* Main Content */}
++      <div className="flex-1 flex flex-col min-h-screen overflow-hidden">
++        {/* Top Bar */}
++        <div className="h-16 border-b border-white/[0.08] flex items-center justify-between px-6 bg-white/[0.01]">
++          <button
++            onClick={() => setSidebarOpen(!sidebarOpen)}
++            className="md:hidden p-2 hover:bg-white/[0.08] rounded-lg transition-colors"
++          >
++            <Menu className="w-5 h-5 text-[#a1a1aa]" />
++          </button>
++          <h1 className="text-sm font-semibold text-[#a1a1aa]">Dashboard</h1>
++          <div className="flex items-center gap-2">
++            <div className="w-8 h-8 bg-[#f59e0b]/20 border border-[#f59e0b]/30 rounded-full flex items-center justify-center">
++              <span className="text-xs font-semibold text-[#f59e0b]">
++                {userName.charAt(0).toUpperCase()}
++              </span>
++            </div>
++          </div>
++        </div>
++
++        {/* Page Content */}
++        <div className="flex-1 overflow-y-auto">
++          <div className="p-6 md:p-8 max-w-7xl mx-auto">
++            {/* Greeting Section */}
++            <div className="mb-10">
++              <h2 className="text-3xl font-bold text-white mb-2">Good morning, {userName}</h2>
++              <p className="text-[#a1a1aa]">Your legal solutions are ready when you are.</p>
++            </div>
++
++            {/* Tier Indicator */}
++            {isFreeTier && (
++              <div className="mb-8 p-4 bg-amber-500/10 border border-amber-500/20 rounded-lg flex items-start justify-between">
++                <div>
++                  <p className="text-sm font-medium text-amber-400">No Active Plan</p>
++                  <p className="text-xs text-amber-400/80 mt-1">
++                    Upgrade to Build, Grow, or Lead to unlock full features
++                  </p>
++                </div>
++                <a
++                  href="/#pricing"
++                  className="text-xs font-medium text-amber-400 hover:text-amber-300 transition-colors"
++                >
++                  View Plans →
++                </a>
++              </div>
++            )}
++
++            {/* Stats Cards */}
++            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
++              <div className="bg-gradient-to-br from-[#1a1a1f] to-[#0f0f14] border border-white/[0.08] rounded-lg p-6 hover:border-white/[0.12] transition-all">
++                <p className="text-xs font-medium text-[#a1a1aa] mb-2">Allora Conversations</p>
++                <p className="text-3xl font-bold text-white">{stats.conversations}</p>
++              </div>
++
++              <div className="bg-gradient-to-br from-[#1a1a1f] to-[#0f0f14] border border-white/[0.08] rounded-lg p-6 hover:border-white/[0.12] transition-all">
++                <p className="text-xs font-medium text-[#a1a1aa] mb-2">
++                  Consultations Remaining
++                </p>
++                <p className="text-3xl font-bold text-[#f59e0b]">{stats.consultations}</p>
++              </div>
++
++              <div className="bg-gradient-to-br from-[#1a1a1f] to-[#0f0f14] border border-white/[0.08] rounded-lg p-6 hover:border-white/[0.12] transition-all">
++                <p className="text-xs font-medium text-[#a1a1aa] mb-2">Documents This Month</p>
++                <p className="text-3xl font-bold text-white">{stats.documents}</p>
++              </div>
++
++              <div className="bg-gradient-to-br from-[#1a1a1f] to-[#0f0f14] border border-white/[0.08] rounded-lg p-6 hover:border-white/[0.12] transition-all">
++                <p className="text-xs font-medium text-[#a1a1aa] mb-2">Next Billing Date</p>
++                <p className="text-sm font-semibold text-white">{stats.billingDate}</p>
++              </div>
++            </div>
++
++            {/* Quick Actions */}
++            <div className="mb-10">
++              <h3 className="text-lg font-semibold text-white mb-4">Quick Actions</h3>
++              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
++                {quickActions.map((action, idx) => {
++                  const Icon = action.icon;
++                  return (
++                    <button
++                      key={idx}
++                      className="flex items-center gap-3 bg-gradient-to-br from-[#1a1a1f] to-[#0f0f14] border border-white/[0.08] rounded-lg p-4 hover:border-[#f59e0b]/30 hover:bg-gradient-to-br hover:from-[#1a1a1f] hover:to-[#0f0f14] transition-all group"
++                    >
++                      <Icon className={`w-6 h-6 ${action.color} group-hover:text-[#f59e0b] transition-colors`} />
++                      <span className="text-sm font-medium text-[#a1a1aa] group-hover:text-white transition-colors">
++                        {action.label}
++                      </span>
++                    </button>
++                  );
++                })}
++              </div>
++            </div>
++
++            {/* Recent Activity */}
++            <div>
++              <h3 className="text-lg font-semibold text-white mb-4">Recent Activity</h3>
++              <div className="bg-gradient-to-br from-[#1a1a1f] to-[#0f0f14] border border-white/[0.08] rounded-lg p-6">
++                <div className="text-center py-8">
++                  <p className="text-[#a1a1aa] text-sm">No activity yet</p>
++                  <p className="text-[#71717a] text-xs mt-1">
++                    Start by chatting with Allora or scheduling a consultation
++                  </p>
++                </div>
++              </div>
++            </div>
++          </div>
++        </div>
++      </div>
++
++      {/* Mobile Sidebar Overlay */}
++      {isMobile && sidebarOpen && (
++        <div
++          className="fixed inset-0 bg-black/50 z-30"
++          onClick={() => setSidebarOpen(false)}
++        />
++      )}
++    </div>
++  );
++}
+diff --git a/src/app/globals.css b/src/app/globals.css
+index 532e91a..d12c6f0 100644
+--- a/src/app/globals.css
++++ b/src/app/globals.css
+@@ -76,6 +76,29 @@
+   --sidebar-ring: #f59e0b;
+ }
+ 
++.light {
++  --background: #ffffff;
++  --foreground: #1a1a1a;
++  --card: #f9f9f9;
++  --card-foreground: #1a1a1a;
++  --primary: #f59e0b;
++  --primary-foreground: #ffffff;
++  --secondary: #f3f4f6;
++  --secondary-foreground: #1a1a1a;
++  --muted: #f3f4f6;
++  --muted-foreground: #6b7280;
++  --accent: #f59e0b;
++  --accent-foreground: #ffffff;
++  --border: rgba(0,0,0,0.08);
++  --input: rgba(0,0,0,0.08);
++  --ring: #f59e0b;
++}
++
++.light body {
++  background-color: #ffffff;
++  color: #1a1a1a;
++}
++
+ @layer base {
+   * {
+     @apply border-border;
+diff --git a/src/app/layout.tsx b/src/app/layout.tsx
+index 1ffa043..1c0ef65 100644
+--- a/src/app/layout.tsx
++++ b/src/app/layout.tsx
+@@ -1,5 +1,6 @@
+ import type { Metadata } from "next";
+ import { Playfair_Display, Inter } from "next/font/google";
++import { ThemeProvider } from "@/components/ThemeProvider";
+ import "./globals.css";
+ 
+ const playfair = Playfair_Display({
+@@ -26,9 +27,11 @@ export default function RootLayout({
+   children: React.ReactNode;
+ }>) {
+   return (
+-    <html lang="en" className={`${playfair.variable} ${inter.variable}`}>
+-      <body className="min-h-full bg-[#0f0f14] text-[#f0f0f5] antialiased">
+-        {children}
++    <html lang="en" className={`${playfair.variable} ${inter.variable}`} suppressHydrationWarning>
++      <body className="min-h-full bg-background text-foreground antialiased">
++        <ThemeProvider>
++          {children}
++        </ThemeProvider>
+       </body>
+     </html>
+   );
+diff --git a/src/app/login/page.tsx b/src/app/login/page.tsx
+new file mode 100644
+index 0000000..c0c3f36
+--- /dev/null
++++ b/src/app/login/page.tsx
+@@ -0,0 +1,151 @@
++"use client";
++
++import { useState } from "react";
++import Image from "next/image";
++import Link from "next/link";
++import { supabase } from "@/lib/supabase";
++import Header from "@/components/Header";
++import Footer from "@/components/Footer";
++
++export default function LoginPage() {
++  const [email, setEmail] = useState("");
++  const [isLoading, setIsLoading] = useState(false);
++  const [isSuccess, setIsSuccess] = useState(false);
++  const [error, setError] = useState("");
++
++  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
++    e.preventDefault();
++    setError("");
++    setIsSuccess(false);
++    setIsLoading(true);
++
++    try {
++      if (!email) {
++        throw new Error("Please enter your email address");
++      }
++
++      const { error: signInError } = await supabase.auth.signInWithOtp({
++        email,
++        options: {
++          emailRedirectTo: `${window.location.origin}/dashboard`,
++        },
++      });
++
++      if (signInError) {
++        throw signInError;
++      }
++
++      setIsSuccess(true);
++      setEmail("");
++    } catch (err) {
++      const errorMessage = err instanceof Error ? err.message : "An error occurred";
++      setError(errorMessage);
++    } finally {
++      setIsLoading(false);
++    }
++  };
++
++  return (
++    <>
++      <Header />
++      <main className="min-h-screen bg-[#0f0f14] flex items-center justify-center px-6 py-12">
++        <div className="w-full max-w-md">
++          {/* Card Container */}
++          <div className="bg-gradient-to-br from-[#1a1a1f] to-[#0f0f14] border border-white/[0.12] rounded-2xl p-8">
++            {/* Logo */}
++            <div className="flex justify-center mb-8">
++              <Image
++                src="/images/logo-arrow.png"
++                alt="Av{ai}lable Law"
++                width={56}
++                height={56}
++                className="object-contain"
++              />
++            </div>
++
++            {/* Heading */}
++            <h1
++              className="text-3xl font-bold text-white text-center mb-3"
++              style={{ fontFamily: "var(--font-display), 'Playfair Display', serif" }}
++            >
++              Member Login
++            </h1>
++
++            {/* Subtitle */}
++            <p className="text-center text-[#a1a1aa] text-sm mb-8">
++              Sign in with your email to access your dashboard
++            </p>
++
++            {/* Success Message */}
++            {isSuccess && (
++              <div className="mb-6 p-4 bg-green-500/10 border border-green-500/20 rounded-lg">
++                <p className="text-sm text-green-400 text-center">
++                  Check your email for a magic link to sign in
++                </p>
++              </div>
++            )}
++
++            {/* Error Message */}
++            {error && (
++              <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-lg">
++                <p className="text-sm text-red-400 text-center">{error}</p>
++              </div>
++            )}
++
++            {/* Form */}
++            <form onSubmit={handleSubmit} className="space-y-6">
++              {/* Email Input */}
++              <div>
++                <label htmlFor="email" className="block text-xs font-medium text-[#a1a1aa] mb-2">
++                  Email Address
++                </label>
++                <input
++                  id="email"
++                  type="email"
++                  value={email}
++                  onChange={(e) => setEmail(e.target.value)}
++                  placeholder="you@example.com"
++                  disabled={isLoading || isSuccess}
++                  className="w-full px-4 py-2.5 bg-[#111113] border border-white/[0.08] text-white placeholder-[#71717a] rounded-lg focus:outline-none focus:border-[#f59e0b]/50 focus:ring-1 focus:ring-[#f59e0b]/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
++                />
++              </div>
++
++              {/* Send Magic Link Button */}
++              <button
++                type="submit"
++                disabled={isLoading || isSuccess}
++                className="btn-al btn-al-primary w-full py-2.5 px-4 rounded-lg text-sm font-semibold transition-all disabled:opacity-70 disabled:cursor-not-allowed"
++              >
++                {isLoading ? "Sending..." : "Send Magic Link"}
++              </button>
++            </form>
++
++            {/* Divider */}
++            <div className="my-6 flex items-center gap-3">
++              <div className="flex-1 h-px bg-white/[0.08]" />
++              <span className="text-xs text-[#71717a]">or</span>
++              <div className="flex-1 h-px bg-white/[0.08]" />
++            </div>
++
++            {/* Get Started Link */}
++            <div className="text-center text-sm text-[#a1a1aa]">
++              Not a member yet?{" "}
++              <a
++                href="/#pricing"
++                className="text-[#f59e0b] font-medium hover:text-[#fbbf24] transition-colors"
++              >
++                Get Started
++              </a>
++            </div>
++          </div>
++
++          {/* Footer Text */}
++          <p className="text-center text-xs text-[#52525b] mt-8">
++            We'll send you a secure magic link to sign in. No password needed.
++          </p>
++        </div>
++      </main>
++      <Footer />
++    </>
++  );
++}
+diff --git a/src/app/page.tsx b/src/app/page.tsx
+index 71c6fe8..5ef8df5 100644
+--- a/src/app/page.tsx
++++ b/src/app/page.tsx
+@@ -1,6 +1,9 @@
++"use client";
++
++import { useState } from "react";
+ import Header from "@/components/Header";
+ import HeroSection from "@/components/HeroSection";
+-import { TestimonialsSection } from "@/components/TestimonialsSection";
++import TestimonialsSection from "@/components/TestimonialsSection";
+ import FeaturedInSection from "@/components/FeaturedInSection";
+ import PerksSection from "@/components/PerksSection";
+ import PricingSection from "@/components/PricingSection";
+@@ -8,22 +11,39 @@ import SolutionsSection from "@/components/SolutionsSection";
+ import BillingSection from "@/components/BillingSection";
+ import QuoteSection from "@/components/QuoteSection";
+ import Footer from "@/components/Footer";
++import FaiirModal from "@/components/FaiirModal";
++import ConciergeButton from "@/components/ConciergeButton";
+ 
+ export default function Home() {
++  const [isFaiirOpen, setIsFaiirOpen] = useState(false);
++
++  const handleFaiirOpen = () => setIsFaiirOpen(true);
++  const handleFaiirClose = () => setIsFaiirOpen(false);
++
+   return (
+     <>
+-      <Header />
++      <Header onFaiirOpen={handleFaiirOpen} />
+       <main>
+-        <HeroSection />
++        <div id="hero">
++          <HeroSection />
++        </div>
++        <div id="about">
++          <PerksSection />
++        </div>
++        <div id="solutions">
++          <SolutionsSection />
++        </div>
+         <TestimonialsSection />
+-        <FeaturedInSection />
+-        <PerksSection />
+-        <PricingSection />
+-        <SolutionsSection />
++        <div id="pricing">
++          <PricingSection />
++        </div>
+         <BillingSection />
++        <FeaturedInSection />
+         <QuoteSection />
+       </main>
+       <Footer />
++      <FaiirModal isOpen={isFaiirOpen} onClose={handleFaiirClose} />
++      <ConciergeButton />
+     </>
+   );
+ }
+diff --git a/src/components/ConciergeButton.tsx b/src/components/ConciergeButton.tsx
+new file mode 100644
+index 0000000..bf88d8d
+--- /dev/null
++++ b/src/components/ConciergeButton.tsx
+@@ -0,0 +1,131 @@
++'use client';
++
++import React, { useState } from 'react';
++
++export default function ConciergeButton() {
++  const [isOpen, setIsOpen] = useState(false);
++
++  const ChatIcon = () => (
++    <svg
++      className="w-6 h-6"
++      fill="currentColor"
++      viewBox="0 0 20 20"
++      xmlns="http://www.w3.org/2000/svg"
++    >
++      <path d="M2 5a2 2 0 012-2h12a2 2 0 012 2v10a2 2 0 01-2 2H4a2 2 0 01-2-2V5z" />
++      <path d="M3 7l3.293 3.293a1 1 0 001.414 0L10 8m0 0l3.293 3.293a1 1 0 001.414-0l3-3" />
++    </svg>
++  );
++
++  const CloseIcon = () => (
++    <svg
++      className="w-5 h-5"
++      fill="currentColor"
++      viewBox="0 0 20 20"
++      xmlns="http://www.w3.org/2000/svg"
++    >
++      <path
++        fillRule="evenodd"
++        d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
++        clipRule="evenodd"
++      />
++    </svg>
++  );
++
++  const SendIcon = () => (
++    <svg
++      className="w-4 h-4"
++      fill="currentColor"
++      viewBox="0 0 20 20"
++      xmlns="http://www.w3.org/2000/svg"
++    >
++      <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5.951-2.976 5.951 2.976a1 1 0 001.169-1.409l-7-14z" />
++    </svg>
++  );
++
++  return (
++    <>
++      {/* Main floating button */}
++      <button
++        onClick={() => setIsOpen(!isOpen)}
++        className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-[#f59e0b] text-[#0f0f14] flex items-center justify-center shadow-lg hover:bg-[#fbbf24] transition-all hover:shadow-xl"
++        title="Chat with our AI concierge"
++      >
++        <ChatIcon />
++      </button>
++
++      {/* Chat panel */}
++      {isOpen && (
++        <div className="fixed bottom-28 right-6 z-50">
++          <div
++            className="w-[380px] h-[500px] bg-[#17171e] border border-white/10 rounded-lg shadow-2xl flex flex-col animate-in fade-in scale-95 duration-200"
++            style={{
++              animation: 'scaleIn 0.2s ease-out',
++            }}
++          >
++            {/* Header */}
++            <div className="flex items-center justify-between px-4 py-4 border-b border-white/10">
++              <h3 className="font-heading text-[16px] font-500 text-[#f0f0f5]">
++                Av<span style={{ color: '#f59e0b' }}>{'{ai}'}</span>lable Law Concierge
++              </h3>
++              <button
++                onClick={() => setIsOpen(false)}
++                className="p-1 hover:bg-white/5 rounded transition-colors"
++              >
++                <CloseIcon />
++              </button>
++            </div>
++
++            {/* Body */}
++            <div className="flex-1 px-4 py-4 overflow-y-auto">
++              <div className="flex flex-col gap-3">
++                <div className="bg-[#1f1f28] rounded-lg px-3 py-3 max-w-[280px]">
++                  <p className="text-[14px] text-[#f0f0f5] leading-relaxed">
++                    Hi! I'm the Available Law concierge. How can I help you today?
++                  </p>
++                </div>
++              </div>
++            </div>
++
++            {/* Disclaimer */}
++            <div className="px-4 py-3 border-t border-white/10 bg-[#0f0f14]/50">
++              <p className="text-[11px] text-[#71717a] leading-relaxed">
++                <strong className="text-[#9898a8]">Disclaimer:</strong> This is an AI assistant providing general information, not legal advice.
++              </p>
++            </div>
++
++            {/* Input area */}
++            <div className="px-4 py-3 border-t border-white/10 flex gap-2">
++              <input
++                type="text"
++                placeholder="Type your message..."
++                className="flex-1 bg-[#1f1f28] border border-white/10 rounded px-3 py-2 text-[14px] text-[#f0f0f5] placeholder-[#71717a] focus:outline-none focus:border-[#f59e0b] focus:ring-1 focus:ring-[#f59e0b]/30 transition-colors"
++              />
++              <button className="bg-[#f59e0b] text-[#0f0f14] rounded px-3 py-2 hover:bg-[#fbbf24] transition-colors flex items-center justify-center">
++                <SendIcon />
++              </button>
++            </div>
++
++            {/* Note */}
++            <div className="px-4 py-2 text-[10px] text-[#52525b] text-center">
++              Connected to Claude agent agent_011CZsBXUSFAGVMkMqc2Y9o6
++            </div>
++          </div>
++        </div>
++      )}
++
++      <style>{`
++        @keyframes scaleIn {
++          from {
++            opacity: 0;
++            transform: scale(0.95);
++          }
++          to {
++            opacity: 1;
++            transform: scale(1);
++          }
++        }
++      `}</style>
++    </>
++  );
++}
+diff --git a/src/components/FaiirModal.tsx b/src/components/FaiirModal.tsx
+new file mode 100644
+index 0000000..db43ad3
+--- /dev/null
++++ b/src/components/FaiirModal.tsx
+@@ -0,0 +1,205 @@
++'use client';
++
++import { useEffect, useState } from 'react';
++import Image from 'next/image';
++import Link from 'next/link';
++
++interface FaiirModalProps {
++  isOpen: boolean;
++  onClose: () => void;
++}
++
++export function FaiirModal({ isOpen, onClose }: FaiirModalProps) {
++  const [mounted, setMounted] = useState(false);
++
++  useEffect(() => {
++    setMounted(true);
++  }, []);
++
++  useEffect(() => {
++    if (!mounted) return;
++
++    const handleEscape = (e: KeyboardEvent) => {
++      if (e.key === 'Escape' && isOpen) {
++        onClose();
++      }
++    };
++
++    if (isOpen) {
++      document.addEventListener('keydown', handleEscape);
++      document.body.style.overflow = 'hidden';
++    }
++
++    return () => {
++      document.removeEventListener('keydown', handleEscape);
++      document.body.style.overflow = 'unset';
++    };
++  }, [isOpen, onClose, mounted]);
++
++  if (!mounted) return null;
++
++  return (
++    <>
++      {/* Dark Overlay */}
++      <div
++        className={`fixed inset-0 bg-black transition-opacity duration-300 ${
++          isOpen ? 'opacity-50 pointer-events-auto' : 'opacity-0 pointer-events-none'
++        }`}
++        onClick={onClose}
++      />
++
++      {/* Modal Container */}
++      <div
++        className={`fixed inset-0 flex items-center justify-center p-4 transition-opacity duration-300 pointer-events-none ${
++          isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0'
++        }`}
++      >
++        {/* Modal Content */}
++        <div
++          className="relative w-full max-w-2xl bg-gradient-to-br from-[#0f0f14] to-[#1a1a22] rounded-lg border border-white/8 shadow-2xl transform transition-transform duration-300 max-h-[90vh] overflow-y-auto"
++          style={{
++            transform: isOpen ? 'scale(1)' : 'scale(0.95)',
++          }}
++        >
++          {/* Header */}
++          <div className="sticky top-0 bg-gradient-to-b from-[#0f0f14] to-transparent p-6 border-b border-white/8 flex items-center justify-between">
++            <div className="flex-1" />
++            {/* Close Button */}
++            <button
++              onClick={onClose}
++              className="absolute right-6 top-6 text-gray-400 hover:text-white transition-colors p-2 hover:bg-white/5 rounded-lg"
++              aria-label="Close modal"
++            >
++              <svg
++                className="w-6 h-6"
++                fill="none"
++                stroke="currentColor"
++                viewBox="0 0 24 24"
++              >
++                <path
++                  strokeLinecap="round"
++                  strokeLinejoin="round"
++                  strokeWidth={2}
++                  d="M6 18L18 6M6 6l12 12"
++                />
++              </svg>
++            </button>
++          </div>
++
++          {/* Body Content */}
++          <div className="p-8">
++            {/* Logo and Title Section */}
++            <div className="flex flex-col items-center mb-8">
++              <div className="relative w-20 h-20 mb-6">
++                <Image
++                  src="/images/faiir-logo.png"
++                  alt="FAIIR Certification"
++                  width={80}
++                  height={80}
++                  className="object-contain"
++                  priority
++                />
++              </div>
++
++              <h2 className="text-3xl font-bold text-white mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>
++                FAIIR AI Certification
++              </h2>
++              <p className="text-gray-400 text-sm">
++                Foundation for AI Integrity &amp; Regulation
++              </p>
++            </div>
++
++            {/* Description */}
++            <p className="text-gray-300 text-base leading-relaxed mb-8 font-sans">
++              The FAIIR certification program provides organizations with a structured,
++              independent pathway to demonstrate that their AI policies, data handling
++              practices, and attorney oversight frameworks meet the standards established
++              by Colorado law and federal guidelines.
++            </p>
++
++            {/* Key Points Section */}
++            <div className="mb-8 space-y-6">
++              <h3 className="text-sm font-semibold text-white uppercase tracking-wide mb-4">
++                How It Works
++              </h3>
++
++              <div className="flex gap-4">
++                <div className="flex-shrink-0 mt-1">
++                  <div className="flex items-center justify-center h-6 w-6 rounded-full bg-amber-500/20">
++                    <span className="h-2 w-2 bg-amber-500 rounded-full" />
++                  </div>
++                </div>
++                <div>
++                  <h4 className="text-white font-semibold mb-1">Audit &amp; Assessment</h4>
++                  <p className="text-gray-400 text-sm">
++                    Comprehensive evaluation of your current AI tools, data handling practices, and policy gaps.
++                  </p>
++                </div>
++              </div>
++
++              <div className="flex gap-4">
++                <div className="flex-shrink-0 mt-1">
++                  <div className="flex items-center justify-center h-6 w-6 rounded-full bg-amber-500/20">
++                    <span className="h-2 w-2 bg-amber-500 rounded-full" />
++                  </div>
++                </div>
++                <div>
++                  <h4 className="text-white font-semibold mb-1">Guided Remediation</h4>
++                  <p className="text-gray-400 text-sm">
++                    Structured coaching and policy development to build your AI use framework and oversight structure.
++                  </p>
++                </div>
++              </div>
++
++              <div className="flex gap-4">
++                <div className="flex-shrink-0 mt-1">
++                  <div className="flex items-center justify-center h-6 w-6 rounded-full bg-amber-500/20">
++                    <span className="h-2 w-2 bg-amber-500 rounded-full" />
++                  </div>
++                </div>
++                <div>
++                  <h4 className="text-white font-semibold mb-1">Certification</h4>
++                  <p className="text-gray-400 text-sm">
++                    Earn the FAIIR AI Trained &amp; Certified seal — a demonstrable credential for clients, carriers, and regulators.
++                  </p>
++                </div>
++              </div>
++            </div>
++
++            {/* Why Now Section */}
++            <div className="bg-white/5 border border-amber-500/20 rounded-lg p-6 mb-8">
++              <h3 className="text-white font-semibold mb-3" style={{ fontFamily: "'Playfair Display', serif" }}>
++                Why Now?
++              </h3>
++              <p className="text-gray-300 text-sm leading-relaxed">
++                Colorado's AI Act (CAIA) is in effect. Organizations that cannot demonstrate
++                compliance face enforcement by the Colorado Attorney General. FAIIR certification
++                is built around CAIA's compliance structure.
++              </p>
++            </div>
++
++            {/* CTA Buttons */}
++            <div className="flex flex-col sm:flex-row gap-4">
++              <Link
++                href="#pricing"
++                className="flex-1 bg-amber-500 hover:bg-amber-600 text-white font-semibold py-3 px-6 rounded-lg transition-colors text-center"
++              >
++                Schedule a FAIIR Consultation
++              </Link>
++              <a
++                href="https://faiir.org"
++                target="_blank"
++                rel="noopener noreferrer"
++                className="flex-1 border border-gray-400 text-gray-300 hover:text-white hover:border-white font-semibold py-3 px-6 rounded-lg transition-colors text-center"
++              >
++                Learn More at FAIIR.org
++              </a>
++            </div>
++          </div>
++        </div>
++      </div>
++    </>
++  );
++}
++
++export default FaiirModal;
+diff --git a/src/components/FeaturedInSection.tsx b/src/components/FeaturedInSection.tsx
+index 254a260..7316cdf 100644
+--- a/src/components/FeaturedInSection.tsx
++++ b/src/components/FeaturedInSection.tsx
+@@ -10,8 +10,8 @@ const logos = [
+ 
+ export default function FeaturedInSection() {
+   return (
+-    <section className="w-full bg-white flex flex-col items-center justify-center" style={{ minHeight: "591px" }}>
+-      <p className="text-[#86868b] text-sm tracking-[0.2em] uppercase mb-16" style={{ fontFamily: "var(--font-body), 'Pontano Sans', sans-serif" }}>
++    <section id="featured" className="w-full bg-[#0f0f14] flex flex-col items-center justify-center py-20 border-t border-white/6">
++      <p className="text-[#52525b] text-sm tracking-[0.2em] uppercase mb-16" style={{ fontFamily: "var(--font-body), 'Pontano Sans', sans-serif" }}>
+         Featured In
+       </p>
+       <div className="flex flex-row items-center justify-center gap-16 flex-wrap px-8">
+@@ -19,13 +19,13 @@ export default function FeaturedInSection() {
+           <div
+             key={i}
+             className="transition-all duration-300"
+-            style={{ filter: "grayscale(1)", opacity: 0.7 }}
++            style={{ filter: "brightness(0.6)", opacity: 0.7 }}
+             onMouseEnter={e => {
+-              (e.currentTarget as HTMLElement).style.filter = "grayscale(0)";
++              (e.currentTarget as HTMLElement).style.filter = "brightness(1)";
+               (e.currentTarget as HTMLElement).style.opacity = "1";
+             }}
+             onMouseLeave={e => {
+-              (e.currentTarget as HTMLElement).style.filter = "grayscale(1)";
++              (e.currentTarget as HTMLElement).style.filter = "brightness(0.6)";
+               (e.currentTarget as HTMLElement).style.opacity = "0.7";
+             }}
+           >
+diff --git a/src/components/Footer.tsx b/src/components/Footer.tsx
+index 0dc5d8d..c30c97e 100644
+--- a/src/components/Footer.tsx
++++ b/src/components/Footer.tsx
+@@ -1,9 +1,10 @@
+ import Link from "next/link";
+ import { XIcon, LinkedInIcon } from "./icons";
++import { ThemeToggle } from "./ThemeProvider";
+ 
+ export default function Footer() {
+   return (
+-    <footer className="w-full bg-[#0f0f14] border-t border-white/[0.06]">
++    <footer className="w-full bg-[#0f0f14] dark:bg-[#0f0f14] light:bg-white border-t border-white/[0.06] dark:border-white/[0.06] light:border-gray-200">
+       {/* Main footer body */}
+       <div className="max-w-[1200px] mx-auto px-8 py-16 grid grid-cols-1 md:grid-cols-3 gap-12">
+         {/* Brand */}
+@@ -14,7 +15,7 @@ export default function Footer() {
+           >
+             Av<span style={{ color: "#f59e0b" }}>{"{"}</span>ai<span style={{ color: "#f59e0b" }}>{"}"}</span>lable Law
+           </p>
+-          <p className="text-[14px] text-[#71717a] leading-relaxed mb-5 max-w-[240px]">
++          <p className="text-[14px] text-[#71717a] light:text-gray-600 leading-relaxed mb-5 max-w-[240px]">
+             AI-powered legal solutions for Colorado businesses. Practical advice
+             from an attorney who builds with AI.
+           </p>
+@@ -23,38 +24,38 @@ export default function Footer() {
+               href="https://x.com/availablelaw"
+               target="_blank"
+               rel="noopener noreferrer"
+-              className="w-8 h-8 rounded-md border border-white/10 flex items-center justify-center hover:border-white/20 transition-all"
++              className="w-8 h-8 rounded-md border border-white/10 light:border-gray-300 flex items-center justify-center hover:border-white/20 light:hover:border-gray-400 transition-all"
+             >
+-              <XIcon className="w-3.5 h-3.5 text-[#71717a]" />
++              <XIcon className="w-3.5 h-3.5 text-[#71717a] light:text-gray-600" />
+             </a>
+             <a
+               href="https://www.linkedin.com/company/available-legal-solutions-llc/"
+               target="_blank"
+               rel="noopener noreferrer"
+-              className="w-8 h-8 rounded-md border border-white/10 flex items-center justify-center hover:border-white/20 transition-all"
++              className="w-8 h-8 rounded-md border border-white/10 light:border-gray-300 flex items-center justify-center hover:border-white/20 light:hover:border-gray-400 transition-all"
+             >
+-              <LinkedInIcon className="w-3.5 h-3.5 text-[#71717a]" />
++              <LinkedInIcon className="w-3.5 h-3.5 text-[#71717a] light:text-gray-600" />
+             </a>
+           </div>
+         </div>
+ 
+         {/* Navigation */}
+         <div>
+-          <p className="text-[12px] font-semibold text-[#52525b] tracking-widest uppercase mb-4">
++          <p className="text-[12px] font-semibold text-[#52525b] light:text-gray-500 tracking-widest uppercase mb-4">
+             Navigation
+           </p>
+           <ul className="flex flex-col gap-3">
+             {[
+-              { label: "Home", href: "/" },
+-              { label: "About", href: "/about" },
++              { label: "Home", href: "/#hero" },
++              { label: "About", href: "/#about" },
++              { label: "Solutions", href: "/#solutions" },
+               { label: "Blog", href: "/blog" },
+-              { label: "Solutions", href: "/solutions" },
+-              { label: "Contact", href: "/contact" },
++              { label: "Member Login", href: "/login" },
+             ].map((item) => (
+               <li key={item.label}>
+                 <Link
+                   href={item.href}
+-                  className="text-[14px] text-[#71717a] hover:text-[#fafafa] transition-colors"
++                  className="text-[14px] text-[#71717a] light:text-gray-600 hover:text-[#fafafa] light:hover:text-gray-900 transition-colors"
+                 >
+                   {item.label}
+                 </Link>
+@@ -65,7 +66,7 @@ export default function Footer() {
+ 
+         {/* Services */}
+         <div>
+-          <p className="text-[12px] font-semibold text-[#52525b] tracking-widest uppercase mb-4">
++          <p className="text-[12px] font-semibold text-[#52525b] light:text-gray-500 tracking-widest uppercase mb-4">
+             Services
+           </p>
+           <ul className="flex flex-col gap-3">
+@@ -79,7 +80,7 @@ export default function Footer() {
+               <li key={service}>
+                 <a
+                   href="#"
+-                  className="text-[14px] text-[#71717a] hover:text-[#fafafa] transition-colors"
++                  className="text-[14px] text-[#71717a] light:text-gray-600 hover:text-[#fafafa] light:hover:text-gray-900 transition-colors"
+                 >
+                   {service}
+                 </a>
+@@ -90,18 +91,19 @@ export default function Footer() {
+       </div>
+ 
+       {/* Bottom bar */}
+-      <div className="border-t border-white/[0.05]">
++      <div className="border-t border-white/[0.05] light:border-gray-200">
+         <div className="max-w-[1200px] mx-auto px-8 py-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+-          <p className="text-[12px] text-[#52525b]">
+-            © 2025 Available Legal Solutions, LLC. All rights reserved.
++          <p className="text-[12px] text-[#52525b] light:text-gray-600">
++            © 2026 Available Legal Solutions, LLC. All rights reserved.
+           </p>
++          <ThemeToggle />
+           <p
+-            className="text-[11px] text-[#3f3f46] leading-relaxed max-w-[600px]"
++            className="text-[11px] text-[#3f3f46] light:text-gray-500 leading-relaxed max-w-[600px]"
+             style={{ fontFamily: "var(--font-body), 'Inter', sans-serif" }}
+           >
+-            <strong className="text-[#52525b]">Disclaimer:</strong> Information on this site is for general
++            <strong className="text-[#52525b] light:text-gray-600">Disclaimer:</strong> Information on this site is for general
+             informational purposes only and does not constitute legal advice. Use of this site does not
+-            create an attorney-client relationship. <strong className="text-[#52525b]">AI Disclosure:</strong>{" "}
++            create an attorney-client relationship. <strong className="text-[#52525b] light:text-gray-600">AI Disclosure:</strong>{" "}
+             Some content may be AI-assisted and reviewed by a licensed attorney.
+           </p>
+         </div>
+diff --git a/src/components/Header.tsx b/src/components/Header.tsx
+index 4a11a9a..b26c9ae 100644
+--- a/src/components/Header.tsx
++++ b/src/components/Header.tsx
+@@ -4,8 +4,13 @@ import Image from "next/image";
+ import Link from "next/link";
+ import { XIcon, LinkedInIcon } from "./icons";
+ 
+-export default function Header() {
++interface HeaderProps {
++  onFaiirOpen?: () => void;
++}
++
++export default function Header({ onFaiirOpen }: HeaderProps) {
+   const [scrolled, setScrolled] = useState(false);
++  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+ 
+   useEffect(() => {
+     const handler = () => setScrolled(window.scrollY > 50);
+@@ -13,15 +18,30 @@ export default function Header() {
+     return () => window.removeEventListener("scroll", handler);
+   }, []);
+ 
++  // Handle smooth scroll for anchor links
++  const handleAnchorClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
++    if (href.startsWith("#")) {
++      e.preventDefault();
++      const target = document.querySelector(href);
++      if (target) {
++        target.scrollIntoView({ behavior: "smooth" });
++        setMobileMenuOpen(false);
++      }
++    }
++  };
++
+   return (
+     <>
+       {/* Announcement banner */}
+       <div className="announcement-banner w-full text-center py-2 px-4">
+         <p className="text-[13px] text-[#f59e0b] font-medium tracking-wide">
+-          🚀 Now offering AI Legal Risk Consulting for Colorado tech companies —{" "}
+-          <a href="#" className="underline underline-offset-2 hover:text-[#fbbf24] transition-colors">
+-            Book a free consult →
+-          </a>
++          Now offering AI Legal Risk Consulting for Colorado Businesses —{" "}
++          <button
++            onClick={onFaiirOpen}
++            className="underline underline-offset-2 hover:text-[#fbbf24] transition-colors cursor-pointer"
++          >
++            Learn more about FAIIR →
++          </button>
+         </p>
+       </div>
+ 
+@@ -46,30 +66,39 @@ export default function Header() {
+             />
+           </Link>
+ 
+-          {/* Nav links — center */}
++          {/* Nav links — center (desktop) */}
+           <nav className="hidden md:flex items-center gap-1">
+-            {[
+-              { label: "Home", href: "/", active: true },
+-              { label: "About", href: "/about" },
+-              { label: "Blog", href: "/blog" },
+-              { label: "Solutions", href: "/solutions" },
+-            ].map((item) => (
+-              <Link
+-                key={item.label}
+-                href={item.href}
+-                className={`px-4 py-2 rounded-md text-[14px] transition-all ${
+-                  item.active
+-                    ? "bg-white/[0.07] text-white font-medium"
+-                    : "text-[#a1a1aa] hover:text-white hover:bg-white/[0.04]"
+-                }`}
+-              >
+-                {item.label}
+-              </Link>
+-            ))}
++            <a
++              href="#hero"
++              onClick={(e) => handleAnchorClick(e, "#hero")}
++              className="px-4 py-2 rounded-md text-[14px] text-[#a1a1aa] hover:text-white hover:bg-white/[0.04] transition-all cursor-pointer"
++            >
++              Home
++            </a>
++            <a
++              href="#about"
++              onClick={(e) => handleAnchorClick(e, "#about")}
++              className="px-4 py-2 rounded-md text-[14px] text-[#a1a1aa] hover:text-white hover:bg-white/[0.04] transition-all cursor-pointer"
++            >
++              About
++            </a>
++            <a
++              href="#solutions"
++              onClick={(e) => handleAnchorClick(e, "#solutions")}
++              className="px-4 py-2 rounded-md text-[14px] text-[#a1a1aa] hover:text-white hover:bg-white/[0.04] transition-all cursor-pointer"
++            >
++              Solutions
++            </a>
++            <Link
++              href="/blog"
++              className="px-4 py-2 rounded-md text-[14px] text-[#a1a1aa] hover:text-white hover:bg-white/[0.04] transition-all"
++            >
++              Blog
++            </Link>
+           </nav>
+ 
+-          {/* Right side: social + CTA */}
+-          <div className="flex items-center gap-3">
++          {/* Right side: social + CTA buttons (desktop) */}
++          <div className="hidden md:flex items-center gap-3">
+             <a
+               href="https://x.com/availablelaw"
+               target="_blank"
+@@ -89,13 +118,80 @@ export default function Header() {
+               <LinkedInIcon className="w-3.5 h-3.5 text-[#a1a1aa]" />
+             </a>
+             <Link
+-              href="/contact"
+-              className="btn-al btn-al-primary ml-1 text-[13px] px-4 py-2"
++              href="/login"
++              className="btn-al btn-al-outline ml-4 text-[13px] px-4 py-2"
+             >
+-              Free Consultation
++              Member Login
+             </Link>
++            <a
++              href="#pricing"
++              onClick={(e) => handleAnchorClick(e, "#pricing")}
++              className="btn-al btn-al-primary text-[13px] px-4 py-2 cursor-pointer"
++            >
++              Get Started
++            </a>
+           </div>
++
++          {/* Mobile menu toggle */}
++          <button
++            className="md:hidden w-8 h-8 rounded-md border border-white/10 flex items-center justify-center hover:border-white/20 hover:bg-white/[0.04] transition-all"
++            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
++            aria-label="Toggle menu"
++          >
++            <svg className="w-4 h-4 text-[#a1a1aa]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
++              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
++            </svg>
++          </button>
+         </div>
++
++        {/* Mobile menu */}
++        {mobileMenuOpen && (
++          <div className="md:hidden border-t border-white/[0.04] bg-[#09090b]/95 backdrop-blur-md">
++            <div className="max-w-[1280px] mx-auto px-6 py-4 flex flex-col gap-2">
++              <a
++                href="#hero"
++                onClick={(e) => handleAnchorClick(e, "#hero")}
++                className="px-4 py-2 rounded-md text-[14px] text-[#a1a1aa] hover:text-white hover:bg-white/[0.04] transition-all cursor-pointer block"
++              >
++                Home
++              </a>
++              <a
++                href="#about"
++                onClick={(e) => handleAnchorClick(e, "#about")}
++                className="px-4 py-2 rounded-md text-[14px] text-[#a1a1aa] hover:text-white hover:bg-white/[0.04] transition-all cursor-pointer block"
++              >
++                About
++              </a>
++              <a
++                href="#solutions"
++                onClick={(e) => handleAnchorClick(e, "#solutions")}
++                className="px-4 py-2 rounded-md text-[14px] text-[#a1a1aa] hover:text-white hover:bg-white/[0.04] transition-all cursor-pointer block"
++              >
++                Solutions
++              </a>
++              <Link
++                href="/blog"
++                className="px-4 py-2 rounded-md text-[14px] text-[#a1a1aa] hover:text-white hover:bg-white/[0.04] transition-all block"
++              >
++                Blog
++              </Link>
++              <hr className="border-white/[0.06] my-2" />
++              <Link
++                href="/login"
++                className="px-4 py-2 rounded-md text-[14px] text-[#a1a1aa] hover:text-white hover:bg-white/[0.04] transition-all block"
++              >
++                Member Login
++              </Link>
++              <a
++                href="#pricing"
++                onClick={(e) => handleAnchorClick(e, "#pricing")}
++                className="btn-al btn-al-primary text-[13px] px-4 py-2 cursor-pointer block text-center"
++              >
++                Get Started
++              </a>
++            </div>
++          </div>
++        )}
+       </header>
+     </>
+   );
+diff --git a/src/components/PricingSection.tsx b/src/components/PricingSection.tsx
+index 688a1aa..9de80b3 100644
+--- a/src/components/PricingSection.tsx
++++ b/src/components/PricingSection.tsx
+@@ -1,172 +1,243 @@
+-import { Check } from "lucide-react";
++"use client";
++import { useState } from "react";
+ 
+-const plans = [
++interface PricingTier {
++  name: string;
++  description: string;
++  annualPrice: number;
++  monthlyPrice: number;
++  features: string[];
++  cta: string;
++  badge?: string;
++  featured?: boolean;
++  proUpgrade?: {
++    price: number;
++    label: string;
++  };
++}
++
++const pricingTiers: PricingTier[] = [
+   {
+-    price: "$150",
+-    period: "/mo",
+-    name: "Startup",
+-    description: "For early-stage companies getting legal basics in order.",
++    name: "Explore",
++    description: "Get a taste of AI-powered legal solutions. No commitment required.",
++    annualPrice: 0,
++    monthlyPrice: 0,
+     features: [
+-      "Custom AI Agent for your business",
+       "Monthly legal newsletter",
+-      "2 attorney consultations/month",
+-      "Legal templates & guides library",
++      "Limited dashboard access",
++      "Educational legal guides",
++      "Community resources",
+     ],
+-    featured: false,
++    cta: "Join Free",
+   },
+   {
+-    price: "$300",
+-    period: "/mo",
+-    name: "Scale",
+-    description: "For growing companies with active legal needs.",
++    name: "Build",
++    description: "Full AI legal assistant access for growing businesses.",
++    annualPrice: 25,
++    monthlyPrice: 50,
+     features: [
+-      "Everything in Startup, plus:",
+-      "Document drafting with attorney review",
+-      "Legal research on business questions",
+-      "5 attorney consultations/month",
++      "Full Allora AI assistant access",
++      "Educational guides & checklists",
++      "Usage tracking dashboard",
++      "Member-rate attorney consultations",
+     ],
++    cta: "Start Building",
++  },
++  {
++    name: "Grow",
++    description: "Priority legal support with dedicated attorney access.",
++    annualPrice: 100,
++    monthlyPrice: 150,
++    features: [
++      "Everything in Build, plus:",
++      "1 attorney consultation/month",
++      "Priority Allora responses",
++      "Document review credits",
++    ],
++    cta: "Start Growing",
++    badge: "Most Popular",
+     featured: true,
++    proUpgrade: {
++      price: 200,
++      label: "Upgrade to Pro ($200/mo) for extra consultations",
++    },
+   },
+   {
+-    price: "$750",
+-    period: "/mo",
+-    name: "Sustain",
+-    description: "For companies needing ongoing strategic legal counsel.",
++    name: "Lead",
++    description: "Fractional AI General Counsel for established businesses.",
++    annualPrice: 300,
++    monthlyPrice: 300,
+     features: [
+-      "Everything in Scale, plus:",
+-      "Unlimited attorney consultations",
+-      "Executive business strategy",
++      "Everything in Grow, plus:",
++      "2-3 attorney consultations/month",
++      "Quarterly AI risk reviews",
++      "Priority support & all document reviews",
+     ],
+-    featured: false,
++    cta: "Start Leading",
+   },
+ ];
+ 
+ export default function PricingSection() {
++  const [isAnnual, setIsAnnual] = useState(true);
++
+   return (
+-    <section className="w-full py-28" style={{ backgroundColor: "#0f0f14" }}>
+-      <div className="max-w-[1200px] mx-auto px-8">
+-        {/* Header */}
+-        <div className="text-center mb-16">
+-          <div className="flex justify-center mb-4">
+-            <div className="section-divider mx-auto" style={{ width: "48px" }} />
+-          </div>
+-          <p className="text-[13px] font-medium text-[#f59e0b] tracking-widest uppercase mb-4">
+-            Business Solutions
+-          </p>
+-          <h2
+-            className="font-heading mb-4"
+-            style={{
+-              fontSize: "clamp(38px, 5vw, 62px)",
+-              color: "#fafafa",
+-              fontWeight: 400,
+-              letterSpacing: "-0.02em",
+-            }}
+-          >
+-            Subscription-Based Plans
+-          </h2>
+-          <p
+-            style={{
+-              fontSize: "17px",
+-              color: "#a1a1aa",
+-              fontFamily: "var(--font-body), 'Inter', sans-serif",
+-              maxWidth: "480px",
+-              margin: "0 auto",
+-            }}
+-          >
+-            Predictable pricing that streamlines your legal needs.
+-            No surprise bills, no minimum hours.
+-          </p>
+-        </div>
++    <section
++      id="pricing"
++      className="w-full bg-[#0f0f14] flex flex-col items-center justify-center py-24 px-6"
++    >
++      {/* Header */}
++      <div className="max-w-[900px] text-center mb-16">
++        <h2
++          className="text-5xl font-bold text-white mb-6"
++          style={{ fontFamily: "var(--font-display), 'Playfair Display', serif" }}
++        >
++          Membership Plans
++        </h2>
++        <p className="text-[#a1a1aa] text-lg leading-relaxed">
++          AI-powered legal solutions at every stage of your business. Start free, scale as you grow.
++        </p>
++      </div>
++
++      {/* Billing Toggle */}
++      <div className="flex items-center justify-center gap-4 mb-16">
++        <button
++          onClick={() => setIsAnnual(true)}
++          className={`px-6 py-2 rounded-lg text-sm font-medium transition-all ${
++            isAnnual
++              ? "bg-[#f59e0b] text-black"
++              : "bg-white/[0.08] text-[#a1a1aa] hover:bg-white/[0.12]"
++          }`}
++        >
++          Annual
++        </button>
++        <button
++          onClick={() => setIsAnnual(false)}
++          className={`px-6 py-2 rounded-lg text-sm font-medium transition-all ${
++            !isAnnual
++              ? "bg-[#f59e0b] text-black"
++              : "bg-white/[0.08] text-[#a1a1aa] hover:bg-white/[0.12]"
++          }`}
++        >
++          Monthly
++        </button>
++        {isAnnual && (
++          <span className="ml-4 text-sm text-[#f59e0b]">
++            Save up to 50%
++          </span>
++        )}
++      </div>
+ 
+-        {/* Cards */}
+-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+-          {plans.map((plan) => (
++      {/* Pricing Cards */}
++      <div className="w-full max-w-[1280px] grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
++        {pricingTiers.map((tier, idx) => {
++          const price = isAnnual ? tier.annualPrice : tier.monthlyPrice;
++          const billingNote = isAnnual
++            ? tier.annualPrice === 0
++              ? ""
++              : "billed annually"
++            : "billed monthly";
++          const altPrice = isAnnual ? tier.monthlyPrice : tier.annualPrice;
++
++          return (
+             <div
+-              key={plan.name}
+-              className={`flex flex-col p-8 ${
+-                plan.featured ? "card-featured" : "card-gradient-border"
++              key={idx}
++              className={`relative rounded-2xl p-8 border transition-all duration-300 ${
++                tier.featured
++                  ? "card-featured border-[#f59e0b]/30 bg-gradient-to-br from-[#1a1a1f] to-[#0f0f14]"
++                  : "card-gradient-border border-white/[0.12] bg-gradient-to-br from-[#1a1a1f] to-[#0f0f14] hover:border-white/[0.2] hover:shadow-lg hover:shadow-white/[0.05]"
+               }`}
+             >
+-              {/* Featured badge */}
+-              {plan.featured && (
+-                <div className="inline-flex self-start mb-4">
+-                  <span className="px-2.5 py-1 rounded-full bg-[#f59e0b]/20 border border-[#f59e0b]/30 text-[#f59e0b] text-[11px] font-semibold tracking-wide uppercase">
+-                    Most Popular
+-                  </span>
++              {/* Badge */}
++              {tier.badge && (
++                <div className="absolute -top-3 left-6 bg-[#f59e0b] text-black text-xs font-bold px-3 py-1 rounded-full">
++                  {tier.badge}
+                 </div>
+               )}
+ 
++              {/* Tier Name */}
++              <h3 className="text-2xl font-bold text-white mb-2">
++                {tier.name}
++              </h3>
++
+               {/* Price */}
+-              <div className="mb-1 flex items-end gap-1">
+-                <span
+-                  className="font-heading"
+-                  style={{
+-                    fontSize: "clamp(36px, 4vw, 52px)",
+-                    color: plan.featured ? "#f59e0b" : "#fafafa",
+-                    fontWeight: 400,
+-                    lineHeight: 1,
+-                  }}
+-                >
+-                  {plan.price}
+-                </span>
+-                <span className="text-[#71717a] text-[15px] mb-1.5">{plan.period}</span>
++              <div className="mb-4">
++                {price === 0 ? (
++                  <div className="text-white">
++                    <span className="text-4xl font-bold">Free</span>
++                  </div>
++                ) : (
++                  <div className="text-white">
++                    <span className="text-4xl font-bold">${price}</span>
++                    <span className="text-lg text-[#a1a1aa]">/mo</span>
++                    {billingNote && (
++                      <div className="text-xs text-[#a1a1aa] mt-1">
++                        {billingNote}
++                      </div>
++                    )}
++                    {isAnnual && altPrice !== 0 && (
++                      <div className="text-xs text-[#a1a1aa] mt-1">
++                        ${altPrice}/mo monthly
++                      </div>
++                    )}
++                  </div>
++                )}
+               </div>
+ 
+-              {/* Plan name */}
+-              <h3
+-                className="font-heading mb-2"
+-                style={{ fontSize: "22px", color: "#fafafa", fontWeight: 500 }}
+-              >
+-                {plan.name}
+-              </h3>
+-
+               {/* Description */}
+-              <p className="text-[14px] text-[#71717a] mb-7 leading-relaxed">
+-                {plan.description}
++              <p className="text-sm text-[#a1a1aa] mb-6 leading-relaxed">
++                {tier.description}
+               </p>
+ 
+-              {/* Divider */}
+-              <div className="w-full h-px bg-white/[0.06] mb-7" />
++              {/* CTA Button */}
++              <button
++                className={`w-full py-2.5 px-4 rounded-lg text-sm font-semibold transition-all mb-6 ${
++                  tier.featured
++                    ? "bg-[#f59e0b] text-black hover:bg-[#fbbf24] shadow-lg shadow-[#f59e0b]/20"
++                    : "bg-white/[0.08] text-white border border-white/[0.12] hover:bg-white/[0.12] hover:border-white/[0.2]"
++                }`}
++              >
++                {tier.cta}
++              </button>
++
++              {/* Pro Upgrade Callout */}
++              {tier.proUpgrade && (
++                <div className="mb-6 p-3 bg-[#f59e0b]/10 border border-[#f59e0b]/20 rounded-lg">
++                  <p className="text-xs text-[#f59e0b] text-center">
++                    {tier.proUpgrade.label}
++                  </p>
++                </div>
++              )}
+ 
+               {/* Features */}
+-              <ul className="flex flex-col gap-3 mb-8 flex-1">
+-                {plan.features.map((f) => (
+-                  <li key={f} className="flex items-start gap-3">
+-                    <Check
+-                      size={15}
+-                      className="flex-shrink-0 mt-0.5"
+-                      style={{ color: plan.featured ? "#f59e0b" : "#52525b" }}
+-                    />
+-                    <span
+-                      style={{
+-                        fontSize: "14px",
+-                        color: "#a1a1aa",
+-                        lineHeight: 1.6,
+-                        fontFamily: "var(--font-body), 'Inter', sans-serif",
+-                      }}
++              <div className="space-y-3">
++                {tier.features.map((feature, featureIdx) => (
++                  <div key={featureIdx} className="flex items-start gap-3">
++                    <svg
++                      className="w-4 h-4 text-[#f59e0b] flex-shrink-0 mt-0.5"
++                      fill="currentColor"
++                      viewBox="0 0 20 20"
+                     >
+-                      {f}
++                      <path
++                        fillRule="evenodd"
++                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
++                        clipRule="evenodd"
++                      />
++                    </svg>
++                    <span className="text-sm text-[#d4d4d8]">
++                      {feature}
+                     </span>
+-                  </li>
++                  </div>
+                 ))}
+-              </ul>
+-
+-              {/* CTA */}
+-              <a
+-                href="#"
+-                className={`btn-al text-center text-[14px] ${
+-                  plan.featured ? "btn-al-primary" : "btn-al-dark"
+-                }`}
+-              >
+-                Get Started
+-              </a>
++              </div>
+             </div>
+-          ))}
+-        </div>
++          );
++        })}
++      </div>
+ 
+-        {/* Footer note */}
+-        <p className="text-center text-[13px] text-[#52525b] mt-8">
+-          All plans include a free onboarding call. Cancel anytime.
++      {/* Footer Note */}
++      <div className="max-w-[900px] text-center">
++        <p className="text-sm text-[#52525b]">
++          All paid plans include a free onboarding call. Cancel anytime. Annual plans save up to 50%.
+         </p>
+       </div>
+     </section>
+diff --git a/src/components/TestimonialsSection.tsx b/src/components/TestimonialsSection.tsx
+index e720f05..3a93b5f 100644
+--- a/src/components/TestimonialsSection.tsx
++++ b/src/components/TestimonialsSection.tsx
+@@ -1,267 +1,181 @@
+-"use client";
+-
+-import { useState } from "react";
+-import { cn } from "@/lib/utils";
++import React, { useState } from 'react';
++import { ChevronLeft, ChevronRight, Star } from 'lucide-react';
+ 
+ interface Review {
+-  quote: string;
+-  client: string;
++  id: number;
++  name: string;
++  company: string;
++  text: string;
++  rating: number;
++  image?: string;
+ }
+ 
+ const reviews: Review[] = [
+   {
+-    quote:
+-      "Excellent legal analysis with a quick turnaround time. Their review of our Terms and Conditions was thorough, well-reasoned, and included practical recommendations tailored to our business needs. Communication was professional and responsive. Highly recommend for business contract review.",
+-    client: "Enhance Safety Training",
+-  },
+-  {
+-    quote:
+-      "Zachariah went above and beyond to help me and was extremely thorough in answering all of my questions.",
+-    client: "Indigo Floral Co.",
+-  },
+-  {
+-    quote:
+-      "Zachariah did a wonderful job with my quickly needed request. He was responsive, thorough, and fast. Would use him again in a heart beat for any legal matter.",
+-    client: "Brooke H.",
+-  },
+-  {
+-    quote:
+-      "Zachariah did a great job, didn't over promise, was realistic with expectations and ultimately the case went my way. Raging success.",
+-    client: "Hassle Free Logistics, LLC",
++    id: 1,
++    name: 'Sarah Chen',
++    company: 'TechStart Inc',
++    text: 'Available Law transformed how we approach legal compliance. Their AI-powered solutions saved us countless hours and gave us confidence in our regulatory posture.',
++    rating: 5,
++    image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop'
+   },
+   {
+-    quote: "Zach was easy to work with and delivered our lease before the estimated time.",
+-    client: "Kerry P.",
++    id: 2,
++    name: 'Marcus Johnson',
++    company: 'Growth Capital Partners',
++    text: 'The platform is intuitive and the support team is exceptional. We\'ve reduced our legal review time by 60% while maintaining higher accuracy standards.',
++    rating: 5,
++    image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop'
+   },
+   {
+-    quote: "I'm glad to have someone of Zach's caliber standing up for people in this community.",
+-    client: "Kathy A.",
++    id: 3,
++    name: 'Elena Rodriguez',
++    company: 'Digital Ventures LLC',
++    text: 'As a startup founder, I needed accessible legal guidance without the enterprise price tag. Available Law delivered exactly that. Highly recommended.',
++    rating: 5,
++    image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop'
+   },
+   {
+-    quote:
+-      "Zachariah C. was thorough, fast, and incredibly thoughtful throughout the entire process. He's highly informed, easy to work with, and communicates complex points clearly. I'd absolutely recommend him to anyone looking for sharp, responsive counsel.",
+-    client: "Molly L.",
++    id: 4,
++    name: 'James Mitchell',
++    company: 'Quantum Solutions',
++    text: 'Integrating their API into our workflow was seamless. The accuracy and speed of their legal analysis tools have been game-changing for our compliance team.',
++    rating: 5,
++    image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop'
+   },
+   {
+-    quote: "Great quality of work and timeliness. Couldn't have been better.",
+-    client: "Church of the Sacred Synthesis",
+-  },
++    id: 5,
++    name: 'Priya Kapoor',
++    company: 'Innovate Labs',
++    text: 'Outstanding service. The platform not only provides legal templates but also educational resources that helped our team understand complex regulations.',
++    rating: 5,
++    image: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&h=100&fit=crop'
++  }
+ ];
+ 
+-export function TestimonialsSection() {
+-  const [activeIndex, setActiveIndex] = useState(0);
++export default function TestimonialsSection() {
++  const [currentIndex, setCurrentIndex] = useState(0);
++  const [visibleReviews, setVisibleReviews] = useState(3);
+ 
+-  function goTo(index: number) {
+-    setActiveIndex((index + reviews.length) % reviews.length);
+-  }
++  const next = () => {
++    setCurrentIndex((prev) => (prev + 1) % reviews.length);
++  };
+ 
+-  function handlePrev() {
+-    goTo(activeIndex - 1);
+-  }
++  const prev = () => {
++    setCurrentIndex((prev) => (prev - 1 + reviews.length) % reviews.length);
++  };
+ 
+-  function handleNext() {
+-    goTo(activeIndex + 1);
+-  }
++  const goToSlide = (index: number) => {
++    setCurrentIndex(index);
++  };
++
++  const getVisibleReviews = () => {
++    const result = [];
++    for (let i = 0; i < visibleReviews; i++) {
++      result.push(reviews[(currentIndex + i) % reviews.length]);
++    }
++    return result;
++  };
+ 
+   return (
+-    <section
+-      style={{
+-        backgroundColor: "#ffffff",
+-        minHeight: "894px",
+-        width: "100%",
+-      }}
+-    >
+-      {/* Heading */}
+-      <div
+-        style={{
+-          paddingTop: "80px",
+-          textAlign: "center",
+-          marginBottom: "48px",
+-        }}
+-      >
+-        <h2
+-          style={{
+-            fontFamily: "var(--font-heading), 'Playfair Display', Georgia, serif",
+-            fontSize: "48px",
+-            fontWeight: 400,
+-            lineHeight: 1.2,
+-            margin: 0,
+-          }}
+-        >
+-          <span style={{ color: "#6b7280" }}>from:&nbsp;</span>
+-          <span style={{ color: "#f59e0b" }}>clients</span>
+-        </h2>
+-      </div>
++    <section id="testimonials" className="w-full bg-[#0f0f14] py-28">
++      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
++        {/* Heading */}
++        <div className="mb-16 flex items-baseline justify-center gap-2">
++          <h2 className="text-4xl font-bold">
++            <span className="text-[#71717a]">from:</span>{' '}
++            <span className="text-[#f59e0b]">clients</span>
++          </h2>
++        </div>
+ 
+-      {/* Carousel wrapper */}
+-      <div
+-        style={{
+-          maxWidth: "1411px",
+-          margin: "0 auto",
+-          overflow: "hidden",
+-          position: "relative",
+-        }}
+-      >
+-        {/* Track */}
+-        <div
+-          className="carousel-track"
+-          style={{
+-            transform: `translateX(-${activeIndex * 100}%)`,
+-          }}
+-        >
+-          {reviews.map((review, i) => (
++        {/* Testimonials Grid */}
++        <div className="grid auto-rows-max grid-cols-1 gap-6 md:grid-cols-3">
++          {getVisibleReviews().map((review) => (
+             <div
+-              key={i}
+-              style={{
+-                minWidth: "100%",
+-                display: "flex",
+-                justifyContent: "center",
+-                alignItems: "center",
+-                padding: "0 16px",
+-                boxSizing: "border-box",
+-              }}
++              key={review.id}
++              className="group relative overflow-hidden rounded-lg border border-white/8 bg-[#111113] p-6 transition-all duration-300 hover:border-white/12 hover:bg-[#1a1a1f]"
+             >
+-              {/* Card */}
+-              <div
+-                style={{
+-                  backgroundColor: "#ffffff",
+-                  border: "1px solid rgba(0,0,0,0.08)",
+-                  borderRadius: "16px",
+-                  boxShadow:
+-                    "rgba(0,0,0,0.05) 0px 2px 4px, rgba(0,0,0,0.06) 0px 8px 16px, rgba(0,0,0,0.04) 0px 16px 32px",
+-                  padding: "50px 55px",
+-                  maxWidth: "800px",
+-                  width: "100%",
+-                }}
+-              >
+-                {/* Stars */}
+-                <div
+-                  style={{
+-                    color: "#f59e0b",
+-                    fontSize: "20px",
+-                    marginBottom: "24px",
+-                    letterSpacing: "2px",
+-                  }}
+-                >
+-                  ★★★★★
+-                </div>
++              {/* Gradient border effect */}
++              <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-transparent opacity-0 group-hover:opacity-10" />
++
++              {/* Quote text */}
++              <p className="relative mb-6 text-base leading-relaxed text-[#d4d4d8]">
++                "{review.text}"
++              </p>
+ 
+-                {/* Quote */}
+-                <p
+-                  style={{
+-                    fontFamily:
+-                      "var(--font-body), 'Pontano Sans', ui-sans-serif, system-ui, sans-serif",
+-                    fontSize: "18px",
+-                    color: "#1d1d1f",
+-                    fontStyle: "italic",
+-                    lineHeight: 1.7,
+-                    margin: "0 0 28px 0",
+-                  }}
+-                >
+-                  &ldquo;{review.quote}&rdquo;
+-                </p>
++              {/* Stars */}
++              <div className="relative mb-6 flex gap-1">
++                {[...Array(review.rating)].map((_, i) => (
++                  <Star
++                    key={i}
++                    size={16}
++                    className="fill-[#f59e0b] text-[#f59e0b]"
++                  />
++                ))}
++              </div>
+ 
+-                {/* Client name */}
+-                <p
+-                  style={{
+-                    fontFamily:
+-                      "var(--font-body), 'Pontano Sans', ui-sans-serif, system-ui, sans-serif",
+-                    fontSize: "15px",
+-                    color: "#86868b",
+-                    margin: 0,
+-                  }}
+-                >
+-                  — {review.client}
+-                </p>
++              {/* Client info */}
++              <div className="relative flex items-center gap-3">
++                {review.image && (
++                  <img
++                    src={review.image}
++                    alt={review.name}
++                    className="h-10 w-10 rounded-full object-cover"
++                  />
++                )}
++                <div>
++                  <p className="text-sm font-semibold text-white">
++                    {review.name}
++                  </p>
++                  <p className="text-xs text-[#71717a]">{review.company}</p>
++                </div>
+               </div>
+             </div>
+           ))}
+         </div>
+-      </div>
+ 
+-      {/* Navigation row */}
+-      <div
+-        style={{
+-          display: "flex",
+-          alignItems: "center",
+-          justifyContent: "center",
+-          gap: "16px",
+-          marginTop: "40px",
+-          paddingBottom: "60px",
+-        }}
+-      >
+-        {/* Prev arrow */}
+-        <button
+-          onClick={handlePrev}
+-          aria-label="Previous testimonial"
+-          style={{
+-            background: "none",
+-            border: "none",
+-            cursor: "pointer",
+-            fontSize: "24px",
+-            color: "#6b7280",
+-            padding: "8px",
+-            lineHeight: 1,
+-            transition: "color 0.2s ease",
+-          }}
+-          onMouseEnter={(e) => {
+-            (e.currentTarget as HTMLButtonElement).style.color = "#f59e0b";
+-          }}
+-          onMouseLeave={(e) => {
+-            (e.currentTarget as HTMLButtonElement).style.color = "#6b7280";
+-          }}
+-        >
+-          ←
+-        </button>
++        {/* Navigation Controls */}
++        <div className="mt-12 flex items-center justify-center gap-8">
++          {/* Previous Button */}
++          <button
++            onClick={prev}
++            className="group rounded-full border border-[#71717a] p-2 transition-all duration-300 hover:border-[#f59e0b]"
++            aria-label="Previous testimonial"
++          >
++            <ChevronLeft
++              size={20}
++              className="text-[#71717a] transition-colors duration-300 group-hover:text-[#f59e0b]"
++            />
++          </button>
++
++          {/* Dots */}
++          <div className="flex gap-2">
++            {reviews.map((_, index) => (
++              <button
++                key={index}
++                onClick={() => goToSlide(index)}
++                className={`h-2 rounded-full transition-all duration-300 ${
++                  index === currentIndex
++                    ? 'w-8 bg-[#f59e0b]'
++                    : 'w-2 bg-[#71717a] hover:bg-[#f59e0b]'
++                }`}
++                aria-label={`Go to testimonial ${index + 1}`}
++              />
++            ))}
++          </div>
+ 
+-        {/* Dots */}
+-        <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+-          {reviews.map((_, i) => (
+-            <button
+-              key={i}
+-              onClick={() => goTo(i)}
+-              aria-label={`Go to testimonial ${i + 1}`}
+-              className={cn(
+-                "rounded-full transition-all duration-200",
+-                i === activeIndex ? "bg-amber-400" : "bg-transparent"
+-              )}
+-              style={{
+-                width: "10px",
+-                height: "10px",
+-                border: i === activeIndex ? "2px solid #f59e0b" : "2px solid #6b7280",
+-                backgroundColor: i === activeIndex ? "#f59e0b" : "transparent",
+-                borderRadius: "50%",
+-                padding: 0,
+-                cursor: "pointer",
+-                transition: "background-color 0.2s ease, border-color 0.2s ease",
+-              }}
++          {/* Next Button */}
++          <button
++            onClick={next}
++            className="group rounded-full border border-[#71717a] p-2 transition-all duration-300 hover:border-[#f59e0b]"
++            aria-label="Next testimonial"
++          >
++            <ChevronRight
++              size={20}
++              className="text-[#71717a] transition-colors duration-300 group-hover:text-[#f59e0b]"
+             />
+-          ))}
++          </button>
+         </div>
+-
+-        {/* Next arrow */}
+-        <button
+-          onClick={handleNext}
+-          aria-label="Next testimonial"
+-          style={{
+-            background: "none",
+-            border: "none",
+-            cursor: "pointer",
+-            fontSize: "24px",
+-            color: "#6b7280",
+-            padding: "8px",
+-            lineHeight: 1,
+-            transition: "color 0.2s ease",
+-          }}
+-          onMouseEnter={(e) => {
+-            (e.currentTarget as HTMLButtonElement).style.color = "#f59e0b";
+-          }}
+-          onMouseLeave={(e) => {
+-            (e.currentTarget as HTMLButtonElement).style.color = "#6b7280";
+-          }}
+-        >
+-          →
+-        </button>
+       </div>
+     </section>
+   );
+diff --git a/src/components/ThemeProvider.tsx b/src/components/ThemeProvider.tsx
+new file mode 100644
+index 0000000..6f5d9f3
+--- /dev/null
++++ b/src/components/ThemeProvider.tsx
+@@ -0,0 +1,118 @@
++'use client';
++
++import React, { createContext, useContext, useEffect, useState } from 'react';
++
++type Theme = 'dark' | 'light';
++
++interface ThemeContextType {
++  theme: Theme;
++  toggleTheme: () => void;
++}
++
++const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
++
++export function ThemeProvider({ children }: { children: React.ReactNode }) {
++  const [theme, setTheme] = useState<Theme>('dark');
++  const [mounted, setMounted] = useState(false);
++
++  useEffect(() => {
++    // Check localStorage for saved preference
++    const savedTheme = localStorage.getItem('al-theme') as Theme | null;
++    const initialTheme = savedTheme || 'dark';
++    setTheme(initialTheme);
++
++    // Apply theme to document
++    if (initialTheme === 'light') {
++      document.documentElement.classList.add('light');
++      document.documentElement.classList.remove('dark');
++    } else {
++      document.documentElement.classList.add('dark');
++      document.documentElement.classList.remove('light');
++    }
++
++    setMounted(true);
++  }, []);
++
++  const toggleTheme = () => {
++    setTheme((prevTheme) => {
++      const newTheme = prevTheme === 'dark' ? 'light' : 'dark';
++
++      // Update localStorage
++      localStorage.setItem('al-theme', newTheme);
++
++      // Update document class
++      if (newTheme === 'light') {
++        document.documentElement.classList.add('light');
++        document.documentElement.classList.remove('dark');
++      } else {
++        document.documentElement.classList.add('dark');
++        document.documentElement.classList.remove('light');
++      }
++
++      return newTheme;
++    });
++  };
++
++  if (!mounted) {
++    return <>{children}</>;
++  }
++
++  return (
++    <ThemeContext.Provider value={{ theme, toggleTheme }}>
++      {children}
++    </ThemeContext.Provider>
++  );
++}
++
++export function useTheme() {
++  const context = useContext(ThemeContext);
++  if (context === undefined) {
++    throw new Error('useTheme must be used within a ThemeProvider');
++  }
++  return context;
++}
++
++export function ThemeToggle() {
++  const { theme, toggleTheme } = useTheme();
++
++  const SunIcon = () => (
++    <svg
++      className="w-4 h-4"
++      fill="currentColor"
++      viewBox="0 0 20 20"
++      xmlns="http://www.w3.org/2000/svg"
++    >
++      <path
++        fillRule="evenodd"
++        d="M10 2a1 1 0 011 1v2a1 1 0 11-2 0V3a1 1 0 011-1zm4.22 1.78a1 1 0 011.415 0l1.414 1.414a1 1 0 01-1.415 1.415l-1.414-1.415a1 1 0 010-1.414zm2.828 4.22a1 1 0 011 1v2a1 1 0 11-2 0v-2a1 1 0 011-1zm0 6a1 1 0 011 1v2a1 1 0 11-2 0v-2a1 1 0 011-1zm-2.828 2.828a1 1 0 011.415 0l1.414 1.414a1 1 0 01-1.415 1.415l-1.414-1.415a1 1 0 010-1.414zm-9.172 2.828a1 1 0 011.415 0l1.414 1.414a1 1 0 11-1.415 1.415L3.636 17.05a1 1 0 010-1.414zM3 15a1 1 0 011 1v2a1 1 0 11-2 0v-2a1 1 0 011-1zm1.78-4.22a1 1 0 011.415 0l1.414 1.414a1 1 0 11-1.415 1.415l-1.414-1.415a1 1 0 010-1.414zM3.636 3.636a1 1 0 011.415 0l1.414 1.414a1 1 0 11-1.415 1.415L4.05 5.05a1 1 0 010-1.414zM10 6a4 4 0 100 8 4 4 0 000-8z"
++        clipRule="evenodd"
++      />
++    </svg>
++  );
++
++  const MoonIcon = () => (
++    <svg
++      className="w-4 h-4"
++      fill="currentColor"
++      viewBox="0 0 20 20"
++      xmlns="http://www.w3.org/2000/svg"
++    >
++      <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
++    </svg>
++  );
++
++  return (
++    <button
++      onClick={toggleTheme}
++      className="w-8 h-8 rounded-md border border-white/10 dark:border-white/10 light:border-gray-200 flex items-center justify-center hover:border-white/20 dark:hover:border-white/20 light:hover:border-gray-300 transition-all"
++      aria-label="Toggle theme"
++      title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
++    >
++      {theme === 'dark' ? (
++        <SunIcon />
++      ) : (
++        <MoonIcon />
++      )}
++    </button>
++  );
++}
+diff --git a/src/lib/supabase.ts b/src/lib/supabase.ts
+new file mode 100644
+index 0000000..0c0ddf7
+--- /dev/null
++++ b/src/lib/supabase.ts
+@@ -0,0 +1,17 @@
++import { createClient } from "@supabase/supabase-js";
++
++// Initialize Supabase client for browser-side usage
++// IMPORTANT: These environment variables need to be set in your .env.local file:
++// NEXT_PUBLIC_SUPABASE_URL - Your Supabase project URL
++// NEXT_PUBLIC_SUPABASE_ANON_KEY - Your Supabase anonymous (public) key
++
++const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
++const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
++
++if (!supabaseUrl || !supabaseAnonKey) {
++  throw new Error(
++    "Missing Supabase environment variables. Please set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY in your .env.local file."
++  );
++}
++
++export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+-- 
+2.34.1
+
