@@ -87,10 +87,10 @@ export default function DashboardPage() {
 
   if (isLoading) {
     return (
-      <div className="h-screen bg-[#0f0f14] flex items-center justify-center">
+      <div className="h-screen bg-[#FAF8F5] flex items-center justify-center">
         <div className="text-center">
-          <div className="w-12 h-12 border-4 border-[#f59e0b]/20 border-t-[#f59e0b] rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-[#a1a1aa]">Loading dashboard...</p>
+          <div className="w-12 h-12 border-4 border-[#C17832]/20 border-t-[#C17832] rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-[#6B5B4E]">Loading dashboard...</p>
         </div>
       </div>
     );
@@ -129,15 +129,15 @@ export default function DashboardPage() {
   ];
 
   return (
-    <div className="h-screen bg-[#0f0f14] flex">
+    <div className="h-screen bg-[#FAF8F5] flex">
       {/* Sidebar */}
       <div
-        className={`fixed md:relative z-40 h-screen bg-white/[0.02] border-r border-white/[0.08] transition-all duration-300 ${
+        className={`fixed md:relative z-40 h-screen bg-[#FFFFFF] border-r border-[#1F1810]/8 transition-all duration-300 ${
           sidebarOpen ? "w-64" : "w-0 md:w-64"
         } ${isMobile && !sidebarOpen ? "hidden" : ""}`}
       >
         {/* Sidebar Header */}
-        <div className="h-16 flex items-center justify-between px-6 border-b border-white/[0.08]">
+        <div className="h-16 flex items-center justify-between px-6 border-b border-[#1F1810]/8">
           <Link href="/dashboard" className="flex items-center gap-2">
             <Image
               src="/images/logo-arrow.png"
@@ -150,9 +150,9 @@ export default function DashboardPage() {
           {isMobile && (
             <button
               onClick={() => setSidebarOpen(false)}
-              className="p-1 hover:bg-white/[0.08] rounded-lg transition-colors"
+              className="p-1 hover:bg-[#F5F0EB] rounded-lg transition-colors"
             >
-              <X className="w-5 h-5 text-[#a1a1aa]" />
+              <X className="w-5 h-5 text-[#6B5B4E]" />
             </button>
           )}
         </div>
@@ -168,8 +168,8 @@ export default function DashboardPage() {
                 href={item.href}
                 className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all ${
                   isActive
-                    ? "bg-[#f59e0b]/10 text-[#f59e0b] border border-[#f59e0b]/20"
-                    : "text-[#a1a1aa] hover:bg-white/[0.04] hover:text-white"
+                    ? "bg-[#C17832]/10 text-[#C17832] border border-[#C17832]/20"
+                    : "text-[#6B5B4E] hover:bg-[#F5F0EB] hover:text-[#1F1810]"
                 }`}
               >
                 <IconComponent className="w-5 h-5" />
@@ -180,14 +180,14 @@ export default function DashboardPage() {
         </nav>
 
         {/* Sidebar Footer */}
-        <div className="p-4 border-t border-white/[0.08] space-y-2">
-          <button className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-[#a1a1aa] hover:bg-white/[0.04] hover:text-white transition-all">
+        <div className="p-4 border-t border-[#1F1810]/8 space-y-2">
+          <button className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-[#6B5B4E] hover:bg-[#F5F0EB] hover:text-[#1F1810] transition-all">
             <User className="w-5 h-5" />
             <span>Profile Settings</span>
           </button>
           <button
             onClick={handleLogout}
-            className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-[#a1a1aa] hover:bg-white/[0.04] hover:text-red-400 transition-all"
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-[#6B5B4E] hover:bg-[#F5F0EB] hover:text-red-400 transition-all"
           >
             <LogOut className="w-5 h-5" />
             <span>Sign Out</span>
@@ -198,17 +198,17 @@ export default function DashboardPage() {
       {/* Main Content */}
       <div className="flex-1 flex flex-col min-h-screen overflow-hidden">
         {/* Top Bar */}
-        <div className="h-16 border-b border-white/[0.08] flex items-center justify-between px-6 bg-white/[0.01]">
+        <div className="h-16 border-b border-[#1F1810]/8 flex items-center justify-between px-6 bg-[#FFFFFF]">
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="md:hidden p-2 hover:bg-white/[0.08] rounded-lg transition-colors"
+            className="md:hidden p-2 hover:bg-[#F5F0EB] rounded-lg transition-colors"
           >
-            <Menu className="w-5 h-5 text-[#a1a1aa]" />
+            <Menu className="w-5 h-5 text-[#6B5B4E]" />
           </button>
-          <h1 className="text-sm font-semibold text-[#a1a1aa]">Dashboard</h1>
+          <h1 className="text-sm font-semibold text-[#6B5B4E]">Dashboard</h1>
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-[#f59e0b]/20 border border-[#f59e0b]/30 rounded-full flex items-center justify-center">
-              <span className="text-xs font-semibold text-[#f59e0b]">
+            <div className="w-8 h-8 bg-[#C17832]/20 border border-[#C17832]/30 rounded-full flex items-center justify-center">
+              <span className="text-xs font-semibold text-[#C17832]">
                 {userName.charAt(0).toUpperCase()}
               </span>
             </div>
@@ -220,8 +220,8 @@ export default function DashboardPage() {
           <div className="p-6 md:p-8 max-w-7xl mx-auto">
             {/* Greeting Section */}
             <div className="mb-10">
-              <h2 className="text-3xl font-bold text-white mb-2">Good morning, {userName}</h2>
-              <p className="text-[#a1a1aa]">Your legal solutions are ready when you are.</p>
+              <h2 className="text-3xl font-bold text-[#1F1810] mb-2">Good morning, {userName}</h2>
+              <p className="text-[#6B5B4E]">Your legal solutions are ready when you are.</p>
             </div>
 
             {/* Tier Indicator */}
@@ -244,42 +244,42 @@ export default function DashboardPage() {
 
             {/* Stats Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-              <div className="bg-gradient-to-br from-[#1a1a1f] to-[#0f0f14] border border-white/[0.08] rounded-lg p-6 hover:border-white/[0.12] transition-all">
-                <p className="text-xs font-medium text-[#a1a1aa] mb-2">Allora Conversations</p>
-                <p className="text-3xl font-bold text-white">{stats.conversations}</p>
+              <div className="bg-white border border-[#1F1810]/8 rounded-lg p-6 hover:border-[#1F1810]/12 transition-all">
+                <p className="text-xs font-medium text-[#6B5B4E] mb-2">Allora Conversations</p>
+                <p className="text-3xl font-bold text-[#1F1810]">{stats.conversations}</p>
               </div>
 
-              <div className="bg-gradient-to-br from-[#1a1a1f] to-[#0f0f14] border border-white/[0.08] rounded-lg p-6 hover:border-white/[0.12] transition-all">
-                <p className="text-xs font-medium text-[#a1a1aa] mb-2">
+              <div className="bg-white border border-[#1F1810]/8 rounded-lg p-6 hover:border-[#1F1810]/12 transition-all">
+                <p className="text-xs font-medium text-[#6B5B4E] mb-2">
                   Consultations Remaining
                 </p>
-                <p className="text-3xl font-bold text-[#f59e0b]">{stats.consultations}</p>
+                <p className="text-3xl font-bold text-[#C17832]">{stats.consultations}</p>
               </div>
 
-              <div className="bg-gradient-to-br from-[#1a1a1f] to-[#0f0f14] border border-white/[0.08] rounded-lg p-6 hover:border-white/[0.12] transition-all">
-                <p className="text-xs font-medium text-[#a1a1aa] mb-2">Documents This Month</p>
-                <p className="text-3xl font-bold text-white">{stats.documents}</p>
+              <div className="bg-white border border-[#1F1810]/8 rounded-lg p-6 hover:border-[#1F1810]/12 transition-all">
+                <p className="text-xs font-medium text-[#6B5B4E] mb-2">Documents This Month</p>
+                <p className="text-3xl font-bold text-[#1F1810]">{stats.documents}</p>
               </div>
 
-              <div className="bg-gradient-to-br from-[#1a1a1f] to-[#0f0f14] border border-white/[0.08] rounded-lg p-6 hover:border-white/[0.12] transition-all">
-                <p className="text-xs font-medium text-[#a1a1aa] mb-2">Next Billing Date</p>
-                <p className="text-sm font-semibold text-white">{stats.billingDate}</p>
+              <div className="bg-white border border-[#1F1810]/8 rounded-lg p-6 hover:border-[#1F1810]/12 transition-all">
+                <p className="text-xs font-medium text-[#6B5B4E] mb-2">Next Billing Date</p>
+                <p className="text-sm font-semibold text-[#1F1810]">{stats.billingDate}</p>
               </div>
             </div>
 
             {/* Quick Actions */}
             <div className="mb-10">
-              <h3 className="text-lg font-semibold text-white mb-4">Quick Actions</h3>
+              <h3 className="text-lg font-semibold text-[#1F1810] mb-4">Quick Actions</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {quickActions.map((action, idx) => {
                   const Icon = action.icon;
                   return (
                     <button
                       key={idx}
-                      className="flex items-center gap-3 bg-gradient-to-br from-[#1a1a1f] to-[#0f0f14] border border-white/[0.08] rounded-lg p-4 hover:border-[#f59e0b]/30 hover:bg-gradient-to-br hover:from-[#1a1a1f] hover:to-[#0f0f14] transition-all group"
+                      className="flex items-center gap-3 bg-white border border-[#1F1810]/8 rounded-lg p-4 hover:border-[#C17832]/30 hover:bg-[#F5F0EB] transition-all group"
                     >
-                      <Icon className={`w-6 h-6 ${action.color} group-hover:text-[#f59e0b] transition-colors`} />
-                      <span className="text-sm font-medium text-[#a1a1aa] group-hover:text-white transition-colors">
+                      <Icon className={`w-6 h-6 ${action.color} group-hover:text-[#C17832] transition-colors`} />
+                      <span className="text-sm font-medium text-[#6B5B4E] group-hover:text-[#1F1810] transition-colors">
                         {action.label}
                       </span>
                     </button>
@@ -290,11 +290,11 @@ export default function DashboardPage() {
 
             {/* Recent Activity */}
             <div>
-              <h3 className="text-lg font-semibold text-white mb-4">Recent Activity</h3>
-              <div className="bg-gradient-to-br from-[#1a1a1f] to-[#0f0f14] border border-white/[0.08] rounded-lg p-6">
+              <h3 className="text-lg font-semibold text-[#1F1810] mb-4">Recent Activity</h3>
+              <div className="bg-white border border-[#1F1810]/8 rounded-lg p-6">
                 <div className="text-center py-8">
-                  <p className="text-[#a1a1aa] text-sm">No activity yet</p>
-                  <p className="text-[#71717a] text-xs mt-1">
+                  <p className="text-[#6B5B4E] text-sm">No activity yet</p>
+                  <p className="text-[#A89279] text-xs mt-1">
                     Start by chatting with Allora or scheduling a consultation
                   </p>
                 </div>

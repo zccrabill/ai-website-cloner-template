@@ -37,18 +37,18 @@ export default function BlogPage() {
   return (
     <>
       <Header />
-      <main className="bg-[#0f0f14] min-h-screen">
+      <main className="bg-[#FAF8F5] min-h-screen">
         {/* Blog header */}
-        <section className="w-full bg-gradient-to-b from-[#0f0f14] to-[#0f0f14] border-b border-white/[0.06]">
+        <section className="w-full bg-gradient-to-b from-[#FAF8F5] to-[#FAF8F5] border-b border-[#1F1810]/8">
           <div className="max-w-[1200px] mx-auto px-6 md:px-8 py-20 md:py-32">
             <div className="section-divider"></div>
             <h1
-              className="font-heading text-4xl md:text-5xl text-[#f0f0f5] mb-4 leading-tight"
+              className="font-heading text-4xl md:text-5xl text-[#1F1810] mb-4 leading-tight"
               style={{ fontWeight: 400 }}
             >
               AI Legal Insights
             </h1>
-            <p className="text-[#9898a8] text-lg max-w-[600px] leading-relaxed">
+            <p className="text-[#6B5B4E] text-lg max-w-[600px] leading-relaxed">
               Practical guidance on AI compliance, vendor contracts, and building responsible AI
               systems for your business.
             </p>
@@ -65,24 +65,24 @@ export default function BlogPage() {
                   href={`/blog/${post.slug}`}
                   className="group"
                 >
-                  <div className="card-gradient-border p-6 md:p-8 h-full flex flex-col justify-between transition-all duration-300 hover:bg-[#17171e] cursor-pointer">
+                  <div className="bg-white border border-[#1F1810]/8 rounded-[20px] p-6 md:p-8 h-full flex flex-col justify-between transition-all duration-300 hover:bg-[#F5F0EB] cursor-pointer">
                     {/* Content */}
                     <div className="flex-1">
-                      <p className="text-[#f59e0b] text-[12px] font-semibold tracking-widest uppercase mb-3">
+                      <p className="text-[#C17832] text-[12px] font-semibold tracking-widest uppercase mb-3">
                         AI Legal
                       </p>
-                      <h2 className="font-heading text-lg md:text-xl text-[#f0f0f5] mb-3 leading-snug group-hover:text-[#fbbf24] transition-colors">
+                      <h2 className="font-heading text-lg md:text-xl text-[#1F1810] mb-3 leading-snug group-hover:text-[#D4893F] transition-colors">
                         {post.title}
                       </h2>
-                      <p className="text-[#9898a8] text-[14px] leading-relaxed mb-4">
+                      <p className="text-[#6B5B4E] text-[14px] leading-relaxed mb-4">
                         {post.excerpt}
                       </p>
                     </div>
 
                     {/* Footer */}
-                    <div className="flex items-center justify-between pt-4 border-t border-white/[0.08]">
-                      <p className="text-[#52525b] text-[12px]">{post.date}</p>
-                      <span className="text-[#f59e0b] text-[14px] font-medium group-hover:translate-x-1 transition-transform">
+                    <div className="flex items-center justify-between pt-4 border-t border-[#1F1810]/8">
+                      <p className="text-[#A89279] text-[12px]">{post.date}</p>
+                      <span className="text-[#C17832] text-[14px] font-medium group-hover:translate-x-1 transition-transform">
                         Read →
                       </span>
                     </div>
@@ -94,12 +94,12 @@ export default function BlogPage() {
         </section>
 
         {/* CTA section */}
-        <section className="w-full py-16 md:py-24 border-t border-white/[0.06]">
+        <section className="w-full py-16 md:py-24 border-t border-[#1F1810]/8">
           <div className="max-w-[800px] mx-auto px-6 md:px-8 text-center">
-            <h2 className="font-heading text-3xl md:text-4xl text-[#f0f0f5] mb-4" style={{ fontWeight: 400 }}>
+            <h2 className="font-heading text-3xl md:text-4xl text-[#1F1810] mb-4" style={{ fontWeight: 400 }}>
               Need AI Legal Guidance?
             </h2>
-            <p className="text-[#9898a8] text-lg mb-8 leading-relaxed">
+            <p className="text-[#6B5B4E] text-lg mb-8 leading-relaxed">
               Get personalized advice on AI compliance, vendor contracts, and risk management from a
               Colorado attorney who specializes in AI law.
             </p>

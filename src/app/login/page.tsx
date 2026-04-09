@@ -48,10 +48,10 @@ export default function LoginPage() {
   return (
     <>
       <Header />
-      <main className="min-h-screen bg-[#0f0f14] flex items-center justify-center px-6 py-12">
+      <main className="min-h-screen bg-[#FAF8F5] flex items-center justify-center px-6 py-12">
         <div className="w-full max-w-md">
           {/* Card Container */}
-          <div className="bg-gradient-to-br from-[#1a1a1f] to-[#0f0f14] border border-white/[0.12] rounded-2xl p-8">
+          <div className="bg-white border border-[#1F1810]/8 rounded-2xl p-8">
             {/* Logo */}
             <div className="flex justify-center mb-8">
               <Image
@@ -65,14 +65,14 @@ export default function LoginPage() {
 
             {/* Heading */}
             <h1
-              className="text-3xl font-bold text-white text-center mb-3"
+              className="text-3xl font-bold text-[#1F1810] text-center mb-3"
               style={{ fontFamily: "var(--font-display), 'Playfair Display', serif" }}
             >
               Member Login
             </h1>
 
             {/* Subtitle */}
-            <p className="text-center text-[#a1a1aa] text-sm mb-8">
+            <p className="text-center text-[#6B5B4E] text-sm mb-8">
               Sign in with your email to access your dashboard
             </p>
 
@@ -96,7 +96,7 @@ export default function LoginPage() {
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Email Input */}
               <div>
-                <label htmlFor="email" className="block text-xs font-medium text-[#a1a1aa] mb-2">
+                <label htmlFor="email" className="block text-xs font-medium text-[#6B5B4E] mb-2">
                   Email Address
                 </label>
                 <input
@@ -106,7 +106,7 @@ export default function LoginPage() {
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="you@example.com"
                   disabled={isLoading || isSuccess}
-                  className="w-full px-4 py-2.5 bg-[#111113] border border-white/[0.08] text-white placeholder-[#71717a] rounded-lg focus:outline-none focus:border-[#f59e0b]/50 focus:ring-1 focus:ring-[#f59e0b]/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full px-4 py-2.5 bg-[#F5F0EB] border border-[#1F1810]/8 text-[#1F1810] placeholder-[#A89279] rounded-lg focus:outline-none focus:border-[#C17832]/50 focus:ring-1 focus:ring-[#C17832]/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 />
               </div>
 
@@ -122,17 +122,17 @@ export default function LoginPage() {
 
             {/* Divider */}
             <div className="my-6 flex items-center gap-3">
-              <div className="flex-1 h-px bg-white/[0.08]" />
-              <span className="text-xs text-[#71717a]">or</span>
-              <div className="flex-1 h-px bg-white/[0.08]" />
+              <div className="flex-1 h-px bg-[#1F1810]/8" />
+              <span className="text-xs text-[#A89279]">or</span>
+              <div className="flex-1 h-px bg-[#1F1810]/8" />
             </div>
 
             {/* Get Started Link */}
-            <div className="text-center text-sm text-[#a1a1aa]">
+            <div className="text-center text-sm text-[#6B5B4E]">
               Not a member yet?{" "}
               <a
                 href="/#pricing"
-                className="text-[#f59e0b] font-medium hover:text-[#fbbf24] transition-colors"
+                className="text-[#C17832] font-medium hover:text-[#D4893F] transition-colors"
               >
                 Get Started
               </a>
@@ -140,7 +140,7 @@ export default function LoginPage() {
           </div>
 
           {/* Footer Text */}
-          <p className="text-center text-xs text-[#52525b] mt-8">
+          <p className="text-center text-xs text-[#A89279] mt-8">
             We'll send you a secure magic link to sign in. No password needed.
           </p>
         </div>

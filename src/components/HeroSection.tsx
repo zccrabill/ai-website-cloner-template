@@ -1,84 +1,187 @@
+"use client";
+
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 export default function HeroSection() {
+  const [isAnimating, setIsAnimating] = useState(false);
+
+  useEffect(() => {
+    setIsAnimating(true);
+  }, []);
+
   return (
-    <section className="relative w-full min-h-[92vh] flex flex-col items-center justify-center overflow-hidden bg-[#0f0f14] bg-grid">
-      {/* Radial amber glow */}
-      <div className="hero-glow" />
-
-      {/* Bottom gradient fade */}
-      <div
-        className="absolute bottom-0 left-0 right-0 h-48 pointer-events-none z-10"
-        style={{ background: "linear-gradient(to top, #0f0f14, transparent)" }}
-      />
-
-      {/* Content */}
-      <div className="relative z-10 flex flex-col items-center text-center px-6 py-24 max-w-[900px] mx-auto">
-        {/* Eyebrow chip */}
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-[#f59e0b]/30 bg-[#f59e0b]/10 mb-8">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#f59e0b] animate-pulse" />
-          <span className="text-[13px] text-[#f59e0b] font-medium tracking-wide">
-            AI Legal Risk Consulting · Colorado
-          </span>
-        </div>
-
-        {/* Main heading */}
-        <h1
-          className="font-heading mb-6"
+    <section className="relative w-full min-h-screen bg-[#FAF8F5] overflow-hidden">
+      {/* Animated gradient orbs background */}
+      <div className="absolute inset-0 overflow-hidden">
+        {/* Accent orb */}
+        <div
+          className={`absolute w-96 h-96 rounded-full opacity-20 pointer-events-none mix-blend-multiply blur-3xl ${
+            isAnimating ? "animate-float" : ""
+          }`}
           style={{
-            fontSize: "clamp(52px, 7.5vw, 104px)",
-            lineHeight: 1.08,
-            fontWeight: 400,
-            color: "#f0f0f5",
-            letterSpacing: "-0.02em",
+            background: "#C17832",
+            top: "10%",
+            right: "5%",
+            animation: isAnimating ? "float 6s ease-in-out infinite" : "none",
           }}
-        >
-          Av
-          <span style={{ color: "#f59e0b", textShadow: "0 0 36px rgba(245,158,11,0.35)" }}>{"{"}</span>
-          ai
-          <span style={{ color: "#f59e0b", textShadow: "0 0 36px rgba(245,158,11,0.35)" }}>{"}"}</span>
-          lable Law
-        </h1>
-
-        {/* Subtitle */}
-        <p
-          className="mb-10 max-w-[560px]"
+        />
+        {/* Sage orb */}
+        <div
+          className={`absolute w-80 h-80 rounded-full opacity-15 pointer-events-none mix-blend-multiply blur-3xl ${
+            isAnimating ? "animate-float" : ""
+          }`}
           style={{
-            fontSize: "clamp(17px, 2vw, 21px)",
-            color: "#a1a1aa",
-            lineHeight: 1.7,
-            fontFamily: "var(--font-body), 'Inter', sans-serif",
+            background: "#7A8B6F",
+            bottom: "15%",
+            left: "10%",
+            animation: isAnimating ? "float 8s ease-in-out infinite 1s" : "none",
           }}
-        >
-          AI-powered legal solutions for Colorado businesses.
-          Practical advice from an attorney who actually builds with AI.
-        </p>
+        />
+      </div>
 
-        {/* CTAs */}
-        <div className="flex flex-col sm:flex-row items-center gap-3">
-          <Link href="/#solutions" className="btn-al btn-al-primary px-6 py-3 text-[15px]">
-            Explore Solutions
-          </Link>
-          <Link href="/#pricing" className="btn-al btn-al-outline px-6 py-3 text-[15px]">
-            Free Consultation
-          </Link>
-        </div>
-
-        {/* Trust indicators */}
-        <div className="mt-16 flex flex-wrap items-center justify-center gap-x-8 gap-y-3">
-          {[
-            "AI Contract Review",
-            "Liability Audits",
-            "Colorado-Based",
-            "Fractional AI GC",
-          ].map((item) => (
-            <div key={item} className="flex items-center gap-2 text-[13px] text-[#52525b]">
-              <span className="text-[#f59e0b]">✦</span>
-              <span>{item}</span>
+      {/* Content grid: text left, card right */}
+      <div className="relative z-10 max-w-7xl mx-auto px-6 py-20 lg:py-32">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          {/* Left: Text content */}
+          <div
+            className={`space-y-8 ${
+              isAnimating
+                ? "animate-fadeUp"
+                : "opacity-0"
+            }`}
+            style={{
+              animationDelay: isAnimating ? "0.1s" : undefined,
+              animation: isAnimating ? "fadeUp 0.8s ease-out forwards" : "none",
+            }}
+          >
+            {/* Badge */}
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[#C17832]/20 bg-white/60 backdrop-blur-sm w-fit">
+              <span className="w-2 h-2 rounded-full bg-[#C17832] animate-pulse" />
+              <span className="text-sm font-medium text-[#1F1810] tracking-wide">
+                Colorado-licensed · AI-powered
+              </span>
             </div>
-          ))}
+
+            {/* Main heading */}
+            <h1
+              className="font-heading text-5xl lg:text-6xl leading-tight text-[#1F1810]"
+              style={{ letterSpacing: "-0.02em" }}
+            >
+              Legal solutions that{" "}
+              <em className="not-italic text-[#C17832]">actually</em> work for your business
+            </h1>
+
+            {/* Subtitle */}
+            <p className="text-lg text-[#6B5B4E] max-w-md leading-relaxed">
+              Practical legal advice from an attorney who builds with AI. We combine human expertise with intelligent automation.
+            </p>
+
+            {/* CTAs */}
+            <div className="flex flex-col sm:flex-row gap-4 pt-4">
+              <Link
+                href="/#plans"
+                className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-[#1F1810] text-white rounded-lg font-medium transition-all duration-200 hover:bg-[#C17832] group"
+              >
+                Explore Plans
+                <span className="transition-transform group-hover:translate-x-1">→</span>
+              </Link>
+              <Link
+                href="/#solutions"
+                className="inline-flex items-center justify-center px-6 py-3 border-2 border-[#1F1810] text-[#1F1810] rounded-lg font-medium transition-all duration-200 hover:border-[#C17832] hover:text-[#C17832]"
+              >
+                See Solutions
+              </Link>
+            </div>
+          </div>
+
+          {/* Right: Card showcase */}
+          <div
+            className={`relative ${
+              isAnimating
+                ? "animate-fadeUp"
+                : "opacity-0"
+            }`}
+            style={{
+              animationDelay: isAnimating ? "0.3s" : undefined,
+              animation: isAnimating ? "fadeUp 0.8s ease-out forwards" : "none",
+            }}
+          >
+            <div className="bg-white rounded-2xl p-8 shadow-lg border border-[#F5F0EB]">
+              {/* Card header */}
+              <div className="flex items-start justify-between mb-6">
+                <div>
+                  <h3 className="font-heading text-2xl text-[#1F1810] mb-2">AI Contract Review</h3>
+                </div>
+              </div>
+
+              {/* Tags */}
+              <div className="flex flex-wrap gap-2 mb-6">
+                {["Liability Cap", "IP Assignment", "Indemnity"].map((tag) => (
+                  <span
+                    key={tag}
+                    className="px-3 py-1 text-xs font-medium rounded-full bg-[#F5F0EB] text-[#6B5B4E]"
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+
+              {/* Status badge */}
+              <div className="flex items-center gap-2 p-3 rounded-lg bg-[#F0F9F6]">
+                <span className="w-2 h-2 rounded-full bg-[#10B981]" />
+                <span className="text-sm font-medium text-[#059669]">
+                  Review complete — attorney verified
+                </span>
+              </div>
+            </div>
+
+            {/* Floating badges */}
+            <div
+              className="absolute -bottom-6 -left-8 bg-white px-4 py-3 rounded-xl shadow-lg border border-[#F5F0EB] flex items-center gap-2 animate-pulse"
+              style={{
+                animation: isAnimating ? "float 5s ease-in-out infinite 0.5s" : "none",
+              }}
+            >
+              <span className="text-xl">⏱️</span>
+              <span className="text-sm font-medium text-[#1F1810]">24hr turnaround</span>
+            </div>
+
+            <div
+              className="absolute -top-6 -right-8 bg-white px-4 py-3 rounded-xl shadow-lg border border-[#F5F0EB] flex items-center gap-2 animate-pulse"
+              style={{
+                animation: isAnimating ? "float 5s ease-in-out infinite 1s" : "none",
+              }}
+            >
+              <span className="text-xl">✓</span>
+              <span className="text-sm font-medium text-[#1F1810]">Attorney verified</span>
+            </div>
+          </div>
         </div>
       </div>
+
+      {/* Animations */}
+      <style jsx>{`
+        @keyframes float {
+          0%, 100% {
+            transform: translateY(0px);
+          }
+          50% {
+            transform: translateY(-20px);
+          }
+        }
+
+        @keyframes fadeUp {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+      `}</style>
     </section>
   );
 }

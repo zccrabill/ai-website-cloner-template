@@ -11,22 +11,18 @@ interface PricingTier {
   cta: string;
   badge?: string;
   featured?: boolean;
-  proUpgrade?: {
-    price: number;
-    label: string;
-  };
 }
 
 const pricingTiers: PricingTier[] = [
   {
     name: "Explore",
-    description: "Get a taste of AI-powered legal solutions. No commitment required.",
+    description: "Get a taste of AI-powered legal solutions.",
     annualPrice: 0,
     monthlyPrice: 0,
     features: [
-      "Monthly legal newsletter",
-      "Limited dashboard access",
-      "Educational legal guides",
+      "Monthly newsletter",
+      "Limited dashboard",
+      "Educational guides",
       "Community resources",
     ],
     cta: "Join Free",
@@ -37,10 +33,10 @@ const pricingTiers: PricingTier[] = [
     annualPrice: 25,
     monthlyPrice: 50,
     features: [
-      "Full Allora AI assistant access",
+      "Full Allora AI access",
       "Educational guides & checklists",
       "Usage tracking dashboard",
-      "Member-rate attorney consultations",
+      "Member-rate consultations",
     ],
     cta: "Start Building",
   },
@@ -50,7 +46,7 @@ const pricingTiers: PricingTier[] = [
     annualPrice: 100,
     monthlyPrice: 150,
     features: [
-      "Everything in Build, plus:",
+      "Everything in Build plus:",
       "1 attorney consultation/month",
       "Priority Allora responses",
       "Document review credits",
@@ -58,10 +54,6 @@ const pricingTiers: PricingTier[] = [
     cta: "Start Growing",
     badge: "Most Popular",
     featured: true,
-    proUpgrade: {
-      price: 200,
-      label: "Upgrade to Pro ($200/mo) for extra consultations",
-    },
   },
   {
     name: "Lead",
@@ -69,10 +61,10 @@ const pricingTiers: PricingTier[] = [
     annualPrice: 300,
     monthlyPrice: 300,
     features: [
-      "Everything in Grow, plus:",
-      "2-3 attorney consultations/month",
+      "Everything in Grow plus:",
+      "2-3 attorney consultations/mo",
       "Quarterly AI risk reviews",
-      "Priority support & all document reviews",
+      "Priority support & all doc reviews",
     ],
     cta: "Start Leading",
   },
@@ -84,18 +76,20 @@ export default function PricingSection() {
   return (
     <section
       id="pricing"
-      className="w-full bg-[#0f0f14] flex flex-col items-center justify-center py-24 px-6"
+      className="w-full bg-[#FAF8F5] flex flex-col items-center justify-center py-24 px-6"
     >
       {/* Header */}
-      <div className="max-w-[900px] text-center mb-16">
-        <h2
-          className="text-5xl font-bold text-white mb-6"
-          style={{ fontFamily: "var(--font-display), 'Playfair Display', serif" }}
-        >
+      <div className="max-w-[900px] text-center mb-12">
+        <p className="text-sm font-semibold text-[#C17832] uppercase tracking-wide mb-4">
           Membership Plans
+        </p>
+        <h2
+          className="text-5xl font-heading text-[#1F1810] mb-6 leading-tight"
+        >
+          Invest in legal clarity, not legal bills
         </h2>
-        <p className="text-[#a1a1aa] text-lg leading-relaxed">
-          AI-powered legal solutions at every stage of your business. Start free, scale as you grow.
+        <p className="text-lg text-[#6B5B4E] leading-relaxed">
+          Choose the membership that fits your legal needs
         </p>
       </div>
 
@@ -103,33 +97,33 @@ export default function PricingSection() {
       <div className="flex items-center justify-center gap-4 mb-16">
         <button
           onClick={() => setIsAnnual(true)}
-          className={`px-6 py-2 rounded-lg text-sm font-medium transition-all ${
+          className={`px-6 py-2.5 rounded-lg text-sm font-medium transition-all ${
             isAnnual
-              ? "bg-[#f59e0b] text-black"
-              : "bg-white/[0.08] text-[#a1a1aa] hover:bg-white/[0.12]"
+              ? "bg-[#C17832] text-white"
+              : "bg-[#EDE5DB] text-[#6B5B4E] hover:bg-[#D9CCBC]"
           }`}
         >
           Annual
         </button>
         <button
           onClick={() => setIsAnnual(false)}
-          className={`px-6 py-2 rounded-lg text-sm font-medium transition-all ${
+          className={`px-6 py-2.5 rounded-lg text-sm font-medium transition-all ${
             !isAnnual
-              ? "bg-[#f59e0b] text-black"
-              : "bg-white/[0.08] text-[#a1a1aa] hover:bg-white/[0.12]"
+              ? "bg-[#C17832] text-white"
+              : "bg-[#EDE5DB] text-[#6B5B4E] hover:bg-[#D9CCBC]"
           }`}
         >
           Monthly
         </button>
         {isAnnual && (
-          <span className="ml-4 text-sm text-[#f59e0b]">
+          <span className="ml-4 text-sm font-semibold text-[#C17832]">
             Save up to 50%
           </span>
         )}
       </div>
 
       {/* Pricing Cards */}
-      <div className="w-full max-w-[1280px] grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+      <div className="w-full max-w-[1280px] grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
         {pricingTiers.map((tier, idx) => {
           const price = isAnnual ? tier.annualPrice : tier.monthlyPrice;
           const billingNote = isAnnual
@@ -137,47 +131,41 @@ export default function PricingSection() {
               ? ""
               : "billed annually"
             : "billed monthly";
-          const altPrice = isAnnual ? tier.monthlyPrice : tier.annualPrice;
 
           return (
             <div
               key={idx}
-              className={`relative rounded-2xl p-8 border transition-all duration-300 ${
+              className={`relative rounded-[20px] p-8 border transition-all duration-300 ${
                 tier.featured
-                  ? "card-featured border-[#f59e0b]/30 bg-gradient-to-br from-[#1a1a1f] to-[#0f0f14]"
-                  : "card-gradient-border border-white/[0.12] bg-gradient-to-br from-[#1a1a1f] to-[#0f0f14] hover:border-white/[0.2] hover:shadow-lg hover:shadow-white/[0.05]"
+                  ? "border-[#C17832] bg-white shadow-[0_20px_40px_rgba(193,120,50,0.15)]"
+                  : "border-[#D9CCBC] bg-white hover:border-[#C17832] hover:shadow-md"
               }`}
             >
               {/* Badge */}
               {tier.badge && (
-                <div className="absolute -top-3 left-6 bg-[#f59e0b] text-black text-xs font-bold px-3 py-1 rounded-full">
+                <div className="absolute -top-4 left-8 bg-[#C17832] text-white text-xs font-bold px-3 py-1.5 rounded-full">
                   {tier.badge}
                 </div>
               )}
 
               {/* Tier Name */}
-              <h3 className="text-2xl font-bold text-white mb-2">
+              <h3 className="text-2xl font-heading text-[#1F1810] mb-3">
                 {tier.name}
               </h3>
 
               {/* Price */}
-              <div className="mb-4">
+              <div className="mb-6">
                 {price === 0 ? (
-                  <div className="text-white">
+                  <div className="text-[#1F1810]">
                     <span className="text-4xl font-bold">Free</span>
                   </div>
                 ) : (
-                  <div className="text-white">
-                    <span className="text-4xl font-bold">${price}</span>
-                    <span className="text-lg text-[#a1a1aa]">/mo</span>
+                  <div className="text-[#1F1810]">
+                    <span className="text-5xl font-bold">${price}</span>
+                    <span className="text-lg text-[#6B5B4E]">/mo</span>
                     {billingNote && (
-                      <div className="text-xs text-[#a1a1aa] mt-1">
+                      <div className="text-xs text-[#A89279] mt-2">
                         {billingNote}
-                      </div>
-                    )}
-                    {isAnnual && altPrice !== 0 && (
-                      <div className="text-xs text-[#a1a1aa] mt-1">
-                        ${altPrice}/mo monthly
                       </div>
                     )}
                   </div>
@@ -185,37 +173,28 @@ export default function PricingSection() {
               </div>
 
               {/* Description */}
-              <p className="text-sm text-[#a1a1aa] mb-6 leading-relaxed">
+              <p className="text-sm text-[#6B5B4E] mb-8 leading-relaxed">
                 {tier.description}
               </p>
 
               {/* CTA Button */}
               <Link
-                href={tier.annualPrice === 0 ? "/login" : "/login"}
-                className={`block w-full py-2.5 px-4 rounded-lg text-sm font-semibold transition-all mb-6 text-center ${
+                href="/login"
+                className={`block w-full py-3 px-4 rounded-lg text-sm font-semibold transition-all mb-8 text-center ${
                   tier.featured
-                    ? "bg-[#f59e0b] text-black hover:bg-[#fbbf24] shadow-lg shadow-[#f59e0b]/20"
-                    : "bg-white/[0.08] text-white border border-white/[0.12] hover:bg-white/[0.12] hover:border-white/[0.2]"
+                    ? "bg-[#1F1810] text-white hover:bg-[#C17832]"
+                    : "bg-transparent border border-[#C17832] text-[#C17832] hover:bg-[#FAF8F5]"
                 }`}
               >
                 {tier.cta}
               </Link>
-
-              {/* Pro Upgrade Callout */}
-              {tier.proUpgrade && (
-                <div className="mb-6 p-3 bg-[#f59e0b]/10 border border-[#f59e0b]/20 rounded-lg">
-                  <p className="text-xs text-[#f59e0b] text-center">
-                    {tier.proUpgrade.label}
-                  </p>
-                </div>
-              )}
 
               {/* Features */}
               <div className="space-y-3">
                 {tier.features.map((feature, featureIdx) => (
                   <div key={featureIdx} className="flex items-start gap-3">
                     <svg
-                      className="w-4 h-4 text-[#f59e0b] flex-shrink-0 mt-0.5"
+                      className="w-5 h-5 text-[#7A8B6F] flex-shrink-0 mt-0.5"
                       fill="currentColor"
                       viewBox="0 0 20 20"
                     >
@@ -225,7 +204,7 @@ export default function PricingSection() {
                         clipRule="evenodd"
                       />
                     </svg>
-                    <span className="text-sm text-[#d4d4d8]">
+                    <span className="text-sm text-[#6B5B4E]">
                       {feature}
                     </span>
                   </div>
@@ -234,13 +213,6 @@ export default function PricingSection() {
             </div>
           );
         })}
-      </div>
-
-      {/* Footer Note */}
-      <div className="max-w-[900px] text-center">
-        <p className="text-sm text-[#52525b]">
-          All paid plans include a free onboarding call. Cancel anytime. Annual plans save up to 50%.
-        </p>
       </div>
     </section>
   );

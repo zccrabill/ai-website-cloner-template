@@ -1,12 +1,11 @@
 import type { Metadata } from "next";
-import { Playfair_Display, Inter } from "next/font/google";
-import { ThemeProvider } from "@/components/ThemeProvider";
+import { DM_Serif_Display, Inter } from "next/font/google";
 import "./globals.css";
 
-const playfair = Playfair_Display({
+const dmSerif = DM_Serif_Display({
   variable: "--font-heading",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  weight: "400",
   style: ["normal", "italic"],
 });
 
@@ -27,11 +26,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${playfair.variable} ${inter.variable}`} suppressHydrationWarning>
-      <body className="min-h-full bg-background text-foreground antialiased">
-        <ThemeProvider>
-          {children}
-        </ThemeProvider>
+    <html lang="en" className={`${dmSerif.variable} ${inter.variable}`}>
+      <body className="min-h-full bg-[#FAF8F5] text-[#1F1810] antialiased">
+        {children}
       </body>
     </html>
   );

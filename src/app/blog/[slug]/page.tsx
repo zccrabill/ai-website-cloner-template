@@ -45,14 +45,14 @@ export default async function BlogPostPage({
     return (
       <>
         <Header />
-        <main className="bg-[#0f0f14] min-h-screen flex items-center justify-center">
+        <main className="bg-[#FAF8F5] min-h-screen flex items-center justify-center">
           <div className="text-center">
-            <h1 className="font-heading text-3xl text-[#f0f0f5] mb-4">
+            <h1 className="font-heading text-3xl text-[#1F1810] mb-4">
               Post not found
             </h1>
             <Link
               href="/blog"
-              className="text-[#f59e0b] hover:text-[#fbbf24]"
+              className="text-[#C17832] hover:text-[#D4893F]"
             >
               Back to blog
             </Link>
@@ -66,13 +66,13 @@ export default async function BlogPostPage({
   return (
     <>
       <Header />
-      <main className="bg-[#0f0f14] min-h-screen">
+      <main className="bg-[#FAF8F5] min-h-screen">
         {/* Back link */}
-        <div className="w-full bg-[#0f0f14] border-b border-white/[0.06]">
+        <div className="w-full bg-[#FAF8F5] border-b border-[#1F1810]/8">
           <div className="max-w-[800px] mx-auto px-6 md:px-8 py-6">
             <Link
               href="/blog"
-              className="text-[#f59e0b] hover:text-[#fbbf24] text-[14px] font-medium"
+              className="text-[#C17832] hover:text-[#D4893F] text-[14px] font-medium"
             >
               &larr; Back to blog
             </Link>
@@ -84,57 +84,57 @@ export default async function BlogPostPage({
           <div className="max-w-[800px] mx-auto px-6 md:px-8 py-16 md:py-24">
             {/* Meta */}
             <div className="mb-8">
-              <p className="text-[#f59e0b] text-[12px] font-semibold tracking-widest uppercase mb-3">
+              <p className="text-[#C17832] text-[12px] font-semibold tracking-widest uppercase mb-3">
                 AI Legal
               </p>
               <h1
-                className="font-heading text-4xl md:text-5xl text-[#f0f0f5] mb-4 leading-tight"
+                className="font-heading text-4xl md:text-5xl text-[#1F1810] mb-4 leading-tight"
                 style={{ fontWeight: 400 }}
               >
                 {post.title}
               </h1>
-              <div className="flex items-center gap-4 pt-4 border-t border-white/[0.06]">
-                <p className="text-[#9898a8] text-[14px]">
-                  <span className="text-[#f0f0f5] font-medium">
+              <div className="flex items-center gap-4 pt-4 border-t border-[#1F1810]/8">
+                <p className="text-[#6B5B4E] text-[14px]">
+                  <span className="text-[#1F1810] font-medium">
                     {post.author}
                   </span>
                 </p>
-                <span className="text-[#52525b]">&bull;</span>
-                <p className="text-[#9898a8] text-[14px]">{post.date}</p>
+                <span className="text-[#A89279]">&bull;</span>
+                <p className="text-[#6B5B4E] text-[14px]">{post.date}</p>
               </div>
             </div>
 
             {/* Article excerpt */}
-            <div className="bg-[#17171e] border border-white/[0.06] rounded-lg p-6 md:p-8 mb-12">
-              <p className="text-[#a1a1aa] text-lg leading-relaxed">
+            <div className="bg-[#F5F0EB] border border-[#1F1810]/8 rounded-lg p-6 md:p-8 mb-12">
+              <p className="text-[#6B5B4E] text-lg leading-relaxed">
                 {post.excerpt}
               </p>
             </div>
 
             {/* Article content placeholder */}
-            <div className="prose prose-invert max-w-none mb-16">
-              <div className="text-[#9898a8] leading-relaxed space-y-6 text-[15px]">
+            <div className="prose prose-light max-w-none mb-16">
+              <div className="text-[#6B5B4E] leading-relaxed space-y-6 text-[15px]">
                 <p>
                   Article content will be loaded from markdown files. The slug
                   &ldquo;
-                  <code className="text-[#f59e0b] bg-[#17171e] px-2 py-1 rounded">
+                  <code className="text-[#C17832] bg-[#F5F0EB] px-2 py-1 rounded">
                     {slug}
                   </code>
                   &rdquo; maps to the corresponding markdown file in{" "}
-                  <code className="text-[#f59e0b] bg-[#17171e] px-2 py-1 rounded">
+                  <code className="text-[#C17832] bg-[#F5F0EB] px-2 py-1 rounded">
                     /content/blog/
                   </code>
                   .
                 </p>
 
-                <div className="bg-[#17171e] border border-white/[0.08] rounded-lg p-6 mt-8">
+                <div className="bg-[#F5F0EB] border border-[#1F1810]/8 rounded-lg p-6 mt-8">
                   <h3
-                    className="font-heading text-[#f0f0f5] text-xl mb-3"
+                    className="font-heading text-[#1F1810] text-xl mb-3"
                     style={{ fontWeight: 400 }}
                   >
                     Coming Soon
                   </h3>
-                  <p className="text-[#a1a1aa] text-[14px]">
+                  <p className="text-[#6B5B4E] text-[14px]">
                     The full article content for &ldquo;{post.title}&rdquo; will
                     be displayed here.
                   </p>
@@ -143,14 +143,14 @@ export default async function BlogPostPage({
             </div>
 
             {/* CTA section */}
-            <div className="bg-gradient-to-r from-[#17171e] to-[#1f1f28] border border-white/[0.06] rounded-lg p-8 md:p-12 text-center">
+            <div className="bg-gradient-to-r from-[#F5F0EB] to-[#FFFFFF] border border-[#1F1810]/8 rounded-lg p-8 md:p-12 text-center">
               <h3
-                className="font-heading text-2xl text-[#f0f0f5] mb-3"
+                className="font-heading text-2xl text-[#1F1810] mb-3"
                 style={{ fontWeight: 400 }}
               >
                 Need AI Legal Guidance?
               </h3>
-              <p className="text-[#9898a8] mb-6 leading-relaxed">
+              <p className="text-[#6B5B4E] mb-6 leading-relaxed">
                 Get personalized advice on AI compliance, contracts, and risk
                 management from Zachariah Crabill, JD.
               </p>
