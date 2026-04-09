@@ -11,6 +11,8 @@ interface PricingTier {
   cta: string;
   badge?: string;
   featured?: boolean;
+  monthlyLink?: string;
+  annualLink?: string;
 }
 
 const pricingTiers: PricingTier[] = [
@@ -39,6 +41,8 @@ const pricingTiers: PricingTier[] = [
       "Member-rate consultations",
     ],
     cta: "Start Building",
+    monthlyLink: "https://buy.stripe.com/aFa9AT9SseJn9aHfE0cMM02",
+    annualLink: "https://buy.stripe.com/5kQeVd1lW9p31IfcrOcMM05",
   },
   {
     name: "Grow",
@@ -54,6 +58,8 @@ const pricingTiers: PricingTier[] = [
     cta: "Start Growing",
     badge: "Most Popular",
     featured: true,
+    monthlyLink: "https://buy.stripe.com/8x24gz4y8at7gD9gI4cMM03",
+    annualLink: "https://buy.stripe.com/14A7sLfcM1WB2MjdvScMM06",
   },
   {
     name: "Lead",
@@ -67,6 +73,8 @@ const pricingTiers: PricingTier[] = [
       "Priority support & all doc reviews",
     ],
     cta: "Start Leading",
+    monthlyLink: "https://buy.stripe.com/eVqcN5ggQ0Sx5YvbnKcMM04",
+    annualLink: "https://buy.stripe.com/aFafZhc0Aat772zezWcMM07",
   },
 ];
 
@@ -178,16 +186,31 @@ export default function PricingSection() {
               </p>
 
               {/* CTA Button */}
-              <Link
-                href="/login"
-                className={`block w-full py-3 px-4 rounded-lg text-sm font-semibold transition-all mb-8 text-center ${
-                  tier.featured
-                    ? "bg-[#1F1810] text-white hover:bg-[#C17832]"
-                    : "bg-transparent border border-[#C17832] text-[#C17832] hover:bg-[#FAF8F5]"
-                }`}
-              >
-                {tier.cta}
-              </Link>
+              {tier.monthlyLink ? (
+                <a
+                  href={isAnnual && tier.annualLink ? tier.annualLink : tier.monthlyLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`block w-full py-3 px-4 rounded-lg text-sm font-semibold transition-all mb-8 text-center ${
+                    tier.featured
+                      ? "bg-[#1F1810] text-white hover:bg-[#C17832]"
+                      : "bg-transparent border border-[#C17832] text-[#C17832] hover:bg-[#FAF8F5]"
+                  }`}
+                >
+                  {tier.cta}
+                </a>
+              ) : (
+                <Link
+                  href="/login"
+                  className={`block w-full py-3 px-4 rounded-lg text-sm font-semibold transition-all mb-8 text-center ${
+                    tier.featured
+                      ? "bg-[#1F1810] text-white hover:bg-[#C17832]"
+                      : "bg-transparent border border-[#C17832] text-[#C17832] hover:bg-[#FAF8F5]"
+                  }`}
+                >
+                  {tier.cta}
+                </Link>
+              )}
 
               {/* Features */}
               <div className="space-y-3">
