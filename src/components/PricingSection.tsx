@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import Link from "next/link";
 
 interface PricingTier {
   name: string;
@@ -189,15 +190,16 @@ export default function PricingSection() {
               </p>
 
               {/* CTA Button */}
-              <button
-                className={`w-full py-2.5 px-4 rounded-lg text-sm font-semibold transition-all mb-6 ${
+              <Link
+                href={tier.annualPrice === 0 ? "/login" : "/login"}
+                className={`block w-full py-2.5 px-4 rounded-lg text-sm font-semibold transition-all mb-6 text-center ${
                   tier.featured
                     ? "bg-[#f59e0b] text-black hover:bg-[#fbbf24] shadow-lg shadow-[#f59e0b]/20"
                     : "bg-white/[0.08] text-white border border-white/[0.12] hover:bg-white/[0.12] hover:border-white/[0.2]"
                 }`}
               >
                 {tier.cta}
-              </button>
+              </Link>
 
               {/* Pro Upgrade Callout */}
               {tier.proUpgrade && (

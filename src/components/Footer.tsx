@@ -84,12 +84,12 @@ export default function Footer() {
               "Transactional Legal Work",
             ].map((service) => (
               <li key={service}>
-                <a
-                  href="#"
+                <Link
+                  href="/#solutions"
                   className="text-[14px] text-[#71717a] light:text-gray-600 hover:text-[#fafafa] light:hover:text-gray-900 transition-colors"
                 >
                   {service}
-                </a>
+                </Link>
               </li>
             ))}
           </ul>

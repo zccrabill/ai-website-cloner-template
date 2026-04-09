@@ -56,10 +56,10 @@ export default function HeroSection() {
 
         {/* CTAs */}
         <div className="flex flex-col sm:flex-row items-center gap-3">
-          <Link href="/solutions" className="btn-al btn-al-primary px-6 py-3 text-[15px]">
+          <Link href="/#solutions" className="btn-al btn-al-primary px-6 py-3 text-[15px]">
             Explore Solutions
           </Link>
-          <Link href="/contact" className="btn-al btn-al-outline px-6 py-3 text-[15px]">
+          <Link href="/#pricing" className="btn-al btn-al-outline px-6 py-3 text-[15px]">
             Free Consultation
           </Link>
         </div>

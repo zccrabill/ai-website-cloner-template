@@ -59,7 +59,7 @@ export default function SolutionsSection() {
             </div>
 
             <a
-              href="#"
+              href="/#pricing"
               className="btn-al btn-al-primary text-[14px] px-6 py-3"
             >
               Free Consultation
