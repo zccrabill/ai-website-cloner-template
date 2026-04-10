@@ -1,6 +1,7 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
+import { supabase } from "@/lib/supabase";
 
 interface PricingTier {
   name: string;
@@ -41,8 +42,8 @@ const pricingTiers: PricingTier[] = [
       "Member-rate consultations",
     ],
     cta: "Start Building",
-    monthlyLink: "https://buy.stripe.com/aFa9AT9SseJn9aHfE0cMM02",
-    annualLink: "https://buy.stripe.com/5kQeVd1lW9p31IfcrOcMM05",
+    monthlyLink: "https://buy.stripe.com/5kQ7sLe8IdFjbiPbnKcMM08",
+    annualLink: "https://buy.stripe.com/7sY4gz8Oobxb4UrfE0cMM09",
   },
   {
     name: "Grow",
@@ -58,8 +59,8 @@ const pricingTiers: PricingTier[] = [
     cta: "Start Growing",
     badge: "Most Popular",
     featured: true,
-    monthlyLink: "https://buy.stripe.com/8x24gz4y8at7gD9gI4cMM03",
-    annualLink: "https://buy.stripe.com/14A7sLfcM1WB2MjdvScMM06",
+    monthlyLink: "https://buy.stripe.com/7sY6oH4y8dFj3Qn63qcMM0a",
+    annualLink: "https://buy.stripe.com/7sY3cv2q00Sx1If77ucMM0b",
   },
   {
     name: "Lead",
@@ -74,12 +75,45 @@ const pricingTiers: PricingTier[] = [
     ],
     cta: "Start Leading",
     monthlyLink: "https://buy.stripe.com/eVqcN5ggQ0Sx5YvbnKcMM04",
-    annualLink: "https://buy.stripe.com/aFafZhc0Aat772zezWcMM07",
+    annualLink: "https://buy.stripe.com/3cIbJ18Oo6cRcmTfE0cMM0c",
   },
 ];
 
 export default function PricingSection() {
   const [isAnnual, setIsAnnual] = useState(true);
+  const [userId, setUserId] = useState<string | null>(null);
+  const [userEmail, setUserEmail] = useState<string | null>(null);
+
+  useEffect(() => {
+    let mounted = true;
+    supabase.auth.getSession().then(({ data }) => {
+      if (!mounted) return;
+      setUserId(data.session?.user?.id ?? null);
+      setUserEmail(data.session?.user?.email ?? null);
+    });
+    const { data: listener } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        setUserId(session?.user?.id ?? null);
+        setUserEmail(session?.user?.email ?? null);
+      }
+    );
+    return () => {
+      mounted = false;
+      listener.subscription.unsubscribe();
+    };
+  }, []);
+
+  // Append client_reference_id + prefilled_email so the Stripe webhook can
+  // match the completed checkout back to the Supabase user record. Falls back
+  // to the bare URL when the visitor is not signed in — the webhook will then
+  // use the customer email as a secondary match key.
+  const buildCheckoutUrl = (baseUrl: string): string => {
+    if (!userId && !userEmail) return baseUrl;
+    const url = new URL(baseUrl);
+    if (userId) url.searchParams.set("client_reference_id", userId);
+    if (userEmail) url.searchParams.set("prefilled_email", userEmail);
+    return url.toString();
+  };
 
   return (
     <section
@@ -188,7 +222,11 @@ export default function PricingSection() {
               {/* CTA Button */}
               {tier.monthlyLink ? (
                 <a
-                  href={isAnnual && tier.annualLink ? tier.annualLink : tier.monthlyLink}
+                  href={buildCheckoutUrl(
+                    isAnnual && tier.annualLink
+                      ? tier.annualLink
+                      : tier.monthlyLink
+                  )}
                   target="_blank"
                   rel="noopener noreferrer"
                   className={`block w-full py-3 px-4 rounded-lg text-sm font-semibold transition-all mb-8 text-center ${
