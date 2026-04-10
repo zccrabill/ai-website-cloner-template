@@ -53,6 +53,8 @@ export default function DashboardShell({
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
+    let currentUserId: string | null = null;
+
     const checkAuth = async () => {
       try {
         const {
@@ -64,6 +66,7 @@ export default function DashboardShell({
           return;
         }
 
+        currentUserId = session.user.id;
         setUser(session.user as UserData);
 
         // Check role from members table
@@ -75,6 +78,8 @@ export default function DashboardShell({
 
         if (member?.role === "admin" || member?.role === "attorney") {
           setIsAdmin(true);
+        } else {
+          setIsAdmin(false);
         }
 
         setIsLoading(false);
@@ -86,6 +91,31 @@ export default function DashboardShell({
 
     checkAuth();
 
+    // Hard-reset on any auth identity change. This prevents stale state from a
+    // previous user from surviving a sign-out / sign-in cycle in the same tab,
+    // which would otherwise look like an attorney-client confidentiality leak.
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        const nextUserId = session?.user?.id ?? null;
+
+        if (event === "SIGNED_OUT" || !nextUserId) {
+          // Wipe any in-memory state by doing a full reload to the login page
+          if (typeof window !== "undefined") {
+            window.location.replace("/login");
+          }
+          return;
+        }
+
+        if (currentUserId && nextUserId !== currentUserId) {
+          // Different user signed in — force full reload so every child
+          // component remounts with a clean slate
+          if (typeof window !== "undefined") {
+            window.location.reload();
+          }
+        }
+      }
+    );
+
     const handleResize = () => {
       setIsMobile(window.innerWidth < 768);
       if (window.innerWidth < 768) {
@@ -95,7 +125,10 @@ export default function DashboardShell({
 
     handleResize();
     window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      authListener.subscription.unsubscribe();
+    };
   }, [router]);
 
   const handleLogout = async () => {
@@ -194,14 +227,7 @@ export default function DashboardShell({
           )}
         </nav>
 
-        <div className="p-4 border-t border-[#1F1810]/8 space-y-2">
-          <Link
-            href="/dashboard/account"
-            className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-[#6B5B4E] hover:bg-[#F5F0EB] hover:text-[#1F1810] transition-all"
-          >
-            <User className="w-5 h-5" />
-            <span>Profile Settings</span>
-          </Link>
+        <div className="p-4 border-t border-[#1F1810]/8">
           <button
             onClick={handleLogout}
             className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-[#6B5B4E] hover:bg-[#F5F0EB] hover:text-red-400 transition-all"

@@ -11,9 +11,15 @@ import {
   Download,
   X,
   CheckCircle2,
+  ShieldCheck,
+  Eye,
 } from "lucide-react";
 
-interface DocumentRow {
+// -------- Types --------
+// A client-uploaded or Allora-produced document that lives in the `documents`
+// table and has a file in storage.
+interface UploadDoc {
+  kind: "upload";
   id: string;
   user_id: string;
   filename: string;
@@ -22,9 +28,26 @@ interface DocumentRow {
   mime_type: string | null;
   source: "client_upload" | "allora_draft" | "attorney_final";
   status: "uploading" | "uploaded" | "reviewing" | "ready" | "sent";
-  uploaded_at: string;
+  created_at: string; // uploaded_at
 }
 
+// A draft that an attorney approved and sent to the client. Lives in the
+// `drafts` table. No storage file — the body is rendered in-app.
+interface AttorneyDoc {
+  kind: "attorney";
+  id: string;
+  user_id: string;
+  title: string;
+  body: string;
+  sent_at: string | null;
+  created_at: string;
+}
+
+type UnifiedItem = UploadDoc | AttorneyDoc;
+
+type TabKey = "all" | "uploads" | "attorney";
+
+// -------- Helpers --------
 function formatBytes(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`;
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
@@ -40,21 +63,35 @@ function fileTypeLabel(mime: string | null): string {
   return "FILE";
 }
 
+function itemDate(item: UnifiedItem): string {
+  if (item.kind === "attorney") {
+    return item.sent_at ?? item.created_at;
+  }
+  return item.created_at;
+}
+
+function itemTitle(item: UnifiedItem): string {
+  return item.kind === "upload" ? item.filename : item.title;
+}
+
 const ACCEPTED =
   ".pdf,.doc,.docx,.txt,.rtf,.png,.jpg,.jpeg,.heic,.webp,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain,text/rtf,image/*";
 
 const MAX_SIZE_MB = 25;
 
 export default function DocumentsPage() {
-  const [docs, setDocs] = useState<DocumentRow[]>([]);
+  const [uploads, setUploads] = useState<UploadDoc[]>([]);
+  const [attorneyDocs, setAttorneyDocs] = useState<AttorneyDoc[]>([]);
+  const [tab, setTab] = useState<TabKey>("all");
   const [search, setSearch] = useState("");
   const [isDragging, setIsDragging] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [userId, setUserId] = useState<string | null>(null);
+  const [viewing, setViewing] = useState<AttorneyDoc | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Load existing documents on mount
+  // Load both uploaded documents and attorney-delivered drafts
   useEffect(() => {
     let mounted = true;
 
@@ -62,28 +99,111 @@ export default function DocumentsPage() {
       const { data: sess } = await supabase.auth.getSession();
       const uid = sess.session?.user.id;
       if (!uid) {
-        setLoading(false);
+        if (mounted) {
+          setUploads([]);
+          setAttorneyDocs([]);
+          setUserId(null);
+          setLoading(false);
+        }
         return;
       }
       if (!mounted) return;
       setUserId(uid);
 
-      const { data, error: dbErr } = await supabase
-        .from("documents")
-        .select("*")
-        .order("uploaded_at", { ascending: false });
+      // Pull both sources in parallel. Both are scoped by explicit user_id
+      // filter + RLS.
+      const [docsRes, draftsRes] = await Promise.all([
+        supabase
+          .from("documents")
+          .select("*")
+          .eq("user_id", uid)
+          .order("uploaded_at", { ascending: false }),
+        supabase
+          .from("drafts")
+          .select("id, user_id, title, draft_content, sent_at, created_at, status")
+          .eq("user_id", uid)
+          .eq("status", "sent")
+          .order("sent_at", { ascending: false }),
+      ]);
 
-      if (dbErr) {
-        setError(dbErr.message);
-      } else if (data && mounted) {
-        setDocs(data as DocumentRow[]);
+      if (!mounted) return;
+
+      if (docsRes.error) {
+        setError(docsRes.error.message);
+        setUploads([]);
+      } else {
+        setUploads(
+          ((docsRes.data ?? []) as Array<{
+            id: string;
+            user_id: string;
+            filename: string;
+            storage_path: string;
+            size_bytes: number;
+            mime_type: string | null;
+            source: UploadDoc["source"];
+            status: UploadDoc["status"];
+            uploaded_at: string;
+          }>).map((d) => ({
+            kind: "upload" as const,
+            id: d.id,
+            user_id: d.user_id,
+            filename: d.filename,
+            storage_path: d.storage_path,
+            size_bytes: d.size_bytes,
+            mime_type: d.mime_type,
+            source: d.source,
+            status: d.status,
+            created_at: d.uploaded_at,
+          }))
+        );
       }
+
+      if (draftsRes.error) {
+        // Non-fatal: show uploads even if drafts query fails
+        console.error("drafts load error", draftsRes.error);
+        setAttorneyDocs([]);
+      } else {
+        setAttorneyDocs(
+          ((draftsRes.data ?? []) as Array<{
+            id: string;
+            user_id: string;
+            title: string;
+            draft_content: string;
+            sent_at: string | null;
+            created_at: string;
+          }>).map((d) => ({
+            kind: "attorney" as const,
+            id: d.id,
+            user_id: d.user_id,
+            title: d.title,
+            body: d.draft_content,
+            sent_at: d.sent_at,
+            created_at: d.created_at,
+          }))
+        );
+      }
+
       setLoading(false);
     };
 
     load();
+
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        if (!mounted) return;
+        // Any auth change: wipe local state and reload for the new identity
+        setUploads([]);
+        setAttorneyDocs([]);
+        setViewing(null);
+        setUserId(session?.user?.id ?? null);
+        setLoading(true);
+        load();
+      }
+    );
+
     return () => {
       mounted = false;
+      authListener.subscription.unsubscribe();
     };
   }, []);
 
@@ -94,7 +214,8 @@ export default function DocumentsPage() {
         .slice(2, 9)}`;
 
       // Optimistic uploading row
-      const optimistic: DocumentRow = {
+      const optimistic: UploadDoc = {
+        kind: "upload",
         id: tempId,
         user_id: uid,
         filename: file.name,
@@ -103,9 +224,9 @@ export default function DocumentsPage() {
         mime_type: file.type || "application/octet-stream",
         source: "client_upload",
         status: "uploading",
-        uploaded_at: new Date().toISOString(),
+        created_at: new Date().toISOString(),
       };
-      setDocs((prev) => [optimistic, ...prev]);
+      setUploads((prev) => [optimistic, ...prev]);
 
       // Sanitize the filename to keep storage paths clean
       const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
@@ -121,7 +242,7 @@ export default function DocumentsPage() {
         });
 
       if (upErr) {
-        setDocs((prev) => prev.filter((d) => d.id !== tempId));
+        setUploads((prev) => prev.filter((d) => d.id !== tempId));
         setError(`${file.name}: ${upErr.message}`);
         return;
       }
@@ -144,13 +265,24 @@ export default function DocumentsPage() {
       if (dbErr || !row) {
         // Roll back the storage upload
         await supabase.storage.from("documents").remove([storagePath]);
-        setDocs((prev) => prev.filter((d) => d.id !== tempId));
+        setUploads((prev) => prev.filter((d) => d.id !== tempId));
         setError(`${file.name}: ${dbErr?.message ?? "DB insert failed"}`);
         return;
       }
 
-      // Replace optimistic row with real row
-      setDocs((prev) => prev.map((d) => (d.id === tempId ? (row as DocumentRow) : d)));
+      const realRow: UploadDoc = {
+        kind: "upload",
+        id: row.id,
+        user_id: row.user_id,
+        filename: row.filename,
+        storage_path: row.storage_path,
+        size_bytes: row.size_bytes,
+        mime_type: row.mime_type,
+        source: row.source,
+        status: row.status,
+        created_at: row.uploaded_at,
+      };
+      setUploads((prev) => prev.map((d) => (d.id === tempId ? realRow : d)));
     },
     []
   );
@@ -214,7 +346,7 @@ export default function DocumentsPage() {
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
-  const handleDelete = async (doc: DocumentRow) => {
+  const handleDelete = async (doc: UploadDoc) => {
     const ok = window.confirm(`Delete "${doc.filename}"? This cannot be undone.`);
     if (!ok) return;
 
@@ -230,10 +362,10 @@ export default function DocumentsPage() {
       setError(delErr.message);
       return;
     }
-    setDocs((prev) => prev.filter((d) => d.id !== doc.id));
+    setUploads((prev) => prev.filter((d) => d.id !== doc.id));
   };
 
-  const handleDownload = async (doc: DocumentRow) => {
+  const handleDownload = async (doc: UploadDoc) => {
     const { data, error: dlErr } = await supabase.storage
       .from("documents")
       .createSignedUrl(doc.storage_path, 60);
@@ -244,11 +376,20 @@ export default function DocumentsPage() {
     window.open(data.signedUrl, "_blank");
   };
 
-  const filtered = docs.filter((d) =>
-    d.filename.toLowerCase().includes(search.toLowerCase())
+  // Build the unified, filtered, searched list
+  const unified: UnifiedItem[] = [
+    ...(tab === "attorney" ? [] : uploads),
+    ...(tab === "uploads" ? [] : attorneyDocs),
+  ].sort((a, b) => (itemDate(b) ?? "").localeCompare(itemDate(a) ?? ""));
+
+  const filtered = unified.filter((item) =>
+    itemTitle(item).toLowerCase().includes(search.toLowerCase())
   );
 
-  const statusBadge = (status: DocumentRow["status"]) => {
+  const uploadsCount = uploads.length;
+  const attorneyCount = attorneyDocs.length;
+
+  const uploadStatusBadge = (status: UploadDoc["status"]) => {
     switch (status) {
       case "uploading":
         return (
@@ -288,6 +429,13 @@ export default function DocumentsPage() {
     }
   };
 
+  const attorneyBadge = () => (
+    <span className="inline-flex items-center gap-1.5 px-2 py-0.5 bg-[#7A8B6F]/15 text-[#7A8B6F] text-[10px] font-semibold rounded-full uppercase tracking-wider">
+      <ShieldCheck className="w-3 h-3" />
+      From Attorney
+    </span>
+  );
+
   return (
     <DashboardShell title="Documents">
       <input
@@ -317,6 +465,45 @@ export default function DocumentsPage() {
         </button>
       </div>
 
+      {/* Tabs */}
+      <div className="flex gap-2 mb-6 border-b border-[#1F1810]/10">
+        <button
+          onClick={() => setTab("all")}
+          className={`px-5 py-3 text-sm font-medium border-b-2 transition-all ${
+            tab === "all"
+              ? "border-[#C17832] text-[#1F1810]"
+              : "border-transparent text-[#6B5B4E] hover:text-[#1F1810]"
+          }`}
+        >
+          All{" "}
+          <span className="ml-1 text-xs text-[#A89279]">
+            ({uploadsCount + attorneyCount})
+          </span>
+        </button>
+        <button
+          onClick={() => setTab("uploads")}
+          className={`px-5 py-3 text-sm font-medium border-b-2 transition-all ${
+            tab === "uploads"
+              ? "border-[#C17832] text-[#1F1810]"
+              : "border-transparent text-[#6B5B4E] hover:text-[#1F1810]"
+          }`}
+        >
+          Your Uploads{" "}
+          <span className="ml-1 text-xs text-[#A89279]">({uploadsCount})</span>
+        </button>
+        <button
+          onClick={() => setTab("attorney")}
+          className={`px-5 py-3 text-sm font-medium border-b-2 transition-all ${
+            tab === "attorney"
+              ? "border-[#7A8B6F] text-[#1F1810]"
+              : "border-transparent text-[#6B5B4E] hover:text-[#1F1810]"
+          }`}
+        >
+          From Your Attorney{" "}
+          <span className="ml-1 text-xs text-[#A89279]">({attorneyCount})</span>
+        </button>
+      </div>
+
       {/* Search */}
       <div className="relative mb-6">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#A89279]" />
@@ -342,42 +529,44 @@ export default function DocumentsPage() {
         </div>
       )}
 
-      {/* Drop zone */}
-      <div
-        onDrop={handleDrop}
-        onDragOver={handleDragOver}
-        onDragLeave={handleDragLeave}
-        onClick={docs.length === 0 ? handleUploadClick : undefined}
-        className={`mb-6 border-2 border-dashed rounded-2xl p-10 text-center transition-all ${
-          isDragging
-            ? "border-[#C17832] bg-[#C17832]/5"
-            : "border-[#1F1810]/15 bg-white hover:border-[#C17832]/40"
-        } ${docs.length === 0 ? "cursor-pointer" : ""}`}
-      >
-        <div className="w-14 h-14 bg-[#F5F0EB] rounded-2xl flex items-center justify-center mx-auto mb-4">
-          <Upload className="w-6 h-6 text-[#C17832]" />
+      {/* Drop zone — only show on All / Uploads tabs */}
+      {tab !== "attorney" && (
+        <div
+          onDrop={handleDrop}
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
+          onClick={uploadsCount === 0 ? handleUploadClick : undefined}
+          className={`mb-6 border-2 border-dashed rounded-2xl p-10 text-center transition-all ${
+            isDragging
+              ? "border-[#C17832] bg-[#C17832]/5"
+              : "border-[#1F1810]/15 bg-white hover:border-[#C17832]/40"
+          } ${uploadsCount === 0 ? "cursor-pointer" : ""}`}
+        >
+          <div className="w-14 h-14 bg-[#F5F0EB] rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <Upload className="w-6 h-6 text-[#C17832]" />
+          </div>
+          <p className="text-sm font-semibold text-[#1F1810] mb-1">
+            {isDragging
+              ? "Drop files to upload"
+              : "Drag files here or click to browse"}
+          </p>
+          <p className="text-xs text-[#6B5B4E]">
+            PDF, DOC, DOCX, TXT, or image files · Max {MAX_SIZE_MB}MB each
+          </p>
+          {uploadsCount === 0 && !loading && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                handleUploadClick();
+              }}
+              className="mt-5 inline-flex items-center gap-2 px-5 py-2.5 bg-[#C17832] text-white rounded-lg text-sm font-medium hover:bg-[#A8621F] transition-all"
+            >
+              <Upload className="w-4 h-4" />
+              Choose files
+            </button>
+          )}
         </div>
-        <p className="text-sm font-semibold text-[#1F1810] mb-1">
-          {isDragging
-            ? "Drop files to upload"
-            : "Drag files here or click to browse"}
-        </p>
-        <p className="text-xs text-[#6B5B4E]">
-          PDF, DOC, DOCX, TXT, or image files · Max {MAX_SIZE_MB}MB each
-        </p>
-        {docs.length === 0 && !loading && (
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              handleUploadClick();
-            }}
-            className="mt-5 inline-flex items-center gap-2 px-5 py-2.5 bg-[#C17832] text-white rounded-lg text-sm font-medium hover:bg-[#A8621F] transition-all"
-          >
-            <Upload className="w-4 h-4" />
-            Choose files
-          </button>
-        )}
-      </div>
+      )}
 
       {/* Loading */}
       {loading && (
@@ -395,63 +584,152 @@ export default function DocumentsPage() {
             </p>
           </div>
           <ul className="divide-y divide-[#1F1810]/5">
-            {filtered.map((doc) => (
-              <li
-                key={doc.id}
-                className="px-6 py-4 flex items-center justify-between gap-4 hover:bg-[#FAF8F5] transition-colors group"
-              >
-                <div className="flex items-center gap-4 min-w-0 flex-1">
-                  <div className="w-10 h-10 bg-[#F5F0EB] rounded-lg flex items-center justify-center flex-shrink-0">
-                    <FileText className="w-5 h-5 text-[#C17832]" />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <p className="text-sm font-medium text-[#1F1810] truncate">
-                      {doc.filename}
-                    </p>
-                    <p className="text-xs text-[#A89279] mt-0.5">
-                      {fileTypeLabel(doc.mime_type)} ·{" "}
-                      {formatBytes(doc.size_bytes)} ·{" "}
-                      {new Date(doc.uploaded_at).toLocaleDateString()}
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3 flex-shrink-0">
-                  {statusBadge(doc.status)}
-                  {doc.storage_path && (
-                    <button
-                      onClick={() => handleDownload(doc)}
-                      className="p-2 hover:bg-[#1F1810]/5 rounded-lg transition-colors text-[#6B5B4E] hover:text-[#1F1810] opacity-0 group-hover:opacity-100"
-                      aria-label="Download"
-                    >
-                      <Download className="w-4 h-4" />
-                    </button>
-                  )}
-                  <button
-                    onClick={() => handleDelete(doc)}
-                    className="p-2 hover:bg-red-50 rounded-lg transition-colors text-[#6B5B4E] hover:text-red-600 opacity-0 group-hover:opacity-100"
-                    aria-label="Delete"
+            {filtered.map((item) => {
+              if (item.kind === "upload") {
+                const doc = item;
+                return (
+                  <li
+                    key={`up-${doc.id}`}
+                    className="px-6 py-4 flex items-center justify-between gap-4 hover:bg-[#FAF8F5] transition-colors group"
                   >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
-                </div>
-              </li>
-            ))}
+                    <div className="flex items-center gap-4 min-w-0 flex-1">
+                      <div className="w-10 h-10 bg-[#F5F0EB] rounded-lg flex items-center justify-center flex-shrink-0">
+                        <FileText className="w-5 h-5 text-[#C17832]" />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm font-medium text-[#1F1810] truncate">
+                          {doc.filename}
+                        </p>
+                        <p className="text-xs text-[#A89279] mt-0.5">
+                          {fileTypeLabel(doc.mime_type)} ·{" "}
+                          {formatBytes(doc.size_bytes)} ·{" "}
+                          {new Date(doc.created_at).toLocaleDateString()}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3 flex-shrink-0">
+                      {uploadStatusBadge(doc.status)}
+                      {doc.storage_path && (
+                        <button
+                          onClick={() => handleDownload(doc)}
+                          className="p-2 hover:bg-[#1F1810]/5 rounded-lg transition-colors text-[#6B5B4E] hover:text-[#1F1810] opacity-0 group-hover:opacity-100"
+                          aria-label="Download"
+                        >
+                          <Download className="w-4 h-4" />
+                        </button>
+                      )}
+                      <button
+                        onClick={() => handleDelete(doc)}
+                        className="p-2 hover:bg-red-50 rounded-lg transition-colors text-[#6B5B4E] hover:text-red-600 opacity-0 group-hover:opacity-100"
+                        aria-label="Delete"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </li>
+                );
+              }
+
+              const ad = item;
+              return (
+                <li
+                  key={`att-${ad.id}`}
+                  className="px-6 py-4 flex items-center justify-between gap-4 hover:bg-[#FAF8F5] transition-colors group cursor-pointer"
+                  onClick={() => setViewing(ad)}
+                >
+                  <div className="flex items-center gap-4 min-w-0 flex-1">
+                    <div className="w-10 h-10 bg-[#7A8B6F]/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <ShieldCheck className="w-5 h-5 text-[#7A8B6F]" />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm font-medium text-[#1F1810] truncate">
+                        {ad.title}
+                      </p>
+                      <p className="text-xs text-[#A89279] mt-0.5">
+                        Delivered{" "}
+                        {new Date(
+                          ad.sent_at ?? ad.created_at
+                        ).toLocaleDateString()}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3 flex-shrink-0">
+                    {attorneyBadge()}
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setViewing(ad);
+                      }}
+                      className="p-2 hover:bg-[#1F1810]/5 rounded-lg transition-colors text-[#6B5B4E] hover:text-[#1F1810]"
+                      aria-label="View"
+                    >
+                      <Eye className="w-4 h-4" />
+                    </button>
+                  </div>
+                </li>
+              );
+            })}
           </ul>
         </div>
       )}
 
       {/* Empty hint */}
-      {!loading && docs.length === 0 && (
+      {!loading && filtered.length === 0 && (
         <p className="text-xs text-center text-[#A89279] mt-4">
-          Documents created by Allora or uploaded by you appear here. Need
-          help?{" "}
-          <a
-            href="/dashboard/chat"
-            className="text-[#C17832] hover:underline font-medium"
-          >
-            Chat with Allora →
-          </a>
+          {tab === "attorney"
+            ? "Nothing from your attorney yet. Documents your attorney reviews and sends will show up here."
+            : "Documents created by Allora or uploaded by you appear here. Need help?"}{" "}
+          {tab !== "attorney" && (
+            <a
+              href="/dashboard/chat"
+              className="text-[#C17832] hover:underline font-medium"
+            >
+              Chat with Allora →
+            </a>
+          )}
         </p>
+      )}
+
+      {/* Attorney-doc viewer modal */}
+      {viewing && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#1F1810]/60 backdrop-blur-sm overflow-y-auto"
+          onClick={() => setViewing(null)}
+        >
+          <div
+            className="relative bg-[#FAF8F5] rounded-2xl shadow-2xl w-full max-w-3xl my-8 max-h-[90vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="p-6 border-b border-[#1F1810]/10 sticky top-0 bg-[#FAF8F5] z-10 flex items-start justify-between gap-4">
+              <div className="flex-1">
+                <p className="text-[10px] font-semibold text-[#7A8B6F] uppercase tracking-widest mb-1 flex items-center gap-1.5">
+                  <ShieldCheck className="w-3 h-3" />
+                  Delivered by your attorney
+                </p>
+                <h3 className="text-xl font-heading text-[#1F1810]">
+                  {viewing.title}
+                </h3>
+                <p className="text-xs text-[#A89279] mt-1">
+                  {new Date(
+                    viewing.sent_at ?? viewing.created_at
+                  ).toLocaleString()}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setViewing(null)}
+                className="text-sm text-[#6B5B4E] hover:text-[#1F1810]"
+              >
+                Close
+              </button>
+            </div>
+            <div className="p-6">
+              <div className="bg-white border border-[#1F1810]/8 rounded-lg p-6 text-sm text-[#1F1810] whitespace-pre-wrap leading-relaxed">
+                {viewing.body}
+              </div>
+            </div>
+          </div>
+        </div>
       )}
     </DashboardShell>
   );

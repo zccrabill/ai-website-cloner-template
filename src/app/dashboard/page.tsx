@@ -1,7 +1,9 @@
 "use client";
 
+import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import DashboardShell from "@/components/DashboardShell";
+import { supabase } from "@/lib/supabase";
 import {
   FileCheck,
   Briefcase,
@@ -11,17 +13,81 @@ import {
   Users,
 } from "lucide-react";
 
-export default function DashboardPage() {
-  const userTier: string = "Grow"; // Placeholder - will be fetched from subscription data
-  const isFreeTier = userTier === "Explore";
+const TIER_LABELS: Record<string, string> = {
+  explore: "Explore",
+  build: "Build",
+  grow: "Grow",
+  lead: "Lead",
+};
 
-  const stats = {
-    conversations: 0,
-    consultations:
-      userTier === "Build" ? 0 : userTier === "Grow" ? 1 : userTier === "Lead" ? 2 : 0,
-    documents: 0,
-    billingDate: "May 9, 2026",
-  };
+// Monthly consultation allotment by tier
+const CONSULTATIONS_BY_TIER: Record<string, number> = {
+  explore: 0,
+  build: 1,
+  grow: 2,
+  lead: 3,
+};
+
+export default function DashboardPage() {
+  const [userTier, setUserTier] = useState<string>("explore");
+  const [subStatus, setSubStatus] = useState<string>("inactive");
+  const [conversationsCount, setConversationsCount] = useState(0);
+  const [documentsCount, setDocumentsCount] = useState(0);
+
+  const loadDashboard = useCallback(async () => {
+    const { data: sess } = await supabase.auth.getSession();
+    const session = sess.session;
+    if (!session) {
+      setUserTier("explore");
+      setSubStatus("inactive");
+      setConversationsCount(0);
+      setDocumentsCount(0);
+      return;
+    }
+
+    // Subscription tier + status from members table
+    const { data: member } = await supabase
+      .from("members")
+      .select("subscription_tier, subscription_status")
+      .eq("user_id", session.user.id)
+      .maybeSingle();
+
+    setUserTier(member?.subscription_tier ?? "explore");
+    setSubStatus(member?.subscription_status ?? "inactive");
+
+    // Live usage counts, scoped by RLS + explicit user_id filter
+    const [convRes, docRes] = await Promise.all([
+      supabase
+        .from("conversations")
+        .select("id", { count: "exact", head: true })
+        .eq("user_id", session.user.id),
+      supabase
+        .from("documents")
+        .select("id", { count: "exact", head: true })
+        .eq("user_id", session.user.id),
+    ]);
+
+    setConversationsCount(convRes.count ?? 0);
+    setDocumentsCount(docRes.count ?? 0);
+  }, []);
+
+  useEffect(() => {
+    // loadDashboard awaits getSession before touching state, so all setState
+    // calls happen after a microtask boundary. The lint rule still flags this
+    // because it traces into the useCallback body; safe to disable here.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    loadDashboard();
+    const { data: authListener } = supabase.auth.onAuthStateChange(() => {
+      loadDashboard();
+    });
+    return () => {
+      authListener.subscription.unsubscribe();
+    };
+  }, [loadDashboard]);
+
+  const tierLabel = TIER_LABELS[userTier] ?? userTier;
+  const isFreeTier = userTier === "explore";
+  const consultationsRemaining = CONSULTATIONS_BY_TIER[userTier] ?? 0;
 
   const quickActions = [
     { icon: FileCheck, label: "Review a Contract", href: "/dashboard/chat?action=contract-review" },
@@ -37,7 +103,9 @@ export default function DashboardPage() {
       {/* Greeting */}
       <div className="mb-10">
         <h2 className="text-3xl font-bold text-[#1F1810] mb-2">Welcome back</h2>
-        <p className="text-[#6B5B4E]">Your legal solutions are ready when you are.</p>
+        <p className="text-[#6B5B4E]">
+          Your {tierLabel} plan is ready when you are.
+        </p>
       </div>
 
       {/* Tier Indicator */}
@@ -49,32 +117,37 @@ export default function DashboardPage() {
               Upgrade to Build, Grow, or Lead to unlock full features
             </p>
           </div>
-          <a
+          <Link
             href="/#pricing"
             className="text-xs font-medium text-amber-600 hover:text-amber-700 transition-colors"
           >
             View Plans →
-          </a>
+          </Link>
         </div>
       )}
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         <div className="bg-white border border-[#1F1810]/8 rounded-lg p-6 hover:border-[#1F1810]/12 transition-all">
+          <p className="text-xs font-medium text-[#6B5B4E] mb-2">Current Plan</p>
+          <p className="text-3xl font-bold text-[#C17832]">{tierLabel}</p>
+          <p className="text-[10px] text-[#A89279] mt-1 capitalize">
+            {subStatus}
+          </p>
+        </div>
+        <div className="bg-white border border-[#1F1810]/8 rounded-lg p-6 hover:border-[#1F1810]/12 transition-all">
           <p className="text-xs font-medium text-[#6B5B4E] mb-2">Allora Conversations</p>
-          <p className="text-3xl font-bold text-[#1F1810]">{stats.conversations}</p>
+          <p className="text-3xl font-bold text-[#1F1810]">{conversationsCount}</p>
         </div>
         <div className="bg-white border border-[#1F1810]/8 rounded-lg p-6 hover:border-[#1F1810]/12 transition-all">
-          <p className="text-xs font-medium text-[#6B5B4E] mb-2">Consultations Remaining</p>
-          <p className="text-3xl font-bold text-[#C17832]">{stats.consultations}</p>
+          <p className="text-xs font-medium text-[#6B5B4E] mb-2">Consultations / mo</p>
+          <p className="text-3xl font-bold text-[#C17832]">
+            {consultationsRemaining}
+          </p>
         </div>
         <div className="bg-white border border-[#1F1810]/8 rounded-lg p-6 hover:border-[#1F1810]/12 transition-all">
-          <p className="text-xs font-medium text-[#6B5B4E] mb-2">Documents This Month</p>
-          <p className="text-3xl font-bold text-[#1F1810]">{stats.documents}</p>
-        </div>
-        <div className="bg-white border border-[#1F1810]/8 rounded-lg p-6 hover:border-[#1F1810]/12 transition-all">
-          <p className="text-xs font-medium text-[#6B5B4E] mb-2">Next Billing Date</p>
-          <p className="text-sm font-semibold text-[#1F1810]">{stats.billingDate}</p>
+          <p className="text-xs font-medium text-[#6B5B4E] mb-2">Documents</p>
+          <p className="text-3xl font-bold text-[#1F1810]">{documentsCount}</p>
         </div>
       </div>
 
@@ -104,12 +177,26 @@ export default function DashboardPage() {
       <div>
         <h3 className="text-lg font-semibold text-[#1F1810] mb-4">Recent Activity</h3>
         <div className="bg-white border border-[#1F1810]/8 rounded-lg p-6">
-          <div className="text-center py-8">
-            <p className="text-[#6B5B4E] text-sm">No activity yet</p>
-            <p className="text-[#A89279] text-xs mt-1">
-              Start by chatting with Allora or scheduling a consultation
-            </p>
-          </div>
+          {conversationsCount === 0 && documentsCount === 0 ? (
+            <div className="text-center py-8">
+              <p className="text-[#6B5B4E] text-sm">No activity yet</p>
+              <p className="text-[#A89279] text-xs mt-1">
+                Start by chatting with Allora or scheduling a consultation
+              </p>
+            </div>
+          ) : (
+            <div className="text-sm text-[#6B5B4E]">
+              You have{" "}
+              <span className="font-semibold text-[#1F1810]">
+                {conversationsCount}
+              </span>{" "}
+              conversation{conversationsCount === 1 ? "" : "s"} and{" "}
+              <span className="font-semibold text-[#1F1810]">
+                {documentsCount}
+              </span>{" "}
+              document{documentsCount === 1 ? "" : "s"} on file.
+            </div>
+          )}
         </div>
       </div>
     </DashboardShell>
