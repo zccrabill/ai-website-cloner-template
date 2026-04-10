@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import DashboardShell from "@/components/DashboardShell";
+import { supabase } from "@/lib/supabase";
 import {
   FileText,
   Upload,
@@ -12,13 +13,16 @@ import {
   CheckCircle2,
 } from "lucide-react";
 
-interface UploadedDoc {
+interface DocumentRow {
   id: string;
-  name: string;
-  size: number;
-  type: string;
-  uploadedAt: Date;
-  status: "uploading" | "uploaded" | "reviewing" | "ready";
+  user_id: string;
+  filename: string;
+  storage_path: string;
+  size_bytes: number;
+  mime_type: string | null;
+  source: "client_upload" | "allora_draft" | "attorney_final";
+  status: "uploading" | "uploaded" | "reviewing" | "ready" | "sent";
+  uploaded_at: string;
 }
 
 function formatBytes(bytes: number): string {
@@ -27,79 +31,158 @@ function formatBytes(bytes: number): string {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
-function fileIcon(type: string): string {
-  if (type.includes("pdf")) return "PDF";
-  if (type.includes("word") || type.includes("document")) return "DOC";
-  if (type.includes("image")) return "IMG";
-  if (type.includes("text")) return "TXT";
+function fileTypeLabel(mime: string | null): string {
+  if (!mime) return "FILE";
+  if (mime.includes("pdf")) return "PDF";
+  if (mime.includes("word") || mime.includes("document")) return "DOC";
+  if (mime.includes("image")) return "IMG";
+  if (mime.includes("text")) return "TXT";
   return "FILE";
 }
 
 const ACCEPTED =
-  ".pdf,.doc,.docx,.txt,.rtf,.png,.jpg,.jpeg,.heic,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain,image/*";
+  ".pdf,.doc,.docx,.txt,.rtf,.png,.jpg,.jpeg,.heic,.webp,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain,text/rtf,image/*";
 
 const MAX_SIZE_MB = 25;
 
 export default function DocumentsPage() {
-  const [docs, setDocs] = useState<UploadedDoc[]>([]);
+  const [docs, setDocs] = useState<DocumentRow[]>([]);
   const [search, setSearch] = useState("");
   const [isDragging, setIsDragging] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [userId, setUserId] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleFiles = useCallback((files: FileList | File[]) => {
-    setError(null);
-    const fileArray = Array.from(files);
-    const validFiles: UploadedDoc[] = [];
-    const errors: string[] = [];
+  // Load existing documents on mount
+  useEffect(() => {
+    let mounted = true;
 
-    for (const file of fileArray) {
-      if (file.size > MAX_SIZE_MB * 1024 * 1024) {
-        errors.push(`${file.name} is too large (max ${MAX_SIZE_MB}MB)`);
-        continue;
+    const load = async () => {
+      const { data: sess } = await supabase.auth.getSession();
+      const uid = sess.session?.user.id;
+      if (!uid) {
+        setLoading(false);
+        return;
       }
-      validFiles.push({
-        id: `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
-        name: file.name,
-        size: file.size,
-        type: file.type || "application/octet-stream",
-        uploadedAt: new Date(),
-        status: "uploading",
-      });
-    }
+      if (!mounted) return;
+      setUserId(uid);
 
-    if (errors.length > 0) setError(errors.join(" · "));
-    if (validFiles.length === 0) return;
+      const { data, error: dbErr } = await supabase
+        .from("documents")
+        .select("*")
+        .order("uploaded_at", { ascending: false });
 
-    setDocs((prev) => [...validFiles, ...prev]);
+      if (dbErr) {
+        setError(dbErr.message);
+      } else if (data && mounted) {
+        setDocs(data as DocumentRow[]);
+      }
+      setLoading(false);
+    };
 
-    // Simulate upload + review pipeline
-    validFiles.forEach((doc, idx) => {
-      setTimeout(() => {
-        setDocs((prev) =>
-          prev.map((d) =>
-            d.id === doc.id ? { ...d, status: "uploaded" as const } : d
-          )
-        );
-      }, 800 + idx * 200);
-
-      setTimeout(() => {
-        setDocs((prev) =>
-          prev.map((d) =>
-            d.id === doc.id ? { ...d, status: "reviewing" as const } : d
-          )
-        );
-      }, 1600 + idx * 200);
-
-      setTimeout(() => {
-        setDocs((prev) =>
-          prev.map((d) =>
-            d.id === doc.id ? { ...d, status: "ready" as const } : d
-          )
-        );
-      }, 3200 + idx * 200);
-    });
+    load();
+    return () => {
+      mounted = false;
+    };
   }, []);
+
+  const uploadFile = useCallback(
+    async (file: File, uid: string) => {
+      const tempId = `temp-${Date.now()}-${Math.random()
+        .toString(36)
+        .slice(2, 9)}`;
+
+      // Optimistic uploading row
+      const optimistic: DocumentRow = {
+        id: tempId,
+        user_id: uid,
+        filename: file.name,
+        storage_path: "",
+        size_bytes: file.size,
+        mime_type: file.type || "application/octet-stream",
+        source: "client_upload",
+        status: "uploading",
+        uploaded_at: new Date().toISOString(),
+      };
+      setDocs((prev) => [optimistic, ...prev]);
+
+      // Sanitize the filename to keep storage paths clean
+      const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+      const storagePath = `${uid}/${Date.now()}_${safeName}`;
+
+      // Upload to Storage
+      const { error: upErr } = await supabase.storage
+        .from("documents")
+        .upload(storagePath, file, {
+          cacheControl: "3600",
+          upsert: false,
+          contentType: file.type || undefined,
+        });
+
+      if (upErr) {
+        setDocs((prev) => prev.filter((d) => d.id !== tempId));
+        setError(`${file.name}: ${upErr.message}`);
+        return;
+      }
+
+      // Insert DB row
+      const { data: row, error: dbErr } = await supabase
+        .from("documents")
+        .insert({
+          user_id: uid,
+          filename: file.name,
+          storage_path: storagePath,
+          size_bytes: file.size,
+          mime_type: file.type || null,
+          source: "client_upload",
+          status: "uploaded",
+        })
+        .select()
+        .single();
+
+      if (dbErr || !row) {
+        // Roll back the storage upload
+        await supabase.storage.from("documents").remove([storagePath]);
+        setDocs((prev) => prev.filter((d) => d.id !== tempId));
+        setError(`${file.name}: ${dbErr?.message ?? "DB insert failed"}`);
+        return;
+      }
+
+      // Replace optimistic row with real row
+      setDocs((prev) => prev.map((d) => (d.id === tempId ? (row as DocumentRow) : d)));
+    },
+    []
+  );
+
+  const handleFiles = useCallback(
+    async (files: FileList | File[]) => {
+      setError(null);
+      if (!userId) {
+        setError("You must be signed in to upload documents.");
+        return;
+      }
+
+      const fileArray = Array.from(files);
+      const validFiles: File[] = [];
+      const errs: string[] = [];
+
+      for (const file of fileArray) {
+        if (file.size > MAX_SIZE_MB * 1024 * 1024) {
+          errs.push(`${file.name} is too large (max ${MAX_SIZE_MB}MB)`);
+          continue;
+        }
+        validFiles.push(file);
+      }
+
+      if (errs.length > 0) setError(errs.join(" · "));
+      // Upload sequentially so progress is visible and rate-limit-friendly
+      for (const f of validFiles) {
+        await uploadFile(f, userId);
+      }
+    },
+    [userId, uploadFile]
+  );
 
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
@@ -122,9 +205,7 @@ export default function DocumentsPage() {
     setIsDragging(false);
   };
 
-  const handleUploadClick = () => {
-    fileInputRef.current?.click();
-  };
+  const handleUploadClick = () => fileInputRef.current?.click();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -133,15 +214,41 @@ export default function DocumentsPage() {
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
-  const handleDelete = (id: string) => {
-    setDocs((prev) => prev.filter((d) => d.id !== id));
+  const handleDelete = async (doc: DocumentRow) => {
+    const ok = window.confirm(`Delete "${doc.filename}"? This cannot be undone.`);
+    if (!ok) return;
+
+    // Remove from storage first
+    if (doc.storage_path) {
+      await supabase.storage.from("documents").remove([doc.storage_path]);
+    }
+    const { error: delErr } = await supabase
+      .from("documents")
+      .delete()
+      .eq("id", doc.id);
+    if (delErr) {
+      setError(delErr.message);
+      return;
+    }
+    setDocs((prev) => prev.filter((d) => d.id !== doc.id));
+  };
+
+  const handleDownload = async (doc: DocumentRow) => {
+    const { data, error: dlErr } = await supabase.storage
+      .from("documents")
+      .createSignedUrl(doc.storage_path, 60);
+    if (dlErr || !data) {
+      setError(dlErr?.message ?? "Failed to create download link");
+      return;
+    }
+    window.open(data.signedUrl, "_blank");
   };
 
   const filtered = docs.filter((d) =>
-    d.name.toLowerCase().includes(search.toLowerCase())
+    d.filename.toLowerCase().includes(search.toLowerCase())
   );
 
-  const statusBadge = (status: UploadedDoc["status"]) => {
+  const statusBadge = (status: DocumentRow["status"]) => {
     switch (status) {
       case "uploading":
         return (
@@ -171,12 +278,18 @@ export default function DocumentsPage() {
             Ready
           </span>
         );
+      case "sent":
+        return (
+          <span className="inline-flex items-center gap-1.5 px-2 py-0.5 bg-[#C17832] text-white text-[10px] font-medium rounded-full uppercase tracking-wider">
+            <CheckCircle2 className="w-3 h-3" />
+            Delivered
+          </span>
+        );
     }
   };
 
   return (
     <DashboardShell title="Documents">
-      {/* Hidden native file input */}
       <input
         ref={fileInputRef}
         type="file"
@@ -191,12 +304,13 @@ export default function DocumentsPage() {
         <div>
           <h2 className="text-2xl font-bold text-[#1F1810] mb-1">Documents</h2>
           <p className="text-sm text-[#6B5B4E]">
-            Your legal documents, contracts, and deliverables
+            Securely stored. Only you and your attorney can see these.
           </p>
         </div>
         <button
           onClick={handleUploadClick}
-          className="flex items-center gap-2 px-4 py-2.5 bg-[#1F1810] text-white rounded-lg text-sm font-medium hover:bg-[#C17832] transition-all"
+          disabled={!userId}
+          className="flex items-center gap-2 px-4 py-2.5 bg-[#1F1810] text-white rounded-lg text-sm font-medium hover:bg-[#C17832] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <Upload className="w-4 h-4" />
           Upload
@@ -228,7 +342,7 @@ export default function DocumentsPage() {
         </div>
       )}
 
-      {/* Drop zone (always visible, doubles as empty state) */}
+      {/* Drop zone */}
       <div
         onDrop={handleDrop}
         onDragOver={handleDragOver}
@@ -244,12 +358,14 @@ export default function DocumentsPage() {
           <Upload className="w-6 h-6 text-[#C17832]" />
         </div>
         <p className="text-sm font-semibold text-[#1F1810] mb-1">
-          {isDragging ? "Drop files to upload" : "Drag files here or click to browse"}
+          {isDragging
+            ? "Drop files to upload"
+            : "Drag files here or click to browse"}
         </p>
         <p className="text-xs text-[#6B5B4E]">
           PDF, DOC, DOCX, TXT, or image files · Max {MAX_SIZE_MB}MB each
         </p>
-        {docs.length === 0 && (
+        {docs.length === 0 && !loading && (
           <button
             onClick={(e) => {
               e.stopPropagation();
@@ -263,8 +379,15 @@ export default function DocumentsPage() {
         )}
       </div>
 
+      {/* Loading */}
+      {loading && (
+        <p className="text-center text-sm text-[#A89279] py-8">
+          Loading your documents…
+        </p>
+      )}
+
       {/* Document list */}
-      {filtered.length > 0 && (
+      {!loading && filtered.length > 0 && (
         <div className="bg-white border border-[#1F1810]/8 rounded-2xl overflow-hidden">
           <div className="px-6 py-4 border-b border-[#1F1810]/8 flex items-center justify-between">
             <p className="text-xs font-semibold text-[#6B5B4E] uppercase tracking-wider">
@@ -283,24 +406,28 @@ export default function DocumentsPage() {
                   </div>
                   <div className="min-w-0 flex-1">
                     <p className="text-sm font-medium text-[#1F1810] truncate">
-                      {doc.name}
+                      {doc.filename}
                     </p>
                     <p className="text-xs text-[#A89279] mt-0.5">
-                      {fileIcon(doc.type)} · {formatBytes(doc.size)} ·{" "}
-                      {doc.uploadedAt.toLocaleDateString()}
+                      {fileTypeLabel(doc.mime_type)} ·{" "}
+                      {formatBytes(doc.size_bytes)} ·{" "}
+                      {new Date(doc.uploaded_at).toLocaleDateString()}
                     </p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3 flex-shrink-0">
                   {statusBadge(doc.status)}
+                  {doc.storage_path && (
+                    <button
+                      onClick={() => handleDownload(doc)}
+                      className="p-2 hover:bg-[#1F1810]/5 rounded-lg transition-colors text-[#6B5B4E] hover:text-[#1F1810] opacity-0 group-hover:opacity-100"
+                      aria-label="Download"
+                    >
+                      <Download className="w-4 h-4" />
+                    </button>
+                  )}
                   <button
-                    className="p-2 hover:bg-[#1F1810]/5 rounded-lg transition-colors text-[#6B5B4E] hover:text-[#1F1810] opacity-0 group-hover:opacity-100"
-                    aria-label="Download"
-                  >
-                    <Download className="w-4 h-4" />
-                  </button>
-                  <button
-                    onClick={() => handleDelete(doc.id)}
+                    onClick={() => handleDelete(doc)}
                     className="p-2 hover:bg-red-50 rounded-lg transition-colors text-[#6B5B4E] hover:text-red-600 opacity-0 group-hover:opacity-100"
                     aria-label="Delete"
                   >
@@ -313,8 +440,8 @@ export default function DocumentsPage() {
         </div>
       )}
 
-      {/* Empty hint when no docs uploaded yet */}
-      {docs.length === 0 && (
+      {/* Empty hint */}
+      {!loading && docs.length === 0 && (
         <p className="text-xs text-center text-[#A89279] mt-4">
           Documents created by Allora or uploaded by you appear here. Need
           help?{" "}

@@ -14,6 +14,7 @@ import {
   LogOut,
   Menu,
   X,
+  ShieldCheck,
 } from "lucide-react";
 
 interface UserData {
@@ -32,6 +33,10 @@ const sidebarItems = [
   { icon: User, label: "My Account", href: "/dashboard/account" },
 ];
 
+const adminItems = [
+  { icon: ShieldCheck, label: "Review Queue", href: "/dashboard/review" },
+];
+
 export default function DashboardShell({
   children,
   title,
@@ -42,6 +47,7 @@ export default function DashboardShell({
   const router = useRouter();
   const pathname = usePathname();
   const [user, setUser] = useState<UserData | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
@@ -59,6 +65,18 @@ export default function DashboardShell({
         }
 
         setUser(session.user as UserData);
+
+        // Check role from members table
+        const { data: member } = await supabase
+          .from("members")
+          .select("role")
+          .eq("user_id", session.user.id)
+          .maybeSingle();
+
+        if (member?.role === "admin" || member?.role === "attorney") {
+          setIsAdmin(true);
+        }
+
         setIsLoading(false);
       } catch (error) {
         console.error("Auth error:", error);
@@ -148,6 +166,32 @@ export default function DashboardShell({
               </Link>
             );
           })}
+
+          {isAdmin && (
+            <div className="pt-4 mt-4 border-t border-[#1F1810]/8">
+              <p className="px-4 mb-2 text-[10px] font-semibold text-[#A89279] uppercase tracking-widest">
+                Attorney
+              </p>
+              {adminItems.map((item) => {
+                const IconComponent = item.icon;
+                const isActive = pathname === item.href;
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all ${
+                      isActive
+                        ? "bg-[#7A8B6F]/10 text-[#7A8B6F] border border-[#7A8B6F]/20"
+                        : "text-[#6B5B4E] hover:bg-[#F5F0EB] hover:text-[#1F1810]"
+                    }`}
+                  >
+                    <IconComponent className="w-5 h-5" />
+                    <span>{item.label}</span>
+                  </Link>
+                );
+              })}
+            </div>
+          )}
         </nav>
 
         <div className="p-4 border-t border-[#1F1810]/8 space-y-2">

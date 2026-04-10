@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import DashboardShell from "@/components/DashboardShell";
 import { Send, Bot, Sparkles, Clock, CheckCircle2 } from "lucide-react";
+import { supabase } from "@/lib/supabase";
 
 interface ChatMessage {
   role: "user" | "assistant";
@@ -14,6 +15,9 @@ export default function ChatPage() {
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isTyping, setIsTyping] = useState(false);
+  const [conversationId, setConversationId] = useState<string | null>(null);
+  const [readyForReview, setReadyForReview] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const suggestions = [
     "Review my contractor agreement for red flags",
@@ -24,67 +28,130 @@ export default function ChatPage() {
     "What insurance does my startup need?",
   ];
 
-  const generateResponse = (userInput: string): string => {
-    const text = userInput.toLowerCase();
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages, isTyping]);
 
-    if (/\b(contract|review|redline|nda|agreement|tos|terms|privacy policy|msa|sow|contractor)\b/.test(text)) {
-      return `Got it — let's review your contract. To do this thoroughly, I'll need a few things:\n\n1. **Upload the document** — head to Documents in the sidebar and drop the file in. PDF, DOCX, or pasted text all work.\n2. **Tell me the context** — who's the counterparty, what's the deal, and what's your role?\n3. **Highlight any specific concerns** — are there clauses that worry you, or do you want a full top-to-bottom review?\n\nOnce I have those, I'll do a fast first-pass review flagging risk areas, ambiguous language, and missing protections. An attorney will then review my work and finalize the redlines within 24 hours.`;
+  // Lazily create a conversation row on first send so messages stay grouped
+  const ensureConversation = async (firstMessage: string): Promise<string | null> => {
+    if (conversationId) return conversationId;
+    try {
+      const { data: userData } = await supabase.auth.getUser();
+      const uid = userData?.user?.id;
+      if (!uid) return null;
+
+      const { data: convo, error } = await supabase
+        .from("conversations")
+        .insert({
+          user_id: uid,
+          title: firstMessage.slice(0, 80),
+        })
+        .select("id")
+        .single();
+
+      if (error || !convo) return null;
+      setConversationId(convo.id);
+      return convo.id;
+    } catch {
+      return null;
     }
-
-    if (/\b(llc|incorporate|formation|form a|form an|business entity|c-?corp|s-?corp)\b/.test(text)) {
-      return `Forming a Colorado business — happy to help. A few questions to get us started:\n\n1. **What are you building?** A service business, a product company, raising venture capital, or something else?\n2. **Who's involved?** Solo founder or co-founders? Any planned employees soon?\n3. **Any tax considerations?** Do you want pass-through taxation, or are you optimizing for an investor-ready structure?\n\nIn most cases, an LLC is the best fit for early-stage Colorado businesses. If you're raising venture money, we'd lean toward a Delaware C-Corp. I can have an attorney prepare your filing, operating agreement, and EIN within 48 hours of getting your answers.`;
-    }
-
-    if (/\b(complian|gdpr|ccpa|cpa|hipaa|privacy|data)\b/.test(text)) {
-      return `Compliance work is one of my favorite areas. To scope this out:\n\n1. **What regulation(s)** are you concerned with? Colorado Privacy Act, GDPR, CCPA, HIPAA, something else?\n2. **What does your business do** with personal or sensitive data — collection, storage, processing, sharing?\n3. **Where are your customers?** Colorado only, U.S., international?\n\nDepending on your answers, I can produce a compliance gap analysis, draft policy updates, and recommend next steps. An attorney will validate everything before delivery.`;
-    }
-
-    if (/\b(non.?compete|severance|termination|employment|employee|fired|laid off)\b/.test(text)) {
-      return `Employment matters — important to handle carefully. A few things I need to know:\n\n1. **Are you the employer or the employee?**\n2. **What's the situation?** New offer, separation, dispute, or policy review?\n3. **Colorado-based?** Colorado has specific non-compete restrictions that may apply.\n\nNote: Colorado significantly limits non-compete enforceability for most employees. If you're the employee and were asked to sign one, it may not be enforceable. Send me the document and the context and I'll have an attorney review it within 24 hours.`;
-    }
-
-    if (/\b(cease.?and.?desist|trademark|copyright|infringement|ip|intellectual)\b/.test(text)) {
-      return `IP and cease-and-desist matters move fast — let's get you what you need.\n\n1. **What happened?** Who's doing what to whom?\n2. **What do you want as the outcome?** Stop the activity, monetary damages, both?\n3. **Do you have evidence?** Screenshots, dates, communications?\n\nI can draft a cease-and-desist letter or an IP licensing agreement quickly. An attorney will review and finalize before it goes out under their signature, which gives the letter real weight.`;
-    }
-
-    if (/\b(insurance|liability|risk)\b/.test(text)) {
-      return `Smart to think about insurance early. For most Colorado startups, the baseline coverage is:\n\n• **General liability** — covers third-party bodily injury and property damage\n• **Professional liability (E&O)** — covers mistakes in your professional services\n• **Cyber liability** — covers data breaches and cyber incidents\n• **Workers' comp** — required if you have W-2 employees in Colorado\n• **Directors & officers (D&O)** — important if you have a board or are raising capital\n\nI can help you understand what's required vs. recommended for your specific business. What's your industry and headcount?`;
-    }
-
-    if (/^\s*(hi|hey|hello|howdy|sup|yo|good (morning|afternoon|evening))/i.test(userInput.trim())) {
-      return `Hey! Great to see you in the dashboard. I'm Allora, your AI legal assistant. I can help with contracts, formation, compliance, employment, IP, and more — all attorney-reviewed.\n\nWhat are you working on today?`;
-    }
-
-    if (/\b(thank|thanks|thx)\b/.test(text)) {
-      return `Anytime! Let me know if you need anything else. I'm here 24/7 and an attorney is always one step behind me reviewing the substantive stuff.`;
-    }
-
-    return `Thanks for reaching out — I'd be happy to help with that.\n\nTo give you the most accurate guidance, I have a few questions:\n\n1. Could you tell me a bit more about your specific situation?\n2. Is this for a Colorado-based business?\n3. Is there a timeline or deadline I should be aware of?\n\nOnce I have those details, I'll draft a thorough response and have one of our attorneys review it. You can expect the attorney-reviewed answer within 24 hours.`;
   };
 
-  const handleSend = () => {
+  const handleSend = async () => {
     if (!message.trim()) return;
 
+    const sentText = message.trim();
     const userMsg: ChatMessage = {
       role: "user",
-      content: message.trim(),
+      content: sentText,
       timestamp: new Date(),
     };
 
-    setMessages((prev) => [...prev, userMsg]);
-    const sentText = message.trim();
+    const nextHistory = [...messages, userMsg];
+    setMessages(nextHistory);
     setMessage("");
     setIsTyping(true);
+    setReadyForReview(false);
 
-    setTimeout(() => {
-      const alloraMsg: ChatMessage = {
-        role: "assistant",
-        content: generateResponse(sentText),
-        timestamp: new Date(),
+    const convId = await ensureConversation(sentText);
+
+    // Persist user message (best-effort)
+    if (convId) {
+      try {
+        const { data: userData } = await supabase.auth.getUser();
+        const uid = userData?.user?.id;
+        if (uid) {
+          await supabase.from("messages").insert({
+            conversation_id: convId,
+            user_id: uid,
+            role: "user",
+            content: sentText,
+          });
+        }
+      } catch {
+        /* swallow — chat still works without history persistence */
+      }
+    }
+
+    try {
+      const { data, error } = await supabase.functions.invoke("allora-chat", {
+        body: {
+          conversation_id: convId,
+          messages: nextHistory.map((m) => ({
+            role: m.role,
+            content: m.content,
+          })),
+        },
+      });
+
+      if (error) throw error;
+
+      const result = (data ?? {}) as {
+        reply?: string;
+        ready_for_review?: boolean;
       };
-      setMessages((prev) => [...prev, alloraMsg]);
+      const reply =
+        result.reply ??
+        "I'm having trouble responding right now — please try again in a moment.";
+
+      setMessages((prev) => [
+        ...prev,
+        { role: "assistant", content: reply, timestamp: new Date() },
+      ]);
+
+      if (result.ready_for_review) setReadyForReview(true);
+
+      // Persist assistant message
+      if (convId) {
+        try {
+          const { data: userData } = await supabase.auth.getUser();
+          const uid = userData?.user?.id;
+          if (uid) {
+            await supabase.from("messages").insert({
+              conversation_id: convId,
+              user_id: uid,
+              role: "assistant",
+              content: reply,
+            });
+          }
+        } catch {
+          /* ignore */
+        }
+      }
+    } catch (err) {
+      console.error("allora-chat error", err);
+      setMessages((prev) => [
+        ...prev,
+        {
+          role: "assistant",
+          content:
+            "I'm having trouble connecting to the AI service. Please refresh and try again — if it keeps happening, email zachariah@availablelaw.com.",
+          timestamp: new Date(),
+        },
+      ]);
+    } finally {
       setIsTyping(false);
-    }, 1200 + (messages.length % 4) * 200);
+    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -184,18 +251,20 @@ export default function ChatPage() {
               </div>
             )}
 
-            {/* 24hr notice after first exchange */}
-            {messages.length >= 2 && !isTyping && (
+            {/* 24hr notice — shown when Allora signals a deliverable is queued for review */}
+            {readyForReview && !isTyping && (
               <div className="flex items-center justify-center gap-2 py-2">
                 <div className="flex items-center gap-2 bg-[#7A8B6F]/10 border border-[#7A8B6F]/20 rounded-full px-4 py-2">
                   <Clock className="w-3.5 h-3.5 text-[#7A8B6F]" />
                   <span className="text-xs text-[#7A8B6F] font-medium">
-                    Attorney-reviewed response within 24 hours
+                    Sent to attorney for review · expect a final answer within 24 hours
                   </span>
                   <CheckCircle2 className="w-3.5 h-3.5 text-[#7A8B6F]" />
                 </div>
               </div>
             )}
+
+            <div ref={messagesEndRef} />
           </div>
         )}
 

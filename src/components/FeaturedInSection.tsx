@@ -1,7 +1,7 @@
 export default function FeaturedInSection() {
   const companies = [
     "Warren Law Group",
-    "Twin Leak Kitchens",
+    "Twin Leaf Kitchens",
     "Legend Motor Works",
     "YLab",
     "Links.",
