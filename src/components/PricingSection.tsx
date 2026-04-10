@@ -2,82 +2,57 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
+import { TIERS, TierKey, OVERAGE_PRICE_PER_PAGE_USD } from "@/lib/tiers";
 
-interface PricingTier {
-  name: string;
-  description: string;
-  annualPrice: number;
-  monthlyPrice: number;
-  features: string[];
+/**
+ * Tier-card presentation metadata that lives alongside but not inside
+ * src/lib/tiers.ts. tiers.ts is the source of truth for LIMITS and PRICING
+ * used across the product; this map holds marketing-only details (Stripe
+ * payment link URLs, CTA copy, featured badge, and the display-as-monthly
+ * price for the annual plan).
+ *
+ * Annual price rework is tracked separately — for now annualDisplayMonthly
+ * is the effective monthly price a customer sees when they choose annual
+ * billing (matches the Stripe prices behind annualLink).
+ */
+interface TierDisplay {
   cta: string;
   badge?: string;
   featured?: boolean;
   monthlyLink?: string;
   annualLink?: string;
+  /** Effective per-month price when billed annually. 0 for free tier. */
+  annualDisplayMonthly: number;
 }
 
-const pricingTiers: PricingTier[] = [
-  {
-    name: "Explore",
-    description: "Get a taste of AI-powered legal solutions.",
-    annualPrice: 0,
-    monthlyPrice: 0,
-    features: [
-      "Monthly newsletter",
-      "Limited dashboard",
-      "Educational guides",
-      "Community resources",
-    ],
+const TIER_DISPLAY: Record<TierKey, TierDisplay> = {
+  explore: {
     cta: "Join Free",
+    annualDisplayMonthly: 0,
   },
-  {
-    name: "Build",
-    description: "Full AI legal assistant access for growing businesses.",
-    annualPrice: 25,
-    monthlyPrice: 50,
-    features: [
-      "Full Allora AI access",
-      "Educational guides & checklists",
-      "Usage tracking dashboard",
-      "Member-rate consultations",
-    ],
+  build: {
     cta: "Start Building",
+    annualDisplayMonthly: 25,
     monthlyLink: "https://buy.stripe.com/5kQ7sLe8IdFjbiPbnKcMM08",
     annualLink: "https://buy.stripe.com/7sY4gz8Oobxb4UrfE0cMM09",
   },
-  {
-    name: "Grow",
-    description: "Priority legal support with dedicated attorney access.",
-    annualPrice: 100,
-    monthlyPrice: 150,
-    features: [
-      "Everything in Build plus:",
-      "1 attorney consultation/month",
-      "Priority Allora responses",
-      "Document review credits",
-    ],
+  grow: {
     cta: "Start Growing",
     badge: "Most Popular",
     featured: true,
+    annualDisplayMonthly: 100,
     monthlyLink: "https://buy.stripe.com/7sY6oH4y8dFj3Qn63qcMM0a",
     annualLink: "https://buy.stripe.com/7sY3cv2q00Sx1If77ucMM0b",
   },
-  {
-    name: "Lead",
-    description: "Fractional AI General Counsel for established businesses.",
-    annualPrice: 300,
-    monthlyPrice: 300,
-    features: [
-      "Everything in Grow plus:",
-      "2-3 attorney consultations/mo",
-      "Quarterly AI risk reviews",
-      "Priority support & all doc reviews",
-    ],
+  lead: {
     cta: "Start Leading",
+    annualDisplayMonthly: 300,
     monthlyLink: "https://buy.stripe.com/eVqcN5ggQ0Sx5YvbnKcMM04",
     annualLink: "https://buy.stripe.com/3cIbJ18Oo6cRcmTfE0cMM0c",
   },
-];
+};
+
+const TIER_ORDER: TierKey[] = ["explore", "build", "grow", "lead"];
 
 export default function PricingSection() {
   const [isAnnual, setIsAnnual] = useState(true);
@@ -166,33 +141,38 @@ export default function PricingSection() {
 
       {/* Pricing Cards */}
       <div className="w-full max-w-[1280px] grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
-        {pricingTiers.map((tier, idx) => {
-          const price = isAnnual ? tier.annualPrice : tier.monthlyPrice;
-          const billingNote = isAnnual
-            ? tier.annualPrice === 0
+        {TIER_ORDER.map((key) => {
+          const tier = TIERS[key];
+          const display = TIER_DISPLAY[key];
+          const price = isAnnual
+            ? display.annualDisplayMonthly
+            : tier.monthlyPriceUsd;
+          const billingNote =
+            price === 0
               ? ""
-              : "billed annually"
-            : "billed monthly";
+              : isAnnual
+              ? "billed annually"
+              : "billed monthly";
 
           return (
             <div
-              key={idx}
+              key={key}
               className={`relative rounded-[20px] p-8 border transition-all duration-300 ${
-                tier.featured
+                display.featured
                   ? "border-[#C17832] bg-white shadow-[0_20px_40px_rgba(193,120,50,0.15)]"
                   : "border-[#D9CCBC] bg-white hover:border-[#C17832] hover:shadow-md"
               }`}
             >
               {/* Badge */}
-              {tier.badge && (
+              {display.badge && (
                 <div className="absolute -top-4 left-8 bg-[#C17832] text-white text-xs font-bold px-3 py-1.5 rounded-full">
-                  {tier.badge}
+                  {display.badge}
                 </div>
               )}
 
               {/* Tier Name */}
               <h3 className="text-2xl font-heading text-[#1F1810] mb-3">
-                {tier.name}
+                {tier.label}
               </h3>
 
               {/* Price */}
@@ -214,39 +194,65 @@ export default function PricingSection() {
                 )}
               </div>
 
-              {/* Description */}
-              <p className="text-sm text-[#6B5B4E] mb-8 leading-relaxed">
-                {tier.description}
+              {/* Tagline */}
+              <p className="text-sm text-[#6B5B4E] mb-6 leading-relaxed">
+                {tier.tagline}
               </p>
 
+              {/* Work-item headline: concrete, consistent language across tiers */}
+              <div
+                className={`mb-6 rounded-lg px-4 py-3 text-xs ${
+                  tier.workItemsPerMonth === 0
+                    ? "bg-[#F5F0EB] text-[#6B5B4E]"
+                    : "bg-[#7A8B6F]/10 text-[#1F1810]"
+                }`}
+              >
+                {tier.workItemsPerMonth === 0 ? (
+                  <>
+                    <span className="font-semibold">No attorney work</span>{" "}
+                    included. Upgrade any time to unlock matter reviews and
+                    consultations.
+                  </>
+                ) : (
+                  <>
+                    <span className="font-semibold">
+                      {tier.workItemsPerMonth} attorney work item
+                      {tier.workItemsPerMonth === 1 ? "" : "s"} / month.
+                    </span>{" "}
+                    Use {tier.workItemsPerMonth === 1 ? "it" : "them"} for
+                    matter reviews or 30-min consultations — your choice.
+                  </>
+                )}
+              </div>
+
               {/* CTA Button */}
-              {tier.monthlyLink ? (
+              {display.monthlyLink ? (
                 <a
                   href={buildCheckoutUrl(
-                    isAnnual && tier.annualLink
-                      ? tier.annualLink
-                      : tier.monthlyLink
+                    isAnnual && display.annualLink
+                      ? display.annualLink
+                      : display.monthlyLink
                   )}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className={`block w-full py-3 px-4 rounded-lg text-sm font-semibold transition-all mb-8 text-center ${
-                    tier.featured
+                  className={`block w-full py-3 px-4 rounded-lg text-sm font-semibold transition-all mb-6 text-center ${
+                    display.featured
                       ? "bg-[#1F1810] text-white hover:bg-[#C17832]"
                       : "bg-transparent border border-[#C17832] text-[#C17832] hover:bg-[#FAF8F5]"
                   }`}
                 >
-                  {tier.cta}
+                  {display.cta}
                 </a>
               ) : (
                 <Link
                   href="/login"
-                  className={`block w-full py-3 px-4 rounded-lg text-sm font-semibold transition-all mb-8 text-center ${
-                    tier.featured
+                  className={`block w-full py-3 px-4 rounded-lg text-sm font-semibold transition-all mb-6 text-center ${
+                    display.featured
                       ? "bg-[#1F1810] text-white hover:bg-[#C17832]"
                       : "bg-transparent border border-[#C17832] text-[#C17832] hover:bg-[#FAF8F5]"
                   }`}
                 >
-                  {tier.cta}
+                  {display.cta}
                 </Link>
               )}
 
@@ -265,9 +271,7 @@ export default function PricingSection() {
                         clipRule="evenodd"
                       />
                     </svg>
-                    <span className="text-sm text-[#6B5B4E]">
-                      {feature}
-                    </span>
+                    <span className="text-sm text-[#6B5B4E]">{feature}</span>
                   </div>
                 ))}
               </div>
@@ -275,6 +279,13 @@ export default function PricingSection() {
           );
         })}
       </div>
+
+      {/* Overage footnote */}
+      <p className="text-xs text-[#A89279] text-center max-w-2xl">
+        Need more than your monthly allotment? Additional matter reviews bill
+        at ${OVERAGE_PRICE_PER_PAGE_USD}/page on paid plans. Additional
+        consultations require upgrading your plan.
+      </p>
     </section>
   );
 }

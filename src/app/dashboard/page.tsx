@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import DashboardShell from "@/components/DashboardShell";
 import { supabase } from "@/lib/supabase";
+import { getTier, OVERAGE_PRICE_PER_PAGE_USD } from "@/lib/tiers";
 import {
   FileCheck,
   Briefcase,
@@ -13,35 +14,22 @@ import {
   Users,
 } from "lucide-react";
 
-const TIER_LABELS: Record<string, string> = {
-  explore: "Explore",
-  build: "Build",
-  grow: "Grow",
-  lead: "Lead",
-};
-
-// Monthly consultation allotment by tier
-const CONSULTATIONS_BY_TIER: Record<string, number> = {
-  explore: 0,
-  build: 1,
-  grow: 2,
-  lead: 3,
-};
-
 export default function DashboardPage() {
-  const [userTier, setUserTier] = useState<string>("explore");
+  const [rawTier, setRawTier] = useState<string>("explore");
   const [subStatus, setSubStatus] = useState<string>("inactive");
   const [conversationsCount, setConversationsCount] = useState(0);
   const [documentsCount, setDocumentsCount] = useState(0);
+  const [workItemsUsed, setWorkItemsUsed] = useState(0);
 
   const loadDashboard = useCallback(async () => {
     const { data: sess } = await supabase.auth.getSession();
     const session = sess.session;
     if (!session) {
-      setUserTier("explore");
+      setRawTier("explore");
       setSubStatus("inactive");
       setConversationsCount(0);
       setDocumentsCount(0);
+      setWorkItemsUsed(0);
       return;
     }
 
@@ -52,11 +40,12 @@ export default function DashboardPage() {
       .eq("user_id", session.user.id)
       .maybeSingle();
 
-    setUserTier(member?.subscription_tier ?? "explore");
+    setRawTier(member?.subscription_tier ?? "explore");
     setSubStatus(member?.subscription_status ?? "inactive");
 
-    // Live usage counts, scoped by RLS + explicit user_id filter
-    const [convRes, docRes] = await Promise.all([
+    // Live usage counts + this-period attorney work, scoped by RLS + explicit
+    // user_id filter. get_usage_this_period is a security-definer function.
+    const [convRes, docRes, usageRes] = await Promise.all([
       supabase
         .from("conversations")
         .select("id", { count: "exact", head: true })
@@ -65,10 +54,14 @@ export default function DashboardPage() {
         .from("documents")
         .select("id", { count: "exact", head: true })
         .eq("user_id", session.user.id),
+      supabase.rpc("get_usage_this_period", { p_user_id: session.user.id }),
     ]);
 
     setConversationsCount(convRes.count ?? 0);
     setDocumentsCount(docRes.count ?? 0);
+    setWorkItemsUsed(
+      typeof usageRes.data === "number" ? usageRes.data : 0
+    );
   }, []);
 
   useEffect(() => {
@@ -85,9 +78,12 @@ export default function DashboardPage() {
     };
   }, [loadDashboard]);
 
-  const tierLabel = TIER_LABELS[userTier] ?? userTier;
-  const isFreeTier = userTier === "explore";
-  const consultationsRemaining = CONSULTATIONS_BY_TIER[userTier] ?? 0;
+  const tier = getTier(rawTier);
+  const tierLabel = tier.label;
+  const isFreeTier = tier.key === "explore";
+  const workItemsLimit = tier.workItemsPerMonth;
+  const workItemsRemaining = Math.max(workItemsLimit - workItemsUsed, 0);
+  const isOverLimit = !isFreeTier && workItemsUsed >= workItemsLimit;
 
   const quickActions = [
     { icon: FileCheck, label: "Review a Contract", href: "/dashboard/chat?action=contract-review" },
@@ -135,15 +131,42 @@ export default function DashboardPage() {
             {subStatus}
           </p>
         </div>
-        <div className="bg-white border border-[#1F1810]/8 rounded-lg p-6 hover:border-[#1F1810]/12 transition-all">
-          <p className="text-xs font-medium text-[#6B5B4E] mb-2">Allora Conversations</p>
-          <p className="text-3xl font-bold text-[#1F1810]">{conversationsCount}</p>
+        <div
+          className={`bg-white border rounded-lg p-6 transition-all ${
+            isOverLimit
+              ? "border-[#C17832]/40"
+              : "border-[#1F1810]/8 hover:border-[#1F1810]/12"
+          }`}
+        >
+          <p className="text-xs font-medium text-[#6B5B4E] mb-2">
+            Attorney Work This Month
+          </p>
+          {isFreeTier ? (
+            <>
+              <p className="text-3xl font-bold text-[#A89279]">—</p>
+              <p className="text-[10px] text-[#A89279] mt-1">
+                Upgrade to unlock
+              </p>
+            </>
+          ) : (
+            <>
+              <p className="text-3xl font-bold text-[#1F1810]">
+                {workItemsUsed}
+                <span className="text-lg text-[#A89279]"> / {workItemsLimit}</span>
+              </p>
+              <p className="text-[10px] text-[#A89279] mt-1">
+                {isOverLimit
+                  ? `Overage: $${OVERAGE_PRICE_PER_PAGE_USD}/page`
+                  : `${workItemsRemaining} remaining`}
+              </p>
+            </>
+          )}
         </div>
         <div className="bg-white border border-[#1F1810]/8 rounded-lg p-6 hover:border-[#1F1810]/12 transition-all">
-          <p className="text-xs font-medium text-[#6B5B4E] mb-2">Consultations / mo</p>
-          <p className="text-3xl font-bold text-[#C17832]">
-            {consultationsRemaining}
+          <p className="text-xs font-medium text-[#6B5B4E] mb-2">
+            Allora Conversations
           </p>
+          <p className="text-3xl font-bold text-[#1F1810]">{conversationsCount}</p>
         </div>
         <div className="bg-white border border-[#1F1810]/8 rounded-lg p-6 hover:border-[#1F1810]/12 transition-all">
           <p className="text-xs font-medium text-[#6B5B4E] mb-2">Documents</p>

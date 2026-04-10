@@ -91,6 +91,22 @@ export default function ReviewQueuePage() {
       }
     };
     init();
+
+    // Reset admin-queue state on any auth change. If an admin signs out,
+    // immediately wipe drafts/intakes from memory so they cannot be seen by
+    // whoever signs in next on the same tab before the shell forces a reload.
+    const { data: authListener } = supabase.auth.onAuthStateChange(() => {
+      setAuthorized(false);
+      setDrafts([]);
+      setIntakes([]);
+      setSelectedDraft(null);
+      setEditedContent("");
+      setAttorneyNotes("");
+    });
+
+    return () => {
+      authListener.subscription.unsubscribe();
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -172,11 +188,34 @@ export default function ReviewQueuePage() {
       })
       .eq("id", selectedDraft.id);
 
-    setSavingAction(null);
     if (upErr) {
+      setSavingAction(null);
       setError(upErr.message);
       return;
     }
+
+    // Log a billable usage event against the client's monthly allotment.
+    // The unique index on (draft_id) WHERE event_type='matter_review' makes
+    // this idempotent — retries won't double-count if the attorney re-sends.
+    const { error: usageErr } = await supabase.from("usage_events").insert({
+      user_id: selectedDraft.user_id,
+      event_type: "matter_review",
+      draft_id: selectedDraft.id,
+      conversation_id: selectedDraft.conversation_id,
+      created_by: session?.user?.id ?? null,
+      notes: selectedDraft.title,
+    });
+
+    setSavingAction(null);
+
+    // Duplicate-insert from the unique index is expected on re-send; ignore it.
+    if (usageErr && !usageErr.message.toLowerCase().includes("duplicate")) {
+      console.error("Failed to log usage event:", usageErr);
+      setError(
+        `Draft sent, but usage counter failed to update: ${usageErr.message}`
+      );
+    }
+
     closeDraft();
     await loadDrafts();
   };
