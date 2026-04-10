@@ -4,12 +4,14 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import DashboardShell from "@/components/DashboardShell";
 import { supabase } from "@/lib/supabase";
+import { getTier, OVERAGE_PRICE_PER_PAGE_USD } from "@/lib/tiers";
 import {
   ShieldCheck,
   Clock,
   CheckCircle2,
   Send,
   AlertCircle,
+  AlertTriangle,
   FileText,
   Mail,
   Loader2,
@@ -56,6 +58,14 @@ export default function ReviewQueuePage() {
   const [attorneyNotes, setAttorneyNotes] = useState("");
   const [savingAction, setSavingAction] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  // Client usage snapshot for the currently opened draft. Loaded lazily
+  // when the attorney clicks into a draft so we can show an overage banner
+  // and tag the resulting usage_event correctly.
+  const [clientUsage, setClientUsage] = useState<{
+    rawTier: string;
+    used: number;
+  } | null>(null);
+  const [pageCount, setPageCount] = useState<number>(1);
 
   useEffect(() => {
     const init = async () => {
@@ -135,16 +145,36 @@ export default function ReviewQueuePage() {
     setIntakes((data ?? []) as Intake[]);
   };
 
-  const openDraft = (draft: Draft) => {
+  const openDraft = async (draft: Draft) => {
     setSelectedDraft(draft);
     setEditedContent(draft.draft_content);
     setAttorneyNotes(draft.attorney_notes ?? "");
+    setClientUsage(null);
+    setPageCount(1);
+
+    // Fetch the client's live tier and current-period usage in parallel.
+    // This determines whether approving this draft will blow through the
+    // allotment (and should be logged as an overage event).
+    const [memberRes, usageRes] = await Promise.all([
+      supabase
+        .from("members")
+        .select("subscription_tier")
+        .eq("user_id", draft.user_id)
+        .maybeSingle(),
+      supabase.rpc("get_usage_this_period", { p_user_id: draft.user_id }),
+    ]);
+    setClientUsage({
+      rawTier: memberRes.data?.subscription_tier ?? "explore",
+      used: typeof usageRes.data === "number" ? usageRes.data : 0,
+    });
   };
 
   const closeDraft = () => {
     setSelectedDraft(null);
     setEditedContent("");
     setAttorneyNotes("");
+    setClientUsage(null);
+    setPageCount(1);
   };
 
   const saveDraft = async () => {
@@ -194,6 +224,18 @@ export default function ReviewQueuePage() {
       return;
     }
 
+    // Compute whether this approval will push the client over their tier
+    // allotment and should bill as an overage. clientUsage was loaded when
+    // the attorney opened the draft, so it represents state immediately
+    // before this approval lands.
+    const tier = clientUsage ? getTier(clientUsage.rawTier) : getTier("explore");
+    const used = clientUsage?.used ?? 0;
+    const isOverage = tier.workItemsPerMonth > 0 && used >= tier.workItemsPerMonth;
+    const effectivePageCount = Math.max(1, Math.floor(pageCount));
+    const overageAmountCents = isOverage
+      ? effectivePageCount * OVERAGE_PRICE_PER_PAGE_USD * 100
+      : 0;
+
     // Log a billable usage event against the client's monthly allotment.
     // The unique index on (draft_id) WHERE event_type='matter_review' makes
     // this idempotent — retries won't double-count if the attorney re-sends.
@@ -204,6 +246,9 @@ export default function ReviewQueuePage() {
       conversation_id: selectedDraft.conversation_id,
       created_by: session?.user?.id ?? null,
       notes: selectedDraft.title,
+      page_count: effectivePageCount,
+      is_overage: isOverage,
+      overage_amount_cents: overageAmountCents,
     });
 
     setSavingAction(null);
@@ -517,6 +562,92 @@ export default function ReviewQueuePage() {
                   className="w-full px-4 py-3 bg-white border border-[#1F1810]/10 rounded-lg text-sm text-[#1F1810] focus:outline-none focus:border-[#C17832]/50 focus:ring-1 focus:ring-[#C17832]/20 resize-y disabled:opacity-70"
                 />
               </div>
+
+              {/* Client plan + usage snapshot */}
+              {selectedDraft.status === "pending_review" && clientUsage && (() => {
+                const tier = getTier(clientUsage.rawTier);
+                const used = clientUsage.used;
+                const limit = tier.workItemsPerMonth;
+                const isFreeTier = tier.key === "explore";
+                const isOverLimit = !isFreeTier && used >= limit;
+                const overageAmount =
+                  isOverLimit
+                    ? Math.max(1, Math.floor(pageCount)) *
+                      OVERAGE_PRICE_PER_PAGE_USD
+                    : 0;
+
+                return (
+                  <div
+                    className={`rounded-lg border p-4 text-sm ${
+                      isFreeTier
+                        ? "border-red-200 bg-red-50"
+                        : isOverLimit
+                        ? "border-[#C17832]/40 bg-[#C17832]/5"
+                        : "border-[#7A8B6F]/30 bg-[#7A8B6F]/5"
+                    }`}
+                  >
+                    <div className="flex items-start gap-3">
+                      <AlertTriangle
+                        className={`w-5 h-5 flex-shrink-0 mt-0.5 ${
+                          isFreeTier
+                            ? "text-red-600"
+                            : isOverLimit
+                            ? "text-[#C17832]"
+                            : "text-[#7A8B6F]"
+                        }`}
+                      />
+                      <div className="flex-1">
+                        <p className="font-semibold text-[#1F1810]">
+                          Client plan: {tier.label}
+                          {!isFreeTier && (
+                            <> — {used} / {limit} work items used</>
+                          )}
+                        </p>
+                        {isFreeTier ? (
+                          <p className="text-xs text-red-700 mt-1">
+                            This client is on the free Explore plan and should
+                            not have matters dispatched to attorney review.
+                            Consider rejecting and asking them to upgrade.
+                          </p>
+                        ) : isOverLimit ? (
+                          <>
+                            <p className="text-xs text-[#6B5B4E] mt-1">
+                              Approving will bill as an overage at $
+                              {OVERAGE_PRICE_PER_PAGE_USD}/page on the final
+                              deliverable.
+                            </p>
+                            <div className="mt-3 flex items-center gap-3">
+                              <label className="text-xs font-medium text-[#1F1810]">
+                                Pages
+                              </label>
+                              <input
+                                type="number"
+                                min={1}
+                                value={pageCount}
+                                onChange={(e) =>
+                                  setPageCount(
+                                    Math.max(1, Number(e.target.value) || 1)
+                                  )
+                                }
+                                className="w-20 px-3 py-1.5 bg-white border border-[#1F1810]/15 rounded-md text-sm focus:outline-none focus:border-[#C17832]/50 focus:ring-1 focus:ring-[#C17832]/20"
+                              />
+                              <span className="text-xs text-[#6B5B4E]">
+                                → Overage: ${overageAmount}
+                              </span>
+                            </div>
+                          </>
+                        ) : (
+                          <p className="text-xs text-[#6B5B4E] mt-1">
+                            Approving will use 1 of the client&apos;s{" "}
+                            {limit - used} remaining work item
+                            {limit - used === 1 ? "" : "s"} this period.
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })()}
             </div>
 
             {selectedDraft.status === "pending_review" && (
