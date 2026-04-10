@@ -7,6 +7,7 @@ import PricingSection from "@/components/PricingSection";
 import TestimonialsSection from "@/components/TestimonialsSection";
 import CTASection from "@/components/CTASection";
 import Footer from "@/components/Footer";
+import AlloraFloatingWidget from "@/components/AlloraFloatingWidget";
 
 export default function Home() {
   return (
@@ -36,6 +37,7 @@ export default function Home() {
         <CTASection />
       </main>
       <Footer />
+      <AlloraFloatingWidget />
     </>
   );
 }

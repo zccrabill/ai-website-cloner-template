@@ -36,7 +36,7 @@ export default function Header() {
       <div className="max-w-[1280px] mx-auto px-6 h-16 flex items-center justify-between gap-8">
         {/* Logo */}
         <Link href="/" className="flex items-center flex-shrink-0 font-heading text-lg font-semibold text-[#1F1810]">
-          Av<span className="text-[#C17832]">{"{ai}"}</span>lable Law
+          Av<span className="text-[#C17832]">{"{"}</span>ai<span className="text-[#C17832]">{"}"}</span>lable Law
         </Link>
 
         {/* Nav links — center (desktop) */}
