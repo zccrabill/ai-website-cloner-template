@@ -78,6 +78,92 @@ export default function AlloraFloatingWidget() {
     setDismissed(true);
   };
 
+  const generateResponse = (userInput: string): string => {
+    const text = userInput.toLowerCase();
+
+    // Pricing / cost
+    if (
+      /\b(price|pricing|cost|how much|fee|fees|subscription|plan|tier|payment|monthly|annual)\b/.test(
+        text
+      )
+    ) {
+      return "Available Law uses a transparent subscription model with four tiers:\n\n• **Explore** — Free. Try Allora and access basic legal info.\n• **Build** — $25/mo. For early-stage founders. AI-assisted contract review, compliance Q&A, and document templates.\n• **Grow** — $100/mo. For growing companies. Priority attorney review, monthly consultation, fractional GC support.\n• **Lead** — $300/mo. For established businesses. Unlimited contracts, dedicated counsel, and strategic advisory.\n\nAnnual plans save 17%. Want me to help you pick the right tier for your business?";
+    }
+
+    // How it works / what is Available Law
+    if (
+      /\b(how does|how do you|how it works|what is|what's|tell me about|what does|explain|overview)\b/.test(
+        text
+      )
+    ) {
+      return "Available Law is the first FAIIR-certified AI-powered law firm in Colorado. Here's how it works:\n\n1. **Subscribe** to a tier that matches your needs (Explore is free)\n2. **Chat with me** anytime — I'm Allora, your AI legal assistant trained on Colorado business law\n3. **Attorney review** — every meaningful deliverable is reviewed by a licensed attorney before it reaches you\n4. **Get work done fast** — contracts, formation docs, compliance answers, and more\n\nWe combine AI speed with attorney judgment, and we're transparent about both. What kind of legal work are you facing right now?";
+    }
+
+    // Contracts / contract review
+    if (
+      /\b(contract|review|redline|nda|agreement|tos|terms|privacy policy|msa|sow)\b/.test(
+        text
+      )
+    ) {
+      return "Contract review is one of our most popular services. Here's what we can do:\n\n• **Draft** new contracts (NDAs, MSAs, SOWs, employment agreements, ToS, privacy policies, etc.)\n• **Review & redline** contracts you've received — flag risky terms, suggest improvements\n• **Negotiate** key terms with the other side\n• **Plain-English summaries** so you actually understand what you're signing\n\nI can give you a quick first pass and an attorney finalizes it. Want to share what kind of contract you're working on?";
+    }
+
+    // Business formation / LLC
+    if (
+      /\b(llc|incorporate|incorporation|formation|form a|form an|start a business|business entity|c-?corp|s-?corp|partnership|nonprofit)\b/.test(
+        text
+      )
+    ) {
+      return "Forming a business in Colorado is one of the most common things we help with. The basics:\n\n• **LLC** — most flexible, pass-through taxation, simple admin (popular for small businesses)\n• **C-Corp** — needed if you're raising venture capital or issuing equity\n• **S-Corp** — tax election, not an entity type; can save on self-employment tax\n\nWe handle the full filing with the Colorado Secretary of State, draft your operating agreement, and walk you through tax elections, EIN, and ongoing compliance.\n\nWhat are you trying to build? I can help you pick the right structure.";
+    }
+
+    // Compliance / regulation
+    if (
+      /\b(complian|regulat|gdpr|ccpa|cpa|hipaa|sox|data privacy|policy|policies|audit)\b/.test(
+        text
+      )
+    ) {
+      return "Compliance is where AI shines — we can audit your current posture against CO law, federal requirements, and industry standards quickly.\n\nCommon things we help with:\n• Colorado Privacy Act (CPA) compliance for businesses handling consumer data\n• Privacy policies and ToS aligned to CCPA, GDPR, and CPA\n• Data processing agreements with vendors\n• AI-specific risk assessments and disclosure language\n• Employment compliance (offer letters, handbooks, equity)\n\nWhat regulation or area is on your mind?";
+    }
+
+    // Allora / AI specific
+    if (/\b(allora|ai|artificial intelligence|chatbot|bot|model|llm)\b/.test(text)) {
+      return "I'm Allora — Available Law's AI legal assistant. I'm trained on Colorado business law and the firm's playbooks, so I can help you draft, review, research, and answer common questions fast.\n\nA few important things about how I work:\n\n• **I'm AI** — I move fast but I can make mistakes\n• **Attorneys review my work** — anything substantive gets a licensed attorney's eyes before it goes out\n• **You always know when I'm involved** — full AI transparency is part of FAIIR certification\n\nWhat would you like to chat about?";
+    }
+
+    // FAIIR / certification
+    if (/\b(faiir|cert|certif|standard|trust|verified)\b/.test(text)) {
+      return "FAIIR stands for Framework for AI Integration & Industry Responsibility. It's the certification standard for attorneys who responsibly use AI in legal practice.\n\nFAIIR-certified firms commit to:\n• Verified AI competence (we know how the tools actually work)\n• Mandatory human attorney review of AI output\n• Transparent disclosure when AI is used\n• Ongoing AI ethics education\n\nAvailable Law is proudly FAIIR Certified — you can scroll up to see the seal in the header. Want to learn more about a specific pillar?";
+    }
+
+    // Greetings
+    if (/^\s*(hi|hey|hello|howdy|sup|yo|good (morning|afternoon|evening))/i.test(userInput.trim())) {
+      return "Hey there! 👋 I'm Allora, the AI legal assistant for Available Law. I help Colorado businesses with contracts, formation, compliance, and a bunch of other legal stuff — all backed by attorney review.\n\nWhat brings you here today?";
+    }
+
+    // Lawyer / attorney / talk to a human
+    if (
+      /\b(lawyer|attorney|human|real person|talk to|speak (to|with)|consult|consultation|book|schedule|meet)\b/.test(
+        text
+      )
+    ) {
+      return "Absolutely — you can book time directly with one of our Colorado attorneys. Members on the Build tier and above get priority scheduling, and Grow/Lead members get monthly or unlimited consultations included.\n\nIf you sign up for a free Explore account, you can also book a 30-minute introductory call. Want me to walk you to the signup?";
+    }
+
+    // Thanks
+    if (/\b(thank|thanks|thx|appreciate)\b/.test(text)) {
+      return "You're very welcome! Is there anything else I can help you with — maybe pricing, contract review, or how the FAIIR certification works?";
+    }
+
+    // Default fallback — vary by message count so it doesn't feel canned
+    const fallbacks = [
+      "That's a good question. I can definitely help with that — but to give you a full answer (and to have it reviewed by a licensed attorney), you'll want to start a free Explore account. It only takes a minute. Want me to point you there?",
+      "Happy to dig into that. Available Law handles a wide range of business legal work in Colorado, from contracts and formation to compliance and disputes. Could you tell me a bit more about your situation so I can point you to the right tier or service?",
+      "I can help! Could you give me a little more context? For example: are you an early-stage founder, an established business, or somewhere in between? That'll help me tailor the answer.",
+    ];
+    return fallbacks[messages.filter((m) => m.role === "user").length % fallbacks.length];
+  };
+
   const handleSend = (text?: string) => {
     const content = (text ?? message).trim();
     if (!content) return;
@@ -87,15 +173,16 @@ export default function AlloraFloatingWidget() {
     setMessage("");
     setIsTyping(true);
 
+    // Variable delay for realism (cycles based on conversation length)
+    const delay = 1000 + (messages.length % 4) * 200;
     setTimeout(() => {
       const alloraMsg: ChatMessage = {
         role: "assistant",
-        content:
-          "Great question! I'm Allora, the AI legal assistant for Available Law. I can help with contract reviews, business formation, compliance questions, and more — all backed by attorney review.\n\nTo get a full attorney-reviewed answer, you'll need to sign up for a free Available Law account. Want me to walk you through it?",
+        content: generateResponse(content),
       };
       setMessages((prev) => [...prev, alloraMsg]);
       setIsTyping(false);
-    }, 1400);
+    }, delay);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {

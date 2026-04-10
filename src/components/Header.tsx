@@ -2,10 +2,14 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
+import { usePathname, useRouter } from "next/navigation";
 
 export default function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const pathname = usePathname();
+  const router = useRouter();
 
   useEffect(() => {
     const handler = () => setScrolled(window.scrollY > 50);
@@ -13,15 +17,19 @@ export default function Header() {
     return () => window.removeEventListener("scroll", handler);
   }, []);
 
-  // Handle smooth scroll for anchor links
-  const handleAnchorClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
-    if (href.startsWith("#")) {
+  // Smooth scroll on home page; navigate to /#anchor from other pages
+  const handleAnchorClick = (
+    e: React.MouseEvent<HTMLAnchorElement>,
+    anchor: string
+  ) => {
+    setMobileMenuOpen(false);
+    if (pathname === "/") {
       e.preventDefault();
-      const target = document.querySelector(href);
-      if (target) {
-        target.scrollIntoView({ behavior: "smooth" });
-        setMobileMenuOpen(false);
-      }
+      const target = document.querySelector(anchor);
+      if (target) target.scrollIntoView({ behavior: "smooth" });
+    } else {
+      e.preventDefault();
+      router.push(`/${anchor}`);
     }
   };
 
@@ -33,11 +41,31 @@ export default function Header() {
           : "bg-[rgba(250,248,245,0.7)] backdrop-blur-sm"
       }`}
     >
-      <div className="max-w-[1280px] mx-auto px-6 h-16 flex items-center justify-between gap-8">
-        {/* Logo */}
-        <Link href="/" className="flex items-center flex-shrink-0 font-heading text-lg font-semibold text-[#1F1810]">
-          Av<span className="text-[#C17832]">{"{"}</span>ai<span className="text-[#C17832]">{"}"}</span>lable Law
-        </Link>
+      <div className="max-w-[1280px] mx-auto px-6 h-16 flex items-center justify-between gap-6">
+        {/* Logo + FAIIR Seal */}
+        <div className="flex items-center gap-2 flex-shrink-0">
+          <Link href="/" className="flex items-center font-heading text-lg font-semibold text-[#1F1810]">
+            Av<span className="text-[#C17832]">{"{"}</span>ai<span className="text-[#C17832]">{"}"}</span>lable Law
+          </Link>
+          <a
+            href={pathname === "/" ? "#faiir" : "/#faiir"}
+            onClick={(e) => handleAnchorClick(e, "#faiir")}
+            className="group relative flex items-center justify-center"
+            aria-label="FAIIR Certified — learn more"
+            title="FAIIR Certified — Click to learn more"
+          >
+            <Image
+              src="/images/faiir-logo.png"
+              alt="FAIIR Certified"
+              width={36}
+              height={36}
+              className="object-contain transition-transform duration-200 group-hover:scale-110 group-hover:rotate-3"
+            />
+            <span className="absolute top-full mt-2 left-1/2 -translate-x-1/2 px-2 py-1 bg-[#1F1810] text-white text-[10px] font-medium rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+              FAIIR Certified
+            </span>
+          </a>
+        </div>
 
         {/* Nav links — center (desktop) */}
         <nav className="hidden md:flex items-center gap-8">
