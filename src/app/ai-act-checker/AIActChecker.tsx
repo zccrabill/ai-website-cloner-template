@@ -656,7 +656,7 @@ function ResultsScreen({
         </p>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
           <Link
-            href="/#faiir"
+            href="/faiir"
             className="inline-flex items-center gap-2 px-7 py-3 bg-[#C17832] text-white rounded-full text-sm font-medium hover:bg-[#D4893F] transition-colors"
           >
             {result.ctaText}

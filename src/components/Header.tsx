@@ -49,12 +49,11 @@ export default function Header() {
           <Link href="/" className="flex items-center font-heading text-lg font-semibold text-[#1F1810]">
             Av<span className="text-[#C17832]">{"{"}</span>ai<span className="text-[#C17832]">{"}"}</span>lable Law
           </Link>
-          <a
-            href={pathname === "/" ? "#faiir" : "/#faiir"}
-            onClick={(e) => handleAnchorClick(e, "#faiir")}
+          <Link
+            href="/faiir"
             className="group relative flex items-center justify-center"
-            aria-label="FAIIR Certified — learn more"
-            title="FAIIR Certified — Click to learn more"
+            aria-label="FAIIR Certification — learn more"
+            title="FAIIR Certification — Click to learn more"
           >
             <Image
               src="/images/faiir-logo.png"
@@ -66,7 +65,7 @@ export default function Header() {
             <span className="absolute top-full mt-2 left-1/2 -translate-x-1/2 px-2 py-1 bg-[#1F1810] text-white text-[10px] font-medium rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
               FAIIR Certified
             </span>
-          </a>
+          </Link>
         </div>
 
         {/* Nav links — center (desktop) */}

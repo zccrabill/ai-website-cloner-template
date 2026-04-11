@@ -187,6 +187,47 @@ export function faqPageSchema(
 }
 
 /**
+ * Service schema for a specific offering. Use on product/service landing
+ * pages so search engines (and LLMs) can extract price, provider, and
+ * area-served facts directly.
+ */
+export function serviceSchema(params: {
+  name: string;
+  description: string;
+  url: string;
+  serviceType: string;
+  price?: string;
+  priceCurrency?: string;
+  offerDescription?: string;
+}) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    "@id": `${params.url}#service`,
+    name: params.name,
+    description: params.description,
+    url: params.url,
+    serviceType: params.serviceType,
+    provider: { "@id": `${SITE_URL}/#organization` },
+    areaServed: {
+      "@type": "State",
+      name: JURISDICTION,
+    },
+    ...(params.price
+      ? {
+          offers: {
+            "@type": "Offer",
+            price: params.price,
+            priceCurrency: params.priceCurrency ?? "USD",
+            description: params.offerDescription,
+            availability: "https://schema.org/InStock",
+          },
+        }
+      : {}),
+  };
+}
+
+/**
  * BreadcrumbList schema — helps Google render the URL hierarchy in SERPs.
  */
 export function breadcrumbSchema(

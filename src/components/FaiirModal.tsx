@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -10,33 +10,23 @@ interface FaiirModalProps {
 }
 
 export function FaiirModal({ isOpen, onClose }: FaiirModalProps) {
-  const [mounted, setMounted] = useState(false);
-
   useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  useEffect(() => {
-    if (!mounted) return;
+    if (!isOpen) return;
 
     const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isOpen) {
+      if (e.key === 'Escape') {
         onClose();
       }
     };
 
-    if (isOpen) {
-      document.addEventListener('keydown', handleEscape);
-      document.body.style.overflow = 'hidden';
-    }
+    document.addEventListener('keydown', handleEscape);
+    document.body.style.overflow = 'hidden';
 
     return () => {
       document.removeEventListener('keydown', handleEscape);
       document.body.style.overflow = 'unset';
     };
-  }, [isOpen, onClose, mounted]);
-
-  if (!mounted) return null;
+  }, [isOpen, onClose]);
 
   return (
     <>
@@ -172,28 +162,26 @@ export function FaiirModal({ isOpen, onClose }: FaiirModalProps) {
                 Why Now?
               </h3>
               <p className="text-gray-300 text-sm leading-relaxed">
-                Colorado's AI Act (CAIA) is in effect. Organizations that cannot demonstrate
+                Colorado&apos;s AI Act (CAIA) is in effect. Organizations that cannot demonstrate
                 compliance face enforcement by the Colorado Attorney General. FAIIR certification
-                is built around CAIA's compliance structure.
+                is built around CAIA&apos;s compliance structure.
               </p>
             </div>
 
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4">
               <Link
-                href="#pricing"
+                href="/faiir"
                 className="flex-1 bg-amber-500 hover:bg-amber-600 text-white font-semibold py-3 px-6 rounded-lg transition-colors text-center"
               >
-                Schedule a FAIIR Consultation
+                Explore FAIIR Certification
               </Link>
-              <a
-                href="https://faiir.org"
-                target="_blank"
-                rel="noopener noreferrer"
+              <Link
+                href="/ai-act-checker"
                 className="flex-1 border border-gray-400 text-gray-300 hover:text-white hover:border-white font-semibold py-3 px-6 rounded-lg transition-colors text-center"
               >
-                Learn More at FAIIR.org
-              </a>
+                Take the free readiness check
+              </Link>
             </div>
           </div>
         </div>
