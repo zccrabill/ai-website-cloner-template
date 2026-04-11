@@ -57,8 +57,8 @@ export default function AnnouncementBanner() {
 
   return (
     <div className="bg-[#1F1810] text-[#FAF8F5] border-b border-[#C17832]/40">
-      <div className="max-w-[1280px] mx-auto px-6 py-2 flex items-center justify-between gap-4">
-        <p className="text-[13px] md:text-sm leading-snug flex-1">
+      <div className="relative px-12 py-2">
+        <p className="text-[13px] md:text-sm leading-snug text-center">
           <span className="hidden sm:inline font-semibold text-[#F2B870] mr-2">
             Colorado AI Act →
           </span>
@@ -77,7 +77,7 @@ export default function AnnouncementBanner() {
           type="button"
           onClick={dismiss}
           aria-label="Dismiss announcement"
-          className="flex-shrink-0 p-1 rounded-full hover:bg-white/10 transition-colors"
+          className="absolute right-4 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-white/10 transition-colors"
         >
           <X className="w-4 h-4" />
         </button>

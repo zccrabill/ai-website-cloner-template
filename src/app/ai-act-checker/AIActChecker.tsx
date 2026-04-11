@@ -370,7 +370,26 @@ function TeaserScreen({
   error,
   onBack,
 }: TeaserScreenProps) {
-  const gapsPreview = result.gaps.slice(0, 3);
+  // Show up to 3 gaps in the preview, but dedupe by category so the user
+  // sees distinct problem areas (e.g. Scope + Governance + Disclosure)
+  // instead of two Scope gaps stacked together. If there's headroom left
+  // after the category pass, fill with additional gaps.
+  const gapsPreview = (() => {
+    const seen = new Set<string>();
+    const picks: typeof result.gaps = [];
+    for (const g of result.gaps) {
+      if (!seen.has(g.category)) {
+        seen.add(g.category);
+        picks.push(g);
+        if (picks.length === 3) return picks;
+      }
+    }
+    for (const g of result.gaps) {
+      if (picks.length === 3) break;
+      if (!picks.includes(g)) picks.push(g);
+    }
+    return picks;
+  })();
   const hiddenCount = Math.max(0, result.gaps.length - gapsPreview.length);
 
   return (
@@ -397,9 +416,7 @@ function TeaserScreen({
 
       <div className="rounded-3xl border border-[#1F1810]/10 bg-white p-6 md:p-8 mb-8">
         <p className="text-[15px] text-[#6B5B4E] leading-relaxed mb-5">
-          We found <strong className="text-[#1F1810]">{result.gaps.length}</strong>{" "}
-          specific compliance gap{result.gaps.length === 1 ? "" : "s"} in your
-          responses. Here&rsquo;s a preview of the first {gapsPreview.length}:
+          {`We found ${result.gaps.length} specific compliance gap${result.gaps.length === 1 ? "" : "s"} in your responses. Here's a preview of the first ${gapsPreview.length}:`}
         </p>
         <ul className="space-y-3 mb-4">
           {gapsPreview.map((g, i) => (
