@@ -1,6 +1,10 @@
 import type { MetadataRoute } from "next";
 import { SITE_URL } from "@/lib/seo";
 
+// Required by Next 16 when next.config.js uses `output: "export"`.
+// Without this, `next build` refuses to statically generate /robots.txt.
+export const dynamic = "force-static";
+
 /**
  * robots.txt for availablelaw.com.
  *

@@ -1,6 +1,10 @@
 import type { MetadataRoute } from "next";
 import { SITE_URL } from "@/lib/seo";
 
+// Required by Next 16 when next.config.js uses `output: "export"`.
+// Without this, `next build` refuses to statically generate /sitemap.xml.
+export const dynamic = "force-static";
+
 /**
  * Blog post slugs + ISO dates. Kept here instead of importing from the blog
  * route file because Next's sitemap generation runs at build time and can't
