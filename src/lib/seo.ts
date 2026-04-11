@@ -17,15 +17,18 @@ export const SITE_TAGLINE = "Legal Solutions for All";
  * Open Graph. Keep under 160 so Google doesn't truncate.
  */
 export const SITE_DESCRIPTION =
-  "Colorado attorneys + AI legal assistant. Flat-fee help with the Colorado AI Act, vendor contracts, and small-business law. Home of FAIIR certification.";
+  "Colorado's subscription law firm for small business. Flat monthly pricing for contracts, employment, AI vendor review, and Colorado AI Act compliance.";
 
 /**
  * Long-form entity description for JSON-LD schema. Search engines and LLM
  * retrievers read this — it can be longer and more descriptive than the
- * meta description without SEO penalty.
+ * meta description without SEO penalty. Structured as an extractable
+ * "[Entity] is a [category] serving [geography] that [differentiator]"
+ * sentence so LLM answer engines (ChatGPT, Perplexity, Google AI Overviews)
+ * can quote it cleanly.
  */
 export const SITE_DESCRIPTION_LONG =
-  "Available Law is a Colorado virtual law firm pairing licensed attorneys with Allora, an AI legal assistant, to deliver flat-rate help with AI compliance, vendor contracts, and business formation. Home of FAIIR — the Foundation for AI Integrity & Regulation, an AI certification framework for the Colorado AI Act.";
+  "Available Law is a Colorado-licensed, FAIIR-certified virtual law firm serving small businesses on a flat monthly subscription. It handles contracts, employment, AI vendor review, and Colorado AI Act (SB24-205) compliance through four subscription tiers — Explore, Build, Grow, and Lead — without billable hours. Available Law is also the home of FAIIR, the Foundation for AI Integrity & Regulation, an AI certification framework for the Colorado AI Act.";
 export const CONTACT_EMAIL = "zachariah@availablelaw.com";
 export const FOUNDER_NAME = "Zachariah Crabill";
 export const FOUNDER_CREDENTIAL = "JD";
@@ -269,7 +272,7 @@ export const HOMEPAGE_FAQS: Array<{ question: string; answer: string }> = [
   {
     question: "What is Available Law?",
     answer:
-      "Available Law is a Colorado-based virtual law firm that pairs licensed attorneys with Allora, an AI legal assistant, to deliver flat-rate legal services to small and mid-sized businesses. Available Law focuses on AI compliance, technology contracts, and business formation.",
+      "Available Law is a Colorado-licensed, FAIIR-certified virtual law firm serving small businesses on a flat monthly subscription. Instead of billable hours, clients pay a predictable monthly fee for contracts, employment support, AI vendor review, and Colorado AI Act (SB24-205) compliance. Available Law pairs licensed Colorado attorneys with Allora, an AI legal assistant, to deliver work faster without sacrificing attorney review.",
   },
   {
     question: "What is FAIIR?",

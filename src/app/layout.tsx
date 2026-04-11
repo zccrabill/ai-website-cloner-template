@@ -6,11 +6,17 @@ import {
   SITE_URL,
   SITE_NAME,
   SITE_DESCRIPTION,
-  SITE_TAGLINE,
   DEFAULT_OG_IMAGE,
   organizationSchema,
   websiteSchema,
 } from "@/lib/seo";
+
+// Homepage title tag. Kept separate from SITE_TAGLINE ("Legal Solutions for
+// All") because the tagline is a brand slogan, not an SEO-optimized title.
+// This string is the single highest-weighted on-page ranking signal and is
+// also what AI answer engines quote when citing the site.
+const HOMEPAGE_TITLE =
+  "Colorado's subscription law firm for small business | Available Law";
 
 const dmSerif = DM_Serif_Display({
   variable: "--font-heading",
@@ -28,22 +34,26 @@ const inter = Inter({
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: `${SITE_NAME} — ${SITE_TAGLINE}`,
+    default: HOMEPAGE_TITLE,
     template: `%s | ${SITE_NAME}`,
   },
   description: SITE_DESCRIPTION,
   applicationName: SITE_NAME,
   keywords: [
-    "Colorado AI attorney",
+    "subscription law firm Colorado",
+    "small business lawyer Colorado",
+    "Colorado small business attorney",
+    "flat fee lawyer Colorado",
+    "monthly legal subscription",
+    "fractional general counsel Colorado",
     "Colorado AI Act",
-    "AI compliance lawyer",
+    "Colorado AI Act compliance",
+    "SB24-205",
+    "AI vendor contract review",
     "FAIIR certification",
     "virtual law firm Colorado",
-    "AI vendor contract review",
     "business formation Colorado",
-    "flat rate attorney",
-    "AI legal assistant",
-    "Allora AI",
+    "AI compliance lawyer",
     "Available Law",
     "Zachariah Crabill",
   ],
@@ -58,7 +68,7 @@ export const metadata: Metadata = {
     type: "website",
     url: SITE_URL,
     siteName: SITE_NAME,
-    title: `${SITE_NAME} — ${SITE_TAGLINE}`,
+    title: HOMEPAGE_TITLE,
     description: SITE_DESCRIPTION,
     locale: "en_US",
     images: [
@@ -72,7 +82,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: `${SITE_NAME} — ${SITE_TAGLINE}`,
+    title: HOMEPAGE_TITLE,
     description: SITE_DESCRIPTION,
     images: [DEFAULT_OG_IMAGE],
   },

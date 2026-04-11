@@ -67,13 +67,13 @@ export default function HeroSection() {
               className="font-heading text-5xl lg:text-6xl leading-tight text-[#1F1810]"
               style={{ letterSpacing: "-0.02em" }}
             >
-              Colorado AI Act compliance{" "}
-              <em className="not-italic text-[#C17832]">and</em> everyday legal help for small business
+              Colorado&rsquo;s subscription law firm{" "}
+              <em className="not-italic text-[#C17832]">for</em> small business
             </h1>
 
             {/* Subtitle */}
             <p className="text-lg text-[#6B5B4E] max-w-md leading-relaxed">
-              Available Law is a Colorado attorney–led firm helping small businesses prepare for the Colorado AI Act (SB24-205), review AI vendor contracts, and handle day-to-day legal work — flat fees, AI-accelerated, human-verified.
+              Available Law is a Colorado-licensed, FAIIR-certified virtual law firm serving small businesses on a flat monthly subscription. Contracts, employment, AI vendor review, and Colorado AI Act (SB24-205) compliance &mdash; on a subscription, not a stopwatch.
             </p>
 
             {/* CTAs */}
