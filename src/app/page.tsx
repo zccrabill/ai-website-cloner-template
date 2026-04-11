@@ -9,10 +9,13 @@ import TestimonialsSection from "@/components/TestimonialsSection";
 import CTASection from "@/components/CTASection";
 import Footer from "@/components/Footer";
 import AlloraFloatingWidget from "@/components/AlloraFloatingWidget";
+import JsonLd from "@/components/JsonLd";
+import { faqPageSchema, HOMEPAGE_FAQS } from "@/lib/seo";
 
 export default function Home() {
   return (
     <>
+      <JsonLd data={faqPageSchema(HOMEPAGE_FAQS)} />
       <Header />
       <main>
         <HeroSection />

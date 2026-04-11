@@ -1,14 +1,28 @@
+import type { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Link from "next/link";
+import JsonLd from "@/components/JsonLd";
+import {
+  SITE_URL,
+  blogPostingSchema,
+  breadcrumbSchema,
+  DEFAULT_OG_IMAGE,
+} from "@/lib/seo";
 
-const postMetadata: Record<
-  string,
-  { title: string; date: string; author: string; excerpt: string }
-> = {
+interface PostMeta {
+  title: string;
+  date: string; // human-readable display date
+  isoDate: string; // ISO 8601 for schema + metadata
+  author: string;
+  excerpt: string;
+}
+
+const postMetadata: Record<string, PostMeta> = {
   "5-ai-vendor-contract-clauses": {
     title: "5 AI Vendor Contract Clauses Your Company Is Missing",
     date: "April 7, 2026",
+    isoDate: "2026-04-07",
     author: "Zachariah Crabill, JD",
     excerpt:
       "Most companies don't protect themselves adequately when contracting with AI vendors. Learn the critical clauses you need to include in your vendor agreements.",
@@ -16,6 +30,7 @@ const postMetadata: Record<
   "colorado-ai-act-2026": {
     title: "Colorado's AI Act: What Businesses Need to Know in 2026",
     date: "April 2, 2026",
+    isoDate: "2026-04-02",
     author: "Zachariah Crabill, JD",
     excerpt:
       "Colorado's new AI legislation sets a precedent for responsible AI use.",
@@ -23,6 +38,7 @@ const postMetadata: Record<
   "document-ai-decision-making": {
     title: "How to Document AI Decision-Making for Compliance",
     date: "March 28, 2026",
+    isoDate: "2026-03-28",
     author: "Zachariah Crabill, JD",
     excerpt:
       "Documentation is critical for AI compliance. This guide walks you through building a practical system for tracking AI decisions.",
@@ -31,6 +47,38 @@ const postMetadata: Record<
 
 export function generateStaticParams() {
   return Object.keys(postMetadata).map((slug) => ({ slug }));
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const post = postMetadata[slug];
+  if (!post) {
+    return { title: "Post not found" };
+  }
+  const url = `${SITE_URL}/blog/${slug}`;
+  return {
+    title: post.title,
+    description: post.excerpt,
+    alternates: { canonical: `/blog/${slug}` },
+    openGraph: {
+      type: "article",
+      url,
+      title: post.title,
+      description: post.excerpt,
+      publishedTime: post.isoDate,
+      authors: [post.author],
+      images: [DEFAULT_OG_IMAGE],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: post.title,
+      description: post.excerpt,
+    },
+  };
 }
 
 export default async function BlogPostPage({
@@ -65,6 +113,22 @@ export default async function BlogPostPage({
 
   return (
     <>
+      <JsonLd
+        data={[
+          blogPostingSchema({
+            slug,
+            title: post.title,
+            description: post.excerpt,
+            datePublished: post.isoDate,
+            authorName: post.author,
+          }),
+          breadcrumbSchema([
+            { name: "Home", url: "/" },
+            { name: "Blog", url: "/blog" },
+            { name: post.title, url: `/blog/${slug}` },
+          ]),
+        ]}
+      />
       <Header />
       <main className="bg-[#FAF8F5] min-h-screen">
         {/* Back link */}

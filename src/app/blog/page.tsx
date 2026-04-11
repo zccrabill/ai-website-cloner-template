@@ -1,6 +1,22 @@
+import type { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Link from "next/link";
+import JsonLd from "@/components/JsonLd";
+import { breadcrumbSchema } from "@/lib/seo";
+
+export const metadata: Metadata = {
+  title: "AI Legal Insights — Blog",
+  description:
+    "Plain-language analysis of the Colorado AI Act, AI vendor contracts, and compliance documentation from Available Law — a Colorado virtual law firm focused on AI regulation.",
+  alternates: { canonical: "/blog" },
+  openGraph: {
+    type: "website",
+    title: "AI Legal Insights — Available Law Blog",
+    description:
+      "Plain-language analysis of the Colorado AI Act, AI vendor contracts, and compliance documentation from Available Law.",
+  },
+};
 
 interface BlogPost {
   slug: string;
@@ -36,6 +52,12 @@ const blogPosts: BlogPost[] = [
 export default function BlogPage() {
   return (
     <>
+      <JsonLd
+        data={breadcrumbSchema([
+          { name: "Home", url: "/" },
+          { name: "Blog", url: "/blog" },
+        ])}
+      />
       <Header />
       <main className="bg-[#FAF8F5] min-h-screen">
         {/* Blog header */}
