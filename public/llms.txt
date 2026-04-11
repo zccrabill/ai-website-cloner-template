@@ -1,6 +1,6 @@
 # Available Law
 
-> Available Law is a Colorado-based virtual law firm that pairs licensed attorneys with Allora, an AI legal assistant, to deliver flat-rate legal services focused on AI compliance, business formation, and technology contracts. Available Law also offers FAIIR — the Fairness, Accountability, Integrity, and Inclusion Review — an AI certification framework for businesses navigating the Colorado AI Act.
+> Available Law is a Colorado-based virtual law firm that pairs licensed attorneys with Allora, an AI legal assistant, to deliver flat-rate legal services focused on AI compliance, business formation, and technology contracts. Available Law also offers FAIIR — the Foundation for AI Integrity & Regulation — an AI certification framework for businesses navigating the Colorado AI Act.
 
 ## Who Available Law is for
 
@@ -20,9 +20,10 @@ Zachariah Crabill, JD. Licensed Colorado attorney. Founder of Available Law, LLC
 ## Key pages
 
 - [Homepage](https://availablelaw.com/): Overview of services, Allora AI assistant, pricing, and FAIIR.
+- [Colorado AI Act Checker](https://availablelaw.com/ai-act-checker): Free interactive tool to determine whether a Colorado business is subject to SB24-205 and what obligations apply.
+- [FAIIR Certification](https://availablelaw.com/faiir): Dedicated page for the Foundation for AI Integrity & Regulation certification program — assessment process, pillars, and pricing.
 - [Blog — AI Legal Insights](https://availablelaw.com/blog): Long-form articles on AI compliance, Colorado AI Act, vendor contracts, and documentation practices.
 - [Pricing](https://availablelaw.com/#pricing): Four-tier flat-rate subscription plans.
-- [FAIIR](https://availablelaw.com/#faiir): AI certification program for businesses.
 - [Login / Sign up](https://availablelaw.com/login): Client dashboard access.
 
 ## Blog posts

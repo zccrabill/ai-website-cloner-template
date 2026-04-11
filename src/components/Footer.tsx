@@ -25,6 +25,7 @@ export default function Footer() {
               { label: "Home", href: "/" },
               { label: "Solutions", href: "/#solutions" },
               { label: "Pricing", href: "/#pricing" },
+              { label: "How It Works", href: "/#how" },
               { label: "Blog", href: "/blog" },
             ].map((item) => (
               <li key={item.label}>
@@ -46,17 +47,18 @@ export default function Footer() {
           </p>
           <ul className="flex flex-col gap-3">
             {[
-              "AI Contract Review",
-              "AI Liability Audits",
-              "Data Privacy",
-              "Fractional GC",
+              { label: "Colorado AI Act Checker", href: "/ai-act-checker" },
+              { label: "FAIIR Certification", href: "/faiir" },
+              { label: "AI Contract Review", href: "/#solutions" },
+              { label: "AI Liability Audits", href: "/#solutions" },
+              { label: "Fractional GC", href: "/#solutions" },
             ].map((service) => (
-              <li key={service}>
+              <li key={service.label}>
                 <Link
-                  href="/#solutions"
+                  href={service.href}
                   className="text-sm text-[#6B5B4E] hover:text-[#C17832] transition-colors"
                 >
-                  {service}
+                  {service.label}
                 </Link>
               </li>
             ))}
@@ -105,7 +107,7 @@ export default function Footer() {
       <div className="border-t border-[#1F1810]/8">
         <div className="max-w-[1200px] mx-auto px-8 py-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <p className="text-xs text-[#6B5B4E]">
-            © 2026 Available Legal Solutions, LLC. All rights reserved.
+            © 2026 Available Law, LLC. All rights reserved.
           </p>
           <p className="text-xs text-[#6B5B4E] leading-relaxed max-w-md">
             Information on this site is for general informational purposes only and does not constitute legal advice. AI Disclosure: Some content may be AI-assisted and reviewed by our licensed attorneys.

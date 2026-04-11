@@ -1,14 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
 
 export default function HeroSection() {
-  const [isAnimating, setIsAnimating] = useState(false);
-
-  useEffect(() => {
-    setIsAnimating(true);
-  }, []);
+  // Animations start immediately on mount. There's no server/client divergence
+  // because CSS keyframes are the same in both environments — the effect-based
+  // pattern that used to flip this from false to true was a React anti-pattern
+  // and also triggered react-hooks/set-state-in-effect.
+  const isAnimating = true;
 
   return (
     <section className="relative w-full min-h-screen bg-[#FAF8F5] overflow-hidden">
@@ -68,13 +67,13 @@ export default function HeroSection() {
               className="font-heading text-5xl lg:text-6xl leading-tight text-[#1F1810]"
               style={{ letterSpacing: "-0.02em" }}
             >
-              Legal solutions that{" "}
-              <em className="not-italic text-[#C17832]">actually</em> work for your business
+              Colorado AI Act compliance{" "}
+              <em className="not-italic text-[#C17832]">and</em> everyday legal help for small business
             </h1>
 
             {/* Subtitle */}
             <p className="text-lg text-[#6B5B4E] max-w-md leading-relaxed">
-              A team of attorneys who build with AI — not just advise on it. We combine legal expertise with intelligent automation to deliver practical, affordable guidance for Colorado businesses.
+              Available Law is a Colorado attorney–led firm helping small businesses prepare for the Colorado AI Act (SB24-205), review AI vendor contracts, and handle day-to-day legal work — flat fees, AI-accelerated, human-verified.
             </p>
 
             {/* CTAs */}

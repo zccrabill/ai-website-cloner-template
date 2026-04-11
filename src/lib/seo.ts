@@ -12,8 +12,20 @@ export const SITE_URL = "https://availablelaw.com";
 export const SITE_NAME = "Available Law";
 export const LEGAL_NAME = "Available Law, LLC";
 export const SITE_TAGLINE = "Legal Solutions for All";
+/**
+ * Short meta description (<=160 chars) for <meta name="description"> and
+ * Open Graph. Keep under 160 so Google doesn't truncate.
+ */
 export const SITE_DESCRIPTION =
-  "Available Law is a Colorado virtual law firm pairing licensed attorneys with Allora, an AI legal assistant, to deliver flat-rate help with AI compliance, vendor contracts, and business formation. Home of FAIIR — the AI certification framework for the Colorado AI Act.";
+  "Colorado attorneys + AI legal assistant. Flat-fee help with the Colorado AI Act, vendor contracts, and small-business law. Home of FAIIR certification.";
+
+/**
+ * Long-form entity description for JSON-LD schema. Search engines and LLM
+ * retrievers read this — it can be longer and more descriptive than the
+ * meta description without SEO penalty.
+ */
+export const SITE_DESCRIPTION_LONG =
+  "Available Law is a Colorado virtual law firm pairing licensed attorneys with Allora, an AI legal assistant, to deliver flat-rate help with AI compliance, vendor contracts, and business formation. Home of FAIIR — the Foundation for AI Integrity & Regulation, an AI certification framework for the Colorado AI Act.";
 export const CONTACT_EMAIL = "zachariah@availablelaw.com";
 export const FOUNDER_NAME = "Zachariah Crabill";
 export const FOUNDER_CREDENTIAL = "JD";
@@ -43,7 +55,7 @@ export function organizationSchema() {
       height: 512,
     },
     image: DEFAULT_OG_IMAGE,
-    description: SITE_DESCRIPTION,
+    description: SITE_DESCRIPTION_LONG,
     email: CONTACT_EMAIL,
     foundingDate: "2025",
     founder: {
@@ -107,10 +119,13 @@ export function organizationSchema() {
         availableLanguage: ["English"],
       },
     ],
+    // sameAs links help search engines and LLM retrievers disambiguate
+    // "Available Law" from any other entity with a similar name. These URLs
+    // must resolve to live profiles — if you claim additional ones
+    // (Crunchbase, Facebook, YouTube, etc.), add them here.
     sameAs: [
-      // Add profile URLs here once they exist:
-      // "https://www.linkedin.com/company/available-law",
-      // "https://www.crunchbase.com/organization/available-law",
+      "https://www.linkedin.com/company/available-legal-solutions-llc/",
+      "https://x.com/availablelaw",
     ],
   };
 }
@@ -125,7 +140,7 @@ export function websiteSchema() {
     "@id": `${SITE_URL}/#website`,
     url: SITE_URL,
     name: SITE_NAME,
-    description: SITE_DESCRIPTION,
+    description: SITE_DESCRIPTION_LONG,
     publisher: { "@id": `${SITE_URL}/#organization` },
     inLanguage: "en-US",
   };
@@ -259,7 +274,7 @@ export const HOMEPAGE_FAQS: Array<{ question: string; answer: string }> = [
   {
     question: "What is FAIIR?",
     answer:
-      "FAIIR is the Fairness, Accountability, Integrity, and Inclusion Review — an AI certification framework created by Available Law to help businesses audit their AI systems for compliance with the Colorado AI Act and emerging state AI laws. FAIIR includes an initial attorney-led assessment, a written certification letter, and ongoing compliance monitoring.",
+      "FAIIR stands for the Foundation for AI Integrity & Regulation — an AI certification framework created by Available Law to help businesses audit their AI systems for compliance with the Colorado AI Act and emerging state AI laws. FAIIR includes an initial attorney-led assessment, a written certification letter, and ongoing compliance monitoring.",
   },
   {
     question: "Does Available Law serve clients outside Colorado?",

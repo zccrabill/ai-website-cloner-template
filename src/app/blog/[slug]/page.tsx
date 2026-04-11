@@ -64,6 +64,16 @@ export async function generateMetadata({
     title: post.title,
     description: post.excerpt,
     alternates: { canonical: `/blog/${slug}` },
+    // Placeholder content — excluded from search indexing until the full article is published.
+    // Remove `robots` once real content ships and re-add the slug to sitemap.ts.
+    robots: {
+      index: false,
+      follow: true,
+      googleBot: {
+        index: false,
+        follow: true,
+      },
+    },
     openGraph: {
       type: "article",
       url,

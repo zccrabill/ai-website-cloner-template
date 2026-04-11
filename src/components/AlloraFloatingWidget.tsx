@@ -184,6 +184,7 @@ export default function AlloraFloatingWidget() {
               alt="Allora"
               width={36}
               height={36}
+              loading="lazy"
               className="object-contain"
               style={{
                 filter:
@@ -210,6 +211,7 @@ export default function AlloraFloatingWidget() {
                   alt="Allora"
                   width={22}
                   height={22}
+                  loading="lazy"
                   className="object-contain"
                   style={{
                     filter:
