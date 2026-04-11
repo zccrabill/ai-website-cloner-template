@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import type { ReactNode } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Link from "next/link";
@@ -9,6 +10,9 @@ import {
   breadcrumbSchema,
   DEFAULT_OG_IMAGE,
 } from "@/lib/seo";
+import ColoradoAiAct2026Article from "@/content/blog/colorado-ai-act-2026";
+import AiVendorContractClausesArticle from "@/content/blog/5-ai-vendor-contract-clauses";
+import DocumentAiDecisionMakingArticle from "@/content/blog/document-ai-decision-making";
 
 interface PostMeta {
   title: string;
@@ -17,6 +21,17 @@ interface PostMeta {
   author: string;
   excerpt: string;
 }
+
+// Slug → rendered article body. Each component is a collection of typography
+// primitives (H2, P, UL, etc.) exported as a default component from
+// src/content/blog/*.tsx. Keeping the mapping centralized here means adding a
+// new post is: (1) create the .tsx file under src/content/blog, (2) register
+// metadata above, (3) register the component here, (4) add to sitemap.ts.
+const postContent: Record<string, ReactNode> = {
+  "colorado-ai-act-2026": <ColoradoAiAct2026Article />,
+  "5-ai-vendor-contract-clauses": <AiVendorContractClausesArticle />,
+  "document-ai-decision-making": <DocumentAiDecisionMakingArticle />,
+};
 
 const postMetadata: Record<string, PostMeta> = {
   "5-ai-vendor-contract-clauses": {
@@ -64,16 +79,6 @@ export async function generateMetadata({
     title: post.title,
     description: post.excerpt,
     alternates: { canonical: `/blog/${slug}` },
-    // Placeholder content — excluded from search indexing until the full article is published.
-    // Remove `robots` once real content ships and re-add the slug to sitemap.ts.
-    robots: {
-      index: false,
-      follow: true,
-      googleBot: {
-        index: false,
-        follow: true,
-      },
-    },
     openGraph: {
       type: "article",
       url,
@@ -185,36 +190,8 @@ export default async function BlogPostPage({
               </p>
             </div>
 
-            {/* Article content placeholder */}
-            <div className="prose prose-light max-w-none mb-16">
-              <div className="text-[#6B5B4E] leading-relaxed space-y-6 text-[15px]">
-                <p>
-                  Article content will be loaded from markdown files. The slug
-                  &ldquo;
-                  <code className="text-[#C17832] bg-[#F5F0EB] px-2 py-1 rounded">
-                    {slug}
-                  </code>
-                  &rdquo; maps to the corresponding markdown file in{" "}
-                  <code className="text-[#C17832] bg-[#F5F0EB] px-2 py-1 rounded">
-                    /content/blog/
-                  </code>
-                  .
-                </p>
-
-                <div className="bg-[#F5F0EB] border border-[#1F1810]/8 rounded-lg p-6 mt-8">
-                  <h3
-                    className="font-heading text-[#1F1810] text-xl mb-3"
-                    style={{ fontWeight: 400 }}
-                  >
-                    Coming Soon
-                  </h3>
-                  <p className="text-[#6B5B4E] text-[14px]">
-                    The full article content for &ldquo;{post.title}&rdquo; will
-                    be displayed here.
-                  </p>
-                </div>
-              </div>
-            </div>
+            {/* Article body */}
+            <div className="max-w-none mb-16">{postContent[slug]}</div>
 
             {/* CTA section */}
             <div className="bg-gradient-to-r from-[#F5F0EB] to-[#FFFFFF] border border-[#1F1810]/8 rounded-lg p-8 md:p-12 text-center">

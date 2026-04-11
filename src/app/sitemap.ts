@@ -10,13 +10,12 @@ export const dynamic = "force-static";
  * route file because Next's sitemap generation runs at build time and can't
  * easily round-trip a server component's internal state. When you add a post,
  * add it here too.
- *
- * NOTE (2026-04-10): The three existing posts are placeholders and are currently
- * noindexed in their metadata. They're excluded from the sitemap until real
- * article content ships — then re-enable by moving entries back into BLOG_POSTS
- * and removing `robots: { index: false }` from `blog/[slug]/page.tsx`.
  */
-const BLOG_POSTS: Array<{ slug: string; isoDate: string }> = [];
+const BLOG_POSTS: Array<{ slug: string; isoDate: string }> = [
+  { slug: "5-ai-vendor-contract-clauses", isoDate: "2026-04-07" },
+  { slug: "colorado-ai-act-2026", isoDate: "2026-04-02" },
+  { slug: "document-ai-decision-making", isoDate: "2026-03-28" },
+];
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date().toISOString();
