@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
+import AnnouncementBanner from "@/components/AnnouncementBanner";
 
 export default function Header() {
   const [scrolled, setScrolled] = useState(false);
@@ -41,6 +42,7 @@ export default function Header() {
           : "bg-[rgba(250,248,245,0.7)] backdrop-blur-sm"
       }`}
     >
+      <AnnouncementBanner />
       <div className="max-w-[1280px] mx-auto px-6 h-16 flex items-center justify-between gap-6">
         {/* Logo + FAIIR Seal */}
         <div className="flex items-center gap-2 flex-shrink-0">
