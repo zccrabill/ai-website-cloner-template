@@ -1,13 +1,6 @@
 import Link from "next/link";
 import type { LucideIcon } from "lucide-react";
-import {
-  FileSearch,
-  ShieldCheck,
-  Lock,
-  Compass,
-  FileSignature,
-  Sparkles,
-} from "lucide-react";
+import { FileSearch, Compass, FileSignature, Sparkles } from "lucide-react";
 
 /**
  * Solutions grid on the homepage. Editorial treatment: line icons (not
@@ -35,6 +28,11 @@ interface Solution {
   href: string;
 }
 
+// Kept deliberately small (four cards, not six). Colorado AI Act readiness
+// and data privacy assessments used to live here but were cut because they
+// double up with the FAIIR section below — running both made the homepage
+// feel long and repetitive. If you add a fifth card, audit for overlap
+// with /faiir before shipping.
 const SOLUTIONS: Solution[] = [
   {
     icon: FileSearch,
@@ -46,26 +44,8 @@ const SOLUTIONS: Solution[] = [
     href: "/#pricing",
   },
   {
-    icon: ShieldCheck,
-    number: "02",
-    category: "AI Compliance",
-    title: "Colorado AI Act Readiness",
-    description:
-      "SB24-205 impact assessments, AI inventory, decision logs, and the paper trail you&rsquo;ll need if the Attorney General comes asking. FAIIR-certified.",
-    href: "/faiir",
-  },
-  {
-    icon: Lock,
-    number: "03",
-    category: "Privacy",
-    title: "Data Privacy Assessments",
-    description:
-      "Colorado Privacy Act compliance for how you collect, store, and share customer data — especially when AI tools sit in the middle of it.",
-    href: "/#pricing",
-  },
-  {
     icon: Compass,
-    number: "04",
+    number: "02",
     category: "Advisory",
     title: "Fractional General Counsel",
     description:
@@ -74,7 +54,7 @@ const SOLUTIONS: Solution[] = [
   },
   {
     icon: FileSignature,
-    number: "05",
+    number: "03",
     category: "Deals",
     title: "Business & Transactional Work",
     description:
@@ -83,7 +63,7 @@ const SOLUTIONS: Solution[] = [
   },
   {
     icon: Sparkles,
-    number: "06",
+    number: "04",
     category: "AI Assistant",
     title: "Allora, Your 24/7 Legal Assistant",
     description:
@@ -111,8 +91,10 @@ export default function SolutionsSection() {
           </p>
         </div>
 
-        {/* Solutions grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* Solutions grid — four cards in a 2x2 on desktop. If a fifth
+            card is added, bump back to lg:grid-cols-3 and audit for
+            overlap with the FAIIR section first. */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {SOLUTIONS.map((solution) => {
             const Icon = solution.icon;
             return (

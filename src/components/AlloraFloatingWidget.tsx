@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { X, Send, Sparkles } from "lucide-react";
+import { X, Send, Sparkles, Mic, Volume2, VolumeX } from "lucide-react";
 import { supabase } from "@/lib/supabase";
+import { useVoiceChat } from "@/hooks/useVoiceChat";
 
 interface ChatMessage {
   role: "user" | "assistant";
@@ -21,6 +22,19 @@ export default function AlloraFloatingWidget() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // --- Voice mode state -------------------------------------------------
+  // Gate the mic button behind an authenticated session. Voice is a
+  // members-only perk in v1 — keeps API cost contained and gives us a
+  // natural metering story if we ever swap to a paid provider.
+  const [isAuthed, setIsAuthed] = useState(false);
+  // Voice is opt-in per-session. We remember whether the user pressed the
+  // mic so we only auto-speak assistant replies for turns they initiated
+  // by voice. Text conversations stay silent.
+  const [voiceModeOn, setVoiceModeOn] = useState(false);
+  // Tracks the assistant reply we've already spoken so we don't read the
+  // same message twice on re-renders or when history is rehydrated.
+  const lastSpokenIndexRef = useRef(-1);
 
   const suggestions = [
     "How does Available Law work?",
@@ -66,6 +80,26 @@ export default function AlloraFloatingWidget() {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isTyping]);
 
+  // Watch Supabase auth state so we can reveal the mic button only to
+  // signed-in members. onAuthStateChange fires for every login/logout so
+  // the gate stays in sync if the user signs out in another tab.
+  useEffect(() => {
+    let mounted = true;
+    supabase.auth.getSession().then(({ data }) => {
+      if (!mounted) return;
+      setIsAuthed(Boolean(data.session?.user));
+    });
+    const { data: listener } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        setIsAuthed(Boolean(session?.user));
+      },
+    );
+    return () => {
+      mounted = false;
+      listener.subscription.unsubscribe();
+    };
+  }, []);
+
   const handleOpenChat = () => {
     setIsOpen(true);
     setShowGreeting(false);
@@ -79,47 +113,110 @@ export default function AlloraFloatingWidget() {
     setDismissed(true);
   };
 
-  const handleSend = async (text?: string) => {
-    const content = (text ?? message).trim();
-    if (!content) return;
+  const handleSend = useCallback(
+    async (text?: string) => {
+      const content = (text ?? message).trim();
+      if (!content) return;
 
-    const userMsg: ChatMessage = { role: "user", content };
-    const nextHistory = [...messages, userMsg];
-    setMessages(nextHistory);
-    setMessage("");
-    setIsTyping(true);
+      const userMsg: ChatMessage = { role: "user", content };
+      setMessages((prev) => {
+        const nextHistory = [...prev, userMsg];
+        // Fire the backend call from inside the setter so we always use
+        // the latest messages snapshot — critical for voice turns where
+        // multiple sends can stack up faster than React commits state.
+        (async () => {
+          setMessage("");
+          setIsTyping(true);
+          try {
+            const { data, error } = await supabase.functions.invoke(
+              "allora-chat",
+              {
+                body: {
+                  messages: nextHistory.map((m) => ({
+                    role: m.role,
+                    content: m.content,
+                  })),
+                },
+              },
+            );
 
-    try {
-      const { data, error } = await supabase.functions.invoke("allora-chat", {
-        body: {
-          messages: nextHistory.map((m) => ({
-            role: m.role,
-            content: m.content,
-          })),
-        },
+            if (error) throw error;
+
+            const reply =
+              (data as { reply?: string } | null)?.reply ??
+              "I'm having trouble reaching the assistant right now — please try again in a moment.";
+
+            setMessages((cur) => [...cur, { role: "assistant", content: reply }]);
+          } catch (err) {
+            console.error("allora-chat error", err);
+            setMessages((cur) => [
+              ...cur,
+              {
+                role: "assistant",
+                content:
+                  "I'm having trouble connecting right now. You can also reach the team directly at zachariah@availablelaw.com — sorry about that.",
+              },
+            ]);
+          } finally {
+            setIsTyping(false);
+          }
+        })();
+        return nextHistory;
       });
+    },
+    [message],
+  );
 
-      if (error) throw error;
+  // --- Voice hook wiring -----------------------------------------------
+  // The hook hands us the final transcript when SpeechRecognition decides a
+  // turn is done (silence or explicit stop). We pipe it straight into the
+  // existing handleSend path so voice turns are indistinguishable from text
+  // turns on the backend. No new endpoint, no new spend.
+  const voice = useVoiceChat({
+    onFinalTranscript: (finalText) => {
+      handleSend(finalText);
+    },
+  });
 
-      const reply =
-        (data as { reply?: string } | null)?.reply ??
-        "I'm having trouble reaching the assistant right now — please try again in a moment.";
+  // When a new assistant message arrives AND the user's last turn was by
+  // voice, speak the reply out loud. We track lastSpokenIndexRef so we
+  // never read the same message twice across re-renders.
+  useEffect(() => {
+    if (!voiceModeOn) return;
+    if (messages.length === 0) return;
+    const lastIdx = messages.length - 1;
+    const last = messages[lastIdx];
+    if (last.role !== "assistant") return;
+    if (lastSpokenIndexRef.current >= lastIdx) return;
+    lastSpokenIndexRef.current = lastIdx;
+    voice.speak(last.content);
+  }, [messages, voiceModeOn, voice]);
 
-      setMessages((prev) => [...prev, { role: "assistant", content: reply }]);
-    } catch (err) {
-      console.error("allora-chat error", err);
-      setMessages((prev) => [
-        ...prev,
-        {
-          role: "assistant",
-          content:
-            "I'm having trouble connecting right now. You can also reach the team directly at zachariah@availablelaw.com — sorry about that.",
-        },
-      ]);
-    } finally {
-      setIsTyping(false);
+  // Click handler for the mic button. Toggles between idle and listening.
+  // Also toggles voiceModeOn so subsequent assistant replies get spoken —
+  // flipping the mic off mid-session is effectively "I'm done talking".
+  const handleMicToggle = useCallback(() => {
+    if (voice.status === "listening") {
+      voice.stop();
+      return;
     }
-  };
+    if (voice.status === "speaking") {
+      // Interrupt Allora and immediately start listening.
+      voice.cancelSpeak();
+    }
+    setVoiceModeOn(true);
+    voice.start();
+  }, [voice]);
+
+  // Explicit "mute" button for when voice mode is on but the user wants to
+  // silence the current TTS playback without disabling voice entirely.
+  const handleMuteToggle = useCallback(() => {
+    if (voice.status === "speaking") {
+      voice.cancelSpeak();
+    } else {
+      setVoiceModeOn((on) => !on);
+    }
+  }, [voice]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -332,18 +429,108 @@ export default function AlloraFloatingWidget() {
 
           {/* Input */}
           <div className="border-t border-[#1F1810]/8 px-4 py-3 bg-white">
+            {/* Voice mode status pill — only shown when something voice-y
+                is happening, so it doesn't add visual noise by default. */}
+            {isAuthed && voice.supported && voice.status !== "idle" && (
+              <div className="mb-2 flex items-center justify-center gap-2 px-3 py-1.5 bg-[#FAF8F5] border border-[#C17832]/30 rounded-full">
+                {voice.status === "listening" && (
+                  <>
+                    <span className="relative flex h-2 w-2">
+                      <span className="absolute inline-flex h-full w-full rounded-full bg-[#C17832] opacity-60 animate-ping" />
+                      <span className="relative inline-flex h-2 w-2 rounded-full bg-[#C17832]" />
+                    </span>
+                    <span className="text-[11px] font-medium text-[#C17832]">
+                      Listening
+                      {voice.transcript ? ` · "${voice.transcript}"` : "…"}
+                    </span>
+                  </>
+                )}
+                {voice.status === "speaking" && (
+                  <>
+                    <Volume2 className="w-3 h-3 text-[#7A8B6F]" />
+                    <span className="text-[11px] font-medium text-[#7A8B6F]">
+                      Allora is speaking
+                    </span>
+                    <button
+                      onClick={voice.cancelSpeak}
+                      className="ml-2 text-[10px] text-[#6B5B4E] hover:text-[#1F1810] underline"
+                    >
+                      stop
+                    </button>
+                  </>
+                )}
+              </div>
+            )}
+
+            {/* Voice error surface — user-friendly, self-dismissing on next
+                successful turn because `error` resets inside start(). */}
+            {voice.error && (
+              <div className="mb-2 px-3 py-1.5 bg-[#FFF4EA] border border-[#C17832]/30 rounded-lg text-[11px] text-[#6B5B4E] leading-snug">
+                {voice.error}
+              </div>
+            )}
+
             <div className="flex gap-2 items-end">
               <input
                 type="text"
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder="Ask Allora a legal question..."
-                className="flex-1 px-3 py-2.5 bg-[#FAF8F5] border border-[#1F1810]/8 rounded-lg text-sm text-[#1F1810] placeholder-[#A89279] focus:outline-none focus:border-[#C17832]/50 focus:ring-1 focus:ring-[#C17832]/20 transition-all"
+                placeholder={
+                  voice.status === "listening"
+                    ? "Listening…"
+                    : "Ask Allora a legal question..."
+                }
+                disabled={voice.status === "listening"}
+                className="flex-1 px-3 py-2.5 bg-[#FAF8F5] border border-[#1F1810]/8 rounded-lg text-sm text-[#1F1810] placeholder-[#A89279] focus:outline-none focus:border-[#C17832]/50 focus:ring-1 focus:ring-[#C17832]/20 transition-all disabled:opacity-60"
               />
+
+              {/* Mic button — members-only, feature-gated by the hook.
+                  Hidden entirely when the browser doesn't support Web
+                  Speech OR the visitor isn't signed in. */}
+              {isAuthed && voice.supported && (
+                <button
+                  onClick={handleMicToggle}
+                  className={`w-10 h-10 rounded-lg transition-all flex items-center justify-center flex-shrink-0 border ${
+                    voice.status === "listening"
+                      ? "bg-[#C17832] text-white border-[#C17832] animate-pulse"
+                      : "bg-white text-[#6B5B4E] border-[#1F1810]/15 hover:border-[#C17832]/60 hover:text-[#C17832]"
+                  }`}
+                  aria-label={
+                    voice.status === "listening"
+                      ? "Stop listening"
+                      : "Start voice input"
+                  }
+                  aria-pressed={voice.status === "listening"}
+                >
+                  <Mic className="w-4 h-4" />
+                </button>
+              )}
+
+              {/* TTS mute toggle — only shown once voice mode has been used
+                  this session, so first-timers aren't confused by two
+                  similar-looking buttons. */}
+              {isAuthed && voice.supported && voiceModeOn && (
+                <button
+                  onClick={handleMuteToggle}
+                  className="w-10 h-10 rounded-lg border border-[#1F1810]/15 bg-white text-[#6B5B4E] hover:text-[#C17832] hover:border-[#C17832]/60 transition-all flex items-center justify-center flex-shrink-0"
+                  aria-label={
+                    voice.status === "speaking"
+                      ? "Stop Allora from speaking"
+                      : "Mute voice replies"
+                  }
+                >
+                  {voice.status === "speaking" ? (
+                    <VolumeX className="w-4 h-4" />
+                  ) : (
+                    <Volume2 className="w-4 h-4" />
+                  )}
+                </button>
+              )}
+
               <button
                 onClick={() => handleSend()}
-                disabled={!message.trim()}
+                disabled={!message.trim() || voice.status === "listening"}
                 className="w-10 h-10 bg-[#1F1810] text-white rounded-lg hover:bg-[#C17832] transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center flex-shrink-0"
                 aria-label="Send"
               >
@@ -351,7 +538,9 @@ export default function AlloraFloatingWidget() {
               </button>
             </div>
             <p className="text-[10px] text-[#A89279] text-center mt-2">
-              Powered by AI · Attorney-reviewed answers for members
+              {isAuthed && voice.supported
+                ? "Powered by AI · Tap the mic to talk to Allora"
+                : "Powered by AI · Attorney-reviewed answers for members"}
             </p>
           </div>
         </div>
