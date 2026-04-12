@@ -116,10 +116,43 @@ export default function ColoradoMapSection() {
   return (
     <section
       id="service-area"
-      className="w-full bg-[#FAF8F5] py-24 px-6"
+      className="relative w-full bg-[#FAF8F5] py-24 px-6 overflow-hidden"
       aria-labelledby="service-area-heading"
     >
-      <div className="max-w-[1180px] mx-auto">
+      {/* Ambient topographic backdrop — faint contour lines bleeding across
+          the whole section. Absolutely positioned, pointer-events: none, and
+          opacity kept very low so it never competes with content. The curves
+          intentionally bunch around the center (where the "mountains" live)
+          and smooth out toward the edges. */}
+      <svg
+        className="pointer-events-none absolute inset-0 w-full h-full"
+        viewBox="0 0 1440 900"
+        preserveAspectRatio="xMidYMid slice"
+        aria-hidden="true"
+      >
+        <g
+          fill="none"
+          stroke="#1F1810"
+          strokeWidth="1"
+          opacity="0.055"
+        >
+          <path d="M -50 120 Q 300 70 520 140 T 920 130 T 1490 90" />
+          <path d="M -50 180 Q 280 110 540 200 T 960 180 T 1490 150" />
+          <path d="M -50 240 Q 260 160 560 260 T 980 240 T 1490 210" />
+          <path d="M -50 300 Q 240 200 580 320 T 1000 300 T 1490 270" />
+          <path d="M -50 360 Q 220 240 600 380 T 1020 360 T 1490 330" />
+          <path d="M -50 420 Q 200 290 620 440 T 1040 420 T 1490 390" />
+          <path d="M -50 480 Q 220 350 640 500 T 1060 480 T 1490 450" />
+          <path d="M -50 540 Q 240 410 660 560 T 1080 540 T 1490 510" />
+          <path d="M -50 600 Q 260 470 680 620 T 1100 600 T 1490 570" />
+          <path d="M -50 660 Q 280 530 700 680 T 1120 660 T 1490 630" />
+          <path d="M -50 720 Q 300 590 720 740 T 1140 720 T 1490 690" />
+          <path d="M -50 780 Q 320 650 740 800 T 1160 780 T 1490 750" />
+          <path d="M -50 840 Q 340 710 760 860 T 1180 840 T 1490 810" />
+        </g>
+      </svg>
+
+      <div className="relative max-w-[1180px] mx-auto">
         {/* Header */}
         <div className="max-w-[780px] mx-auto text-center mb-14">
           <p className="text-sm font-semibold text-[#C17832] uppercase tracking-wide mb-4">
@@ -156,18 +189,20 @@ export default function ColoradoMapSection() {
               Junction, Colorado Springs, Pueblo, and Durango.
             </desc>
 
-            {/* Dot grid texture — subtle topographic hint */}
             <defs>
-              <pattern
-                id="col-dots"
-                x="0"
-                y="0"
-                width="16"
-                height="16"
-                patternUnits="userSpaceOnUse"
-              >
-                <circle cx="1.5" cy="1.5" r="1" fill="#1F1810" opacity="0.06" />
-              </pattern>
+              {/* Clip contour lines to the state boundary so they don't
+                  spill outside the rectangle. */}
+              <clipPath id="col-clip">
+                <rect x="10" y="10" width="680" height="380" rx="8" ry="8" />
+              </clipPath>
+              {/* Faint elevation wash — slightly darker through the
+                  mountain spine on the western half of the state. */}
+              <linearGradient id="col-relief" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stopColor="#EDE5DB" stopOpacity="0.35" />
+                <stop offset="38%" stopColor="#D9CCBC" stopOpacity="0.45" />
+                <stop offset="55%" stopColor="#EDE5DB" stopOpacity="0.25" />
+                <stop offset="100%" stopColor="#FAF8F5" stopOpacity="0" />
+              </linearGradient>
             </defs>
 
             {/* State rectangle — Colorado is geographically a rectangle */}
@@ -182,6 +217,8 @@ export default function ColoradoMapSection() {
               stroke="#1F1810"
               strokeWidth="2.5"
             />
+            {/* Elevation wash — suggests the Rockies without being a literal
+                relief map. Kept subtle enough that pins stay the focal point. */}
             <rect
               x="10"
               y="10"
@@ -189,8 +226,59 @@ export default function ColoradoMapSection() {
               height="380"
               rx="8"
               ry="8"
-              fill="url(#col-dots)"
+              fill="url(#col-relief)"
             />
+
+            {/* Topographic contour lines.
+                Horizontal-ish curves that undulate heavily through the
+                Rockies (western half) and smooth out over the eastern
+                plains — just like a real USGS quad sheet. Faint grey so
+                they recede behind pins and labels. */}
+            <g
+              clipPath="url(#col-clip)"
+              fill="none"
+              stroke="#1F1810"
+              strokeWidth="1"
+              opacity="0.11"
+            >
+              <path d="M 10 35  L 85 35  Q 130 15  170 40  Q 210 65  250 30  Q 290 55  330 40  L 690 40" />
+              <path d="M 10 65  L 80 65  Q 120 35  165 70  Q 205 100 250 55  Q 290 85  335 65  L 690 65" />
+              <path d="M 10 95  L 75 95  Q 115 60  160 100 Q 200 135 250 80  Q 290 115 335 95  L 690 95" />
+              <path d="M 10 125 L 70 125 Q 110 85  155 130 Q 195 165 250 105 Q 290 140 335 125 L 690 125" />
+              <path d="M 10 155 L 70 155 Q 105 110 150 160 Q 195 190 245 130 Q 290 165 340 155 L 690 155" />
+              <path d="M 10 185 L 65 185 Q 100 135 145 185 Q 190 215 240 155 Q 285 190 335 185 L 690 185" />
+              <path d="M 10 215 L 70 215 Q 105 165 150 215 Q 195 245 245 185 Q 290 220 340 215 L 690 215" />
+              <path d="M 10 245 L 75 245 Q 115 195 160 245 Q 200 275 250 215 Q 295 250 345 245 L 690 245" />
+              <path d="M 10 275 L 80 275 Q 120 230 165 275 Q 205 305 255 250 Q 300 280 350 275 L 690 275" />
+              <path d="M 10 305 L 85 305 Q 125 265 175 305 Q 215 335 265 285 Q 305 310 355 305 L 690 305" />
+              <path d="M 10 335 L 90 335 Q 135 300 185 335 Q 225 365 275 320 Q 315 340 360 335 L 690 335" />
+              <path d="M 10 365 L 100 365 Q 145 335 195 365 Q 235 390 285 355 Q 325 370 365 365 L 690 365" />
+            </g>
+
+            {/* Tighter nested contour loops — these read as individual
+                peaks/ranges and give the map a hand-drawn feel.
+                Sawatch / Aspen cluster (around x≈225, y≈180),
+                San Juans / Durango cluster (around x≈140, y≈335),
+                Pikes Peak / Front Range (around x≈395, y≈210). */}
+            <g
+              clipPath="url(#col-clip)"
+              fill="none"
+              stroke="#1F1810"
+              strokeWidth="1"
+              opacity="0.13"
+            >
+              {/* Sawatch / Elk Range — nested around Aspen */}
+              <ellipse cx="225" cy="180" rx="18" ry="10" />
+              <ellipse cx="225" cy="180" rx="30" ry="17" />
+              <ellipse cx="225" cy="180" rx="44" ry="25" />
+              {/* San Juans — nested around Durango */}
+              <ellipse cx="140" cy="335" rx="22" ry="12" />
+              <ellipse cx="140" cy="335" rx="36" ry="20" />
+              <ellipse cx="140" cy="335" rx="52" ry="29" />
+              {/* Pikes Peak / near Colorado Springs */}
+              <ellipse cx="395" cy="215" rx="14" ry="9" />
+              <ellipse cx="395" cy="215" rx="25" ry="16" />
+            </g>
 
             {/* Continental Divide — rough, illustrative only */}
             <path
