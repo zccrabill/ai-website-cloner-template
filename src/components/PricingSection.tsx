@@ -1,94 +1,64 @@
 "use client";
-import { useEffect, useState } from "react";
 import Link from "next/link";
-import { supabase } from "@/lib/supabase";
-import { TIERS, TierKey, OVERAGE_PRICE_PER_PAGE_USD } from "@/lib/tiers";
+import {
+  TIERS,
+  TierKey,
+  OVERAGE_PRICE_PER_PAGE_USD,
+  annualSavingsUsd,
+} from "@/lib/tiers";
+import { useState } from "react";
 
 /**
- * Tier-card presentation metadata that lives alongside but not inside
- * src/lib/tiers.ts. tiers.ts is the source of truth for LIMITS and PRICING
- * used across the product; this map holds marketing-only details (Stripe
- * payment link URLs, CTA copy, featured badge, and the display-as-monthly
- * price for the annual plan).
+ * Marketing-only presentation metadata for each tier card. Pricing and
+ * feature bullets live in src/lib/tiers.ts (source of truth). Stripe Payment
+ * Links live in src/lib/checkout.ts so the homepage cards and the dedicated
+ * /checkout/[tier] pre-checkout page always use the same URLs.
  *
- * Annual price rework is tracked separately — for now annualDisplayMonthly
- * is the effective monthly price a customer sees when they choose annual
- * billing (matches the Stripe prices behind annualLink).
+ * Note: CTAs no longer jump straight to Stripe. Paid-tier buttons route to
+ * /checkout/[tier]?billing=... so the user lands on a Calendly-style order
+ * summary screen first. The checkout page then hands off to Stripe on
+ * confirmation.
  */
 interface TierDisplay {
   cta: string;
   badge?: string;
   featured?: boolean;
-  monthlyLink?: string;
-  annualLink?: string;
-  /** Effective per-month price when billed annually. 0 for free tier. */
-  annualDisplayMonthly: number;
+  /** Whether this tier has a paid checkout flow at all. */
+  hasCheckout: boolean;
 }
 
 const TIER_DISPLAY: Record<TierKey, TierDisplay> = {
-  explore: {
-    cta: "Join Free",
-    annualDisplayMonthly: 0,
-  },
-  build: {
-    cta: "Start Building",
-    annualDisplayMonthly: 25,
-    monthlyLink: "https://buy.stripe.com/5kQ7sLe8IdFjbiPbnKcMM08",
-    annualLink: "https://buy.stripe.com/7sY4gz8Oobxb4UrfE0cMM09",
-  },
+  explore: { cta: "Join Free", hasCheckout: false },
+  build: { cta: "Start Building", hasCheckout: true },
   grow: {
     cta: "Start Growing",
     badge: "Most Popular",
     featured: true,
-    annualDisplayMonthly: 100,
-    monthlyLink: "https://buy.stripe.com/7sY6oH4y8dFj3Qn63qcMM0a",
-    annualLink: "https://buy.stripe.com/7sY3cv2q00Sx1If77ucMM0b",
+    hasCheckout: true,
   },
-  lead: {
-    cta: "Start Leading",
-    annualDisplayMonthly: 300,
-    monthlyLink: "https://buy.stripe.com/eVqcN5ggQ0Sx5YvbnKcMM04",
-    annualLink: "https://buy.stripe.com/3cIbJ18Oo6cRcmTfE0cMM0c",
-  },
+  lead: { cta: "Start Leading", hasCheckout: true },
 };
 
 const TIER_ORDER: TierKey[] = ["explore", "build", "grow", "lead"];
 
+// Largest percent-off across paid tiers. Used in the toggle savings chip so
+// we never advertise a number the pricing math can't back up.
+const MAX_ANNUAL_PERCENT_OFF = (() => {
+  const percents = TIER_ORDER.filter((k) => TIERS[k].monthlyPriceUsd > 0).map(
+    (k) => {
+      const t = TIERS[k];
+      return Math.round(
+        ((t.monthlyPriceUsd * 12 - t.annualPriceUsd) /
+          (t.monthlyPriceUsd * 12)) *
+          100,
+      );
+    },
+  );
+  return Math.max(0, ...percents);
+})();
+
 export default function PricingSection() {
   const [isAnnual, setIsAnnual] = useState(true);
-  const [userId, setUserId] = useState<string | null>(null);
-  const [userEmail, setUserEmail] = useState<string | null>(null);
-
-  useEffect(() => {
-    let mounted = true;
-    supabase.auth.getSession().then(({ data }) => {
-      if (!mounted) return;
-      setUserId(data.session?.user?.id ?? null);
-      setUserEmail(data.session?.user?.email ?? null);
-    });
-    const { data: listener } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        setUserId(session?.user?.id ?? null);
-        setUserEmail(session?.user?.email ?? null);
-      }
-    );
-    return () => {
-      mounted = false;
-      listener.subscription.unsubscribe();
-    };
-  }, []);
-
-  // Append client_reference_id + prefilled_email so the Stripe webhook can
-  // match the completed checkout back to the Supabase user record. Falls back
-  // to the bare URL when the visitor is not signed in — the webhook will then
-  // use the customer email as a secondary match key.
-  const buildCheckoutUrl = (baseUrl: string): string => {
-    if (!userId && !userEmail) return baseUrl;
-    const url = new URL(baseUrl);
-    if (userId) url.searchParams.set("client_reference_id", userId);
-    if (userEmail) url.searchParams.set("prefilled_email", userEmail);
-    return url.toString();
-  };
 
   return (
     <section
@@ -100,9 +70,7 @@ export default function PricingSection() {
         <p className="text-sm font-semibold text-[#C17832] uppercase tracking-wide mb-4">
           Membership Plans
         </p>
-        <h2
-          className="text-5xl font-heading text-[#1F1810] mb-6 leading-tight"
-        >
+        <h2 className="text-5xl font-heading text-[#1F1810] mb-6 leading-tight">
           Invest in legal clarity, not legal bills
         </h2>
         <p className="text-lg text-[#6B5B4E] leading-relaxed">
@@ -132,9 +100,9 @@ export default function PricingSection() {
         >
           Monthly
         </button>
-        {isAnnual && (
+        {isAnnual && MAX_ANNUAL_PERCENT_OFF > 0 && (
           <span className="ml-4 text-sm font-semibold text-[#C17832]">
-            Save up to 50%
+            Save up to {MAX_ANNUAL_PERCENT_OFF}%
           </span>
         )}
       </div>
@@ -144,15 +112,21 @@ export default function PricingSection() {
         {TIER_ORDER.map((key) => {
           const tier = TIERS[key];
           const display = TIER_DISPLAY[key];
+          // Annual effective monthly = annualPriceUsd / 12, rounded to a
+          // whole dollar for display. Computing from tiers.ts means we
+          // never drift from the source of truth.
+          const annualMonthlyEquivalent =
+            tier.annualPriceUsd > 0 ? Math.round(tier.annualPriceUsd / 12) : 0;
           const price = isAnnual
-            ? display.annualDisplayMonthly
+            ? annualMonthlyEquivalent
             : tier.monthlyPriceUsd;
           const billingNote =
-            price === 0
-              ? ""
-              : isAnnual
-              ? "billed annually"
-              : "billed monthly";
+            price === 0 ? "" : isAnnual ? "billed annually" : "billed monthly";
+          const yearlySavings = annualSavingsUsd(tier);
+
+          const checkoutHref = display.hasCheckout
+            ? `/checkout/${key}${isAnnual ? "" : "?billing=monthly"}`
+            : "/login";
 
           return (
             <div
@@ -188,6 +162,11 @@ export default function PricingSection() {
                     {billingNote && (
                       <div className="text-xs text-[#A89279] mt-2">
                         {billingNote}
+                        {isAnnual && yearlySavings > 0 && (
+                          <span className="ml-1 text-[#7A8B6F] font-semibold">
+                            · save ${yearlySavings}/yr
+                          </span>
+                        )}
                       </div>
                     )}
                   </div>
@@ -225,36 +204,18 @@ export default function PricingSection() {
                 )}
               </div>
 
-              {/* CTA Button */}
-              {display.monthlyLink ? (
-                <a
-                  href={buildCheckoutUrl(
-                    isAnnual && display.annualLink
-                      ? display.annualLink
-                      : display.monthlyLink
-                  )}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={`block w-full py-3 px-4 rounded-lg text-sm font-semibold transition-all mb-6 text-center ${
-                    display.featured
-                      ? "bg-[#1F1810] text-white hover:bg-[#C17832]"
-                      : "bg-transparent border border-[#C17832] text-[#C17832] hover:bg-[#FAF8F5]"
-                  }`}
-                >
-                  {display.cta}
-                </a>
-              ) : (
-                <Link
-                  href="/login"
-                  className={`block w-full py-3 px-4 rounded-lg text-sm font-semibold transition-all mb-6 text-center ${
-                    display.featured
-                      ? "bg-[#1F1810] text-white hover:bg-[#C17832]"
-                      : "bg-transparent border border-[#C17832] text-[#C17832] hover:bg-[#FAF8F5]"
-                  }`}
-                >
-                  {display.cta}
-                </Link>
-              )}
+              {/* CTA Button — always routes to /checkout/[tier] for paid
+                  tiers (pre-checkout summary), /login for the free tier. */}
+              <Link
+                href={checkoutHref}
+                className={`block w-full py-3 px-4 rounded-lg text-sm font-semibold transition-all mb-6 text-center ${
+                  display.featured
+                    ? "bg-[#1F1810] text-white hover:bg-[#C17832]"
+                    : "bg-transparent border border-[#C17832] text-[#C17832] hover:bg-[#FAF8F5]"
+                }`}
+              >
+                {display.cta}
+              </Link>
 
               {/* Features */}
               <div className="space-y-3">
