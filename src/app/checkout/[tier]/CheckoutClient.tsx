@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import {
   TIERS,
@@ -28,22 +28,38 @@ interface CheckoutClientProps {
 
 export default function CheckoutClient({ initialTier }: CheckoutClientProps) {
   const router = useRouter();
-  const searchParams = useSearchParams();
 
   // Tier + billing cycle state. Billing cycle defaults to annual (nudges
   // users toward the higher-LTV plan) unless the URL says otherwise. The
   // ?billing= query param is how the homepage PricingSection hands over
   // the user's current toggle state.
+  //
+  // We intentionally DO NOT use next/navigation's useSearchParams() here —
+  // in Next 16's `output: "export"` static export mode, useSearchParams
+  // requires a Suspense boundary AND still trips the prerender in some
+  // situations. Reading window.location.search in a useEffect runs only
+  // after hydration, so the static build is unaffected and the URL value
+  // still takes effect on the very next render post-mount.
   const [tierKey, setTierKey] = useState<TierKey>(initialTier);
-  const billingParam = searchParams?.get("billing");
-  const [cycle, setCycle] = useState<BillingCycle>(
-    billingParam === "monthly" ? "monthly" : "annual",
-  );
+  const [cycle, setCycle] = useState<BillingCycle>("annual");
 
   // Supabase session for prefilling the Stripe customer record.
   const [userId, setUserId] = useState<string | null>(null);
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [redirecting, setRedirecting] = useState(false);
+
+  // Hydration-time: read the ?billing= query param from window.location.
+  // Runs once on mount, never during prerender, so static export is safe.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    const billingParam = params.get("billing");
+    if (billingParam === "monthly") {
+      setCycle("monthly");
+    } else if (billingParam === "annual") {
+      setCycle("annual");
+    }
+  }, []);
 
   useEffect(() => {
     let mounted = true;
@@ -92,7 +108,12 @@ export default function CheckoutClient({ initialTier }: CheckoutClientProps) {
   const handleTierChange = (next: TierKey) => {
     setTierKey(next);
     // Keep the URL in sync so shareable deep links land on the right tier.
-    const params = new URLSearchParams(searchParams?.toString() ?? "");
+    // Read the live window.location instead of a useSearchParams hook (see
+    // the comment above the billing-cycle effect for why).
+    const params =
+      typeof window !== "undefined"
+        ? new URLSearchParams(window.location.search)
+        : new URLSearchParams();
     if (cycle === "monthly") {
       params.set("billing", "monthly");
     } else {
