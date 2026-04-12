@@ -1,32 +1,40 @@
 "use client";
 
 import DashboardShell from "@/components/DashboardShell";
-import { Calendar, Clock, Video, Phone } from "lucide-react";
+import { Calendar, Clock, Video, MapPin } from "lucide-react";
+
+// Consultation event types mapped to their Calendly URLs. Each event is a
+// separate Calendly scheduling page so we can set different durations,
+// questionnaires, and meeting-location logic per type (video link vs.
+// physical office address vs. strategy-session intake form).
+const CONSULTATION_TYPES = [
+  {
+    icon: Video,
+    title: "Video Consultation",
+    duration: "30 minutes",
+    description:
+      "Face-to-face with an attorney via secure video call. Best for complex matters.",
+    url: "https://calendly.com/availablelaw/video-consultation",
+  },
+  {
+    icon: MapPin,
+    title: "In-Person Consultation",
+    duration: "30 minutes",
+    description:
+      "Meet an attorney in person at our office. Best when you need to bring physical documents.",
+    url: "https://calendly.com/availablelaw/in-person-consultation",
+  },
+  {
+    icon: Calendar,
+    title: "Strategy Session",
+    duration: "60 minutes",
+    description:
+      "Deep-dive legal strategy session. Available on Grow and Lead plans.",
+    url: "https://calendly.com/availablelaw/strategy-session",
+  },
+];
 
 export default function SchedulePage() {
-  const consultationTypes = [
-    {
-      icon: Video,
-      title: "Video Consultation",
-      duration: "30 minutes",
-      description:
-        "Face-to-face with an attorney via secure video call. Best for complex matters.",
-    },
-    {
-      icon: Phone,
-      title: "Phone Consultation",
-      duration: "15 minutes",
-      description:
-        "Quick attorney call for straightforward questions or follow-ups.",
-    },
-    {
-      icon: Calendar,
-      title: "Strategy Session",
-      duration: "60 minutes",
-      description:
-        "Deep-dive legal strategy session. Available on Grow and Lead plans.",
-    },
-  ];
 
   return (
     <DashboardShell title="Schedule">
@@ -42,7 +50,7 @@ export default function SchedulePage() {
 
       {/* Consultation Types */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-        {consultationTypes.map((type, idx) => {
+        {CONSULTATION_TYPES.map((type, idx) => {
           const Icon = type.icon;
           return (
             <div
@@ -61,7 +69,7 @@ export default function SchedulePage() {
               </div>
               <p className="text-sm text-[#6B5B4E] mb-4">{type.description}</p>
               <a
-                href="https://calendly.com/availablelaw/30min"
+                href={type.url}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="block w-full py-2.5 px-4 border border-[#C17832] text-[#C17832] rounded-lg text-sm font-medium hover:bg-[#C17832] hover:text-white transition-all text-center"
