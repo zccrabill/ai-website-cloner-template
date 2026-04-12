@@ -31,7 +31,8 @@ interface FaiirLandingProps {
 // scheduler. Update in one place if either changes.
 const MEMBERSHIP_CHECKOUT_URL =
   "https://buy.stripe.com/6oU3cvggQ30Ffz50J6cMM0d";
-const DISCOVERY_CALL_URL = "https://calendly.com/availablelaw/30min";
+const DISCOVERY_CALL_URL =
+  "https://calendly.com/availablelaw/free-faiir-discovery-call";
 
 export default function FaiirLanding({ faqs }: FaiirLandingProps) {
   return (
