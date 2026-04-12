@@ -3,7 +3,6 @@ import HeroSection from "@/components/HeroSection";
 import FeaturedInSection from "@/components/FeaturedInSection";
 import SolutionsSection from "@/components/SolutionsSection";
 import HowItWorksSection from "@/components/HowItWorksSection";
-import ColoradoMapSection from "@/components/ColoradoMapSection";
 import FaiirSection from "@/components/FaiirSection";
 import PricingSection from "@/components/PricingSection";
 import TestimonialsSection from "@/components/TestimonialsSection";
@@ -32,8 +31,6 @@ export default function Home() {
         <div id="how">
           <HowItWorksSection />
         </div>
-
-        <ColoradoMapSection />
 
         <FaiirSection />
 

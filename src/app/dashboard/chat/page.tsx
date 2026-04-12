@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import DashboardShell from "@/components/DashboardShell";
 import { Send, Bot, Sparkles, Clock, CheckCircle2 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
@@ -11,12 +13,21 @@ interface ChatMessage {
   timestamp: Date;
 }
 
+interface PendingQuestion {
+  text: string;
+  options: string[];
+  allow_custom: boolean;
+}
+
 export default function ChatPage() {
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isTyping, setIsTyping] = useState(false);
   const [conversationId, setConversationId] = useState<string | null>(null);
   const [readyForReview, setReadyForReview] = useState(false);
+  const [pendingQuestion, setPendingQuestion] = useState<PendingQuestion | null>(
+    null,
+  );
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const suggestions = [
@@ -32,9 +43,30 @@ export default function ChatPage() {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isTyping]);
 
-  // Lazily create a conversation row on first send so messages stay grouped
-  const ensureConversation = async (firstMessage: string): Promise<string | null> => {
-    if (conversationId) return conversationId;
+  // Reset in-memory chat state on any auth change so a signed-out user's
+  // conversation can never bleed into a subsequent sign-in on the same tab.
+  useEffect(() => {
+    const { data: authListener } = supabase.auth.onAuthStateChange(() => {
+      setMessages([]);
+      setConversationId(null);
+      setReadyForReview(false);
+      setPendingQuestion(null);
+      setMessage("");
+      setIsTyping(false);
+    });
+    return () => {
+      authListener.subscription.unsubscribe();
+    };
+  }, []);
+
+  // Lazily create a conversation row on first send so messages stay grouped.
+  // Callers pass the id they currently consider active (not read from state,
+  // which may be stale after an Option-B reset within the same event loop).
+  const ensureConversation = async (
+    firstMessage: string,
+    existingId: string | null,
+  ): Promise<string | null> => {
+    if (existingId) return existingId;
     try {
       const { data: userData } = await supabase.auth.getUser();
       const uid = userData?.user?.id;
@@ -57,23 +89,42 @@ export default function ChatPage() {
     }
   };
 
-  const handleSend = async () => {
-    if (!message.trim()) return;
+  const handleSend = async (
+    overrideText?: string,
+    opts?: { forceReady?: boolean },
+  ) => {
+    const raw = (overrideText ?? message).trim();
+    if (!raw) return;
 
-    const sentText = message.trim();
+    // Option B: once a matter has been sent to the attorney, the next message
+    // from the user starts a brand-new intake thread rather than appending
+    // onto a closed matter.
+    let baseHistory: ChatMessage[] = messages;
+    let activeConvId: string | null = conversationId;
+    if (readyForReview) {
+      baseHistory = [];
+      activeConvId = null;
+      setMessages([]);
+      setConversationId(null);
+    }
+
+    const sentText = raw;
     const userMsg: ChatMessage = {
       role: "user",
       content: sentText,
       timestamp: new Date(),
     };
 
-    const nextHistory = [...messages, userMsg];
+    const nextHistory = [...baseHistory, userMsg];
     setMessages(nextHistory);
     setMessage("");
     setIsTyping(true);
     setReadyForReview(false);
+    setPendingQuestion(null);
 
-    const convId = await ensureConversation(sentText);
+    // If we just reset the thread we need a fresh conversation row; otherwise
+    // reuse the one we already have.
+    const convId = await ensureConversation(sentText, activeConvId);
 
     // Persist user message (best-effort)
     if (convId) {
@@ -97,6 +148,7 @@ export default function ChatPage() {
       const { data, error } = await supabase.functions.invoke("allora-chat", {
         body: {
           conversation_id: convId,
+          force_ready: opts?.forceReady ?? false,
           messages: nextHistory.map((m) => ({
             role: m.role,
             content: m.content,
@@ -109,6 +161,7 @@ export default function ChatPage() {
       const result = (data ?? {}) as {
         reply?: string;
         ready_for_review?: boolean;
+        pending_question?: PendingQuestion | null;
       };
       const reply =
         result.reply ??
@@ -120,6 +173,16 @@ export default function ChatPage() {
       ]);
 
       if (result.ready_for_review) setReadyForReview(true);
+      if (
+        result.pending_question &&
+        typeof result.pending_question.text === "string" &&
+        Array.isArray(result.pending_question.options) &&
+        result.pending_question.options.length > 0
+      ) {
+        setPendingQuestion(result.pending_question);
+      } else {
+        setPendingQuestion(null);
+      }
 
       // Persist assistant message
       if (convId) {
@@ -157,8 +220,25 @@ export default function ChatPage() {
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-      handleSend();
+      void handleSend();
     }
+  };
+
+  // Clicking a quick-reply chip sends that option immediately, without
+  // requiring the user to type it into the input first.
+  const handleChipClick = (option: string) => {
+    setPendingQuestion(null);
+    void handleSend(option);
+  };
+
+  // Manual escape hatch when the client is ready to hand the matter off
+  // and Allora hasn't proactively summarized. Sends a one-liner AND sets
+  // force_ready so the server nudges Allora to emit handoff tokens.
+  const handleSendToAttorney = () => {
+    void handleSend(
+      "I'm ready — please finalize the intake and send this matter to the attorney for review now.",
+      { forceReady: true },
+    );
   };
 
   return (
@@ -219,7 +299,89 @@ export default function ChatPage() {
                       : "bg-white border border-[#1F1810]/8 text-[#1F1810]"
                   }`}
                 >
-                  <p className="text-sm whitespace-pre-line">{msg.content}</p>
+                  {msg.role === "assistant" ? (
+                    <div className="text-sm leading-relaxed">
+                      <ReactMarkdown
+                        remarkPlugins={[remarkGfm]}
+                        components={{
+                          p: ({ children }) => (
+                            <p className="mb-2 last:mb-0">{children}</p>
+                          ),
+                          strong: ({ children }) => (
+                            <strong className="font-semibold text-[#1F1810]">
+                              {children}
+                            </strong>
+                          ),
+                          em: ({ children }) => (
+                            <em className="italic">{children}</em>
+                          ),
+                          ul: ({ children }) => (
+                            <ul className="list-disc pl-5 mb-2 space-y-1">
+                              {children}
+                            </ul>
+                          ),
+                          ol: ({ children }) => (
+                            <ol className="list-decimal pl-5 mb-2 space-y-1">
+                              {children}
+                            </ol>
+                          ),
+                          li: ({ children }) => <li>{children}</li>,
+                          h1: ({ children }) => (
+                            <h1 className="text-base font-semibold mt-2 mb-1">
+                              {children}
+                            </h1>
+                          ),
+                          h2: ({ children }) => (
+                            <h2 className="text-sm font-semibold mt-2 mb-1">
+                              {children}
+                            </h2>
+                          ),
+                          h3: ({ children }) => (
+                            <h3 className="text-sm font-semibold mt-2 mb-1">
+                              {children}
+                            </h3>
+                          ),
+                          h4: ({ children }) => (
+                            <h4 className="text-sm font-semibold mt-2 mb-1">
+                              {children}
+                            </h4>
+                          ),
+                          a: ({ children, href }) => (
+                            <a
+                              href={href}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-[#C17832] underline"
+                            >
+                              {children}
+                            </a>
+                          ),
+                          code: ({ children }) => (
+                            <code className="bg-[#F5F0EB] px-1 py-0.5 rounded text-[0.85em]">
+                              {children}
+                            </code>
+                          ),
+                          pre: ({ children }) => (
+                            <pre className="bg-[#F5F0EB] p-2 rounded text-[0.85em] overflow-x-auto mb-2">
+                              {children}
+                            </pre>
+                          ),
+                          blockquote: ({ children }) => (
+                            <blockquote className="border-l-2 border-[#D9CCBC] pl-3 italic my-2">
+                              {children}
+                            </blockquote>
+                          ),
+                          hr: () => (
+                            <hr className="border-[#D9CCBC] my-2" />
+                          ),
+                        }}
+                      >
+                        {msg.content}
+                      </ReactMarkdown>
+                    </div>
+                  ) : (
+                    <p className="text-sm whitespace-pre-line">{msg.content}</p>
+                  )}
                   <p
                     className={`text-[10px] mt-2 ${
                       msg.role === "user"
@@ -251,16 +413,41 @@ export default function ChatPage() {
               </div>
             )}
 
-            {/* 24hr notice — shown when Allora signals a deliverable is queued for review */}
-            {readyForReview && !isTyping && (
-              <div className="flex items-center justify-center gap-2 py-2">
-                <div className="flex items-center gap-2 bg-[#7A8B6F]/10 border border-[#7A8B6F]/20 rounded-full px-4 py-2">
-                  <Clock className="w-3.5 h-3.5 text-[#7A8B6F]" />
-                  <span className="text-xs text-[#7A8B6F] font-medium">
-                    Sent to attorney for review · expect a final answer within 24 hours
-                  </span>
-                  <CheckCircle2 className="w-3.5 h-3.5 text-[#7A8B6F]" />
+            {/* Quick-reply chips — Allora asked a structured multiple-choice
+                question. Clicking a chip sends that option immediately; the
+                free-text input below still works for custom answers. */}
+            {pendingQuestion && !isTyping && (
+              <div className="flex gap-3 justify-start">
+                <div className="w-8 h-8 flex-shrink-0" />
+                <div className="flex flex-wrap gap-2 max-w-[70%]">
+                  {pendingQuestion.options.map((option, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => handleChipClick(option)}
+                      className="px-3 py-1.5 text-xs font-medium text-[#C17832] bg-white border border-[#C17832]/30 rounded-full hover:bg-[#C17832] hover:text-white hover:border-[#C17832] transition-all"
+                    >
+                      {option}
+                    </button>
+                  ))}
                 </div>
+              </div>
+            )}
+
+            {/* 24hr notice — shown when Allora signals a deliverable is
+                queued for review. Sending another message starts a brand-new
+                matter thread (Option B completion flow). */}
+            {readyForReview && !isTyping && (
+              <div className="flex flex-col items-center gap-2 py-2">
+                <div className="flex items-center gap-2 bg-[#7A8B6F]/10 border border-[#7A8B6F]/20 rounded-full px-4 py-2">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-[#7A8B6F]" />
+                  <span className="text-xs text-[#7A8B6F] font-medium">
+                    Sent to attorney for review · final answer within 24 hours
+                  </span>
+                  <Clock className="w-3.5 h-3.5 text-[#7A8B6F]" />
+                </div>
+                <p className="text-[11px] text-[#A89279]">
+                  Need something else? Just type below to start a new matter.
+                </p>
               </div>
             )}
 
@@ -270,6 +457,19 @@ export default function ChatPage() {
 
         {/* Input */}
         <div className="border-t border-[#1F1810]/8 pt-4">
+          {/* Manual handoff escape hatch — shown once the conversation has
+              a few substantive turns, in case Allora hasn't proactively
+              wrapped up the intake. Hidden after a matter is sent. */}
+          {messages.length >= 4 && !readyForReview && !isTyping && (
+            <div className="flex justify-center mb-3">
+              <button
+                onClick={handleSendToAttorney}
+                className="text-xs font-medium text-[#C17832] hover:text-[#1F1810] border border-[#C17832]/30 hover:border-[#1F1810] hover:bg-[#1F1810]/5 rounded-full px-4 py-1.5 transition-all"
+              >
+                Send this matter to the attorney for review →
+              </button>
+            </div>
+          )}
           <div className="flex gap-3 max-w-3xl mx-auto">
             <input
               type="text"
@@ -280,7 +480,7 @@ export default function ChatPage() {
               className="flex-1 px-4 py-3 bg-white border border-[#1F1810]/8 rounded-lg text-[#1F1810] placeholder-[#A89279] focus:outline-none focus:border-[#C17832]/50 focus:ring-1 focus:ring-[#C17832]/20 transition-all"
             />
             <button
-              onClick={handleSend}
+              onClick={() => void handleSend()}
               disabled={!message.trim()}
               className="px-4 py-3 bg-[#1F1810] text-white rounded-lg hover:bg-[#C17832] transition-all disabled:opacity-40 disabled:cursor-not-allowed"
             >
@@ -288,8 +488,8 @@ export default function ChatPage() {
             </button>
           </div>
           <p className="text-xs text-[#A89279] text-center mt-3">
-            Allora gathers your details, drafts a response, and an attorney
-            reviews it before delivery.
+            Allora gathers your details and hands the matter off to an
+            attorney — you&apos;ll get a final answer within 24 hours.
           </p>
         </div>
       </div>

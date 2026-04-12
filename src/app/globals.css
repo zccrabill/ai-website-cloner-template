@@ -276,3 +276,92 @@
 .animate-fade-up-stagger > *:nth-child(3) { animation-delay: 0.2s; }
 .animate-fade-up-stagger > *:nth-child(4) { animation-delay: 0.3s; }
 .animate-fade-up-stagger > *:nth-child(5) { animation-delay: 0.4s; }
+
+/* ── Allora chat bubble markdown ── */
+.allora-markdown p {
+  margin: 0 0 0.75em 0;
+  line-height: 1.55;
+}
+.allora-markdown p:last-child {
+  margin-bottom: 0;
+}
+.allora-markdown strong {
+  font-weight: 600;
+  color: #1f1810;
+}
+.allora-markdown em {
+  font-style: italic;
+}
+.allora-markdown ul,
+.allora-markdown ol {
+  margin: 0.5em 0 0.75em 1.25em;
+  padding: 0;
+}
+.allora-markdown ul { list-style-type: disc; }
+.allora-markdown ol { list-style-type: decimal; }
+.allora-markdown li {
+  margin: 0.25em 0;
+  line-height: 1.5;
+}
+.allora-markdown li > p { margin: 0; }
+.allora-markdown h1,
+.allora-markdown h2,
+.allora-markdown h3,
+.allora-markdown h4 {
+  font-weight: 600;
+  color: #1f1810;
+  margin: 0.75em 0 0.35em;
+  line-height: 1.3;
+}
+.allora-markdown h1 { font-size: 1.05rem; }
+.allora-markdown h2 { font-size: 1rem; }
+.allora-markdown h3 { font-size: 0.95rem; }
+.allora-markdown code {
+  background: #f5f0eb;
+  color: #1f1810;
+  padding: 0.1em 0.35em;
+  border-radius: 4px;
+  font-size: 0.85em;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+.allora-markdown pre {
+  background: #f5f0eb;
+  border: 1px solid rgba(31, 24, 16, 0.08);
+  border-radius: 8px;
+  padding: 12px 14px;
+  overflow-x: auto;
+  margin: 0.5em 0 0.75em;
+  font-size: 0.85em;
+}
+.allora-markdown pre code { background: transparent; padding: 0; }
+.allora-markdown a {
+  color: #c17832;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.allora-markdown blockquote {
+  border-left: 3px solid #d9ccbc;
+  padding: 0.1em 0 0.1em 0.75em;
+  margin: 0.5em 0;
+  color: #6b5b4e;
+}
+.allora-markdown hr {
+  border: none;
+  border-top: 1px solid rgba(31, 24, 16, 0.08);
+  margin: 0.75em 0;
+}
+.allora-markdown table {
+  border-collapse: collapse;
+  margin: 0.5em 0 0.75em;
+  font-size: 0.85em;
+}
+.allora-markdown th,
+.allora-markdown td {
+  border: 1px solid rgba(31, 24, 16, 0.12);
+  padding: 4px 8px;
+  text-align: left;
+}
+.allora-markdown th {
+  background: #f5f0eb;
+  font-weight: 600;
+}
