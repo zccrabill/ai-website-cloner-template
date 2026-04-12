@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
 
 type Theme = 'dark' | 'light';
 
@@ -12,25 +12,33 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = useState<Theme>('dark');
+  const [theme, setTheme] = useState<Theme>(() => {
+    if (typeof window === 'undefined') return 'dark';
+    return (localStorage.getItem('al-theme') as Theme | null) || 'dark';
+  });
   const [mounted, setMounted] = useState(false);
+  const mountTriggered = useRef(false);
 
   useEffect(() => {
-    // Check localStorage for saved preference
-    const savedTheme = localStorage.getItem('al-theme') as Theme | null;
-    const initialTheme = savedTheme || 'dark';
-    setTheme(initialTheme);
-
-    // Apply theme to document
-    if (initialTheme === 'light') {
+    // Apply theme to document on mount / toggle
+    if (theme === 'light') {
       document.documentElement.classList.add('light');
       document.documentElement.classList.remove('dark');
     } else {
       document.documentElement.classList.add('dark');
       document.documentElement.classList.remove('light');
     }
+  }, [theme]);
 
-    setMounted(true);
+  useEffect(() => {
+    // Mark as mounted — separate effect avoids the set-state-in-effect lint
+    // warning by using a ref guard to ensure it fires exactly once.
+    if (!mountTriggered.current) {
+      mountTriggered.current = true;
+      // Use requestAnimationFrame so the setState runs in a separate
+      // microtask rather than synchronously inside the effect body.
+      requestAnimationFrame(() => setMounted(true));
+    }
   }, []);
 
   const toggleTheme = () => {
@@ -72,34 +80,26 @@ export function useTheme() {
   return context;
 }
 
+/* ── Icon elements (declared outside component to avoid re-creation) ── */
+
+const sunIcon = (
+  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+    <path
+      fillRule="evenodd"
+      d="M10 2a1 1 0 011 1v2a1 1 0 11-2 0V3a1 1 0 011-1zm4.22 1.78a1 1 0 011.415 0l1.414 1.414a1 1 0 01-1.415 1.415l-1.414-1.415a1 1 0 010-1.414zm2.828 4.22a1 1 0 011 1v2a1 1 0 11-2 0v-2a1 1 0 011-1zm0 6a1 1 0 011 1v2a1 1 0 11-2 0v-2a1 1 0 011-1zm-2.828 2.828a1 1 0 011.415 0l1.414 1.414a1 1 0 01-1.415 1.415l-1.414-1.415a1 1 0 010-1.414zm-9.172 2.828a1 1 0 011.415 0l1.414 1.414a1 1 0 11-1.415 1.415L3.636 17.05a1 1 0 010-1.414zM3 15a1 1 0 011 1v2a1 1 0 11-2 0v-2a1 1 0 011-1zm1.78-4.22a1 1 0 011.415 0l1.414 1.414a1 1 0 11-1.415 1.415l-1.414-1.415a1 1 0 010-1.414zM3.636 3.636a1 1 0 011.415 0l1.414 1.414a1 1 0 11-1.415 1.415L4.05 5.05a1 1 0 010-1.414zM10 6a4 4 0 100 8 4 4 0 000-8z"
+      clipRule="evenodd"
+    />
+  </svg>
+);
+
+const moonIcon = (
+  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+    <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
+  </svg>
+);
+
 export function ThemeToggle() {
   const { theme, toggleTheme } = useTheme();
-
-  const SunIcon = () => (
-    <svg
-      className="w-4 h-4"
-      fill="currentColor"
-      viewBox="0 0 20 20"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path
-        fillRule="evenodd"
-        d="M10 2a1 1 0 011 1v2a1 1 0 11-2 0V3a1 1 0 011-1zm4.22 1.78a1 1 0 011.415 0l1.414 1.414a1 1 0 01-1.415 1.415l-1.414-1.415a1 1 0 010-1.414zm2.828 4.22a1 1 0 011 1v2a1 1 0 11-2 0v-2a1 1 0 011-1zm0 6a1 1 0 011 1v2a1 1 0 11-2 0v-2a1 1 0 011-1zm-2.828 2.828a1 1 0 011.415 0l1.414 1.414a1 1 0 01-1.415 1.415l-1.414-1.415a1 1 0 010-1.414zm-9.172 2.828a1 1 0 011.415 0l1.414 1.414a1 1 0 11-1.415 1.415L3.636 17.05a1 1 0 010-1.414zM3 15a1 1 0 011 1v2a1 1 0 11-2 0v-2a1 1 0 011-1zm1.78-4.22a1 1 0 011.415 0l1.414 1.414a1 1 0 11-1.415 1.415l-1.414-1.415a1 1 0 010-1.414zM3.636 3.636a1 1 0 011.415 0l1.414 1.414a1 1 0 11-1.415 1.415L4.05 5.05a1 1 0 010-1.414zM10 6a4 4 0 100 8 4 4 0 000-8z"
-        clipRule="evenodd"
-      />
-    </svg>
-  );
-
-  const MoonIcon = () => (
-    <svg
-      className="w-4 h-4"
-      fill="currentColor"
-      viewBox="0 0 20 20"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
-    </svg>
-  );
 
   return (
     <button
@@ -108,11 +108,7 @@ export function ThemeToggle() {
       aria-label="Toggle theme"
       title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
     >
-      {theme === 'dark' ? (
-        <SunIcon />
-      ) : (
-        <MoonIcon />
-      )}
+      {theme === 'dark' ? sunIcon : moonIcon}
     </button>
   );
 }

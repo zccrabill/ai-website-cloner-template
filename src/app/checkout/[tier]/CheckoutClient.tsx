@@ -41,25 +41,16 @@ export default function CheckoutClient({ initialTier }: CheckoutClientProps) {
   // after hydration, so the static build is unaffected and the URL value
   // still takes effect on the very next render post-mount.
   const [tierKey, setTierKey] = useState<TierKey>(initialTier);
-  const [cycle, setCycle] = useState<BillingCycle>("annual");
+  const [cycle, setCycle] = useState<BillingCycle>(() => {
+    if (typeof window === "undefined") return "annual";
+    const billingParam = new URLSearchParams(window.location.search).get("billing");
+    return billingParam === "monthly" ? "monthly" : "annual";
+  });
 
   // Supabase session for prefilling the Stripe customer record.
   const [userId, setUserId] = useState<string | null>(null);
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [redirecting, setRedirecting] = useState(false);
-
-  // Hydration-time: read the ?billing= query param from window.location.
-  // Runs once on mount, never during prerender, so static export is safe.
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    const params = new URLSearchParams(window.location.search);
-    const billingParam = params.get("billing");
-    if (billingParam === "monthly") {
-      setCycle("monthly");
-    } else if (billingParam === "annual") {
-      setCycle("annual");
-    }
-  }, []);
 
   useEffect(() => {
     let mounted = true;

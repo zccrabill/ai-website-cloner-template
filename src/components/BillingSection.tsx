@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function BillingSection() {
   return (
     <section
@@ -47,9 +49,9 @@ export default function BillingSection() {
           Book a free consultation to learn more.
         </p>
 
-        <a href="/#pricing" className="btn-al btn-al-primary px-8 py-3.5 text-[15px]">
+        <Link href="/#pricing" className="btn-al btn-al-primary px-8 py-3.5 text-[15px]">
           Book Free Consultation
-        </a>
+        </Link>
 
         {/* Feature chips */}
         <div className="mt-10 flex flex-wrap justify-center gap-3">

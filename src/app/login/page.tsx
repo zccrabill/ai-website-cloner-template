@@ -130,18 +130,18 @@ export default function LoginPage() {
             {/* Get Started Link */}
             <div className="text-center text-sm text-[#6B5B4E]">
               Not a member yet?{" "}
-              <a
+              <Link
                 href="/#pricing"
                 className="text-[#C17832] font-medium hover:text-[#D4893F] transition-colors"
               >
                 Get Started
-              </a>
+              </Link>
             </div>
           </div>
 
           {/* Footer Text */}
           <p className="text-center text-xs text-[#A89279] mt-8">
-            We'll send you a secure magic link to sign in. No password needed.
+            We&apos;ll send you a secure magic link to sign in. No password needed.
           </p>
         </div>
       </main>
