@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Header from "@/components/Header";
@@ -67,9 +68,48 @@ export default async function CheckoutPage({
     <>
       <Header />
       <main className="bg-[#FAF8F5] min-h-screen">
-        <CheckoutClient initialTier={tierKey} />
+        {/*
+         * Suspense boundary is required because CheckoutClient calls
+         * useSearchParams(). Without it, Next 16's static export throws
+         * "useSearchParams() should be wrapped in a suspense boundary"
+         * during prerender and the build fails. The fallback is a static
+         * skeleton of the layout so the first paint doesn't flash empty.
+         */}
+        <Suspense fallback={<CheckoutFallback />}>
+          <CheckoutClient initialTier={tierKey} />
+        </Suspense>
       </main>
       <Footer />
     </>
+  );
+}
+
+/**
+ * Lightweight skeleton shown while the client component hydrates and reads
+ * search params. Matches the two-column checkout layout so nothing jumps.
+ */
+function CheckoutFallback() {
+  return (
+    <div className="max-w-[1180px] mx-auto px-6 md:px-8 py-12 lg:py-16">
+      <div className="mb-8 h-4 w-32 rounded bg-[#EDE5DB]" />
+      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_400px] gap-10 lg:gap-12">
+        <div className="space-y-6">
+          <div className="h-10 w-3/4 rounded bg-[#EDE5DB]" />
+          <div className="h-4 w-2/3 rounded bg-[#EDE5DB]" />
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-4">
+            <div className="h-28 rounded-xl bg-[#EDE5DB]" />
+            <div className="h-28 rounded-xl bg-[#EDE5DB]" />
+            <div className="h-28 rounded-xl bg-[#EDE5DB]" />
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-4">
+            <div className="h-32 rounded-xl bg-[#EDE5DB]" />
+            <div className="h-32 rounded-xl bg-[#EDE5DB]" />
+          </div>
+        </div>
+        <aside className="lg:sticky lg:top-28 lg:self-start">
+          <div className="h-[360px] rounded-2xl bg-[#EDE5DB]" />
+        </aside>
+      </div>
+    </div>
   );
 }

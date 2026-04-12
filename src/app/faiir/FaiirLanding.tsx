@@ -27,12 +27,38 @@ interface FaiirLandingProps {
   faqs: Faq[];
 }
 
-// Single source of truth for the membership buy link and discovery-call
-// scheduler. Update in one place if either changes.
-const MEMBERSHIP_CHECKOUT_URL =
+// Single source of truth for the membership buy links and discovery-call
+// scheduler. Update in one place if any change.
+//
+// FAIIR membership billing:
+//   - Monthly: $49/mo
+//   - Annual:  $490/yr  (= 2 months free = ~17% off)
+// Matches the Available Law subscription convention so the savings story is
+// consistent across both products.
+const MEMBERSHIP_CHECKOUT_URL_MONTHLY =
   "https://buy.stripe.com/6oU3cvggQ30Ffz50J6cMM0d";
+// TODO(stripe): create the FAIIR Compliance Membership annual Payment Link
+// in Stripe Dashboard (price: $490/yr, product: existing FAIIR Compliance
+// Membership) and replace this URL. Until then, the annual CTA falls back
+// to the monthly link so the button is never broken.
+const MEMBERSHIP_CHECKOUT_URL_ANNUAL =
+  "https://buy.stripe.com/6oU3cvggQ30Ffz50J6cMM0d"; // placeholder — swap in annual link
 const DISCOVERY_CALL_URL =
   "https://calendly.com/availablelaw/free-faiir-discovery-call";
+
+// Membership pricing math — keep in lock-step with the Stripe prices above.
+const MEMBERSHIP_MONTHLY_USD = 49;
+const MEMBERSHIP_ANNUAL_USD = 490;
+const MEMBERSHIP_ANNUAL_MONTHLY_EQUIVALENT = Math.round(
+  MEMBERSHIP_ANNUAL_USD / 12,
+); // shown as "$41/mo, billed yearly"
+const MEMBERSHIP_ANNUAL_SAVINGS_USD =
+  MEMBERSHIP_MONTHLY_USD * 12 - MEMBERSHIP_ANNUAL_USD; // $98
+const MEMBERSHIP_ANNUAL_PERCENT_OFF = Math.round(
+  (MEMBERSHIP_ANNUAL_SAVINGS_USD / (MEMBERSHIP_MONTHLY_USD * 12)) * 100,
+); // 17
+
+type MembershipCycle = "monthly" | "annual";
 
 export default function FaiirLanding({ faqs }: FaiirLandingProps) {
   return (
@@ -366,6 +392,31 @@ function PillarsSection() {
 /* ------------------------------------------------------------------ */
 
 function PricingSection() {
+  // Billing cycle state for the membership card. Defaults to annual to nudge
+  // higher-LTV selection and surface the "save $X" badge immediately — same
+  // convention as the Available Law /checkout/[tier] page.
+  const [membershipCycle, setMembershipCycle] =
+    useState<MembershipCycle>("annual");
+
+  const membershipPriceLarge =
+    membershipCycle === "annual"
+      ? `$${MEMBERSHIP_ANNUAL_MONTHLY_EQUIVALENT}`
+      : `$${MEMBERSHIP_MONTHLY_USD}`;
+  const membershipPriceSuffix =
+    membershipCycle === "annual" ? "per month, billed yearly" : "per month";
+  const membershipSubline =
+    membershipCycle === "annual"
+      ? `$${MEMBERSHIP_ANNUAL_USD}/year · save $${MEMBERSHIP_ANNUAL_SAVINGS_USD} (${MEMBERSHIP_ANNUAL_PERCENT_OFF}% off) vs. monthly`
+      : "Billed monthly. Cancel anytime. Assessment recommended but not required before starting membership.";
+  const membershipCtaUrl =
+    membershipCycle === "annual"
+      ? MEMBERSHIP_CHECKOUT_URL_ANNUAL
+      : MEMBERSHIP_CHECKOUT_URL_MONTHLY;
+  const membershipCtaLabel =
+    membershipCycle === "annual"
+      ? `Start membership — $${MEMBERSHIP_ANNUAL_USD}/yr`
+      : `Start membership — $${MEMBERSHIP_MONTHLY_USD}/mo`;
+
   const assessmentFeatures = [
     "Attorney-led AI inventory and high-risk classification",
     "Written impact assessments for each high-risk system",
@@ -484,19 +535,67 @@ function PricingSection() {
                 certification current between full assessments.
               </p>
             </div>
+
+            {/*
+             * Billing cycle toggle. Two pills inside a rounded container —
+             * selected state uses the dark brand colour for strong contrast,
+             * and the annual pill carries a green "save X%" badge. Defaulting
+             * to annual is intentional: the first thing a visitor sees is
+             * the discounted price, which anchors the decision.
+             */}
+            <div
+              role="tablist"
+              aria-label="Billing cycle"
+              className="relative mb-6 inline-flex items-center gap-1 rounded-full border border-[#1F1810]/15 bg-[#FAF8F5] p-1 self-start"
+            >
+              <button
+                type="button"
+                role="tab"
+                aria-selected={membershipCycle === "monthly"}
+                onClick={() => setMembershipCycle("monthly")}
+                className={`px-4 py-1.5 text-xs font-semibold rounded-full transition-colors ${
+                  membershipCycle === "monthly"
+                    ? "bg-[#1F1810] text-white"
+                    : "text-[#6B5B4E] hover:text-[#1F1810]"
+                }`}
+              >
+                Monthly
+              </button>
+              <button
+                type="button"
+                role="tab"
+                aria-selected={membershipCycle === "annual"}
+                onClick={() => setMembershipCycle("annual")}
+                className={`relative px-4 py-1.5 text-xs font-semibold rounded-full transition-colors ${
+                  membershipCycle === "annual"
+                    ? "bg-[#1F1810] text-white"
+                    : "text-[#6B5B4E] hover:text-[#1F1810]"
+                }`}
+              >
+                Annual
+                <span
+                  className="absolute -top-2 -right-2 bg-[#7A8B6F] text-white text-[9px] font-bold tracking-wide px-1.5 py-0.5 rounded-full shadow-sm"
+                  aria-label={`Save ${MEMBERSHIP_ANNUAL_PERCENT_OFF} percent`}
+                >
+                  SAVE {MEMBERSHIP_ANNUAL_PERCENT_OFF}%
+                </span>
+              </button>
+            </div>
+
             <div className="mb-6 pb-6 border-b border-[#1F1810]/10">
               <div className="flex items-baseline gap-2">
                 <span
                   className="text-5xl text-[#1F1810]"
                   style={{ fontFamily: "'Playfair Display', serif", fontWeight: 400 }}
                 >
-                  $49
+                  {membershipPriceLarge}
                 </span>
-                <span className="text-sm text-[#A89279]">per month</span>
+                <span className="text-sm text-[#A89279]">
+                  {membershipPriceSuffix}
+                </span>
               </div>
               <p className="text-xs text-[#6B5B4E] mt-2 leading-relaxed">
-                Billed monthly. Cancel anytime. Assessment recommended but
-                not required before starting membership.
+                {membershipSubline}
               </p>
             </div>
             <ul className="space-y-3 mb-8 flex-1">
@@ -508,13 +607,13 @@ function PricingSection() {
               ))}
             </ul>
             <a
-              href={MEMBERSHIP_CHECKOUT_URL}
+              href={membershipCtaUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="group w-full inline-flex items-center justify-center gap-2 px-6 py-4 border-2 border-[#1F1810] text-[#1F1810] rounded-full text-sm font-medium hover:bg-[#1F1810] hover:text-white transition-all"
             >
               <CreditCard className="w-4 h-4" />
-              Start membership — $49/mo
+              {membershipCtaLabel}
               <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
             </a>
           </div>
@@ -738,13 +837,13 @@ function FinalCta() {
             <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
           </a>
           <a
-            href={MEMBERSHIP_CHECKOUT_URL}
+            href={MEMBERSHIP_CHECKOUT_URL_MONTHLY}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 px-8 py-4 border border-white/30 text-white rounded-full text-base font-medium hover:bg-white hover:text-[#1F1810] transition-all"
           >
             <CreditCard className="w-5 h-5" />
-            Start membership — $49/mo
+            Start membership — ${MEMBERSHIP_MONTHLY_USD}/mo
           </a>
         </div>
       </div>
