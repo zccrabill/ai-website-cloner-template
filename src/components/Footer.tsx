@@ -13,6 +13,9 @@ export default function Footer() {
           <p className="text-sm text-[#6B5B4E] leading-relaxed max-w-xs">
             AI-powered legal solutions for Colorado businesses. Practical advice from attorneys who build with AI.
           </p>
+          <p className="text-xs text-[#A89279] mt-4">
+            Based in Colorado Springs &middot; Serving the Front Range
+          </p>
         </div>
 
         {/* Navigation Column */}

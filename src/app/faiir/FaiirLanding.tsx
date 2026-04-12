@@ -37,12 +37,8 @@ interface FaiirLandingProps {
 // consistent across both products.
 const MEMBERSHIP_CHECKOUT_URL_MONTHLY =
   "https://buy.stripe.com/6oU3cvggQ30Ffz50J6cMM0d";
-// TODO(stripe): create the FAIIR Compliance Membership annual Payment Link
-// in Stripe Dashboard (price: $490/yr, product: existing FAIIR Compliance
-// Membership) and replace this URL. Until then, the annual CTA falls back
-// to the monthly link so the button is never broken.
 const MEMBERSHIP_CHECKOUT_URL_ANNUAL =
-  "https://buy.stripe.com/6oU3cvggQ30Ffz50J6cMM0d"; // placeholder — swap in annual link
+  "https://buy.stripe.com/bJe9ATaWw6cRev12RecMM0e";
 const DISCOVERY_CALL_URL =
   "https://calendly.com/availablelaw/free-faiir-discovery-call";
 
