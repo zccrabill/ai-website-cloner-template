@@ -13,6 +13,12 @@ import {
 import ColoradoAiAct2026Article from "@/content/blog/colorado-ai-act-2026";
 import AiVendorContractClausesArticle from "@/content/blog/5-ai-vendor-contract-clauses";
 import DocumentAiDecisionMakingArticle from "@/content/blog/document-ai-decision-making";
+import AiEmployeeTrainingRequirementsArticle from "@/content/blog/ai-employee-training-requirements";
+import WhatIsFaiirFrameworkArticle from "@/content/blog/what-is-faiir-framework";
+import AiLiabilityInsuranceCoverageArticle from "@/content/blog/ai-liability-insurance-coverage";
+import WhenSmallBusinessNeedsLawyerArticle from "@/content/blog/when-small-business-needs-lawyer";
+import ColoradoLlcOperatingAgreementArticle from "@/content/blog/colorado-llc-operating-agreement";
+import HowToChooseBusinessAttorneyColoradoArticle from "@/content/blog/how-to-choose-business-attorney-colorado";
 
 interface PostMeta {
   title: string;
@@ -31,6 +37,12 @@ const postContent: Record<string, ReactNode> = {
   "colorado-ai-act-2026": <ColoradoAiAct2026Article />,
   "5-ai-vendor-contract-clauses": <AiVendorContractClausesArticle />,
   "document-ai-decision-making": <DocumentAiDecisionMakingArticle />,
+  "ai-employee-training-requirements": <AiEmployeeTrainingRequirementsArticle />,
+  "what-is-faiir-framework": <WhatIsFaiirFrameworkArticle />,
+  "ai-liability-insurance-coverage": <AiLiabilityInsuranceCoverageArticle />,
+  "when-small-business-needs-lawyer": <WhenSmallBusinessNeedsLawyerArticle />,
+  "colorado-llc-operating-agreement": <ColoradoLlcOperatingAgreementArticle />,
+  "how-to-choose-business-attorney-colorado": <HowToChooseBusinessAttorneyColoradoArticle />,
 };
 
 const postMetadata: Record<string, PostMeta> = {
@@ -57,6 +69,54 @@ const postMetadata: Record<string, PostMeta> = {
     author: "Zachariah Crabill, JD",
     excerpt:
       "Documentation is critical for AI compliance. This guide walks you through building a practical system for tracking AI decisions.",
+  },
+  "ai-employee-training-requirements": {
+    title: "AI Employee Training Requirements Under the Colorado AI Act",
+    date: "April 11, 2026",
+    isoDate: "2026-04-11",
+    author: "Zachariah Crabill, JD",
+    excerpt:
+      "The Colorado AI Act requires businesses to train employees who interact with high-risk AI systems. Here's what the law actually requires and how to build a compliant training program.",
+  },
+  "what-is-faiir-framework": {
+    title: "What Is the FAIIR Framework? AI Compliance for Colorado Businesses",
+    date: "April 11, 2026",
+    isoDate: "2026-04-11",
+    author: "Zachariah Crabill, JD",
+    excerpt:
+      "FAIIR stands for Fairness, Accountability, Impact assessment, Informed consent, and Risk management. It's the compliance framework we built to help Colorado businesses meet the Colorado AI Act.",
+  },
+  "ai-liability-insurance-coverage": {
+    title: "Does Your Business Insurance Cover AI Liability?",
+    date: "April 11, 2026",
+    isoDate: "2026-04-11",
+    author: "Zachariah Crabill, JD",
+    excerpt:
+      "Most business insurance policies weren't written for AI risk. Here's a policy-by-policy breakdown of what's covered, what's not, and what to do about the gaps.",
+  },
+  "when-small-business-needs-lawyer": {
+    title: "When Does Your Small Business Actually Need a Lawyer?",
+    date: "April 10, 2026",
+    isoDate: "2026-04-10",
+    author: "Zachariah Crabill, JD",
+    excerpt:
+      "Most small business owners avoid lawyers until something goes wrong. Here are the specific moments where getting legal help early saves you money — and the ones where DIY is fine.",
+  },
+  "colorado-llc-operating-agreement": {
+    title: "Colorado LLC Operating Agreements: What You Need and Why",
+    date: "April 9, 2026",
+    isoDate: "2026-04-09",
+    author: "Zachariah Crabill, JD",
+    excerpt:
+      "Colorado doesn't require a written operating agreement for LLCs. That's exactly why you need one. Here's what to include and what happens when you skip it.",
+  },
+  "how-to-choose-business-attorney-colorado": {
+    title: "How to Choose a Business Attorney in Colorado",
+    date: "April 8, 2026",
+    isoDate: "2026-04-08",
+    author: "Zachariah Crabill, JD",
+    excerpt:
+      "Finding a business attorney isn't hard. Finding the right one — someone who understands your industry, charges fairly, and communicates clearly — is a different problem.",
   },
 };
 

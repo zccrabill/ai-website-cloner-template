@@ -12,6 +12,12 @@ export const dynamic = "force-static";
  * add it here too.
  */
 const BLOG_POSTS: Array<{ slug: string; isoDate: string }> = [
+  { slug: "ai-employee-training-requirements", isoDate: "2026-04-11" },
+  { slug: "what-is-faiir-framework", isoDate: "2026-04-11" },
+  { slug: "ai-liability-insurance-coverage", isoDate: "2026-04-11" },
+  { slug: "when-small-business-needs-lawyer", isoDate: "2026-04-10" },
+  { slug: "colorado-llc-operating-agreement", isoDate: "2026-04-09" },
+  { slug: "how-to-choose-business-attorney-colorado", isoDate: "2026-04-08" },
   { slug: "5-ai-vendor-contract-clauses", isoDate: "2026-04-07" },
   { slug: "colorado-ai-act-2026", isoDate: "2026-04-02" },
   { slug: "document-ai-decision-making", isoDate: "2026-03-28" },

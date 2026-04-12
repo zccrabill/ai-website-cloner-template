@@ -27,6 +27,48 @@ interface BlogPost {
 
 const blogPosts: BlogPost[] = [
   {
+    slug: "ai-employee-training-requirements",
+    title: "AI Employee Training Requirements Under the Colorado AI Act",
+    date: "April 11, 2026",
+    excerpt:
+      "The Colorado AI Act requires businesses to train employees who interact with high-risk AI systems. Here's what the law actually requires and how to build a compliant training program.",
+  },
+  {
+    slug: "what-is-faiir-framework",
+    title: "What Is the FAIIR Framework? AI Compliance for Colorado Businesses",
+    date: "April 11, 2026",
+    excerpt:
+      "FAIIR stands for Fairness, Accountability, Impact assessment, Informed consent, and Risk management. It's the compliance framework we built to help Colorado businesses meet the Colorado AI Act.",
+  },
+  {
+    slug: "ai-liability-insurance-coverage",
+    title: "Does Your Business Insurance Cover AI Liability?",
+    date: "April 11, 2026",
+    excerpt:
+      "Most business insurance policies weren't written for AI risk. Here's a policy-by-policy breakdown of what's covered, what's not, and what to do about the gaps.",
+  },
+  {
+    slug: "when-small-business-needs-lawyer",
+    title: "When Does Your Small Business Actually Need a Lawyer?",
+    date: "April 10, 2026",
+    excerpt:
+      "Most small business owners avoid lawyers until something goes wrong. Here are the specific moments where getting legal help early saves you money.",
+  },
+  {
+    slug: "colorado-llc-operating-agreement",
+    title: "Colorado LLC Operating Agreements: What You Need and Why",
+    date: "April 9, 2026",
+    excerpt:
+      "Colorado doesn't require a written operating agreement for LLCs. That's exactly why you need one. Here's what to include and what happens when you skip it.",
+  },
+  {
+    slug: "how-to-choose-business-attorney-colorado",
+    title: "How to Choose a Business Attorney in Colorado",
+    date: "April 8, 2026",
+    excerpt:
+      "Finding a business attorney isn't hard. Finding the right one — someone who understands your industry, charges fairly, and communicates clearly — is a different problem.",
+  },
+  {
     slug: "5-ai-vendor-contract-clauses",
     title: "5 AI Vendor Contract Clauses Your Company Is Missing",
     date: "April 7, 2026",
