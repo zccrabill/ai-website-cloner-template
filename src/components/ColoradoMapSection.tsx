@@ -4,23 +4,23 @@
  * Visual story:
  *   1. Dense ambient topographic contours bleed across the full section
  *      background — the whole section feels like you're looking at a
- *      topo map, not just the card.
- *   2. The centerpiece is a Breckenridge-style topo vignette focused on
- *      our Colorado Springs home base, with a black star marking the
- *      city and an uppercase serif caption underneath.
- *   3. A horizontal corridor strip beneath the vignette shows the Front
- *      Range service area — DTC (north) to Colorado Springs (south),
- *      with intermediate waypoints and a dashed I-25 line.
+ *      topo map sheet.
+ *   2. The centerpiece is an editorial layered landscape illustration of
+ *      Pikes Peak rising over Colorado Springs, with a star marker for
+ *      our home base nestled at its eastern base.
+ *   3. A horizontal corridor strip beneath the illustration shows the
+ *      Front Range service area — DTC (north) south to Colorado Springs
+ *      — with intermediate waypoints along the I-25 dashed line.
  *   4. An SEO-indexable city list at the bottom keeps the service-area
- *      claim crawlable for classical search and LLM answer engines.
+ *      claim crawlable for search engines and LLM answer engines.
  *
- * All contour lines are generated deterministically via a seeded PRNG,
- * so the output is identical across renders and builds (SSR/hydration
- * safe) and bundles zero geospatial dependencies.
+ * The background contours use a deterministic seeded PRNG so the output
+ * is identical across renders and builds (SSR/hydration safe) and ship
+ * zero geospatial dependencies.
  */
 
 /* -------------------------------------------------------------- */
-/* Deterministic topographic contour generator                     */
+/* Deterministic topographic contour generator (for section bg)    */
 /* -------------------------------------------------------------- */
 
 /**
@@ -44,25 +44,18 @@ interface ContourOptions {
   height: number;
   xPadding?: number;
   yPadding?: number;
-  /**
-   * Amplitude of the shared terrain shape. Larger values give bigger
-   * vertical sweeps — but must be balanced against yPadding to keep
-   * the lines inside the visible area.
-   */
   sharedAmplitude?: number;
-  /** Number of bezier samples per line — higher = smoother. */
   samples?: number;
 }
 
 /**
  * Generate a stack of flowing, non-crossing topographic contour paths.
  *
- * The approach: every line in the stack shares the same "macro" terrain
- * shape (a layered sum-of-sines), so they follow the same curves and
- * never cross one another — which is the key property of real topo
- * contours. Each line then adds a tiny per-line wobble (bounded to
- * less than the line spacing) so they don't look like parallel
- * photocopies of one another.
+ * Every line in the stack shares the same "macro" terrain shape (a
+ * layered sum-of-sines), so they follow the same curves and never cross
+ * each other — which is the defining property of real topo contours.
+ * Each line then adds a tiny per-line wobble (bounded to less than the
+ * line spacing) so they don't look like perfect photocopies.
  */
 function generateTopoContours({
   seed,
@@ -76,8 +69,6 @@ function generateTopoContours({
 }: ContourOptions): string[] {
   const rand = mulberry32(seed);
 
-  // Layered shared terrain — four sine components at increasing
-  // frequency and decreasing amplitude (1/f noise approximation).
   const sharedComponents = [
     {
       freq: 1.5 + rand() * 0.9,
@@ -110,8 +101,6 @@ function generateTopoContours({
   const usableHeight = height - yPadding * 2;
   const usableWidth = width - xPadding * 2;
   const step = usableHeight / (count + 1);
-  // Per-line wobble is capped to a fraction of the inter-line spacing so
-  // adjacent contours can never touch or cross.
   const perLineCap = step * 0.38;
 
   const paths: string[] = [];
@@ -122,7 +111,6 @@ function generateTopoContours({
     const wobblePhase = rand() * Math.PI * 2;
     const wobbleAmp = perLineCap * (0.35 + rand() * 0.65);
 
-    // Sample the curve at evenly spaced x values.
     const pts: [number, number][] = [];
     for (let j = 0; j <= samples; j++) {
       const t = j / samples;
@@ -134,7 +122,6 @@ function generateTopoContours({
       pts.push([x, y]);
     }
 
-    // Catmull-Rom → cubic bezier conversion for C1 smoothness.
     let d = `M ${pts[0][0].toFixed(1)} ${pts[0][1].toFixed(1)}`;
     for (let j = 0; j < pts.length - 1; j++) {
       const p0 = pts[Math.max(0, j - 1)];
@@ -156,13 +143,7 @@ function generateTopoContours({
   return paths;
 }
 
-/* -------------------------------------------------------------- */
-/* Pre-computed contour sets (module scope — runs once at build)   */
-/* -------------------------------------------------------------- */
-
 // Ambient contours that fill the whole section behind the content.
-// Wide amplitude, lots of lines, heavy yPadding to absorb the shared-
-// noise drift so nothing escapes the viewBox.
 const BG_CONTOURS = generateTopoContours({
   seed: 2026,
   count: 78,
@@ -172,19 +153,6 @@ const BG_CONTOURS = generateTopoContours({
   yPadding: 180,
   sharedAmplitude: 95,
   samples: 90,
-});
-
-// Vignette map contours — denser, tighter, higher amplitude relative to
-// size so you get the Breckenridge-sheet look.
-const MAP_CONTOURS = generateTopoContours({
-  seed: 4242,
-  count: 56,
-  width: 620,
-  height: 680,
-  xPadding: -10,
-  yPadding: 90,
-  sharedAmplitude: 58,
-  samples: 100,
 });
 
 /* -------------------------------------------------------------- */
@@ -197,7 +165,7 @@ interface CorridorNode {
   isHome?: boolean;
 }
 
-// North to south — DTC at the top end of the corridor, Colorado Springs
+// North to south: DTC at the top of the corridor, Colorado Springs
 // (home base) at the southern end.
 const CORRIDOR_NODES: CorridorNode[] = [
   { name: "Denver Tech Center", abbr: "DTC" },
@@ -219,8 +187,8 @@ export default function ColoradoMapSection() {
       aria-labelledby="service-area-heading"
     >
       {/* Ambient topographic backdrop — fills the full section behind
-          content. Opacity is low enough that pins and text never fight
-          with it, but the whole section reads as a topo sheet. */}
+          content. Opacity is low enough that the vignette and text never
+          fight with it, but the whole section reads as a topo sheet. */}
       <svg
         className="pointer-events-none absolute inset-0 w-full h-full"
         viewBox="0 0 1440 1100"
@@ -256,51 +224,176 @@ export default function ColoradoMapSection() {
           </h2>
           <p className="text-lg text-[#6B5B4E] leading-relaxed">
             Available Law is a Colorado-licensed, FAIIR-certified virtual
-            law firm headquartered in Colorado Springs. Because we work
-            remotely, we serve small businesses up and down the Front
-            Range corridor — from the Denver Tech Center south to the
-            Springs — and every Colorado county beyond.
+            law firm headquartered at the foot of Pikes Peak. Because we
+            work remotely, we serve small businesses up and down the
+            Front Range corridor — from the Denver Tech Center south to
+            the Springs — and every Colorado county beyond.
           </p>
         </div>
 
-        {/* Topo vignette — Breckenridge-style centerpiece */}
-        <figure className="mx-auto" style={{ maxWidth: 520 }}>
-          <div className="relative border-[2.5px] border-[#1F1810] bg-[#FAF8F5] p-3 md:p-4 shadow-[0_30px_60px_rgba(31,24,16,0.08)]">
+        {/* Pikes Peak editorial landscape illustration */}
+        <figure className="mx-auto" style={{ maxWidth: 680 }}>
+          <div className="relative border-[2.5px] border-[#1F1810] bg-[#FAF8F5] shadow-[0_30px_60px_rgba(31,24,16,0.08)]">
             <svg
-              viewBox="0 0 620 680"
+              viewBox="0 0 800 520"
               xmlns="http://www.w3.org/2000/svg"
               className="w-full h-auto block"
               role="img"
-              aria-labelledby="col-springs-title col-springs-desc"
+              aria-labelledby="pikes-peak-title pikes-peak-desc"
             >
-              <title id="col-springs-title">
-                Topographic vignette — Colorado Springs, Colorado
+              <title id="pikes-peak-title">
+                Pikes Peak rising above Colorado Springs
               </title>
-              <desc id="col-springs-desc">
-                A stylized topographic map vignette showing Colorado
-                Springs, the home base of Available Law, marked with a
-                black star at the center.
+              <desc id="pikes-peak-desc">
+                An editorial landscape illustration of Pikes Peak, the
+                14,115-foot mountain that towers over Colorado Springs,
+                home base of Available Law. A black star marks the city
+                nestled against the mountain&rsquo;s eastern foothills.
               </desc>
 
-              {/* Topo contour lines */}
-              <g
+              {/* Sky background — matches the card bg but explicit so
+                  the ambient section contours don't bleed through. */}
+              <rect x="0" y="0" width="800" height="520" fill="#FAF8F5" />
+
+              {/* Sun — a warm disk behind the summit, half-occluded by
+                  the peak once the mountain paths draw over it. */}
+              <circle
+                cx="550"
+                cy="155"
+                r="54"
+                fill="#F2B870"
+                opacity="0.58"
+              />
+
+              {/* Distant range — the farthest ridge. Palest fill so it
+                  recedes into haze. */}
+              <path
+                d="M 0 380
+                   L 0 310
+                   Q 55 290 110 305
+                   Q 170 275 230 300
+                   Q 290 270 350 295
+                   Q 415 270 475 295
+                   Q 540 275 600 300
+                   Q 665 280 725 305
+                   Q 775 295 800 310
+                   L 800 380 Z"
+                fill="#D9CCBC"
+              />
+
+              {/* Middle range — mid-distance ridges, slightly more
+                  defined peaks than the far range. */}
+              <path
+                d="M 0 380
+                   L 0 335
+                   Q 45 315 90 330
+                   Q 140 285 190 315
+                   Q 245 275 290 305
+                   Q 335 285 380 315
+                   Q 425 330 470 305
+                   Q 525 280 575 310
+                   Q 625 285 675 315
+                   Q 725 290 770 320
+                   Q 790 325 800 335
+                   L 800 380 Z"
+                fill="#A89279"
+              />
+
+              {/* Pikes Peak — the hero silhouette. Broad rounded summit
+                  at roughly x=430, y=118, with the characteristic massif
+                  shoulders spreading from x=150 (left base) to x=700
+                  (right base). Dominant dark fill. */}
+              <path
+                d="M 150 380
+                   Q 195 362 225 342
+                   Q 260 315 285 285
+                   Q 315 245 340 210
+                   Q 365 175 385 148
+                   Q 400 128 420 120
+                   Q 445 116 465 124
+                   Q 488 135 502 160
+                   Q 522 195 538 230
+                   Q 558 270 578 305
+                   Q 605 340 635 362
+                   Q 668 378 700 380
+                   L 150 380 Z"
+                fill="#6B5B4E"
+              />
+
+              {/* Pikes Peak linework highlight — a faint top edge stroke
+                  that gives the silhouette a clean editorial outline on
+                  just the summit and upper slopes. */}
+              <path
+                d="M 225 342
+                   Q 260 315 285 285
+                   Q 315 245 340 210
+                   Q 365 175 385 148
+                   Q 400 128 420 120
+                   Q 445 116 465 124
+                   Q 488 135 502 160
+                   Q 522 195 538 230
+                   Q 558 270 578 305"
                 fill="none"
                 stroke="#1F1810"
-                strokeWidth="1"
+                strokeWidth="2.5"
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                opacity="0.78"
-              >
-                {MAP_CONTOURS.map((d, i) => (
-                  <path key={i} d={d} />
-                ))}
+              />
+
+              {/* Snow cap — a thin cream crescent hugging the summit
+                  dome. Colorado 14ers hold snow well into summer. */}
+              <path
+                d="M 378 148
+                   Q 398 128 420 122
+                   Q 444 118 465 128
+                   Q 478 135 488 148
+                   Q 472 144 450 144
+                   Q 428 146 408 150
+                   Q 390 153 378 148 Z"
+                fill="#EDE5DB"
+              />
+
+              {/* Left foreground pines — small triangular silhouettes
+                  along the plain, adds scale and editorial texture. */}
+              <g fill="#1F1810">
+                <polygon points="55,380 48,380 55,364" />
+                <polygon points="55,380 62,380 55,364" />
+                <polygon points="84,380 79,380 84,369" />
+                <polygon points="84,380 89,380 84,369" />
+                <polygon points="118,380 110,380 118,362" />
+                <polygon points="118,380 126,380 118,362" />
+                <polygon points="144,380 138,380 144,368" />
+                <polygon points="144,380 150,380 144,368" />
               </g>
 
-              {/* Colorado Springs star — placed near center, slightly
-                  east of center since the city sits east of Pikes Peak. */}
-              <g transform="translate(345, 345)">
-                {/* White halo so the star reads over the densest contour
-                    bands without fighting them */}
+              {/* Right foreground pines — smaller cluster to the east of
+                  the mountain, beyond the Colorado Springs marker. */}
+              <g fill="#1F1810">
+                <polygon points="730,380 724,380 730,368" />
+                <polygon points="730,380 736,380 730,368" />
+                <polygon points="760,380 755,380 760,371" />
+                <polygon points="760,380 765,380 760,371" />
+              </g>
+
+              {/* Horizon line — subtle baseline extending past the
+                  mountain silhouettes so the plain reads as ground. */}
+              <line
+                x1="0"
+                y1="380"
+                x2="800"
+                y2="380"
+                stroke="#1F1810"
+                strokeWidth="1"
+                opacity="0.35"
+              />
+
+              {/* Colorado Springs star — placed at the eastern foot of
+                  Pikes Peak, on the horizon line. The city sits in a
+                  valley against the mountain's base, so this is where
+                  the marker geographically belongs. */}
+              <g transform="translate(660, 380)">
+                {/* Cream halo so the star reads cleanly over whatever
+                    sits behind it. */}
                 <circle r="22" fill="#FAF8F5" />
                 <polygon
                   points="0,-16 4.7,-4.9 16.5,-4.9 7,2.9 10.6,14.7 0,7.6 -10.6,14.7 -7,2.9 -16.5,-4.9 -4.7,-4.9"
@@ -309,6 +402,30 @@ export default function ColoradoMapSection() {
                   strokeWidth="1.2"
                   strokeLinejoin="round"
                 />
+              </g>
+
+              {/* Small directional label 'PIKES PEAK 14,115 ft' floating
+                  above the summit — subtle editorial annotation. */}
+              <g fontFamily="Georgia, serif" fill="#1F1810" opacity="0.7">
+                <text
+                  x="435"
+                  y="85"
+                  textAnchor="middle"
+                  fontSize="13"
+                  fontStyle="italic"
+                  letterSpacing="0.5"
+                >
+                  Pikes Peak
+                </text>
+                <text
+                  x="435"
+                  y="100"
+                  textAnchor="middle"
+                  fontSize="10"
+                  letterSpacing="0.5"
+                >
+                  14,115 ft
+                </text>
               </g>
             </svg>
           </div>
