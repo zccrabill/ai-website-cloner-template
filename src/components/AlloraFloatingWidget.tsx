@@ -36,12 +36,30 @@ export default function AlloraFloatingWidget() {
   // same message twice on re-renders or when history is rehydrated.
   const lastSpokenIndexRef = useRef(-1);
 
-  const suggestions = [
+  // --- Free-tier message cap ---------------------------------------------
+  // Visitors get a taste of Allora (2 user turns) before we lock the input
+  // behind a signup CTA. Members get unlimited access + voice.
+  const FREE_MESSAGE_LIMIT = 2;
+  const userMessageCount = messages.filter((m) => m.role === "user").length;
+  const isLocked = !isAuthed && userMessageCount >= FREE_MESSAGE_LIMIT;
+
+  // Different suggestion chips for visitors vs. members. Visitor prompts
+  // funnel toward learning about the firm; member prompts start real work.
+  const visitorSuggestions = [
     "How does Available Law work?",
-    "Can you review my contract?",
     "What does a subscription cost?",
-    "Help me form an LLC in Colorado",
+    "What is the FAIIR framework?",
+    "Can AI help with my contract?",
   ];
+
+  const memberSuggestions = [
+    "Review my contract for red flags",
+    "Help me draft an NDA",
+    "Walk me through Colorado AI Act compliance",
+    "What should my LLC operating agreement include?",
+  ];
+
+  const suggestions = isAuthed ? memberSuggestions : visitorSuggestions;
 
   // Auto-trigger typing bubble + greeting based on scroll
   useEffect(() => {
@@ -117,6 +135,11 @@ export default function AlloraFloatingWidget() {
     async (text?: string) => {
       const content = (text ?? message).trim();
       if (!content) return;
+      // Enforce free-tier cap — belt + suspenders with the hidden input.
+      if (!isAuthed) {
+        const currentUserCount = messages.filter((m) => m.role === "user").length;
+        if (currentUserCount >= FREE_MESSAGE_LIMIT) return;
+      }
 
       const userMsg: ChatMessage = { role: "user", content };
       setMessages((prev) => {
@@ -164,7 +187,7 @@ export default function AlloraFloatingWidget() {
         return nextHistory;
       });
     },
-    [message],
+    [message, isAuthed, messages],
   );
 
   // --- Voice hook wiring -----------------------------------------------
@@ -344,13 +367,16 @@ export default function AlloraFloatingWidget() {
                   </div>
                   <div className="bg-[#FAF8F5] border border-[#1F1810]/8 rounded-2xl rounded-tl-sm px-4 py-3 max-w-[85%]">
                     <p className="text-sm text-[#1F1810] leading-relaxed">
-                      Hi! I&apos;m Allora — Available Law&apos;s AI legal
-                      assistant. I help Colorado businesses with contracts,
-                      compliance, formation, and more.
+                      {isAuthed
+                        ? "Welcome back! I\u2019m Allora \u2014 your AI legal assistant. I can help you with contracts, compliance, formation, and more."
+                        : "Hi! I\u2019m Allora \u2014 Available Law\u2019s AI legal assistant. Ask me a couple of questions to see how I can help your business."}
                     </p>
-                    <p className="text-sm text-[#1F1810] leading-relaxed mt-2">
-                      What can I help you with today?
-                    </p>
+                    {!isAuthed && (
+                      <p className="text-[11px] text-[#A89279] mt-2">
+                        Members get unlimited access, voice mode, and
+                        attorney-reviewed answers.
+                      </p>
+                    )}
                   </div>
                 </div>
 
@@ -410,15 +436,31 @@ export default function AlloraFloatingWidget() {
                   </div>
                 )}
 
-                {/* CTA after first exchange */}
-                {messages.length >= 2 && !isTyping && (
-                  <div className="pt-2">
-                    <Link
-                      href="/login"
-                      className="block w-full text-center px-4 py-2.5 bg-[#C17832] text-white rounded-lg text-sm font-medium hover:bg-[#1F1810] transition-colors"
-                    >
-                      Sign up free to continue →
-                    </Link>
+                {/* Locked-state CTA — replaces the input for visitors who
+                    have used their free turns. */}
+                {isLocked && !isTyping && (
+                  <div className="pt-3 space-y-2">
+                    <div className="bg-[#FAF8F5] border border-[#C17832]/20 rounded-xl px-4 py-4 text-center">
+                      <p className="text-sm font-semibold text-[#1F1810] mb-1">
+                        Want to keep going?
+                      </p>
+                      <p className="text-xs text-[#6B5B4E] leading-relaxed mb-3">
+                        Members get unlimited Allora access, voice mode, document
+                        reviews, and attorney consultations.
+                      </p>
+                      <Link
+                        href="/#pricing"
+                        className="block w-full text-center px-4 py-2.5 bg-[#C17832] text-white rounded-lg text-sm font-medium hover:bg-[#1F1810] transition-colors"
+                      >
+                        See plans →
+                      </Link>
+                      <Link
+                        href="/login"
+                        className="block mt-2 text-xs text-[#6B5B4E] hover:text-[#C17832] transition-colors"
+                      >
+                        Already a member? Sign in
+                      </Link>
+                    </div>
                   </div>
                 )}
 
@@ -427,8 +469,8 @@ export default function AlloraFloatingWidget() {
             )}
           </div>
 
-          {/* Input */}
-          <div className="border-t border-[#1F1810]/8 px-4 py-3 bg-white">
+          {/* Input — hidden entirely when the visitor's free turns are used */}
+          <div className={`border-t border-[#1F1810]/8 px-4 py-3 bg-white ${isLocked ? "hidden" : ""}`}>
             {/* Voice mode status pill — only shown when something voice-y
                 is happening, so it doesn't add visual noise by default. */}
             {isAuthed && voice.supported && voice.status !== "idle" && (
