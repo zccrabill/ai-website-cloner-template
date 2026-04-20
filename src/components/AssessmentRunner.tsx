@@ -420,6 +420,13 @@ function SoftGateView({
   const tier = TIER_CLASSES[result.overallTier];
   const overall = def.overall[result.overallTier];
 
+  // Preview strategy: show the first 2 area cards in full as proof of value,
+  // then tease the remaining areas as tier-badge rows with locked
+  // recommendations. Email gate sits below.
+  const PREVIEW_COUNT = 2;
+  const previewAreas = result.areas.slice(0, PREVIEW_COUNT);
+  const lockedAreas = result.areas.slice(PREVIEW_COUNT);
+
   return (
     <div>
       <div className="section-divider" />
@@ -451,16 +458,111 @@ function SoftGateView({
         </p>
       </div>
 
+      {/* Preview: full area cards for the first N areas */}
+      {previewAreas.length > 0 && (
+        <div className="mb-8">
+          <h4 className="text-[#f0f0f5] text-[18px] font-semibold mb-5">
+            Preview · your first {previewAreas.length} areas
+          </h4>
+          <div className="flex flex-col gap-3">
+            {previewAreas.map((a) => {
+              const t = TIER_CLASSES[a.tier];
+              return (
+                <div
+                  key={a.area.id}
+                  className="card-gradient-border p-6 md:p-7"
+                >
+                  <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
+                    <h5 className="text-[#18181b] text-[16px] font-semibold">
+                      {a.area.label}
+                    </h5>
+                    <div
+                      className={`inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full border text-[12px] font-medium ${t.pill}`}
+                    >
+                      <span className={`w-1.5 h-1.5 rounded-full ${t.dot}`} />
+                      {t.label} · {a.score} / {a.maxScore}
+                    </div>
+                  </div>
+                  <p className="text-[#52525b] text-[14px] leading-[1.7] mb-3">
+                    {a.area.description}
+                  </p>
+                  <p className="text-[#18181b] text-[14px] leading-[1.75]">
+                    {a.area.recommendations[a.tier]}
+                  </p>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* Locked: show tier shape for remaining areas without the recommendation */}
+      {lockedAreas.length > 0 && (
+        <div className="mb-8">
+          <div className="flex items-center justify-between mb-5">
+            <h4 className="text-[#f0f0f5] text-[18px] font-semibold">
+              {lockedAreas.length} more{" "}
+              {lockedAreas.length === 1 ? "area" : "areas"} — locked
+            </h4>
+            <span className="text-[12px] text-[#a1a1aa] uppercase tracking-widest">
+              Email to unlock
+            </span>
+          </div>
+          <div className="flex flex-col gap-3">
+            {lockedAreas.map((a) => {
+              const t = TIER_CLASSES[a.tier];
+              return (
+                <div
+                  key={a.area.id}
+                  className="card-gradient-border p-5 md:p-6 relative overflow-hidden"
+                >
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <h5 className="text-[#18181b] text-[15px] font-semibold">
+                      {a.area.label}
+                    </h5>
+                    <div
+                      className={`inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full border text-[12px] font-medium ${t.pill}`}
+                    >
+                      <span className={`w-1.5 h-1.5 rounded-full ${t.dot}`} />
+                      {t.label} · {a.score} / {a.maxScore}
+                    </div>
+                  </div>
+                  <div
+                    className="mt-3 select-none pointer-events-none"
+                    aria-hidden
+                  >
+                    <p
+                      className="text-[#18181b] text-[14px] leading-[1.75]"
+                      style={{ filter: "blur(5px)" }}
+                    >
+                      {a.area.recommendations[a.tier]}
+                    </p>
+                  </div>
+                  <div className="mt-2 flex items-center gap-2 text-[12px] text-[#52525b]">
+                    <svg
+                      viewBox="0 0 20 20"
+                      className="w-3.5 h-3.5 fill-[#52525b]"
+                      aria-hidden
+                    >
+                      <path d="M10 1.5a4 4 0 0 0-4 4v2H5a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7a2 2 0 0 0-2-2h-1v-2a4 4 0 0 0-4-4Zm-2.5 4a2.5 2.5 0 1 1 5 0v2h-5v-2Z" />
+                    </svg>
+                    Recommendation locked
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
       <div className="card-gradient-border p-8 md:p-10">
         <h4 className="text-[#18181b] text-[18px] font-semibold mb-2">
-          See the specific gaps — emailed to you
+          Unlock the full breakdown
         </h4>
         <p className="text-[#3f3f46] text-[14px] leading-[1.7] mb-6">
-          The detailed breakdown shows exactly where you scored{" "}
-          <span className="text-rose-600 font-semibold">red</span>,{" "}
-          <span className="text-amber-600 font-semibold">yellow</span>, and{" "}
-          <span className="text-emerald-600 font-semibold">green</span>, with a
-          specific recommendation per area. Drop your email to unlock it.
+          Drop your email and we&rsquo;ll show you the specific recommendation
+          for every area — plus email it over so you can come back to it when
+          you&rsquo;re ready to close the gaps.
         </p>
 
         <form onSubmit={onSubmit} className="flex flex-col gap-4">
