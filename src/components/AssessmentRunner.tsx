@@ -9,6 +9,7 @@ import {
   type AssessmentResult,
   type TierKey,
 } from "@/lib/assessment/types";
+import { supabase } from "@/lib/supabase";
 
 type Stage = "intro" | "asking" | "soft_gate" | "detailed";
 
@@ -102,30 +103,45 @@ export default function AssessmentRunner({
     setSubmitting(true);
     setSubmitError(null);
     try {
-      const res = await fetch("/api/assessment", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          assessmentId: definition.id,
-          email: options.skippedEmail ? null : email.trim() || null,
-          wantsTips: options.skippedEmail ? false : wantsTips,
-          answers,
-          score: {
-            overall: result.overallScore,
-            max: result.overallMaxScore,
-            tier: result.overallTier,
-            areas: result.areas.map((a) => ({
-              id: a.area.id,
-              score: a.score,
-              max: a.maxScore,
-              tier: a.tier,
-            })),
-          },
-        }),
-      });
-      if (!res.ok) throw new Error(`Submission failed (${res.status})`);
+      // Best-effort provenance capture from the browser.
+      const referer =
+        typeof document !== "undefined" ? document.referrer || null : null;
+      const userAgent =
+        typeof navigator !== "undefined" ? navigator.userAgent || null : null;
+
+      const row = {
+        assessment_id: definition.id,
+        email: options.skippedEmail ? null : email.trim() || null,
+        wants_tips: options.skippedEmail ? false : wantsTips,
+        answers,
+        overall_score: result.overallScore,
+        overall_max: result.overallMaxScore,
+        overall_tier: result.overallTier,
+        area_scores: result.areas.map((a) => ({
+          id: a.area.id,
+          score: a.score,
+          max: a.maxScore,
+          tier: a.tier,
+        })),
+        referer,
+        user_agent: userAgent,
+      };
+
+      const { error } = await supabase
+        .from("assessment_responses")
+        .insert(row);
+
+      if (error) {
+        // Fail open — log for diagnostics but still show the user their results.
+        console.error("[assessment] Supabase insert failed", error);
+        setSubmitError(
+          "Could not save your results, but you can still view them below.",
+        );
+      }
+
       setStage("detailed");
     } catch (err) {
+      console.error("[assessment] unexpected insert error", err);
       setSubmitError(
         err instanceof Error
           ? err.message
