@@ -160,10 +160,6 @@ export default function AssessmentRunner({
     void postResult({ skippedEmail: false });
   };
 
-  const handleSkip = () => {
-    void postResult({ skippedEmail: true });
-  };
-
   /* ---------------------------- RENDER ---------------------------- */
 
   const wrapPad =
@@ -201,7 +197,6 @@ export default function AssessmentRunner({
             submitting={submitting}
             submitError={submitError}
             onSubmit={handleEmailSubmit}
-            onSkip={handleSkip}
           />
         )}
 
@@ -247,7 +242,7 @@ function Intro({
         {def.pitch.heading}
       </h2>
 
-      <p className="text-[#a1a1aa] text-[17px] leading-[1.7] max-w-[620px] mb-10">
+      <p className="text-[#d4d4d8] text-[17px] leading-[1.7] max-w-[620px] mb-10">
         {def.pitch.body}
       </p>
 
@@ -264,7 +259,7 @@ function Intro({
           {def.pitch.meta.map((m) => (
             <span
               key={m}
-              className="flex items-center gap-2 text-[13px] text-[#52525b]"
+              className="flex items-center gap-2 text-[13px] text-[#a1a1aa]"
             >
               <span className="text-[#f59e0b]">✦</span>
               {m}
@@ -335,7 +330,7 @@ function AskingView({
       <div className="card-gradient-border p-8 md:p-10">
         <fieldset>
           <legend
-            className="font-heading text-[#f0f0f5] mb-4"
+            className="font-heading text-[#18181b] mb-4"
             style={{
               fontSize: "clamp(22px, 3vw, 32px)",
               fontWeight: 400,
@@ -346,7 +341,7 @@ function AskingView({
             {question.prompt}
           </legend>
           {question.helper && (
-            <p className="text-[#a1a1aa] text-[14px] leading-[1.7] mb-6">
+            <p className="text-[#52525b] text-[14px] leading-[1.7] mb-6">
               {question.helper}
             </p>
           )}
@@ -362,8 +357,8 @@ function AskingView({
                   aria-pressed={isSelected}
                   className={`text-left px-5 py-4 rounded-lg border transition-all duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#f59e0b]/60 ${
                     isSelected
-                      ? "border-[#f59e0b]/60 bg-[#f59e0b]/10"
-                      : "border-white/10 bg-white/[0.02] hover:border-white/20 hover:bg-white/[0.04]"
+                      ? "border-[#f59e0b] bg-[#f59e0b]/10"
+                      : "border-[#e4e4e7] bg-white hover:border-[#f59e0b]/60 hover:bg-[#fafafa]"
                   }`}
                 >
                   <div className="flex items-center gap-4">
@@ -371,16 +366,16 @@ function AskingView({
                       className={`w-5 h-5 rounded-full border flex-shrink-0 transition-colors ${
                         isSelected
                           ? "border-[#f59e0b] bg-[#f59e0b]"
-                          : "border-white/20"
+                          : "border-[#a1a1aa]"
                       }`}
                       aria-hidden
                     />
                     <div>
-                      <div className="text-[#f0f0f5] text-[15px] font-medium">
+                      <div className="text-[#18181b] text-[15px] font-medium">
                         {opt.label}
                       </div>
                       {opt.helper && (
-                        <div className="text-[#a1a1aa] text-[13px] mt-1">
+                        <div className="text-[#52525b] text-[13px] mt-1">
                           {opt.helper}
                         </div>
                       )}
@@ -393,7 +388,7 @@ function AskingView({
         </fieldset>
       </div>
 
-      <p className="text-[12px] text-[#52525b] mt-6">
+      <p className="text-[12px] text-[#a1a1aa] mt-6">
         Your answers are only sent to Available Law if you choose to submit
         your email on the next step.
       </p>
@@ -411,7 +406,6 @@ function SoftGateView({
   submitting,
   submitError,
   onSubmit,
-  onSkip,
 }: {
   def: AssessmentDefinition;
   result: AssessmentResult;
@@ -422,7 +416,6 @@ function SoftGateView({
   submitting: boolean;
   submitError: string | null;
   onSubmit: (e: React.FormEvent) => void;
-  onSkip: () => void;
 }) {
   const tier = TIER_CLASSES[result.overallTier];
   const overall = def.overall[result.overallTier];
@@ -443,7 +436,7 @@ function SoftGateView({
         </div>
 
         <h3
-          className="font-heading text-[#f0f0f5] mb-4"
+          className="font-heading text-[#18181b] mb-4"
           style={{
             fontSize: "clamp(28px, 4vw, 44px)",
             fontWeight: 400,
@@ -453,21 +446,21 @@ function SoftGateView({
         >
           {overall.title}
         </h3>
-        <p className="text-[#a1a1aa] text-[16px] leading-[1.7]">
+        <p className="text-[#3f3f46] text-[16px] leading-[1.7]">
           {overall.summary}
         </p>
       </div>
 
       <div className="card-gradient-border p-8 md:p-10">
-        <h4 className="text-[#f0f0f5] text-[18px] font-semibold mb-2">
+        <h4 className="text-[#18181b] text-[18px] font-semibold mb-2">
           See the specific gaps — emailed to you
         </h4>
-        <p className="text-[#a1a1aa] text-[14px] leading-[1.7] mb-6">
+        <p className="text-[#3f3f46] text-[14px] leading-[1.7] mb-6">
           The detailed breakdown shows exactly where you scored{" "}
-          <span className="text-rose-300">red</span>,{" "}
-          <span className="text-amber-300">yellow</span>, and{" "}
-          <span className="text-emerald-300">green</span>, with a specific
-          recommendation per area. Drop your email to unlock it.
+          <span className="text-rose-600 font-semibold">red</span>,{" "}
+          <span className="text-amber-600 font-semibold">yellow</span>, and{" "}
+          <span className="text-emerald-600 font-semibold">green</span>, with a
+          specific recommendation per area. Drop your email to unlock it.
         </p>
 
         <form onSubmit={onSubmit} className="flex flex-col gap-4">
@@ -478,10 +471,10 @@ function SoftGateView({
             onChange={(e) => onEmailChange(e.target.value)}
             placeholder="you@yourcompany.com"
             autoComplete="email"
-            className="w-full px-4 py-3 rounded-lg bg-white/[0.04] border border-white/10 text-[#f0f0f5] placeholder:text-[#52525b] text-[15px] focus:outline-none focus:border-[#f59e0b]/60 focus:ring-2 focus:ring-[#f59e0b]/20"
+            className="w-full px-4 py-3 rounded-lg bg-[#fafafa] border border-[#e4e4e7] text-[#18181b] placeholder:text-[#a1a1aa] text-[15px] focus:outline-none focus:border-[#f59e0b] focus:ring-2 focus:ring-[#f59e0b]/20"
           />
 
-          <label className="flex items-start gap-3 text-[13px] text-[#a1a1aa] leading-[1.6] cursor-pointer">
+          <label className="flex items-start gap-3 text-[13px] text-[#3f3f46] leading-[1.6] cursor-pointer">
             <input
               type="checkbox"
               checked={wantsTips}
@@ -502,23 +495,15 @@ function SoftGateView({
             >
               {submitting ? "Unlocking…" : "Unlock my full results"}
             </button>
-            <button
-              type="button"
-              onClick={onSkip}
-              disabled={submitting}
-              className="text-[13px] text-[#a1a1aa] hover:text-[#fafafa] transition-colors underline underline-offset-4 decoration-dotted"
-            >
-              No thanks — just show my results
-            </button>
           </div>
 
           {submitError && (
-            <p className="text-[13px] text-rose-300/80">{submitError}</p>
+            <p className="text-[13px] text-rose-600">{submitError}</p>
           )}
         </form>
       </div>
 
-      <p className="text-[12px] text-[#52525b] mt-6 leading-[1.7] max-w-[640px]">
+      <p className="text-[12px] text-[#a1a1aa] mt-6 leading-[1.7] max-w-[640px]">
         {def.disclaimer}
       </p>
     </div>
@@ -555,7 +540,7 @@ function DetailedView({
         </div>
 
         <h3
-          className="font-heading text-[#f0f0f5] mb-4"
+          className="font-heading text-[#18181b] mb-4"
           style={{
             fontSize: "clamp(28px, 4vw, 44px)",
             fontWeight: 400,
@@ -565,7 +550,7 @@ function DetailedView({
         >
           {overall.title}
         </h3>
-        <p className="text-[#a1a1aa] text-[16px] leading-[1.7]">
+        <p className="text-[#3f3f46] text-[16px] leading-[1.7]">
           {overall.summary}
         </p>
       </div>
@@ -584,7 +569,7 @@ function DetailedView({
                 className="card-gradient-border p-6 md:p-7"
               >
                 <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
-                  <h5 className="text-[#f0f0f5] text-[16px] font-semibold">
+                  <h5 className="text-[#18181b] text-[16px] font-semibold">
                     {a.area.label}
                   </h5>
                   <div
@@ -594,10 +579,10 @@ function DetailedView({
                     {t.label} · {a.score} / {a.maxScore}
                   </div>
                 </div>
-                <p className="text-[#a1a1aa] text-[14px] leading-[1.7] mb-3">
+                <p className="text-[#52525b] text-[14px] leading-[1.7] mb-3">
                   {a.area.description}
                 </p>
-                <p className="text-[#f0f0f5] text-[14px] leading-[1.75]">
+                <p className="text-[#18181b] text-[14px] leading-[1.75]">
                   {a.area.recommendations[a.tier]}
                 </p>
               </div>
@@ -622,7 +607,7 @@ function DetailedView({
         >
           {next.label}
         </h4>
-        <p className="text-[#a1a1aa] text-[15px] leading-[1.7] mb-6">
+        <p className="text-[#d4d4d8] text-[15px] leading-[1.7] mb-6">
           {next.summary}
         </p>
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
@@ -642,7 +627,7 @@ function DetailedView({
           )}
         </div>
         {next.secondary && (
-          <p className="text-[13px] text-[#a1a1aa] mt-4 leading-[1.7] max-w-[620px]">
+          <p className="text-[13px] text-[#d4d4d8] mt-4 leading-[1.7] max-w-[620px]">
             {next.secondary.summary}
           </p>
         )}
@@ -658,7 +643,7 @@ function DetailedView({
         </button>
       </div>
 
-      <p className="text-[12px] text-[#52525b] mt-10 leading-[1.7] max-w-[640px]">
+      <p className="text-[12px] text-[#a1a1aa] mt-10 leading-[1.7] max-w-[640px]">
         {def.disclaimer}
       </p>
     </div>
