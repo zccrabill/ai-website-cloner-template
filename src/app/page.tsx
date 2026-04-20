@@ -1,5 +1,6 @@
 import Header from "@/components/Header";
 import HeroSection from "@/components/HeroSection";
+import LiabilityCheckupSection from "@/components/LiabilityCheckupSection";
 import FeaturedInSection from "@/components/FeaturedInSection";
 import SolutionsSection from "@/components/SolutionsSection";
 import HowItWorksSection from "@/components/HowItWorksSection";
@@ -19,6 +20,8 @@ export default function Home() {
       <Header />
       <main>
         <HeroSection />
+
+        <LiabilityCheckupSection />
 
         <div id="featured">
           <FeaturedInSection />
