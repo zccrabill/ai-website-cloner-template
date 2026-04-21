@@ -6,6 +6,7 @@ import SolutionsSection from "@/components/SolutionsSection";
 import HowItWorksSection from "@/components/HowItWorksSection";
 import FaiirSection from "@/components/FaiirSection";
 import PricingSection from "@/components/PricingSection";
+import PracticeSnapshotSection from "@/components/PracticeSnapshotSection";
 import TestimonialsSection from "@/components/TestimonialsSection";
 import CTASection from "@/components/CTASection";
 import Footer from "@/components/Footer";
@@ -40,6 +41,8 @@ export default function Home() {
         <div id="pricing">
           <PricingSection />
         </div>
+
+        <PracticeSnapshotSection />
 
         <TestimonialsSection />
 
