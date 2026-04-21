@@ -226,7 +226,7 @@ export const smbCheckup: AssessmentDefinition = {
       prompt:
         "If my business uses AI to make consequential decisions about people (hiring, lending, housing, healthcare, insurance, education), I know what the Colorado AI Act requires of me.",
       helper:
-        "The Colorado AI Act (effective 2026) regulates 'high-risk' AI decision systems. Ignorance isn't a defense.",
+        "The Colorado AI Act (effective June 30, 2026) regulates 'high-risk' AI decision systems. Ignorance isn't a defense.",
       options: [
         { label: "I use AI that way and haven't checked", value: 0 },
         { label: "I've read about it but haven't acted", value: 1 },

@@ -65,7 +65,7 @@ export default function AnnouncementBanner() {
           <span className="sm:hidden font-semibold text-[#F2B870] mr-1">
             Colorado AI Act →
           </span>
-          Is your business ready for 2026?{" "}
+          Is your business ready for June 2026?{" "}
           <Link
             href="/ai-act-checker"
             className="underline decoration-[#C17832]/60 hover:decoration-[#F2B870] font-medium whitespace-nowrap"
