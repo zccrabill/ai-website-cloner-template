@@ -27,34 +27,229 @@ interface FaiirLandingProps {
   faqs: Faq[];
 }
 
-// Single source of truth for the membership buy links and discovery-call
-// scheduler. Update in one place if any change.
-//
-// FAIIR membership billing:
-//   - Monthly: $49/mo
-//   - Annual:  $490/yr  (= 2 months free = ~17% off)
-// Matches the Available Law subscription convention so the savings story is
-// consistent across both products.
-const MEMBERSHIP_CHECKOUT_URL_MONTHLY =
-  "https://buy.stripe.com/6oU3cvggQ30Ffz50J6cMM0d";
-const MEMBERSHIP_CHECKOUT_URL_ANNUAL =
-  "https://buy.stripe.com/bJe9ATaWw6cRev12RecMM0e";
+// Single source of truth for discovery call + Stripe Payment Links.
+// Update in one place if any change.
 const DISCOVERY_CALL_URL =
   "https://calendly.com/availablelaw/free-faiir-discovery-call";
 
-// Membership pricing math — keep in lock-step with the Stripe prices above.
-const MEMBERSHIP_MONTHLY_USD = 49;
-const MEMBERSHIP_ANNUAL_USD = 490;
-const MEMBERSHIP_ANNUAL_MONTHLY_EQUIVALENT = Math.round(
-  MEMBERSHIP_ANNUAL_USD / 12,
-); // shown as "$41/mo, billed yearly"
-const MEMBERSHIP_ANNUAL_SAVINGS_USD =
-  MEMBERSHIP_MONTHLY_USD * 12 - MEMBERSHIP_ANNUAL_USD; // $98
-const MEMBERSHIP_ANNUAL_PERCENT_OFF = Math.round(
-  (MEMBERSHIP_ANNUAL_SAVINGS_USD / (MEMBERSHIP_MONTHLY_USD * 12)) * 100,
-); // 17
+// Stripe Payment Links for the Standard membership tier (existing, live).
+// Higher tiers (Plus, Enterprise) route to the discovery call until new
+// Stripe Payment Links are created — see TODOs below.
+const STANDARD_MEMBERSHIP_URL_MONTHLY =
+  "https://buy.stripe.com/6oU3cvggQ30Ffz50J6cMM0d";
+const STANDARD_MEMBERSHIP_URL_ANNUAL =
+  "https://buy.stripe.com/bJe9ATaWw6cRev12RecMM0e";
+
+// TODO: Create Stripe Payment Links for Plus monthly + annual and drop them
+// here. Until then, Plus tier CTAs route to the discovery call so the page
+// doesn't ship broken URLs.
+const PLUS_MEMBERSHIP_URL_MONTHLY = DISCOVERY_CALL_URL;
+const PLUS_MEMBERSHIP_URL_ANNUAL = DISCOVERY_CALL_URL;
 
 type MembershipCycle = "monthly" | "annual";
+
+/* ------------------------------------------------------------------ */
+/* Pricing data — single source of truth for every card on the page   */
+/* ------------------------------------------------------------------ */
+
+interface AssessmentTier {
+  key: "starter" | "professional" | "enterprise";
+  name: string;
+  tagline: string;
+  /** Null = custom / "From $X". */
+  priceUsd: number | null;
+  priceLabel: string; // e.g. "$2,500", "From $15,000"
+  priceSuffix: string; // e.g. "one-time"
+  footnote: string;
+  badge?: string;
+  featured?: boolean;
+  features: string[];
+  ctaLabel: string;
+  ctaUrl: string;
+}
+
+interface MembershipTier {
+  key: "standard" | "plus" | "enterprise";
+  name: string;
+  tagline: string;
+  /** Null = custom pricing (Enterprise). */
+  monthlyUsd: number | null;
+  /** Null = custom pricing (Enterprise). */
+  annualUsd: number | null;
+  featured?: boolean;
+  features: string[];
+  /** URLs per billing cycle. For Enterprise, both point to discovery call. */
+  monthlyUrl: string;
+  annualUrl: string;
+}
+
+const ASSESSMENT_TIERS: AssessmentTier[] = [
+  {
+    key: "starter",
+    name: "Starter",
+    tagline: "For SMBs with one or two high-risk AI systems in production.",
+    priceUsd: 2500,
+    priceLabel: "$2,500",
+    priceSuffix: "one-time",
+    footnote:
+      "Fixed fee for 1–2 high-risk systems, single business unit. Scoped on a free 30-min discovery call.",
+    badge: "Start here",
+    features: [
+      "Attorney-led AI inventory and high-risk classification (up to 2 systems)",
+      "Written impact assessments (1 per high-risk system)",
+      "Gap analysis mapped to SB24-205 duties",
+      "Draft AI governance policy and consumer disclosure language",
+      "Vendor contract review (up to 5 agreements)",
+      "Written incident response plan template",
+      "Final report with prioritized remediation roadmap",
+      "FAIIR certification letter on completion",
+      "Typical delivery: 3 weeks",
+    ],
+    ctaLabel: "Book a free discovery call",
+    ctaUrl: DISCOVERY_CALL_URL,
+  },
+  {
+    key: "professional",
+    name: "Professional",
+    tagline: "For growing teams running multiple AI-driven workflows.",
+    priceUsd: 5000,
+    priceLabel: "$5,000",
+    priceSuffix: "one-time",
+    footnote:
+      "Fixed fee for 3–5 high-risk systems. Includes bias-audit methodology and a board-ready executive summary.",
+    badge: "Most popular",
+    featured: true,
+    features: [
+      "Everything in Starter, plus:",
+      "Up to 5 written impact assessments",
+      "Vendor contract review (up to 10 agreements)",
+      "Bias audit methodology design + first pass",
+      "Board-ready executive summary + risk register",
+      "Stakeholder workshop (1 hour, virtual)",
+      "Priority delivery: 2–3 weeks",
+    ],
+    ctaLabel: "Book a free discovery call",
+    ctaUrl: DISCOVERY_CALL_URL,
+  },
+  {
+    key: "enterprise",
+    name: "Enterprise",
+    tagline: "For multi-BU operators and regulated-industry deployers.",
+    priceUsd: null,
+    priceLabel: "From $15,000",
+    priceSuffix: "one-time",
+    footnote:
+      "Custom scope for 6+ high-risk systems, multiple business units, or regulated industries (healthcare, finance, insurance, employment).",
+    features: [
+      "Everything in Professional, plus:",
+      "Unlimited impact assessments and vendor reviews",
+      "Multi-business-unit scoping and governance mapping",
+      "Dedicated engagement attorney",
+      "Custom bias-audit working sessions with your data team",
+      "Expert-witness-quality documentation",
+      "White-glove delivery: 4–6 weeks",
+      "Quarterly partner debriefs through Year 1",
+    ],
+    ctaLabel: "Talk to us",
+    ctaUrl: DISCOVERY_CALL_URL,
+  },
+];
+
+const MEMBERSHIP_TIERS: MembershipTier[] = [
+  {
+    key: "standard",
+    name: "Standard",
+    tagline: "Stay certified. Light-touch monitoring for 1–2 AI systems.",
+    monthlyUsd: 49,
+    annualUsd: 490,
+    features: [
+      "Coverage for 1–2 high-risk AI systems",
+      "Quarterly policy refresh + re-certification review",
+      "Regulatory update briefings when SB24-205 guidance issues",
+      "Email attorney Q&A — 1 business day response",
+      "Audit-trail templates and logging guidance",
+      "5 vendor contract spot-checks per year",
+      "Allora AI legal assistant access",
+      "Cancel anytime",
+    ],
+    monthlyUrl: STANDARD_MEMBERSHIP_URL_MONTHLY,
+    annualUrl: STANDARD_MEMBERSHIP_URL_ANNUAL,
+  },
+  {
+    key: "plus",
+    name: "Plus",
+    tagline: "For teams running multiple systems who want faster turnarounds.",
+    monthlyUsd: 149,
+    annualUsd: 1490,
+    featured: true,
+    features: [
+      "Coverage for up to 5 high-risk AI systems",
+      "Monthly policy refresh + ad-hoc updates when guidance issues",
+      "Email + chat attorney Q&A — same-day response",
+      "15 vendor contract spot-checks per year",
+      "Incident response coordination — same-day engagement",
+      "Quarterly virtual business review with your attorney",
+      "Priority Allora queue",
+      "Annual re-certification audit included (a $1,250 value)",
+      "Cancel anytime",
+    ],
+    monthlyUrl: PLUS_MEMBERSHIP_URL_MONTHLY,
+    annualUrl: PLUS_MEMBERSHIP_URL_ANNUAL,
+  },
+  {
+    key: "enterprise",
+    name: "Enterprise",
+    tagline:
+      "Unlimited coverage, dedicated attorney, custom SLA. Talk to us.",
+    monthlyUsd: null,
+    annualUsd: null,
+    features: [
+      "Unlimited systems covered across all business units",
+      "Continuous monitoring + proactive regulatory briefings",
+      "Dedicated attorney with custom SLA (same-day standard)",
+      "Unlimited vendor contract reviews",
+      "24/7 incident response hotline",
+      "Quarterly on-site or virtual partner reviews",
+      "Custom board reporting and compliance dashboards",
+      "Annual re-certification audit included",
+      "Annual contract",
+    ],
+    monthlyUrl: DISCOVERY_CALL_URL,
+    annualUrl: DISCOVERY_CALL_URL,
+  },
+];
+
+// Re-certification audit — distinct product, priced separately.
+// Mirrors ISO / SOC-2 surveillance audit convention.
+const RECERT_FEE_USD = 1250;
+
+// Membership savings math helpers. Always derive from the tier objects so
+// nothing ever drifts out of sync.
+function annualMonthlyEquivalent(tier: MembershipTier): number | null {
+  return tier.annualUsd == null ? null : Math.round(tier.annualUsd / 12);
+}
+function annualSavingsUsd(tier: MembershipTier): number | null {
+  if (tier.monthlyUsd == null || tier.annualUsd == null) return null;
+  return tier.monthlyUsd * 12 - tier.annualUsd;
+}
+function annualPercentOff(tier: MembershipTier): number | null {
+  if (tier.monthlyUsd == null || tier.annualUsd == null) return null;
+  const save = tier.monthlyUsd * 12 - tier.annualUsd;
+  return Math.round((save / (tier.monthlyUsd * 12)) * 100);
+}
+// Max percent-off across paid tiers — used in the toggle's "Save up to X%"
+// chip so we never advertise a number the math can't back up.
+const MAX_MEMBERSHIP_PERCENT_OFF = Math.max(
+  0,
+  ...MEMBERSHIP_TIERS.map((t) => annualPercentOff(t) ?? 0),
+);
+
+// Cohort credit offer — founding-member promo tied to the June 2026
+// Legal Defense Cohort launch. Sign up for both an assessment and a
+// 12-month annual membership before the cutoff and the assessment fee
+// credits toward the first year of membership.
+const COHORT_OFFER_DEADLINE = "May 31, 2026";
+const COHORT_OFFER_NAME = "Founding Cohort offer";
 
 export default function FaiirLanding({ faqs }: FaiirLandingProps) {
   return (
@@ -388,57 +583,17 @@ function PillarsSection() {
 /* ------------------------------------------------------------------ */
 
 function PricingSection() {
-  // Billing cycle state for the membership card. Defaults to annual to nudge
-  // higher-LTV selection and surface the "save $X" badge immediately — same
-  // convention as the Available Law /checkout/[tier] page.
+  // One billing cycle for the entire membership row — toggling once flips
+  // all three cards together, so the comparison stays apples-to-apples.
+  // Default annual to anchor on the discount.
   const [membershipCycle, setMembershipCycle] =
     useState<MembershipCycle>("annual");
-
-  const membershipPriceLarge =
-    membershipCycle === "annual"
-      ? `$${MEMBERSHIP_ANNUAL_MONTHLY_EQUIVALENT}`
-      : `$${MEMBERSHIP_MONTHLY_USD}`;
-  const membershipPriceSuffix =
-    membershipCycle === "annual" ? "per month, billed yearly" : "per month";
-  const membershipSubline =
-    membershipCycle === "annual"
-      ? `$${MEMBERSHIP_ANNUAL_USD}/year · save $${MEMBERSHIP_ANNUAL_SAVINGS_USD} (${MEMBERSHIP_ANNUAL_PERCENT_OFF}% off) vs. monthly`
-      : "Billed monthly. Cancel anytime. Assessment recommended but not required before starting membership.";
-  const membershipCtaUrl =
-    membershipCycle === "annual"
-      ? MEMBERSHIP_CHECKOUT_URL_ANNUAL
-      : MEMBERSHIP_CHECKOUT_URL_MONTHLY;
-  const membershipCtaLabel =
-    membershipCycle === "annual"
-      ? `Start membership — $${MEMBERSHIP_ANNUAL_USD}/yr`
-      : `Start membership — $${MEMBERSHIP_MONTHLY_USD}/mo`;
-
-  const assessmentFeatures = [
-    "Attorney-led AI inventory and high-risk classification",
-    "Written impact assessments for each high-risk system",
-    "Gap analysis mapped to SB24-205 duties",
-    "Draft AI governance policy and consumer disclosure language",
-    "Vendor contract review (up to 5 AI vendor agreements)",
-    "Written incident response plan template",
-    "Final report with prioritized remediation roadmap",
-    "FAIIR certification letter on completion",
-  ];
-
-  const membershipFeatures = [
-    "Quarterly policy refresh and re-certification review",
-    "Regulatory update briefings when SB24-205 guidance issues",
-    "On-call attorney Q&A (email, 1 business day response)",
-    "Audit-trail templates and logging guidance",
-    "Incident response coordination if an event occurs",
-    "Access to Allora, the Available Law AI legal assistant",
-    "Priority scheduling for follow-up consultations",
-    "Cancel anytime",
-  ];
 
   return (
     <section id="pricing" className="py-24 md:py-28 bg-[#F5F0EB] border-t border-[#1F1810]/8">
       <div className="max-w-[1200px] mx-auto px-6">
-        <div className="max-w-2xl mx-auto text-center mb-14">
+        {/* Section header */}
+        <div className="max-w-2xl mx-auto text-center mb-10">
           <p className="text-xs font-semibold text-[#C17832] uppercase tracking-widest mb-3">
             Pricing
           </p>
@@ -449,173 +604,372 @@ function PricingSection() {
             One assessment. Ongoing peace of mind.
           </h2>
           <p className="text-[#6B5B4E] leading-relaxed">
-            Start with the attorney-led readiness assessment. Stay compliant
-            with an ongoing membership. Both priced to be accessible to
-            small and mid-sized businesses.
+            Start with a one-time, fixed-fee attorney audit. Stay certified
+            with an ongoing membership. Three sizes of each — pick what fits
+            the AI you actually run.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
-          {/* Assessment card */}
-          <div className="bg-white rounded-3xl border-2 border-[#1F1810] p-8 md:p-10 relative flex flex-col">
-            <div className="absolute -top-3 left-8 px-3 py-1 bg-[#1F1810] text-[#F2B870] text-[10px] font-semibold uppercase tracking-widest rounded-full">
-              Start here
-            </div>
-            <div className="mb-6">
-              <h3
-                className="text-2xl text-[#1F1810] mb-2"
-                style={{ fontFamily: "'Playfair Display', serif", fontWeight: 400 }}
-              >
-                FAIIR Readiness Assessment
-              </h3>
-              <p className="text-sm text-[#6B5B4E]">
-                One-time, fixed-fee, attorney-led audit against every duty
-                SB24-205 imposes on deployers.
-              </p>
-            </div>
-            <div className="mb-6 pb-6 border-b border-[#1F1810]/10">
-              <div className="flex items-baseline gap-2">
-                <span className="text-xs text-[#A89279] uppercase tracking-widest">
-                  Starting at
-                </span>
-              </div>
-              <div className="flex items-baseline gap-2 mt-1">
-                <span
-                  className="text-5xl text-[#1F1810]"
-                  style={{ fontFamily: "'Playfair Display', serif", fontWeight: 400 }}
-                >
-                  $2,500
-                </span>
-                <span className="text-sm text-[#A89279]">one-time</span>
-              </div>
-              <p className="text-xs text-[#6B5B4E] mt-2 leading-relaxed">
-                Final fee quoted after a free 30-minute scoping call. Scales
-                with the number of high-risk AI systems and the depth of
-                remediation required. Typical range: $2,500–$5,000.
-              </p>
-            </div>
-            <ul className="space-y-3 mb-8 flex-1">
-              {assessmentFeatures.map((f) => (
-                <li key={f} className="flex items-start gap-3 text-sm text-[#1F1810]">
-                  <Check className="w-4 h-4 text-[#C17832] flex-shrink-0 mt-0.5" />
-                  <span>{f}</span>
-                </li>
-              ))}
-            </ul>
-            <a
-              href={DISCOVERY_CALL_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group w-full inline-flex items-center justify-center gap-2 px-6 py-4 bg-[#1F1810] text-white rounded-full text-sm font-medium hover:bg-[#C17832] transition-all"
+        {/* Cohort credit banner — founding-member promo */}
+        <CohortCreditBanner />
+
+        {/* Assessment row */}
+        <div className="mt-16 mb-6 flex items-end justify-between gap-4 flex-wrap">
+          <div>
+            <p className="text-xs font-semibold text-[#C17832] uppercase tracking-widest mb-2">
+              Step 1 · One-time assessment
+            </p>
+            <h3
+              className="text-2xl md:text-3xl text-[#1F1810] leading-tight"
+              style={{ fontFamily: "'Playfair Display', serif", fontWeight: 400 }}
             >
-              <Calendar className="w-4 h-4" />
-              Book a free discovery call
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
-            </a>
+              Pick the assessment that fits your footprint.
+            </h3>
+          </div>
+          <p className="text-xs text-[#6B5B4E] max-w-sm md:text-right">
+            All tiers fixed-fee. Final scope confirmed on a free 30-minute
+            discovery call before any engagement letter is signed.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+          {ASSESSMENT_TIERS.map((tier) => (
+            <AssessmentCard key={tier.key} tier={tier} />
+          ))}
+        </div>
+
+        {/* Membership row */}
+        <div className="mt-20 mb-6 flex items-end justify-between gap-4 flex-wrap">
+          <div>
+            <p className="text-xs font-semibold text-[#C17832] uppercase tracking-widest mb-2">
+              Step 2 · Ongoing membership
+            </p>
+            <h3
+              className="text-2xl md:text-3xl text-[#1F1810] leading-tight"
+              style={{ fontFamily: "'Playfair Display', serif", fontWeight: 400 }}
+            >
+              Stay certified as the rules — and your AI — keep changing.
+            </h3>
           </div>
 
-          {/* Membership card */}
+          {/* Billing cycle toggle, mirrored from the previous design.
+              Drives all three membership cards in the row below. */}
           <div
-            id="membership"
-            className="bg-white rounded-3xl border border-[#1F1810]/15 p-8 md:p-10 flex flex-col"
+            role="tablist"
+            aria-label="Membership billing cycle"
+            className="relative inline-flex items-center gap-1 rounded-full border border-[#1F1810]/15 bg-white p-1"
           >
-            <div className="mb-6">
-              <h3
-                className="text-2xl text-[#1F1810] mb-2"
-                style={{ fontFamily: "'Playfair Display', serif", fontWeight: 400 }}
-              >
-                FAIIR Compliance Membership
-              </h3>
-              <p className="text-sm text-[#6B5B4E]">
-                Ongoing monitoring and attorney access to keep your FAIIR
-                certification current between full assessments.
-              </p>
-            </div>
-
-            {/*
-             * Billing cycle toggle. Two pills inside a rounded container —
-             * selected state uses the dark brand colour for strong contrast,
-             * and the annual pill carries a green "save X%" badge. Defaulting
-             * to annual is intentional: the first thing a visitor sees is
-             * the discounted price, which anchors the decision.
-             */}
-            <div
-              role="tablist"
-              aria-label="Billing cycle"
-              className="relative mb-6 inline-flex items-center gap-1 rounded-full border border-[#1F1810]/15 bg-[#FAF8F5] p-1 self-start"
+            <button
+              type="button"
+              role="tab"
+              aria-selected={membershipCycle === "monthly"}
+              onClick={() => setMembershipCycle("monthly")}
+              className={`px-4 py-1.5 text-xs font-semibold rounded-full transition-colors ${
+                membershipCycle === "monthly"
+                  ? "bg-[#1F1810] text-white"
+                  : "text-[#6B5B4E] hover:text-[#1F1810]"
+              }`}
             >
-              <button
-                type="button"
-                role="tab"
-                aria-selected={membershipCycle === "monthly"}
-                onClick={() => setMembershipCycle("monthly")}
-                className={`px-4 py-1.5 text-xs font-semibold rounded-full transition-colors ${
-                  membershipCycle === "monthly"
-                    ? "bg-[#1F1810] text-white"
-                    : "text-[#6B5B4E] hover:text-[#1F1810]"
-                }`}
-              >
-                Monthly
-              </button>
-              <button
-                type="button"
-                role="tab"
-                aria-selected={membershipCycle === "annual"}
-                onClick={() => setMembershipCycle("annual")}
-                className={`relative px-4 py-1.5 text-xs font-semibold rounded-full transition-colors ${
-                  membershipCycle === "annual"
-                    ? "bg-[#1F1810] text-white"
-                    : "text-[#6B5B4E] hover:text-[#1F1810]"
-                }`}
-              >
-                Annual
+              Monthly
+            </button>
+            <button
+              type="button"
+              role="tab"
+              aria-selected={membershipCycle === "annual"}
+              onClick={() => setMembershipCycle("annual")}
+              className={`relative px-4 py-1.5 text-xs font-semibold rounded-full transition-colors ${
+                membershipCycle === "annual"
+                  ? "bg-[#1F1810] text-white"
+                  : "text-[#6B5B4E] hover:text-[#1F1810]"
+              }`}
+            >
+              Annual
+              {MAX_MEMBERSHIP_PERCENT_OFF > 0 && (
                 <span
                   className="absolute -top-2 -right-2 bg-[#7A8B6F] text-white text-[9px] font-bold tracking-wide px-1.5 py-0.5 rounded-full shadow-sm"
-                  aria-label={`Save ${MEMBERSHIP_ANNUAL_PERCENT_OFF} percent`}
+                  aria-label={`Save up to ${MAX_MEMBERSHIP_PERCENT_OFF} percent`}
                 >
-                  SAVE {MEMBERSHIP_ANNUAL_PERCENT_OFF}%
+                  SAVE {MAX_MEMBERSHIP_PERCENT_OFF}%
                 </span>
-              </button>
-            </div>
-
-            <div className="mb-6 pb-6 border-b border-[#1F1810]/10">
-              <div className="flex items-baseline gap-2">
-                <span
-                  className="text-5xl text-[#1F1810]"
-                  style={{ fontFamily: "'Playfair Display', serif", fontWeight: 400 }}
-                >
-                  {membershipPriceLarge}
-                </span>
-                <span className="text-sm text-[#A89279]">
-                  {membershipPriceSuffix}
-                </span>
-              </div>
-              <p className="text-xs text-[#6B5B4E] mt-2 leading-relaxed">
-                {membershipSubline}
-              </p>
-            </div>
-            <ul className="space-y-3 mb-8 flex-1">
-              {membershipFeatures.map((f) => (
-                <li key={f} className="flex items-start gap-3 text-sm text-[#1F1810]">
-                  <Check className="w-4 h-4 text-[#C17832] flex-shrink-0 mt-0.5" />
-                  <span>{f}</span>
-                </li>
-              ))}
-            </ul>
-            <a
-              href={membershipCtaUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group w-full inline-flex items-center justify-center gap-2 px-6 py-4 border-2 border-[#1F1810] text-[#1F1810] rounded-full text-sm font-medium hover:bg-[#1F1810] hover:text-white transition-all"
-            >
-              <CreditCard className="w-4 h-4" />
-              {membershipCtaLabel}
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
-            </a>
+              )}
+            </button>
           </div>
         </div>
+
+        <div id="membership" className="grid grid-cols-1 md:grid-cols-3 gap-5">
+          {MEMBERSHIP_TIERS.map((tier) => (
+            <MembershipCard
+              key={tier.key}
+              tier={tier}
+              cycle={membershipCycle}
+            />
+          ))}
+        </div>
+
+        {/* Re-certification audit — distinct from membership.
+            Mirrors ISO/SOC convention; bundled free for Plus/Enterprise. */}
+        <RecertCallout />
       </div>
     </section>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* Pricing sub-components                                              */
+/* ------------------------------------------------------------------ */
+
+function CohortCreditBanner() {
+  return (
+    <div className="mt-12 rounded-2xl border-2 border-[#C17832] bg-gradient-to-r from-[#C17832]/10 via-[#F2B870]/15 to-[#C17832]/10 p-6 md:p-7">
+      <div className="flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-6">
+        <div className="flex-shrink-0 inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#1F1810] text-[#F2B870] text-[10px] font-semibold uppercase tracking-widest">
+          <ShieldCheck className="w-3.5 h-3.5" />
+          {COHORT_OFFER_NAME}
+        </div>
+        <div className="flex-1">
+          <p className="text-[15px] md:text-base text-[#1F1810] leading-relaxed">
+            <span className="font-semibold">
+              Sign up for an assessment + 12-month annual membership before{" "}
+              {COHORT_OFFER_DEADLINE}
+            </span>{" "}
+            and we&rsquo;ll credit your full assessment fee toward your first
+            year of membership. Limited to the inaugural Legal Defense Cohort.
+          </p>
+        </div>
+        <a
+          href={DISCOVERY_CALL_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex-shrink-0 inline-flex items-center gap-2 px-5 py-2.5 bg-[#1F1810] text-white rounded-full text-sm font-medium hover:bg-[#C17832] transition-colors"
+        >
+          Claim the offer
+          <ArrowRight className="w-4 h-4" />
+        </a>
+      </div>
+    </div>
+  );
+}
+
+function AssessmentCard({ tier }: { tier: AssessmentTier }) {
+  const featured = tier.featured;
+  return (
+    <div
+      className={`relative bg-white rounded-3xl p-7 md:p-8 flex flex-col ${
+        featured
+          ? "border-2 border-[#1F1810] shadow-[0_20px_40px_rgba(31,24,16,0.12)]"
+          : "border border-[#1F1810]/10"
+      }`}
+    >
+      {tier.badge && (
+        <div
+          className={`absolute -top-3 left-6 px-3 py-1 text-[10px] font-semibold uppercase tracking-widest rounded-full ${
+            featured
+              ? "bg-[#C17832] text-white"
+              : "bg-[#1F1810] text-[#F2B870]"
+          }`}
+        >
+          {tier.badge}
+        </div>
+      )}
+
+      <div className="mb-5">
+        <h4
+          className="text-xl text-[#1F1810] mb-1.5"
+          style={{ fontFamily: "'Playfair Display', serif", fontWeight: 400 }}
+        >
+          FAIIR Assessment — {tier.name}
+        </h4>
+        <p className="text-xs text-[#6B5B4E] leading-relaxed">{tier.tagline}</p>
+      </div>
+
+      <div className="mb-5 pb-5 border-b border-[#1F1810]/10">
+        <div className="flex items-baseline gap-2">
+          <span
+            className="text-4xl md:text-[42px] text-[#1F1810]"
+            style={{ fontFamily: "'Playfair Display', serif", fontWeight: 400 }}
+          >
+            {tier.priceLabel}
+          </span>
+          <span className="text-xs text-[#A89279]">{tier.priceSuffix}</span>
+        </div>
+        <p className="text-[11px] text-[#6B5B4E] mt-2 leading-relaxed">
+          {tier.footnote}
+        </p>
+      </div>
+
+      <ul className="space-y-2.5 mb-7 flex-1">
+        {tier.features.map((f) => (
+          <li
+            key={f}
+            className="flex items-start gap-2.5 text-[13px] text-[#1F1810]"
+          >
+            <Check className="w-3.5 h-3.5 text-[#C17832] flex-shrink-0 mt-1" />
+            <span className="leading-snug">{f}</span>
+          </li>
+        ))}
+      </ul>
+
+      <a
+        href={tier.ctaUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={`group w-full inline-flex items-center justify-center gap-2 px-5 py-3 rounded-full text-sm font-medium transition-all ${
+          featured
+            ? "bg-[#1F1810] text-white hover:bg-[#C17832]"
+            : "border border-[#1F1810] text-[#1F1810] hover:bg-[#1F1810] hover:text-white"
+        }`}
+      >
+        <Calendar className="w-4 h-4" />
+        {tier.ctaLabel}
+        <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+      </a>
+    </div>
+  );
+}
+
+function MembershipCard({
+  tier,
+  cycle,
+}: {
+  tier: MembershipTier;
+  cycle: MembershipCycle;
+}) {
+  const featured = tier.featured;
+  const isCustom = tier.monthlyUsd == null || tier.annualUsd == null;
+  const monthlyEq = annualMonthlyEquivalent(tier);
+  const savings = annualSavingsUsd(tier);
+  const percentOff = annualPercentOff(tier);
+
+  // Render price block — handles custom (Enterprise) vs. fixed pricing,
+  // and monthly vs. annual cycles.
+  let priceLarge: string;
+  let priceSuffix: string;
+  let subline: string;
+  let ctaUrl: string;
+  let ctaLabel: string;
+
+  if (isCustom) {
+    priceLarge = "Custom";
+    priceSuffix = "from $499/mo";
+    subline = "Annual contract. Pricing scoped to your AI footprint.";
+    ctaUrl = tier.monthlyUrl; // both URLs point to discovery call
+    ctaLabel = "Talk to us";
+  } else if (cycle === "annual") {
+    priceLarge = `$${monthlyEq}`;
+    priceSuffix = "per month, billed yearly";
+    subline =
+      savings != null && savings > 0 && percentOff != null
+        ? `$${tier.annualUsd!.toLocaleString()}/year · save $${savings} (${percentOff}% off) vs. monthly`
+        : `$${tier.annualUsd!.toLocaleString()}/year · cancel anytime`;
+    ctaUrl = tier.annualUrl;
+    ctaLabel = `Start membership — $${tier.annualUsd!.toLocaleString()}/yr`;
+  } else {
+    priceLarge = `$${tier.monthlyUsd}`;
+    priceSuffix = "per month";
+    subline = "Billed monthly. Cancel anytime.";
+    ctaUrl = tier.monthlyUrl;
+    ctaLabel = `Start membership — $${tier.monthlyUsd}/mo`;
+  }
+
+  return (
+    <div
+      className={`relative bg-white rounded-3xl p-7 md:p-8 flex flex-col ${
+        featured
+          ? "border-2 border-[#1F1810] shadow-[0_20px_40px_rgba(31,24,16,0.12)]"
+          : "border border-[#1F1810]/10"
+      }`}
+    >
+      {featured && (
+        <div className="absolute -top-3 left-6 px-3 py-1 bg-[#C17832] text-white text-[10px] font-semibold uppercase tracking-widest rounded-full">
+          Most popular
+        </div>
+      )}
+
+      <div className="mb-5">
+        <h4
+          className="text-xl text-[#1F1810] mb-1.5"
+          style={{ fontFamily: "'Playfair Display', serif", fontWeight: 400 }}
+        >
+          FAIIR Membership — {tier.name}
+        </h4>
+        <p className="text-xs text-[#6B5B4E] leading-relaxed">{tier.tagline}</p>
+      </div>
+
+      <div className="mb-5 pb-5 border-b border-[#1F1810]/10">
+        <div className="flex items-baseline gap-2">
+          <span
+            className="text-4xl md:text-[42px] text-[#1F1810]"
+            style={{ fontFamily: "'Playfair Display', serif", fontWeight: 400 }}
+          >
+            {priceLarge}
+          </span>
+          <span className="text-xs text-[#A89279]">{priceSuffix}</span>
+        </div>
+        <p className="text-[11px] text-[#6B5B4E] mt-2 leading-relaxed">
+          {subline}
+        </p>
+      </div>
+
+      <ul className="space-y-2.5 mb-7 flex-1">
+        {tier.features.map((f) => (
+          <li
+            key={f}
+            className="flex items-start gap-2.5 text-[13px] text-[#1F1810]"
+          >
+            <Check className="w-3.5 h-3.5 text-[#C17832] flex-shrink-0 mt-1" />
+            <span className="leading-snug">{f}</span>
+          </li>
+        ))}
+      </ul>
+
+      <a
+        href={ctaUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={`group w-full inline-flex items-center justify-center gap-2 px-5 py-3 rounded-full text-sm font-medium transition-all ${
+          featured
+            ? "bg-[#1F1810] text-white hover:bg-[#C17832]"
+            : "border border-[#1F1810] text-[#1F1810] hover:bg-[#1F1810] hover:text-white"
+        }`}
+      >
+        <CreditCard className="w-4 h-4" />
+        {ctaLabel}
+        <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+      </a>
+    </div>
+  );
+}
+
+function RecertCallout() {
+  return (
+    <div className="mt-10 rounded-2xl border border-[#1F1810]/10 bg-white p-6 md:p-7 flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-6">
+      <div className="flex-shrink-0 w-11 h-11 rounded-xl bg-[#C17832]/10 flex items-center justify-center">
+        <ShieldCheck className="w-5 h-5 text-[#C17832]" />
+      </div>
+      <div className="flex-1">
+        <p className="text-xs font-semibold text-[#C17832] uppercase tracking-widest mb-1.5">
+          Annual re-certification
+        </p>
+        <p className="text-[15px] text-[#1F1810] leading-relaxed">
+          <span className="font-semibold">${RECERT_FEE_USD.toLocaleString()}/year</span>{" "}
+          attorney-led review to keep your FAIIR letter current after Year 1.
+          Lighter touch than the full assessment, focused on what changed.
+          <span className="text-[#6B5B4E]">
+            {" "}
+            Bundled free into Plus and Enterprise membership.
+          </span>
+        </p>
+      </div>
+      <a
+        href={DISCOVERY_CALL_URL}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="flex-shrink-0 inline-flex items-center gap-2 px-5 py-2.5 border border-[#1F1810] text-[#1F1810] rounded-full text-sm font-medium hover:bg-[#1F1810] hover:text-white transition-colors"
+      >
+        Ask about re-cert
+        <ArrowRight className="w-4 h-4" />
+      </a>
+    </div>
   );
 }
 
@@ -833,13 +1187,11 @@ function FinalCta() {
             <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
           </a>
           <a
-            href={MEMBERSHIP_CHECKOUT_URL_MONTHLY}
-            target="_blank"
-            rel="noopener noreferrer"
+            href="#pricing"
             className="inline-flex items-center gap-2 px-8 py-4 border border-white/30 text-white rounded-full text-base font-medium hover:bg-white hover:text-[#1F1810] transition-all"
           >
             <CreditCard className="w-5 h-5" />
-            Start membership — ${MEMBERSHIP_MONTHLY_USD}/mo
+            Compare membership tiers
           </a>
         </div>
       </div>

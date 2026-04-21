@@ -15,7 +15,7 @@ export const dynamic = "force-static";
 const PAGE_URL = `${SITE_URL}/faiir`;
 const TITLE = "FAIIR Certification — Colorado AI Act Compliance Framework";
 const DESCRIPTION =
-  "FAIIR is a Colorado-focused AI compliance certification for businesses deploying high-risk AI. One attorney-led assessment plus ongoing $49/month compliance support to maintain Colorado AI Act readiness.";
+  "FAIIR is the attorney-led AI compliance certification for Colorado businesses. Tiered fixed-fee assessments from $2,500, ongoing membership from $49/month, and an annual re-certification audit to maintain Colorado AI Act readiness.";
 
 export const metadata: Metadata = {
   title: TITLE,
@@ -60,7 +60,7 @@ const FAIIR_FAQS = [
   {
     question: "How much does FAIIR certification cost?",
     answer:
-      "FAIIR certification has two components. The initial readiness assessment is a fixed-scope engagement starting at $2,500 — the exact fee depends on the number of high-risk AI systems, the size of your organization, and how much remediation is required. Scoping happens on a free 30-minute discovery call before any fee is quoted. Ongoing FAIIR compliance support is $49 per month and includes quarterly policy reviews, audit-trail templates, regulatory update briefings, and on-call attorney Q&A.",
+      "FAIIR is offered in tiered, fixed-fee options so the pricing scales with the AI footprint you actually run. The initial readiness assessment comes in three sizes: Starter at $2,500 (1–2 high-risk AI systems, single business unit), Professional at $5,000 (3–5 systems, board-ready deliverables), and Enterprise from $15,000 (6+ systems or multi-business-unit operators). Final scope is confirmed on a free 30-minute discovery call. Ongoing compliance membership is also tiered: Standard at $49/month, Plus at $149/month (includes the annual re-certification audit), and Enterprise custom pricing from $499/month. Annual billing saves ~17% on every tier. A stand-alone annual re-certification audit is $1,250 for Standard members.",
   },
   {
     question: "How long does the assessment take?",
@@ -92,23 +92,24 @@ export default function FaiirPage() {
           serviceSchema({
             name: "FAIIR Compliance Assessment",
             description:
-              "Attorney-led Colorado AI Act readiness assessment covering governance, impact assessments, human review, bias audit, documentation, incident response, and vendor contracts. Delivered by a Colorado-licensed attorney.",
+              "Attorney-led Colorado AI Act readiness assessment covering governance, impact assessments, human review, bias audit, documentation, incident response, and vendor contracts. Delivered by a Colorado-licensed attorney. Offered in three tiers: Starter ($2,500, 1–2 systems), Professional ($5,000, 3–5 systems), and Enterprise (from $15,000, multi-business-unit).",
             url: PAGE_URL,
             serviceType: "AI Compliance Certification",
             price: "2500",
             priceCurrency: "USD",
             offerDescription:
-              "Starting at $2,500. Final fee quoted after a free 30-minute discovery call.",
+              "Starter tier starts at $2,500. Professional $5,000. Enterprise from $15,000. Fixed fee confirmed after a free 30-minute discovery call.",
           }),
           serviceSchema({
             name: "FAIIR Compliance Membership",
             description:
-              "Monthly Colorado AI Act compliance support for businesses maintaining FAIIR readiness. Quarterly policy reviews, regulatory update briefings, audit-trail templates, and on-call attorney Q&A.",
+              "Monthly Colorado AI Act compliance support for businesses maintaining FAIIR readiness. Offered in three tiers — Standard ($49/month), Plus ($149/month, includes annual re-certification audit), and Enterprise (custom, from $499/month). All tiers include attorney Q&A, regulatory update briefings, audit-trail templates, and Allora AI legal assistant access. Annual billing saves ~17%.",
             url: `${PAGE_URL}#membership`,
             serviceType: "AI Compliance Subscription",
             price: "49",
             priceCurrency: "USD",
-            offerDescription: "$49 per month, cancel anytime.",
+            offerDescription:
+              "Standard $49/mo, Plus $149/mo, Enterprise from $499/mo. Cancel anytime on monthly; annual plans save ~17%.",
           }),
           faqPageSchema(FAIIR_FAQS),
           breadcrumbSchema(BREADCRUMBS),
