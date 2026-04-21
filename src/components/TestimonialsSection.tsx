@@ -74,6 +74,26 @@ const REVIEWS: Review[] = [
       "Great quality of work and timeliness couldn't have been better.",
     author: "Colorado ToS client",
   },
+  {
+    rating: 5,
+    matter: "Liability Waiver & Rental Contract",
+    quote: "Very responsive and great to work with.",
+    author: "Event Rental Business Owner",
+  },
+  {
+    rating: 5,
+    matter: "Commercial Lease Review",
+    quote:
+      "Zachariah delivered a thorough 11-page memo that covered enforceability analysis, Colorado-specific compliance, and practical recommendations. He identified threshold issues I hadn't considered and provided clear, actionable revisions. The follow-up call was equally valuable. Fast turnaround, no filler, and easy to work with. Exactly what you want from an attorney on a commercial deal.",
+    author: "Commercial Tenant",
+  },
+  {
+    rating: 5,
+    matter: "Revocable Living Trust Review",
+    quote:
+      "Zachariah provided a thorough and well-organized review of our executed living trust. He identified legitimate items worth addressing and was responsive throughout. We had one disagreement on a flagged provision that was resolved quickly and professionally. Would use again for Colorado estate matters.",
+    author: "Colorado Estate client",
+  },
 ];
 
 export default function TestimonialsSection() {

@@ -1,9 +1,9 @@
 /**
  * PracticeSnapshotSection — live aggregate view of active legal work.
  *
- * Hits the get-matters-stats Edge Function on mount and renders a
- * three-stat hero row (active clients / YTD matters / jurisdictions),
- * plus a practice-type breakdown and a practice-area tag cloud.
+ * Hits the get-matters-stats Edge Function on mount and renders three
+ * headline stats (active clients / YTD matters / practice areas) plus
+ * a practice-area breakdown chip row.
  *
  * Confidentiality contract: this component renders ONLY aggregate
  * counts and non-identifying dimensions returned by the Edge Function.
@@ -17,19 +17,16 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import {
-  Briefcase,
-  MapPin,
-  TrendingUp,
-  Sparkles,
-} from "lucide-react";
+import { Briefcase, Layers, TrendingUp, Sparkles } from "lucide-react";
 
 // ------------------------------------------------------------------------
-// Types
+// Types — practice_area values are already human-readable strings (e.g.
+// "AI Consulting & Compliance"), enforced by a CHECK constraint on the
+// matters.practice_area column. No label-map layer needed.
 // ------------------------------------------------------------------------
 
-interface PracticeTypeBucket {
-  type: string;
+interface PracticeAreaBucket {
+  area: string;
   count: number;
 }
 
@@ -41,66 +38,8 @@ interface PracticeSnapshot {
   matters_this_month: number;
   states: string[];
   practice_areas: string[];
-  practice_type_breakdown: PracticeTypeBucket[];
+  practice_area_breakdown: PracticeAreaBucket[];
   last_updated: string;
-}
-
-// ------------------------------------------------------------------------
-// Label maps — human-readable versions of the lowercase_snake_case
-// values stored in Supabase. Anything not in the map falls through to
-// the humanize() helper, so adding a new subtype in the DB doesn't
-// break the UI — it just looks slightly less polished until we add a
-// label override here.
-// ------------------------------------------------------------------------
-
-const TYPE_LABELS: Record<string, string> = {
-  engagement: "New engagements",
-  contract_drafting: "Contracts drafted",
-  contract_review: "Contracts reviewed",
-  advisory: "Advisory counsel",
-  governance: "Board & governance",
-  litigation_support: "Litigation support",
-  entity_formation: "Entity formation",
-  employment: "Employment matters",
-  dispute_resolution: "Dispute resolution",
-  other: "Other matters",
-};
-
-const SUBTYPE_LABELS: Record<string, string> = {
-  new_client_intake: "New-client intake",
-  liability_waiver: "Liability waivers",
-  rental_agreement: "Rental agreements",
-  psa_redline: "PSA redlines",
-  client_correspondence: "Advisory correspondence",
-  board_advisory: "Board advisory",
-  llc_operating_agreement: "LLC operating agreements",
-  nda: "NDAs",
-  employment_agreement: "Employment agreements",
-  offer_letter: "Offer letters",
-  terms_of_service: "Terms of service",
-  privacy_policy: "Privacy policies",
-  sweepstakes_rules: "Sweepstakes rules",
-  prenuptial_agreement: "Prenuptial agreements",
-  postnuptial_agreement: "Postnuptial agreements",
-  real_estate_financing: "Real estate financing",
-  ai_compliance_memo: "AI compliance memos",
-  demand_letter: "Demand letters",
-  co_ownership_dissolution: "Co-ownership dissolution",
-  commercial_lease: "Commercial leases",
-};
-
-function humanize(key: string): string {
-  return key
-    .replace(/_/g, " ")
-    .replace(/\b\w/g, (l) => l.toUpperCase());
-}
-
-function typeLabel(key: string): string {
-  return TYPE_LABELS[key] ?? humanize(key);
-}
-
-function subtypeLabel(key: string): string {
-  return SUBTYPE_LABELS[key] ?? humanize(key);
 }
 
 // ------------------------------------------------------------------------
@@ -223,7 +162,7 @@ export default function PracticeSnapshotSection() {
 
   const active_clients = snapshot?.active_clients ?? 0;
   const matters_ytd = snapshot?.matters_ytd ?? 0;
-  const states_count = snapshot?.states.length ?? 0;
+  const practice_areas_count = snapshot?.practice_areas.length ?? 0;
   const loading = !snapshot;
 
   return (
@@ -241,8 +180,8 @@ export default function PracticeSnapshotSection() {
             Active work, real clients.
           </h2>
           <p className="text-[#1F1810]/60 max-w-[640px]">
-            A live snapshot of the matters we&apos;re handling right now — no
-            client names, no specifics, just the shape of the practice.
+            A real-time look at the work we&apos;re handling across our
+            practice areas, updated live from our case ledger.
           </p>
         </div>
 
@@ -261,52 +200,35 @@ export default function PracticeSnapshotSection() {
             loading={loading}
           />
           <StatCard
-            icon={MapPin}
-            value={states_count}
-            label={states_count === 1 ? "Jurisdiction" : "Jurisdictions"}
+            icon={Layers}
+            value={practice_areas_count}
+            label={
+              practice_areas_count === 1 ? "Practice area" : "Practice areas"
+            }
             loading={loading}
           />
         </div>
 
-        {/* Matter-type breakdown chips */}
-        {snapshot && snapshot.practice_type_breakdown.length > 0 && (
-          <div className="mb-10">
+        {/* Practice-area breakdown chips — one row, counts included */}
+        {snapshot && snapshot.practice_area_breakdown.length > 0 && (
+          <div>
             <p className="text-[#A89279] text-xs tracking-widest uppercase mb-5 text-center">
-              By matter type
+              Where the work lives
             </p>
             <div className="flex flex-wrap justify-center gap-3">
-              {snapshot.practice_type_breakdown.map((b) => (
+              {snapshot.practice_area_breakdown.map((b) => (
                 <div
-                  key={b.type}
+                  key={b.area}
                   className="flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-[#1F1810]/8"
                 >
                   <Briefcase className="w-3.5 h-3.5 text-[#A89279]" />
                   <span className="text-[#1F1810] font-medium text-sm">
-                    {typeLabel(b.type)}
+                    {b.area}
                   </span>
                   <span className="text-[#C17832] font-semibold text-sm tabular-nums">
                     {b.count}
                   </span>
                 </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Practice-area tag cloud */}
-        {snapshot && snapshot.practice_areas.length > 0 && (
-          <div>
-            <p className="text-[#A89279] text-xs tracking-widest uppercase mb-5 text-center">
-              Practice areas
-            </p>
-            <div className="flex flex-wrap justify-center gap-2 max-w-[900px] mx-auto">
-              {snapshot.practice_areas.map((area) => (
-                <span
-                  key={area}
-                  className="px-3 py-1 rounded-md bg-[#1F1810]/5 text-[#1F1810]/70 text-sm"
-                >
-                  {subtypeLabel(area)}
-                </span>
               ))}
             </div>
           </div>
