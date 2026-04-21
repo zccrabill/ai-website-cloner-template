@@ -17,7 +17,7 @@ export const SITE_TAGLINE = "Legal Solutions for All";
  * Open Graph. Keep under 160 so Google doesn't truncate.
  */
 export const SITE_DESCRIPTION =
-  "Colorado's subscription law firm for small business. Flat monthly pricing for contracts, employment, AI vendor review, and Colorado AI Act compliance.";
+  "Colorado subscription law firm for small business — flat $50–$300/month. Contracts, employment, AI vendor review, and Colorado AI Act (SB24-205) compliance. No billable hours.";
 
 /**
  * Long-form entity description for JSON-LD schema. Search engines and LLM
@@ -32,6 +32,7 @@ export const SITE_DESCRIPTION_LONG =
 export const CONTACT_EMAIL = "zachariah@availablelaw.com";
 export const FOUNDER_NAME = "Zachariah Crabill";
 export const FOUNDER_CREDENTIAL = "JD";
+export const FOUNDER_URL = `${SITE_URL}/about/zachariah-crabill`;
 export const JURISDICTION = "Colorado";
 export const COUNTRY = "US";
 
@@ -63,10 +64,11 @@ export function organizationSchema() {
     foundingDate: "2025",
     founder: {
       "@type": "Person",
-      "@id": `${SITE_URL}/#founder`,
+      "@id": `${FOUNDER_URL}#person`,
       name: FOUNDER_NAME,
       honorificSuffix: FOUNDER_CREDENTIAL,
       jobTitle: "Founder & Attorney",
+      url: FOUNDER_URL,
       worksFor: { "@id": `${SITE_URL}/#organization` },
       knowsAbout: [
         "Artificial Intelligence Law",
@@ -176,8 +178,9 @@ export function blogPostingSchema(params: {
     image: params.image ?? DEFAULT_OG_IMAGE,
     author: {
       "@type": "Person",
+      "@id": `${FOUNDER_URL}#person`,
       name: params.authorName ?? `${FOUNDER_NAME}, ${FOUNDER_CREDENTIAL}`,
-      url: SITE_URL,
+      url: FOUNDER_URL,
     },
     publisher: { "@id": `${SITE_URL}/#organization` },
     isPartOf: { "@id": `${SITE_URL}/#website` },
@@ -246,6 +249,71 @@ export function serviceSchema(params: {
 }
 
 /**
+ * Person schema for the founder's About page.
+ *
+ * E-E-A-T note: legal content is treated as YMYL (your money, your life) by
+ * Google and by LLM retrievers. BlogPosting.author.url pointing at a richly
+ * described Person entity is what lets ChatGPT, Claude, and Perplexity
+ * confidently cite the site — the Person becomes the authority they're
+ * attributing the claim to. If this page doesn't exist, BlogPosting author
+ * attribution collapses into the Organization and the engines often decline
+ * to cite the source at all for regulated topics.
+ */
+export function personSchema() {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "@id": `${FOUNDER_URL}#person`,
+    name: FOUNDER_NAME,
+    givenName: "Zachariah",
+    familyName: "Crabill",
+    honorificSuffix: FOUNDER_CREDENTIAL,
+    jobTitle: "Founder & Attorney",
+    description:
+      "Zachariah Crabill is a Colorado-licensed attorney and the founder of Available Law, LLC. He built FAIIR — the Foundation for AI Integrity & Regulation — a compliance certification framework for the Colorado AI Act. He writes and speaks regularly on artificial intelligence law, the Colorado AI Act (SB24-205), and how small businesses can build defensible AI governance programs without a big-firm budget.",
+    url: FOUNDER_URL,
+    image: `${SITE_URL}/images/logo-transparent.png`,
+    worksFor: { "@id": `${SITE_URL}/#organization` },
+    memberOf: { "@id": `${SITE_URL}/#organization` },
+    knowsAbout: [
+      "Colorado AI Act",
+      "Colorado Senate Bill 24-205",
+      "Artificial Intelligence Law",
+      "AI Governance",
+      "AI Vendor Contracts",
+      "Technology Contracts",
+      "Business Formation",
+      "Startup Law",
+      "NIST AI Risk Management Framework",
+      "AI Compliance Auditing",
+    ],
+    // alumniOf and hasCredential are intentionally omitted from the schema
+    // until the verifiable credentials are confirmed by the founder. Don't add
+    // a law school, graduation year, or bar number unless they're true and
+    // independently checkable — Google's helpful-content review and LLM
+    // retrievers will downgrade or refuse to cite Person entities whose
+    // credentials don't match public records (e.g., the Colorado Supreme Court
+    // attorney directory). When confirmed, re-add:
+    //   alumniOf: { "@type": "CollegeOrUniversity", name: "<school>" },
+    //   hasCredential: [
+    //     {
+    //       "@type": "EducationalOccupationalCredential",
+    //       credentialCategory: "license",
+    //       name: "Licensed Attorney, State of Colorado, Bar No. <number>",
+    //       recognizedBy: {
+    //         "@type": "Organization",
+    //         name: "Colorado Supreme Court Office of Attorney Regulation Counsel",
+    //       },
+    //     },
+    //   ],
+    sameAs: [
+      "https://www.linkedin.com/company/available-legal-solutions-llc/",
+      "https://x.com/availablelaw",
+    ],
+  };
+}
+
+/**
  * BreadcrumbList schema — helps Google render the URL hierarchy in SERPs.
  */
 export function breadcrumbSchema(
@@ -260,6 +328,76 @@ export function breadcrumbSchema(
       name: item.name,
       item: item.url.startsWith("http") ? item.url : `${SITE_URL}${item.url}`,
     })),
+  };
+}
+
+/**
+ * LocalBusiness schema for a specific city landing page.
+ *
+ * Why a separate LegalService-per-city schema instead of just the
+ * Organization's areaServed: Google and Bing rank local pages substantially
+ * higher when each city has its own LocalBusiness node with city-specific
+ * geo coordinates and a canonical URL. Without it, all five city pages
+ * collapse into the single Organization record and lose their ability to
+ * compete for "[city] small business attorney" queries.
+ */
+export function localBusinessSchema(params: {
+  city: string;
+  slug: string; // e.g. "denver" — used to build the canonical URL
+  description: string;
+  latitude: number;
+  longitude: number;
+}) {
+  const url = `${SITE_URL}/colorado/${params.slug}`;
+  return {
+    "@context": "https://schema.org",
+    "@type": ["LegalService", "LocalBusiness", "ProfessionalService"],
+    "@id": `${url}#localbusiness`,
+    name: `${SITE_NAME} — ${params.city}`,
+    alternateName: `Available Law ${params.city}`,
+    description: params.description,
+    url,
+    image: DEFAULT_OG_IMAGE,
+    logo: `${SITE_URL}/images/logo-transparent.png`,
+    email: CONTACT_EMAIL,
+    priceRange: "$$",
+    parentOrganization: { "@id": `${SITE_URL}/#organization` },
+    areaServed: {
+      "@type": "City",
+      name: params.city,
+      containedInPlace: {
+        "@type": "State",
+        name: JURISDICTION,
+      },
+    },
+    address: {
+      "@type": "PostalAddress",
+      addressLocality: params.city,
+      addressRegion: "CO",
+      addressCountry: COUNTRY,
+    },
+    geo: {
+      "@type": "GeoCoordinates",
+      latitude: params.latitude,
+      longitude: params.longitude,
+    },
+    serviceType: [
+      "Small Business Legal Services",
+      "AI Vendor Contract Review",
+      "Colorado AI Act Compliance",
+      "Business Formation",
+      "Technology Contracts",
+      "FAIIR AI Certification",
+    ],
+    contactPoint: [
+      {
+        "@type": "ContactPoint",
+        contactType: "customer support",
+        email: CONTACT_EMAIL,
+        areaServed: "US-CO",
+        availableLanguage: ["English"],
+      },
+    ],
   };
 }
 
@@ -287,7 +425,7 @@ export const HOMEPAGE_FAQS: Array<{ question: string; answer: string }> = [
   {
     question: "How much does Available Law cost?",
     answer:
-      "Available Law offers four flat-rate subscription tiers: Explore is free and gives access to Allora's self-serve tools, Build is $50/month and includes 1 attorney work item, Grow is $150/month and includes 2 attorney work items, and Lead is $300/month and includes 3 attorney work items. Overages are billed at $50 per page of additional attorney review.",
+      "Available Law offers four flat-rate subscription tiers: Explore is free and gives access to Allora's self-serve tools, Build is $50/month and includes 1 attorney work item, Grow is $150/month and includes 2 attorney work items, and Lead is $300/month and includes 3 attorney work items.",
   },
   {
     question: "Is Allora an AI lawyer?",
@@ -297,6 +435,6 @@ export const HOMEPAGE_FAQS: Array<{ question: string; answer: string }> = [
   {
     question: "What is the Colorado AI Act?",
     answer:
-      "The Colorado AI Act (Senate Bill 24-205) is a 2024 Colorado law that regulates the development and deployment of high-risk artificial intelligence systems. It imposes duties on developers and deployers to prevent algorithmic discrimination, maintain risk management programs, and disclose when AI is used to make consequential decisions. The law takes effect in 2026.",
+      "The Colorado AI Act (Senate Bill 24-205) is a 2024 Colorado law that regulates the development and deployment of high-risk artificial intelligence systems. It imposes duties on developers and deployers to prevent algorithmic discrimination, maintain risk management programs, and disclose when AI is used to make consequential decisions. The law takes effect on June 30, 2026 — pushed back from its original February 1, 2026 effective date by the Colorado General Assembly in the August 2025 special session.",
   },
 ];

@@ -1,11 +1,6 @@
 "use client";
 import Link from "next/link";
-import {
-  TIERS,
-  TierKey,
-  OVERAGE_PRICE_PER_PAGE_USD,
-  annualSavingsUsd,
-} from "@/lib/tiers";
+import { TIERS, TierKey, annualSavingsUsd } from "@/lib/tiers";
 import { useState } from "react";
 
 /**
@@ -241,12 +236,6 @@ export default function PricingSection() {
         })}
       </div>
 
-      {/* Overage footnote */}
-      <p className="text-xs text-[#A89279] text-center max-w-2xl">
-        Need more than your monthly allotment? Additional matter reviews bill
-        at ${OVERAGE_PRICE_PER_PAGE_USD}/page on paid plans. Additional
-        consultations require upgrading your plan.
-      </p>
     </section>
   );
 }

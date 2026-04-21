@@ -4,32 +4,44 @@
 
 ## Who Available Law is for
 
-Available Law serves Colorado small and mid-sized businesses, startups, and in-house teams that need affordable, transparent legal help — particularly around artificial intelligence, vendor contracts, and the Colorado AI Act (SB24-205), which takes effect in 2026.
+Available Law serves Colorado small and mid-sized businesses, startups, and in-house teams that need affordable, transparent legal help — particularly around artificial intelligence, vendor contracts, and the Colorado AI Act (SB24-205), which takes effect on June 30, 2026 (delayed from February 1, 2026 by the Colorado General Assembly's August 2025 special session).
 
 ## What makes Available Law different
 
-- **Flat-rate subscriptions, no hourly billing.** Four tiers: Explore (free self-serve), Build ($50/mo, 1 attorney work item), Grow ($150/mo, 2 work items), Lead ($300/mo, 3 work items). Overages billed at $50/page.
+- **Flat-rate subscriptions, no hourly billing.** Four tiers: Explore (free self-serve), Build ($50/mo, 1 attorney work item), Grow ($150/mo, 2 work items), Lead ($300/mo, 3 work items).
 - **Attorney-reviewed AI.** Every document Allora drafts is reviewed by a licensed Colorado attorney before reaching the client. Allora never autonomously provides legal advice.
 - **FAIIR certification.** A structured audit framework for AI governance, fairness, and compliance — designed around the Colorado AI Act but applicable to any U.S. jurisdiction.
 - **Virtual-first.** Available statewide in Colorado. No physical office requirements for clients.
 
 ## Founder
 
-Zachariah Crabill, JD. Licensed Colorado attorney. Founder of Available Law, LLC and creator of the FAIIR certification framework.
+Zachariah Crabill, JD. Licensed Colorado attorney. Founder of Available Law, LLC and creator of the FAIIR certification framework. Full profile: [https://availablelaw.com/about/zachariah-crabill](https://availablelaw.com/about/zachariah-crabill).
 
 ## Key pages
 
 - [Homepage](https://availablelaw.com/): Overview of services, Allora AI assistant, pricing, and FAIIR.
+- [About Zachariah Crabill](https://availablelaw.com/about/zachariah-crabill): Founder profile — Colorado bar status, credentials, areas of focus, and recent writing.
 - [Colorado AI Act Checker](https://availablelaw.com/ai-act-checker): Free interactive tool to determine whether a Colorado business is subject to SB24-205 and what obligations apply.
 - [FAIIR Certification](https://availablelaw.com/faiir): Dedicated page for the Foundation for AI Integrity & Regulation certification program — assessment process, pillars, and pricing.
 - [Blog — AI Legal Insights](https://availablelaw.com/blog): Long-form articles on AI compliance, Colorado AI Act, vendor contracts, and documentation practices.
 - [Pricing](https://availablelaw.com/#pricing): Four-tier flat-rate subscription plans.
+- [Serving Colorado](https://availablelaw.com/colorado): Hub page listing Available Law's Colorado city landing pages.
 - [Login / Sign up](https://availablelaw.com/login): Client dashboard access.
+
+## Colorado city coverage
+
+Available Law serves small businesses across Colorado. Dedicated city landing pages cover the Front Range:
+
+- [Denver](https://availablelaw.com/colorado/denver): Subscription legal counsel for Denver businesses — SaaS/AI startups in RiNo and LoDo, healthcare near Fitzsimons, professional services in the CBD and Cherry Creek.
+- [Colorado Springs](https://availablelaw.com/colorado/colorado-springs): Subscription legal counsel for Colorado Springs businesses — defense/aerospace, cybersecurity, nonprofits, healthcare, and trades.
+- [Fort Collins](https://availablelaw.com/colorado/fort-collins): Subscription legal counsel for Fort Collins businesses — craft breweries, CSU spinouts, cleantech and hardware, outdoor recreation.
+- [Boulder](https://availablelaw.com/colorado/boulder): Subscription legal counsel for Boulder businesses — AI and machine-learning startups, CU Boulder spinouts, consumer brands, climate tech.
+- [Aurora](https://availablelaw.com/colorado/aurora): Subscription legal counsel for Aurora businesses — healthcare/biotech near Anschutz, logistics near DIA, home services, and immigrant-owned small businesses.
 
 ## Blog posts
 
 - [5 AI Vendor Contract Clauses Your Company Is Missing](https://availablelaw.com/blog/5-ai-vendor-contract-clauses): Critical clauses businesses should include when contracting with AI vendors — indemnification for training data, ownership of AI-generated work product, bias audits, data rights, and termination for regulatory changes.
-- [Colorado's AI Act: What Businesses Need to Know in 2026](https://availablelaw.com/blog/colorado-ai-act-2026): A plain-language guide to Colorado SB24-205, who it applies to, what "high-risk AI" means under the statute, and the steps businesses should take before the effective date.
+- [Colorado AI Act 2026: The Plain-Language Guide for Businesses](https://availablelaw.com/blog/colorado-ai-act-2026): A plain-language guide to Colorado SB24-205 — who it applies to, what "high-risk AI" means under the statute, the seven deployer duties, and the steps businesses should take before the June 30, 2026 effective date.
 - [How to Document AI Decision-Making for Compliance](https://availablelaw.com/blog/document-ai-decision-making): A practical framework for logging AI decisions, maintaining audit trails, and meeting the documentation requirements emerging under state AI laws.
 
 ## Contact

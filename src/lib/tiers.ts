@@ -43,7 +43,7 @@ export const TIERS: Record<TierKey, TierConfig> = {
     monthlyPriceUsd: 0,
     annualPriceUsd: 0,
     features: [
-      "Unlimited Allora chat (general guidance)",
+      "Try Allora chat (limited monthly usage)",
       "Secure document storage",
       "Upgrade anytime to unlock attorney work",
     ],
@@ -60,7 +60,6 @@ export const TIERS: Record<TierKey, TierConfig> = {
       "Matter reviews or 30-min consultation — your choice",
       "Unlimited Allora chat and document drafting",
       "Secure document storage",
-      `Additional reviews: $${OVERAGE_PRICE_PER_PAGE_USD}/page`,
     ],
   },
   grow: {
@@ -76,7 +75,6 @@ export const TIERS: Record<TierKey, TierConfig> = {
       "Priority attorney response (within 2 business days)",
       "Unlimited Allora chat and document drafting",
       "Secure document storage",
-      `Additional reviews: $${OVERAGE_PRICE_PER_PAGE_USD}/page`,
     ],
   },
   lead: {
@@ -92,7 +90,6 @@ export const TIERS: Record<TierKey, TierConfig> = {
       "Priority attorney response (within 1 business day)",
       "Unlimited Allora chat and document drafting",
       "Secure document storage",
-      `Additional reviews: $${OVERAGE_PRICE_PER_PAGE_USD}/page`,
     ],
   },
 };
