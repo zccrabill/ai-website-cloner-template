@@ -63,7 +63,7 @@ export default function AnnouncementBanner() {
             Colorado AI Act →
           </span>
           <span className="sm:hidden font-semibold text-[#F2B870] mr-1">
-            CO AI Act →
+            Colorado AI Act →
           </span>
           Is your business ready for 2026?{" "}
           <Link
