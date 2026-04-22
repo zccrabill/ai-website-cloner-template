@@ -23,7 +23,8 @@ import HowToChooseBusinessAttorneyColoradoArticle from "@/content/blog/how-to-ch
 interface PostMeta {
   title: string;
   date: string; // human-readable display date
-  isoDate: string; // ISO 8601 for schema + metadata
+  isoDate: string; // ISO 8601 for schema + metadata (published)
+  isoDateModified?: string; // ISO 8601 last update; falls back to isoDate
   author: string;
   excerpt: string;
 }
@@ -52,23 +53,24 @@ const postMetadata: Record<string, PostMeta> = {
     isoDate: "2026-04-07",
     author: "Zachariah Crabill, JD",
     excerpt:
-      "Most companies don't protect themselves adequately when contracting with AI vendors. Learn the critical clauses you need to include in your vendor agreements.",
+      "Most AI vendor contracts leave the deployer holding the bag on training-data liability, IP ownership, bias audits, and Colorado AI Act compliance. Here are the five clauses to add before you sign.",
   },
   "colorado-ai-act-2026": {
-    title: "Colorado's AI Act: What Businesses Need to Know in 2026",
-    date: "April 2, 2026",
+    title: "Colorado AI Act 2026: The Plain-Language Guide for Businesses",
+    date: "April 2, 2026 (Updated April 20, 2026)",
     isoDate: "2026-04-02",
+    isoDateModified: "2026-04-20",
     author: "Zachariah Crabill, JD",
     excerpt:
-      "Colorado's new AI legislation sets a precedent for responsible AI use.",
+      "Colorado's AI Act (SB24-205) takes effect June 30, 2026 — pushed back from February 1 during the August 2025 special session. Here's what businesses actually owe as deployers of high-risk AI, and how to build a compliance program that survives an AG inquiry.",
   },
   "document-ai-decision-making": {
-    title: "How to Document AI Decision-Making for Compliance",
+    title: "How to Document AI Decision-Making for Colorado AI Act Compliance",
     date: "March 28, 2026",
     isoDate: "2026-03-28",
     author: "Zachariah Crabill, JD",
     excerpt:
-      "Documentation is critical for AI compliance. This guide walks you through building a practical system for tracking AI decisions.",
+      "The Colorado AI Act requires deployers of high-risk AI to maintain a documented record of consequential decisions. Here's the practical logging and audit-trail system we use for FAIIR-certified clients.",
   },
   "ai-employee-training-requirements": {
     title: "AI Employee Training Requirements Under the Colorado AI Act",
@@ -111,12 +113,12 @@ const postMetadata: Record<string, PostMeta> = {
       "Colorado doesn't require a written operating agreement for LLCs. That's exactly why you need one. Here's what to include and what happens when you skip it.",
   },
   "how-to-choose-business-attorney-colorado": {
-    title: "How to Choose a Business Attorney in Colorado",
+    title: "How to Choose a Small Business Attorney in Colorado",
     date: "April 8, 2026",
     isoDate: "2026-04-08",
     author: "Zachariah Crabill, JD",
     excerpt:
-      "Finding a business attorney isn't hard. Finding the right one — someone who understands your industry, charges fairly, and communicates clearly — is a different problem.",
+      "Choosing a Colorado small-business attorney is more than checking credentials. Here are the seven practical criteria — pricing model, response time, industry fit, and more — that predict whether an attorney will actually be useful to your business.",
   },
 };
 
@@ -145,6 +147,7 @@ export async function generateMetadata({
       title: post.title,
       description: post.excerpt,
       publishedTime: post.isoDate,
+      modifiedTime: post.isoDateModified ?? post.isoDate,
       authors: [post.author],
       images: [DEFAULT_OG_IMAGE],
     },
@@ -195,6 +198,7 @@ export default async function BlogPostPage({
             title: post.title,
             description: post.excerpt,
             datePublished: post.isoDate,
+            dateModified: post.isoDateModified ?? post.isoDate,
             authorName: post.author,
           }),
           breadcrumbSchema([

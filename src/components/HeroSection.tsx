@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import AlloraHeroDemo from "./AlloraHeroDemo";
 
 export default function HeroSection() {
   // Animations start immediately on mount. There's no server/client divergence
@@ -94,7 +95,9 @@ export default function HeroSection() {
             </div>
           </div>
 
-          {/* Right: Card showcase */}
+          {/* Right: Allora chat demo — auto-plays scripted conversations
+              across 3 scenarios (lease review, formation, CO AI Act). Full
+              state machine + timing details in AlloraHeroDemo.tsx. */}
           <div
             className={`relative ${
               isAnimating
@@ -106,55 +109,7 @@ export default function HeroSection() {
               animation: isAnimating ? "fadeUp 0.8s ease-out forwards" : "none",
             }}
           >
-            <div className="bg-white rounded-2xl p-8 shadow-lg border border-[#F5F0EB]">
-              {/* Card header */}
-              <div className="flex items-start justify-between mb-6">
-                <div>
-                  <h3 className="font-heading text-2xl text-[#1F1810] mb-2">AI Contract Review</h3>
-                </div>
-              </div>
-
-              {/* Tags */}
-              <div className="flex flex-wrap gap-2 mb-6">
-                {["Liability Cap", "IP Assignment", "Indemnity"].map((tag) => (
-                  <span
-                    key={tag}
-                    className="px-3 py-1 text-xs font-medium rounded-full bg-[#F5F0EB] text-[#6B5B4E]"
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
-
-              {/* Status badge */}
-              <div className="flex items-center gap-2 p-3 rounded-lg bg-[#F0F9F6]">
-                <span className="w-2 h-2 rounded-full bg-[#10B981]" />
-                <span className="text-sm font-medium text-[#059669]">
-                  Review complete — attorney verified
-                </span>
-              </div>
-            </div>
-
-            {/* Floating badges */}
-            <div
-              className="absolute -bottom-6 -left-8 bg-white px-4 py-3 rounded-xl shadow-lg border border-[#F5F0EB] flex items-center gap-2 animate-pulse"
-              style={{
-                animation: isAnimating ? "float 5s ease-in-out infinite 0.5s" : "none",
-              }}
-            >
-              <span className="text-xl">⏱️</span>
-              <span className="text-sm font-medium text-[#1F1810]">24hr turnaround</span>
-            </div>
-
-            <div
-              className="absolute -top-6 -right-8 bg-white px-4 py-3 rounded-xl shadow-lg border border-[#F5F0EB] flex items-center gap-2 animate-pulse"
-              style={{
-                animation: isAnimating ? "float 5s ease-in-out infinite 1s" : "none",
-              }}
-            >
-              <span className="text-xl">✓</span>
-              <span className="text-sm font-medium text-[#1F1810]">Attorney verified</span>
-            </div>
+            <AlloraHeroDemo />
           </div>
         </div>
       </div>

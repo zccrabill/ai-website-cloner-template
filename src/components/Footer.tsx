@@ -30,6 +30,8 @@ export default function Footer() {
               { label: "Pricing", href: "/#pricing" },
               { label: "How It Works", href: "/#how" },
               { label: "Blog", href: "/blog" },
+              { label: "About Zachariah", href: "/about/zachariah-crabill" },
+              { label: "Serving Colorado", href: "/colorado" },
             ].map((item) => (
               <li key={item.label}>
                 <Link

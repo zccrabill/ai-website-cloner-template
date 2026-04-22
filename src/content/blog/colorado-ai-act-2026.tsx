@@ -48,9 +48,13 @@ export default function ColoradoAiAct2026Article() {
 
       <P>
         The Colorado AI Act is the shorthand name for{" "}
-        <Strong>Senate Bill 24-205</Strong>, passed in 2024 and set to take
-        effect in 2026. It is the first state-level law in the United States
-        that imposes ongoing duties on any business using so-called{" "}
+        <Strong>Senate Bill 24-205</Strong>, passed in 2024 and now scheduled to
+        take effect on <Strong>June 30, 2026</Strong>. (The original effective
+        date was February 1, 2026; the Colorado General Assembly pushed it back
+        to June 30 during the August 2025 special session to give businesses and
+        the Attorney General&apos;s office additional time to prepare.) It is
+        the first state-level law in the United States that imposes ongoing
+        duties on any business using so-called{" "}
         <Strong>high-risk AI systems</Strong> to make decisions about real
         people. Other states are watching closely and several have already
         introduced copycat legislation, which means whatever Colorado businesses
@@ -307,10 +311,10 @@ export default function ColoradoAiAct2026Article() {
         it imposes are things a well-run business would want to do anyway:
         know what tools you are using, be honest with customers, have a
         paper trail, plan for what happens when something breaks. The businesses
-        that get hurt by this statute in 2026 will not be the ones that got
-        every detail right — they will be the ones that ignored it until the
-        enforcement window opened and then tried to back-date a compliance
-        program under pressure.
+        that get hurt after the June 30, 2026 effective date will not be the
+        ones that got every detail right — they will be the ones that ignored
+        the statute until the enforcement window opened and then tried to
+        back-date a compliance program under pressure.
       </P>
 
       <P>

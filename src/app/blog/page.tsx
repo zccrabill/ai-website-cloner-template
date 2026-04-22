@@ -6,15 +6,15 @@ import JsonLd from "@/components/JsonLd";
 import { breadcrumbSchema } from "@/lib/seo";
 
 export const metadata: Metadata = {
-  title: "AI Legal Insights — Blog",
+  title: "Colorado AI Act & Small Business Legal Blog",
   description:
-    "Plain-language analysis of the Colorado AI Act, AI vendor contracts, and compliance documentation from Available Law — a Colorado virtual law firm focused on AI regulation.",
+    "Plain-language analysis of the Colorado AI Act (SB24-205), AI vendor contracts, FAIIR compliance, and small-business legal questions — written by Zachariah Crabill, JD, founder of Available Law.",
   alternates: { canonical: "/blog" },
   openGraph: {
     type: "website",
-    title: "AI Legal Insights — Available Law Blog",
+    title: "Colorado AI Act & Small Business Legal Blog | Available Law",
     description:
-      "Plain-language analysis of the Colorado AI Act, AI vendor contracts, and compliance documentation from Available Law.",
+      "Plain-language analysis of the Colorado AI Act, AI vendor contracts, FAIIR compliance, and small-business legal questions, written by a Colorado attorney.",
   },
 };
 
@@ -63,24 +63,24 @@ const blogPosts: BlogPost[] = [
   },
   {
     slug: "how-to-choose-business-attorney-colorado",
-    title: "How to Choose a Business Attorney in Colorado",
+    title: "How to Choose a Small Business Attorney in Colorado",
     date: "April 8, 2026",
     excerpt:
-      "Finding a business attorney isn't hard. Finding the right one — someone who understands your industry, charges fairly, and communicates clearly — is a different problem.",
+      "Choosing a Colorado small-business attorney is more than checking credentials. Seven criteria — pricing model, response time, industry fit, and more — that predict whether an attorney will actually be useful.",
   },
   {
     slug: "5-ai-vendor-contract-clauses",
     title: "5 AI Vendor Contract Clauses Your Company Is Missing",
     date: "April 7, 2026",
     excerpt:
-      "Most companies don't protect themselves adequately when contracting with AI vendors. Learn the critical clauses you need to include in your vendor agreements.",
+      "Most AI vendor contracts leave the deployer holding the bag on training-data liability, IP ownership, bias audits, and Colorado AI Act compliance. Five clauses to add before you sign.",
   },
   {
     slug: "colorado-ai-act-2026",
-    title: "Colorado's AI Act: What Businesses Need to Know in 2026",
-    date: "April 2, 2026",
+    title: "Colorado AI Act 2026: The Plain-Language Guide for Businesses",
+    date: "Updated April 20, 2026",
     excerpt:
-      "Colorado's new AI legislation sets a precedent for responsible AI use. Discover what compliance means for your business and how to prepare.",
+      "SB24-205 takes effect June 30, 2026 — pushed back from February 1 in the August 2025 special session. What your business actually owes as a deployer of high-risk AI.",
   },
   {
     slug: "document-ai-decision-making",

@@ -233,7 +233,8 @@ export default function WhatIsFaiirFrameworkArticle() {
       <H2>Get started</H2>
 
       <P>
-        The Colorado AI Act takes effect February 1, 2026, and enforcement
+        The Colorado AI Act takes effect June 30, 2026 (delayed from
+        February 1 in the August 2025 special session), and enforcement
         discretion will not last forever. If your business deploys AI
         systems that touch consumer decisions, the cost of compliance now
         is a fraction of the cost of an enforcement action later. Start

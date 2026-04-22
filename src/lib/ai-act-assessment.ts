@@ -372,7 +372,7 @@ export function scoreAssessment(
     rag === "green"
       ? "Your business has the core elements of an AI compliance program in place. The remaining work is mostly maintenance, documentation refinement, and periodic audit. Our FAIIR certification can formalize what you already have and give you a defensible certificate to show customers, partners, and regulators."
       : rag === "amber"
-        ? "You have some of the pieces but not a cohesive program. The Colorado AI Act takes effect in 2026 and most of the missing work takes 4–8 weeks to stand up properly. A FAIIR assessment will prioritize which gaps to close first and give you a written roadmap."
+        ? "You have some of the pieces but not a cohesive program. The Colorado AI Act takes effect June 30, 2026 and most of the missing work takes 4–8 weeks to stand up properly. A FAIIR assessment will prioritize which gaps to close first and give you a written roadmap."
         : "You are running AI in ways that the Colorado AI Act will regulate, without the policies, disclosures, or documentation the statute requires. This is a material legal and reputational risk. A FAIIR assessment is the fastest way to get organized, document what you already do, and build the missing pieces before the enforcement window opens.";
 
   const ctaText =
