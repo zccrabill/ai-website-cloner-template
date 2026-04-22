@@ -55,7 +55,7 @@ export const TIERS: Record<TierKey, TierConfig> = {
     monthlyPriceUsd: 50,
     annualPriceUsd: 500,
     features: [
-      "Unlimited Allora chat & drafting",
+      "Unlimited AI chat & drafts with Allora",
       "Secure document storage",
     ],
   },
@@ -68,7 +68,7 @@ export const TIERS: Record<TierKey, TierConfig> = {
     annualPriceUsd: 1500,
     features: [
       "Priority attorney response (2 business days)",
-      "Unlimited Allora chat & drafting",
+      "Unlimited AI chat & drafts with Allora",
       "Secure document storage",
     ],
   },
@@ -81,7 +81,7 @@ export const TIERS: Record<TierKey, TierConfig> = {
     annualPriceUsd: 3000,
     features: [
       "Priority attorney response (1 business day)",
-      "Unlimited Allora chat & drafting",
+      "Unlimited AI chat & drafts with Allora",
       "Secure document storage",
     ],
   },
