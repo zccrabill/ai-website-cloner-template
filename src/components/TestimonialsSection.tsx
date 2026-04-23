@@ -137,9 +137,15 @@ export default function TestimonialsSection() {
             &ldquo;
           </div>
 
-          <div className="relative">
-            {/* Stars */}
-            <div className="flex gap-1 mb-6">
+          {/* Inner wrapper is flex-col with a fixed min-height so the card
+              doesn't resize when reviews have different lengths. The blockquote
+              uses flex-1 to absorb extra space, which pins the attribution
+              row + carousel buttons to the same vertical position on every
+              slide. */}
+          <div className="relative flex flex-col min-h-[360px] md:min-h-[400px]">
+            {/* Stars — right-aligned so they balance the large quotation-mark
+                decoration on the top-left, keeping the top-left corner less busy. */}
+            <div className="flex gap-1 mb-6 justify-end">
               {[...Array(review.rating)].map((_, i) => (
                 <Star
                   key={i}
@@ -149,7 +155,7 @@ export default function TestimonialsSection() {
             </div>
 
             {/* Quote */}
-            <blockquote className="mb-8">
+            <blockquote className="mb-8 flex-1">
               <p className="text-xl md:text-2xl font-heading text-[#1F1810] leading-snug">
                 {review.quote}
               </p>
