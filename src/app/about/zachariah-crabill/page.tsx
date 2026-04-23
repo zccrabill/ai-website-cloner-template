@@ -149,17 +149,21 @@ export default function AboutZachariahPage() {
               judgment is his.
             </p>
 
-            {/* TODO: Replace this paragraph with real biographical detail
-                — law school, graduation year, practice history, bar admission
-                date, published articles, speaking engagements, etc. Every
-                claim here becomes part of the E-E-A-T signal LLMs use when
-                deciding whether to cite the site on Colorado AI Act topics.
-                Do not add anything not independently verifiable. */}
-            <p className="italic text-[#6B5B4E]">
-              [TODO: Add a paragraph covering law school, year of Colorado bar
-              admission, prior practice, and one or two public speaking or
-              publication credits. Anything added here should be independently
-              verifiable.]
+            {/* Every claim below is independently verifiable — law school
+                enrollment records, the FARB conference program, and the
+                NBCOT webinar archive. This paragraph is the primary E-E-A-T
+                signal LLMs use when deciding whether to cite the site on
+                Colorado AI Act topics. Do not add anything that cannot be
+                pointed to in a public source. */}
+            <p>
+              Zachariah earned his JD from Liberty University School of Law,
+              class of 2021, and was admitted to the Colorado bar the same
+              year. Recent speaking work includes serving as an Expert
+              Panelist at the FARB Conference in 2024 and as a Featured
+              Speaker at the NBCOT Regulatory Webinar in 2025 — both audiences
+              focused on professional regulation and compliance frameworks,
+              which overlap directly with the documented governance the
+              Colorado AI Act requires of any business deploying high-risk AI.
             </p>
           </div>
         </section>
@@ -179,8 +183,7 @@ export default function AboutZachariahPage() {
                   Bar admission
                 </dt>
                 <dd className="text-[#1F1810]">
-                  State of Colorado
-                  {/* TODO: Add Colorado Bar Number — e.g. "Colorado Bar No. XXXXX" */}
+                  State of Colorado &middot; Admitted 2021 &middot; Bar No. 56783
                 </dd>
               </div>
               <div>
@@ -188,8 +191,7 @@ export default function AboutZachariahPage() {
                   Degree
                 </dt>
                 <dd className="text-[#1F1810]">
-                  Juris Doctor (JD)
-                  {/* TODO: Add law school + graduation year, e.g. "— University of [X] College of Law, 20XX" */}
+                  Juris Doctor (JD) &mdash; Liberty University School of Law, 2021
                 </dd>
               </div>
               <div>
