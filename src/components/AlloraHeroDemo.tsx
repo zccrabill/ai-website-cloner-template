@@ -169,7 +169,7 @@ function UserBubble({
 }) {
   return (
     <div className="flex justify-end">
-      <div className="max-w-[85%] px-4 py-3 bg-[#C17832] text-white rounded-2xl rounded-br-sm shadow-sm">
+      <div className="max-w-[85%] px-4 py-3 bg-[#D4893F] text-white rounded-2xl rounded-br-sm shadow-sm">
         <p className="text-sm leading-relaxed whitespace-pre-wrap">
           {text}
           {showCursor && (
@@ -478,7 +478,7 @@ export default function AlloraHeroDemo() {
           <div className="flex-1 px-4 py-2.5 rounded-full bg-[#F5F0EB] text-xs text-[#A89279]">
             Ask Allora anything about your business...
           </div>
-          <div className="w-9 h-9 rounded-full bg-[#C17832] flex items-center justify-center text-white shadow-sm">
+          <div className="w-9 h-9 rounded-full bg-[#D4893F] flex items-center justify-center text-white shadow-sm">
             <svg
               className="w-4 h-4"
               fill="none"
@@ -503,7 +503,7 @@ export default function AlloraHeroDemo() {
             key={i}
             className={`h-1.5 rounded-full transition-all duration-500 ${
               i === scenarioIdx
-                ? "w-8 bg-[#C17832]"
+                ? "w-8 bg-[#D4893F]"
                 : "w-1.5 bg-[#1F1810]/15"
             }`}
             aria-hidden
