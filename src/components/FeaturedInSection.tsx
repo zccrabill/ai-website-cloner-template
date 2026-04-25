@@ -1,6 +1,6 @@
 export default function FeaturedInSection() {
   const companies = [
-    "Warren Law Group",
+    "Kate Barclay Creative",
     "Twin Leaf Kitchens",
     "Legend Motor Works",
     "YLab",
