@@ -416,7 +416,7 @@ export default function AlloraHeroDemo() {
         {/* Chat header */}
         <div className="flex items-center justify-between px-5 py-4 border-b border-[#1F1810]/6 bg-white">
           <div className="flex items-center gap-3">
-            <div className="relative w-8 h-8 rounded-full bg-gradient-to-br from-[#C17832] to-[#8a5022] flex items-center justify-center">
+            <div className="relative w-8 h-8 rounded-full bg-gradient-to-br from-[#D4893F] to-[#C17832] flex items-center justify-center">
               <span className="text-white text-xs font-heading font-bold">A</span>
               <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-[#7A8B6F] border-2 border-white" />
             </div>
