@@ -250,7 +250,7 @@ function Intro({
         <button
           type="button"
           onClick={onStart}
-          className="btn-al btn-al-primary px-6 py-3 text-[15px]"
+          className="btn-al btn-al-primary btn-tracer px-6 py-3 text-[15px]"
         >
           {def.pitch.startCta}
         </button>
