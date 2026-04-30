@@ -36,6 +36,22 @@ export default function AlloraFloatingWidget() {
   // same message twice on re-renders or when history is rehydrated.
   const lastSpokenIndexRef = useRef(-1);
 
+  // External "open with seed" trigger. Any component on the page can call:
+  //   window.dispatchEvent(new CustomEvent("allora:open", { detail: { seed: "..." } }))
+  // to pop the widget open with a pre-filled prompt. First use is the
+  // "Ask Allora" CTA in PricingSection — keeps the pattern reusable for
+  // future CTAs (Solutions section, FAIIR landing, etc.).
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const seed = (e as CustomEvent<{ seed?: string }>).detail?.seed;
+      setIsOpen(true);
+      setDismissed(false);
+      if (seed) setMessage(seed);
+    };
+    window.addEventListener("allora:open", handler);
+    return () => window.removeEventListener("allora:open", handler);
+  }, []);
+
   // --- Free-tier message cap ---------------------------------------------
   // Visitors get a taste of Allora (2 user turns) before we lock the input
   // behind a signup CTA. Members get unlimited access + voice.

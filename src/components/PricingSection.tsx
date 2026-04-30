@@ -345,6 +345,39 @@ export default function PricingSection() {
           );
         })}
       </div>
+
+      {/* Decision-helper band — routes "I'm not sure which plan" prospects
+          to Allora instead of into the calendar. Dispatches a window event
+          the AlloraFloatingWidget listens for and pre-fills with a seed
+          prompt so Allora opens mid-triage, not cold. */}
+      <div className="mt-12 max-w-[820px] mx-auto">
+        <div className="bg-white border border-[#1F1810]/10 rounded-2xl px-6 py-6 md:px-8 md:py-7 flex flex-col md:flex-row items-center justify-between gap-4 shadow-sm">
+          <div className="text-center md:text-left">
+            <p className="font-heading text-xl md:text-2xl text-[#1F1810] mb-1">
+              Not sure which plan fits your business?
+            </p>
+            <p className="text-[14px] text-[#6B5B4E]">
+              Ask Allora — a quick chat usually narrows it down. No calendar to book, no commitment.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => {
+              window.dispatchEvent(
+                new CustomEvent("allora:open", {
+                  detail: {
+                    seed: "I'm trying to decide between your subscription plans — can you help me figure out which one fits my business?",
+                  },
+                })
+              );
+            }}
+            className="btn-al btn-al-primary text-[13px] px-6 py-3 whitespace-nowrap"
+          >
+            Ask Allora &rarr;
+          </button>
+        </div>
+      </div>
+
     </section>
   );
 }
