@@ -310,9 +310,9 @@ export default function AlloraFloatingWidget() {
 
         {/* The Circle Button */}
         {!isOpen && (
-          <button
+          <div className="allora-float-bob-wrapper"><button
             onClick={handleOpenChat}
-            className="group relative w-16 h-16 bg-white border-2 border-[#C17832] rounded-full shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-200 flex items-center justify-center"
+            className="group allora-float-bob-shadow relative w-16 h-16 bg-white border-2 border-[#C17832] rounded-full hover:scale-105 transition-all duration-200 flex items-center justify-center"
             aria-label="Chat with Allora"
           >
             <Image
@@ -331,7 +331,7 @@ export default function AlloraFloatingWidget() {
             {hasTriggered && !showGreeting && !showTyping && (
               <span className="absolute inset-0 rounded-full border-2 border-[#C17832] animate-ping opacity-30" />
             )}
-          </button>
+          </button></div>
         )}
       </div>
 

@@ -405,3 +405,47 @@
     --tracer-angle: 360deg;
   }
 }
+
+
+/* ===== Allora floating button: bob + shadow breathing ===================
+ * Wrapper does the vertical bob (translate). Button does the box-shadow
+ * breathing — tight & dark when the button dips, soft & wide when it
+ * rises, giving real depth instead of a flat translate. Both animations
+ * pause on wrapper:hover so the button stills under the cursor and is
+ * easy to click. The buttons existing hover:scale-105 still works since
+ * it composes on a different element from the wrappers translate.
+ */
+@keyframes allora-bob-y {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-7px); }
+}
+
+@keyframes allora-bob-shadow {
+  0%, 100% {
+    box-shadow:
+      0 6px 16px rgba(31, 24, 16, 0.18),
+      0 2px 4px  rgba(31, 24, 16, 0.10);
+  }
+  50% {
+    box-shadow:
+      0 18px 30px rgba(31, 24, 16, 0.10),
+      0 5px 10px  rgba(31, 24, 16, 0.06);
+  }
+}
+
+.allora-float-bob-wrapper {
+  display: inline-block;
+  animation: allora-bob-y 3.6s ease-in-out infinite;
+}
+
+.allora-float-bob-shadow {
+  box-shadow: 0 6px 16px rgba(31, 24, 16, 0.18), 0 2px 4px rgba(31, 24, 16, 0.10);
+  animation: allora-bob-shadow 3.6s ease-in-out infinite;
+}
+
+.allora-float-bob-wrapper:hover {
+  animation-play-state: paused;
+}
+.allora-float-bob-wrapper:hover .allora-float-bob-shadow {
+  animation-play-state: paused;
+}
