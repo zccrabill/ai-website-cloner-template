@@ -312,7 +312,7 @@ export default function AlloraFloatingWidget() {
         {!isOpen && (
           <div className="allora-float-bob-wrapper"><button
             onClick={handleOpenChat}
-            className="group allora-float-bob-shadow relative w-16 h-16 bg-white border-2 border-[#C17832] rounded-full hover:scale-105 transition-all duration-200 flex items-center justify-center"
+            className="group allora-float-bob-shadow relative w-16 h-16 bg-white/10 backdrop-blur-2xl backdrop-saturate-150 border-2 border-[#C17832] rounded-full hover:scale-105 transition-all duration-200 flex items-center justify-center"
             aria-label="Chat with Allora"
           >
             <Image
