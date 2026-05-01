@@ -221,7 +221,7 @@ export default function PricingSection() {
           return (
             <div
               key={key}
-              className={`relative rounded-[18px] p-6 pt-7 border transition-all duration-300 flex flex-col ${
+              className={`relative rounded-[18px] p-6 pt-7 border transition-all duration-300 flex flex-col hover:-translate-y-1 hover:shadow-2xl ${
                 display.featured
                   ? "border-[#C17832] bg-white shadow-[0_20px_40px_rgba(193,120,50,0.15)]"
                   : "border-[#D9CCBC] bg-white hover:border-[#C17832] hover:shadow-md"

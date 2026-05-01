@@ -48,11 +48,12 @@ interface PracticeSnapshot {
 // motion via prefers-reduced-motion.
 // ------------------------------------------------------------------------
 
-function useCountUp(target: number, duration = 900): number {
+function useCountUp(target: number, duration = 900, enabled = true): number {
   const [value, setValue] = useState(0);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
+    if (!enabled) return;
 
     const prefersReduced = window.matchMedia(
       "(prefers-reduced-motion: reduce)"
@@ -74,7 +75,7 @@ function useCountUp(target: number, duration = 900): number {
     };
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
-  }, [target, duration]);
+  }, [target, duration, enabled]);
 
   return value;
 }
@@ -94,10 +95,29 @@ function StatCard({
   label: string;
   loading: boolean;
 }) {
-  const animated = useCountUp(loading ? 0 : value);
+  const cardRef = useRef<HTMLDivElement>(null);
+  const [inView, setInView] = useState(false);
+
+  useEffect(() => {
+    const node = cardRef.current;
+    if (!node) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setInView(true);
+          obs.disconnect();
+        }
+      },
+      { threshold: 0.3 }
+    );
+    obs.observe(node);
+    return () => obs.disconnect();
+  }, []);
+
+  const animated = useCountUp(loading ? 0 : value, 900, inView);
 
   return (
-    <div className="flex flex-col items-center text-center p-8 bg-white rounded-xl border border-[#1F1810]/8 hover:border-[#C17832]/30 transition-colors">
+    <div ref={cardRef} className="flex flex-col items-center text-center p-8 bg-white rounded-xl border border-[#1F1810]/8 hover:border-[#C17832]/30 transition-colors">
       <Icon className="w-6 h-6 text-[#C17832] mb-4" />
       <div
         className={`font-heading text-5xl md:text-6xl text-[#1F1810] mb-2 tabular-nums ${
