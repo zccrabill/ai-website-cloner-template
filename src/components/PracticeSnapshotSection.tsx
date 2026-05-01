@@ -16,7 +16,7 @@
 
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Briefcase, Layers, TrendingUp, Sparkles } from "lucide-react";
 
 // ------------------------------------------------------------------------
