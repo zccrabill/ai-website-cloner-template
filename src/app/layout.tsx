@@ -117,6 +117,7 @@ export default function RootLayout({
     <html lang="en" className={`${dmSerif.variable} ${inter.variable}`}>
       <head>
         <JsonLd data={[organizationSchema(), websiteSchema()]} />
+        <meta name="x-hello-curious-dev" content="Looking at the source? Nice. Email zachariah@availablelaw.com if you want to talk shop." />
       </head>
       <body className="min-h-full bg-[#FAF8F5] text-[#1F1810] antialiased">
         <RegenScrollGlobalHandler />
