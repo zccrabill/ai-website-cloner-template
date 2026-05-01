@@ -11,6 +11,7 @@ import TestimonialsSection from "@/components/TestimonialsSection";
 import CTASection from "@/components/CTASection";
 import Footer from "@/components/Footer";
 import AlloraFloatingWidget from "@/components/AlloraFloatingWidget";
+import Reveal from "@/components/Reveal";
 import JsonLd from "@/components/JsonLd";
 import { faqPageSchema, HOMEPAGE_FAQS } from "@/lib/seo";
 
@@ -22,31 +23,31 @@ export default function Home() {
       <main>
         <HeroSection />
 
-        <LiabilityCheckupSection />
+        <Reveal><LiabilityCheckupSection /></Reveal>
 
         <div id="featured">
-          <FeaturedInSection />
+          <Reveal><FeaturedInSection /></Reveal>
         </div>
 
         <div id="solutions">
-          <SolutionsSection />
+          <Reveal><SolutionsSection /></Reveal>
         </div>
 
         <div id="how">
-          <HowItWorksSection />
+          <Reveal><HowItWorksSection /></Reveal>
         </div>
 
-        <FaiirSection />
+        <Reveal><FaiirSection /></Reveal>
 
         <div id="pricing">
-          <PricingSection />
+          <Reveal><PricingSection /></Reveal>
         </div>
 
         <PracticeSnapshotSection />
 
-        <TestimonialsSection />
+        <Reveal><TestimonialsSection /></Reveal>
 
-        <CTASection />
+        <Reveal><CTASection /></Reveal>
       </main>
       <Footer />
       <AlloraFloatingWidget />

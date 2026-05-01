@@ -112,7 +112,7 @@ export default function Footer() {
       <div className="border-t border-[#1F1810]/8">
         <div className="max-w-[1200px] mx-auto px-8 py-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <p className="text-xs text-[#6B5B4E]">
-            © 2026 Available Law, LLC. All rights reserved.
+            © {new Date().getFullYear()} Available Law, LLC. All rights reserved.
           </p>
           <p className="text-xs text-[#6B5B4E] leading-relaxed max-w-md">
             Information on this site is for general informational purposes only and does not constitute legal advice. AI Disclosure: Some content may be AI-assisted and reviewed by our licensed attorneys.
