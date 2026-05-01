@@ -3,6 +3,7 @@ import { DM_Serif_Display, Inter } from "next/font/google";
 import "./globals.css";
 import JsonLd from "@/components/JsonLd";
 import RegenScrollGlobalHandler from "@/components/RegenScrollGlobalHandler";
+import KonamiCode from "@/components/KonamiCode";
 import {
   SITE_URL,
   SITE_NAME,
@@ -121,6 +122,7 @@ export default function RootLayout({
       </head>
       <body className="min-h-full bg-[#FAF8F5] text-[#1F1810] antialiased">
         <RegenScrollGlobalHandler />
+        <KonamiCode />
         {children}
       </body>
     </html>

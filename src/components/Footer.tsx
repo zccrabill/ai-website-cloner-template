@@ -1,4 +1,5 @@
 import Link from "next/link";
+import FooterTerminal from "@/components/FooterTerminal";
 
 export default function Footer() {
   return (
@@ -107,6 +108,8 @@ export default function Footer() {
           </ul>
         </div>
       </div>
+
+      <FooterTerminal />
 
       {/* Bottom bar */}
       <div className="border-t border-[#1F1810]/8">
