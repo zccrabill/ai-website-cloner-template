@@ -224,7 +224,7 @@ export const smbCheckup: AssessmentDefinition = {
       id: "a1-coaia",
       areaId: "ai",
       prompt:
-        "If my business uses AI to make consequential decisions about people (hiring, lending, housing, healthcare, insurance, education), I know what the Colorado AI Act requires of me.",
+        "If my business uses AI to make consequential decisions about people (hiring, lending, housing, healthcare, insurance, education, legal services, or essential government services), I know what the Colorado AI Act requires of me.",
       helper:
         "The Colorado AI Act (effective June 30, 2026) regulates 'high-risk' AI decision systems. Ignorance isn't a defense.",
       options: [

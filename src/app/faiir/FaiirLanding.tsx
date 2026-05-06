@@ -139,7 +139,7 @@ const ASSESSMENT_TIERS: AssessmentTier[] = [
     priceLabel: "From $15,000",
     priceSuffix: "one-time",
     footnote:
-      "Custom scope for 6+ high-risk systems, multiple business units, or regulated industries (healthcare, finance, insurance, employment).",
+      "Custom scope for 6+ high-risk systems, multiple business units, or regulated industries (legal services, healthcare, finance, insurance, employment, education, housing, or essential government services).",
     features: [
       "Everything in Professional, plus:",
       "Unlimited impact assessments and vendor reviews",
@@ -420,7 +420,7 @@ function ProblemSection() {
     {
       icon: Scale,
       headline: "The law applies broadly",
-      body: "Any business using AI to make — or substantially assist in making — consequential decisions about hiring, lending, insurance, housing, education, or healthcare is a deployer under the statute.",
+      body: "Any business using AI to make — or substantially assist in making — consequential decisions about hiring, lending, insurance, housing, education, healthcare, legal services, or essential government services is a deployer under the statute.",
     },
     {
       icon: FileSearch,
