@@ -50,6 +50,16 @@ export default function AIActChecker() {
 
   const selectAnswer = (questionId: string, answer: AnswerKey) => {
     setResponses((prev) => ({ ...prev, [questionId]: answer }));
+    // Auto-advance on click to match AssessmentRunner UX (used by SMB
+    // Liability Checkup + FAIIR). No delay — selection should feel like a
+    // single decisive action, not click + mandatory confirm. Back button
+    // still works for review; Next button still useful when the user
+    // navigates back and wants to proceed without re-selecting.
+    if (currentIdx < QUESTIONS.length - 1) {
+      setCurrentIdx((i) => i + 1);
+    } else {
+      setStage("teaser");
+    }
   };
 
   const goNext = () => {
