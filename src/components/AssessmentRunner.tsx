@@ -11,6 +11,10 @@ import {
 } from "@/lib/assessment/types";
 import { supabase } from "@/lib/supabase";
 
+// Pulled at module load. NEXT_PUBLIC_* envs are inlined at build time.
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "";
+
 type Stage = "intro" | "asking" | "soft_gate" | "detailed";
 
 interface Props {
@@ -137,6 +141,40 @@ export default function AssessmentRunner({
         setSubmitError(
           "Could not save your results, but you can still view them below.",
         );
+      }
+
+      // Fire-and-forget notification email via Edge Function. We do not await
+      // or surface failures — the UI keeps moving regardless of whether the
+      // email path is healthy. Errors land in Supabase function logs.
+      if (!options.skippedEmail && email.trim() && supabaseUrl && supabaseAnonKey) {
+        const notifyUrl = `${supabaseUrl}/functions/v1/notify-assessment-completed`;
+        const notifyBody = {
+          assessment_id: definition.id,
+          assessment_name: definition.name,
+          email: email.trim(),
+          wants_tips: wantsTips,
+          overall_score: result.overallScore,
+          overall_max: result.overallMaxScore,
+          overall_tier: result.overallTier,
+          area_scores: result.areas.map((a) => ({
+            id: a.area.id,
+            score: a.score,
+            max: a.maxScore,
+            tier: a.tier,
+          })),
+          referer,
+          user_agent: userAgent,
+        };
+        fetch(notifyUrl, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${supabaseAnonKey}`,
+          },
+          body: JSON.stringify(notifyBody),
+        }).catch((e) => {
+          console.error("[assessment] notify-assessment-completed failed", e);
+        });
       }
 
       setStage("detailed");
