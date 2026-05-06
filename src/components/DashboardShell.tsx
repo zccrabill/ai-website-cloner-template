@@ -98,8 +98,12 @@ export default function DashboardShell({
       (event, session) => {
         const nextUserId = session?.user?.id ?? null;
 
-        if (event === "SIGNED_OUT" || !nextUserId) {
-          // Wipe any in-memory state by doing a full reload to the login page
+        // Only hard-redirect on explicit SIGNED_OUT. INITIAL_SESSION can
+        // fire with null mid-restoration from localStorage, and a few other
+        // events (TOKEN_REFRESHED, USER_UPDATED) can briefly arrive without
+        // a session payload — none of those are real sign-outs, and treating
+        // them as such bounced members back to /login on every page nav.
+        if (event === "SIGNED_OUT") {
           if (typeof window !== "undefined") {
             window.location.replace("/login");
           }

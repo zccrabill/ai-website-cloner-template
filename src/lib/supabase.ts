@@ -11,5 +11,17 @@ const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
 // Create client even with empty strings — guards in components handle missing config
 export const supabase: SupabaseClient = createClient(
   supabaseUrl || "https://placeholder.supabase.co",
-  supabaseAnonKey || "placeholder"
+  supabaseAnonKey || "placeholder",
+  {
+    // Explicit so future maintainers do not accidentally regress these.
+    // All four are also the SDK defaults today, but spelling them out makes
+    // intent unambiguous and survives any internal default change.
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: true,
+      storage:
+        typeof window !== "undefined" ? window.localStorage : undefined,
+    },
+  }
 );
