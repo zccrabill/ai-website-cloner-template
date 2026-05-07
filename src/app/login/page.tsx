@@ -1,10 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 import { SITE_URL } from "@/lib/seo";
+
+// Cloudflare Turnstile site key — public, safe to commit. The matching
+// secret key lives only in Supabase (Auth → Attack Protection).
+const TURNSTILE_SITE_KEY = "0x4AAAAAADKgYilWl-LRewOy";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
@@ -13,6 +17,50 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [error, setError] = useState("");
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const turnstileRef = useRef<HTMLDivElement>(null);
+  const widgetIdRef = useRef<string | null>(null);
+
+  // Load Cloudflare Turnstile and mount its widget. Without this guard,
+  // every email submission triggers a magic-link send — bots discovered
+  // this and burned ~80 emails in 14 days before we wired the captcha in.
+  // The token returned here gets passed to signInWithOtp; Supabase Auth
+  // verifies it server-side before sending the magic link.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const renderWidget = () => {
+      const w = window as unknown as {
+        turnstile?: {
+          render: (
+            el: HTMLElement,
+            opts: Record<string, unknown>
+          ) => string;
+          reset: (id: string) => void;
+        };
+      };
+      if (!w.turnstile || !turnstileRef.current || widgetIdRef.current) return;
+      widgetIdRef.current = w.turnstile.render(turnstileRef.current, {
+        sitekey: TURNSTILE_SITE_KEY,
+        callback: (token: string) => setCaptchaToken(token),
+        "error-callback": () => setCaptchaToken(null),
+        "expired-callback": () => setCaptchaToken(null),
+      });
+    };
+
+    if (!document.getElementById("cf-turnstile-script")) {
+      const s = document.createElement("script");
+      s.id = "cf-turnstile-script";
+      s.src =
+        "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
+      s.async = true;
+      s.defer = true;
+      s.onload = renderWidget;
+      document.head.appendChild(s);
+    } else {
+      renderWidget();
+    }
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -25,12 +73,27 @@ export default function LoginPage() {
         throw new Error("Please enter your email address");
       }
 
+      if (!captchaToken) {
+        throw new Error("Please complete the verification challenge.");
+      }
+
       const { error: signInError } = await supabase.auth.signInWithOtp({
         email,
         options: {
           emailRedirectTo: `${SITE_URL}/auth/callback`,
+          captchaToken,
         },
       });
+
+      // Reset Turnstile so a second submit (e.g., user mistyped email and
+      // wants to retry) requires a fresh token.
+      const w = window as unknown as {
+        turnstile?: { reset: (id: string) => void };
+      };
+      if (widgetIdRef.current && w.turnstile) {
+        w.turnstile.reset(widgetIdRef.current);
+      }
+      setCaptchaToken(null);
 
       if (signInError) {
         throw signInError;
@@ -111,10 +174,16 @@ export default function LoginPage() {
                 />
               </div>
 
-              {/* Send Magic Link Button */}
+              {/* Cloudflare Turnstile widget. Renders invisibly (Managed mode)
+                  for legit traffic; pops a challenge for suspicious clients. */}
+              <div className="flex justify-center">
+                <div ref={turnstileRef} />
+              </div>
+
+                            {/* Send Magic Link Button */}
               <button
                 type="submit"
-                disabled={isLoading || isSuccess}
+                disabled={isLoading || isSuccess || !captchaToken}
                 className="btn-al btn-al-primary w-full py-2.5 px-4 rounded-lg text-sm font-semibold transition-all disabled:opacity-70 disabled:cursor-not-allowed"
               >
                 {isLoading ? "Sending..." : "Send Magic Link"}
