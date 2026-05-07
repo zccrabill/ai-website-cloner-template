@@ -30,16 +30,22 @@ export interface TierCheckoutLinks {
 export const CHECKOUT_LINKS: Record<TierKey, TierCheckoutLinks> = {
   explore: {},
   build: {
+    // EXPECTED PRICE: $50/month. Verify in Stripe before changing.
     monthly: "https://buy.stripe.com/5kQ7sLe8IdFjbiPbnKcMM08",
-    annual: "https://buy.stripe.com/7sY4gz8Oobxb4UrfE0cMM09",
+    // EXPECTED PRICE: $500/year. Verify in Stripe before changing.
+    annual: "https://buy.stripe.com/fZuaEX3u4bxbbiP77ucMM0g",
   },
   grow: {
+    // EXPECTED PRICE: $150/month. Verify in Stripe before changing.
     monthly: "https://buy.stripe.com/7sY6oH4y8dFj3Qn63qcMM0a",
-    annual: "https://buy.stripe.com/7sY3cv2q00Sx1If77ucMM0b",
+    // EXPECTED PRICE: $1,500/year. Verify in Stripe before changing.
+    annual: "https://buy.stripe.com/28E7sL0hScBf72z9fCcMM0h",
   },
   lead: {
+    // EXPECTED PRICE: $300/month. Verify in Stripe before changing.
     monthly: "https://buy.stripe.com/eVqcN5ggQ0Sx5YvbnKcMM04",
-    annual: "https://buy.stripe.com/3cIbJ18Oo6cRcmTfE0cMM0c",
+    // EXPECTED PRICE: $3,000/year. Verify in Stripe before changing.
+    annual: "https://buy.stripe.com/aFafZhc0Aat772zezWcMM07",
   },
 };
 
