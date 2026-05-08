@@ -94,6 +94,19 @@ const REVIEWS: Review[] = [
       "Zachariah provided a thorough and well-organized review of our executed living trust. He identified legitimate items worth addressing and was responsive throughout. We had one disagreement on a flagged provision that was resolved quickly and professionally. Would use again for Colorado estate matters.",
     author: "Colorado Estate client",
   },
+  {
+    rating: 5,
+    matter: "Quitclaim Deed Drafting",
+    quote: "Quick, easy, as intended :)",
+    author: "Property Deed client",
+  },
+  {
+    rating: 5,
+    matter: "Phantom Stock Agreement Review",
+    quote:
+      "Zach did a great job and had my best interests at heart during the review process.",
+    author: "Founder, VC-track startup",
+  },
 ];
 
 export default function TestimonialsSection() {
