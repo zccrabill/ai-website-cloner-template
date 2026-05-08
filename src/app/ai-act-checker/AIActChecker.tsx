@@ -20,6 +20,10 @@ import {
 } from "@/lib/ai-act-assessment";
 import { supabase } from "@/lib/supabase";
 
+// Pulled at module load. NEXT_PUBLIC_* envs are inlined at build time.
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "";
+
 type Stage = "intro" | "question" | "teaser" | "results";
 
 interface LeadInfo {
@@ -120,6 +124,38 @@ export default function AIActChecker() {
         // Table may not exist yet in dev — still show results on client so the
         // UX works end-to-end. Log for visibility.
         console.warn("ai_act_assessments insert failed:", error.message);
+      }
+
+      // Fire-and-forget notification email via the shared notify-assessment-
+      // completed Edge Function. Mirrors what AssessmentRunner does for SMB
+      // Checkup + FAIIR. Failures don't block the UX — errors land in
+      // Supabase function logs and the user still sees their results.
+      if (supabaseUrl && supabaseAnonKey) {
+        fetch(`${supabaseUrl}/functions/v1/notify-assessment-completed`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${supabaseAnonKey}`,
+          },
+          body: JSON.stringify({
+            assessment_id: "ai-act-checker",
+            assessment_name: "Colorado AI Act Readiness Check",
+            email: lead.email.trim(),
+            wants_tips: true,
+            overall_score: result.score,
+            overall_max: 100,
+            overall_tier: result.rag,
+            area_scores: [],
+            referer:
+              typeof document !== "undefined"
+                ? document.referrer || null
+                : null,
+            user_agent:
+              typeof navigator !== "undefined" ? navigator.userAgent : null,
+          }),
+        }).catch((e) => {
+          console.error("[ai-act] notify-assessment-completed failed", e);
+        });
       }
 
       setStage("results");
