@@ -26,6 +26,11 @@ interface AreaScore {
   tier: "green" | "amber" | "red";
 }
 
+interface QA {
+  prompt: string;
+  answer: string;
+}
+
 interface Payload {
   assessment_id: string;
   assessment_name: string;
@@ -37,6 +42,13 @@ interface Payload {
   area_scores: AreaScore[];
   referer?: string | null;
   user_agent?: string | null;
+  // Optional richer lead context (AI Act lead-capture form)
+  name?: string;
+  company?: string;
+  role?: string;
+  // Question-by-question breakdown — gives the firm enough detail to write
+  // an informed first response without clicking into Supabase.
+  questions_with_answers?: QA[];
 }
 
 const RESEND_API = "https://api.resend.com/emails";
@@ -54,6 +66,36 @@ function tierColor(t: "green" | "amber" | "red") {
   if (t === "green") return "#7A8B6F";
   if (t === "amber") return "#C17832";
   return "#A33B2A";
+}
+
+function renderLeadDetails(p: Payload): string {
+  const rows: string[] = [];
+  if (p.name) rows.push(`<p style="margin:4px 0;"><strong>Name:</strong> ${p.name}</p>`);
+  if (p.company) rows.push(`<p style="margin:4px 0;"><strong>Company:</strong> ${p.company}</p>`);
+  if (p.role) rows.push(`<p style="margin:4px 0;"><strong>Role:</strong> ${p.role}</p>`);
+  if (rows.length === 0) return "";
+  return `<div style="background:#FAF8F5;border:1px solid rgba(31,24,16,0.08);border-radius:12px;padding:20px;margin-bottom:16px;">
+    <h3 style="font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#A89279;margin:0 0 12px;">Lead context</h3>
+    ${rows.join("")}
+  </div>`;
+}
+
+function renderQuestionsAnswers(p: Payload): string {
+  const qa = p.questions_with_answers ?? [];
+  if (qa.length === 0) return "";
+  const rows = qa.map((q, i) => `
+    <tr>
+      <td style="padding:10px 0;border-bottom:1px solid rgba(31,24,16,0.06);vertical-align:top;">
+        <p style="margin:0 0 4px;color:#A89279;font-size:10px;text-transform:uppercase;letter-spacing:1px;">Q${i + 1}</p>
+        <p style="margin:0 0 6px;color:#1F1810;font-size:13px;line-height:1.5;">${q.prompt}</p>
+        <p style="margin:0;color:#C17832;font-size:13px;font-weight:600;">&rarr; ${q.answer}</p>
+      </td>
+    </tr>
+  `).join("");
+  return `<div style="background:#FAF8F5;border:1px solid rgba(31,24,16,0.08);border-radius:12px;padding:20px;margin-top:16px;">
+    <h3 style="font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#A89279;margin:0 0 12px;">Their answers</h3>
+    <table style="width:100%;border-collapse:collapse;">${rows}</table>
+  </div>`;
 }
 
 function notificationEmailHtml(p: Payload): string {
@@ -85,6 +127,8 @@ function notificationEmailHtml(p: Payload): string {
       <h3 style="font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#A89279;margin:0 0 12px;">Weakest areas</h3>
       <ul style="padding-left:20px;margin:0;">${weakAreasHtml}</ul>
     </div>
+    ${renderLeadDetails(p)}
+    ${renderQuestionsAnswers(p)}
     <p style="color:#A89279;font-size:11px;margin-top:24px;">Sent automatically from the Available Law assessment runner. Reply-to is set to the lead.</p>
   </body></html>`;
 }

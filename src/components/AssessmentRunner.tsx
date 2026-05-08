@@ -162,6 +162,18 @@ export default function AssessmentRunner({
             max: a.maxScore,
             tier: a.tier,
           })),
+          // Per-question breakdown so the firm can read the user's actual
+          // answers in the notification email instead of just an aggregate.
+          questions_with_answers: questions.map((q) => {
+            const answerValue = answers[q.id];
+            const opt = (q.options as Array<{ value: AnswerValue; label: string }> | undefined)?.find(
+              (o) => o.value === answerValue,
+            );
+            return {
+              prompt: q.prompt,
+              answer: opt?.label ?? String(answerValue ?? ""),
+            };
+          }),
           referer,
           user_agent: userAgent,
         };

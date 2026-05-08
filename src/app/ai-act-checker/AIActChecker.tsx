@@ -141,11 +141,27 @@ export default function AIActChecker() {
             assessment_id: "ai-act-checker",
             assessment_name: "Colorado AI Act Readiness Check",
             email: lead.email.trim(),
+            name: lead.name.trim() || undefined,
+            company: lead.company.trim() || undefined,
+            role: lead.role.trim() || undefined,
             wants_tips: true,
             overall_score: result.score,
             overall_max: 100,
             overall_tier: result.rag,
             area_scores: [],
+            // Map each question to its prompt + the answer label they picked,
+            // so the notification email reads like a transcript instead of
+            // a faceless score number.
+            questions_with_answers: QUESTIONS.map((q) => {
+              const answerKey = responses[q.id];
+              const opt = (q.options as Array<{ key: string; label: string }> | undefined)?.find(
+                (o) => o.key === answerKey,
+              );
+              return {
+                prompt: q.prompt,
+                answer: opt?.label ?? String(answerKey ?? ""),
+              };
+            }),
             referer:
               typeof document !== "undefined"
                 ? document.referrer || null
