@@ -266,6 +266,19 @@ export default function CheckoutClient({ initialTier }: CheckoutClientProps) {
               <p className="text-sm text-[#6B5B4E] mb-4 leading-relaxed">
                 {tier.tagline}
               </p>
+
+              {tier.workItemsPerMonth > 0 && (
+                <div className="mb-5 rounded-lg bg-[#7A8B6F]/10 border border-[#7A8B6F]/20 px-4 py-3">
+                  <p className="text-[15px] font-semibold text-[#1F1810]">
+                    {tier.workItemsPerMonth} attorney work item
+                    {tier.workItemsPerMonth === 1 ? "" : "s"} / month
+                  </p>
+                  <p className="text-xs text-[#6B5B4E] mt-1">
+                    Matter review or consult &mdash; your call.
+                  </p>
+                </div>
+              )}
+
               <ul className="space-y-3">
                 {tier.features.map((feature, idx) => (
                   <li key={idx} className="flex items-start gap-3">
