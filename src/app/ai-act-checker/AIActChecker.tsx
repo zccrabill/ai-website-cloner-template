@@ -343,15 +343,6 @@ function QuestionScreen({
           <ArrowLeft className="w-4 h-4" />
           Back
         </button>
-        <button
-          type="button"
-          onClick={onNext}
-          disabled={!selected}
-          className="inline-flex items-center gap-2 px-7 py-3 bg-[#1F1810] text-white rounded-full text-sm font-medium transition-colors disabled:bg-[#1F1810]/30 disabled:cursor-not-allowed hover:bg-[#C17832]"
-        >
-          {isLast ? "See my score" : "Next"}
-          <ArrowRight className="w-4 h-4" />
-        </button>
       </div>
     </section>
   );
