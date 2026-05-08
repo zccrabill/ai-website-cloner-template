@@ -121,14 +121,6 @@ export default function Header() {
             Pricing
             <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-[#C17832] group-hover:w-full transition-all duration-300" />
           </a>
-          
-            href="#testimonials"
-            onClick={(e) => handleAnchorClick(e, "#testimonials")}
-            className="text-[#6B5B4E] hover:text-[#1F1810] relative group transition-colors cursor-pointer text-sm"
-          >
-            Reviews
-            <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-[#C17832] group-hover:w-full transition-all duration-300" />
-          </a>
           <Link
             href="/blog"
             className="text-[#6B5B4E] hover:text-[#1F1810] relative group transition-colors text-sm"
@@ -195,14 +187,6 @@ export default function Header() {
             >
               Pricing
             </a>
-          
-            href="#testimonials"
-            onClick={(e) => handleAnchorClick(e, "#testimonials")}
-            className="text-[#6B5B4E] hover:text-[#1F1810] relative group transition-colors cursor-pointer text-sm"
-          >
-            Reviews
-            <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-[#C17832] group-hover:w-full transition-all duration-300" />
-          </a>
             <Link
               href="/blog"
               className="text-[#6B5B4E] hover:text-[#1F1810] transition-colors block text-sm"
