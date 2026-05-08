@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
@@ -17,33 +17,6 @@ export default function Header() {
     window.addEventListener("scroll", handler, { passive: true });
     return () => window.removeEventListener("scroll", handler);
   }, []);
-
-  // {ai} easter egg: 5 clicks within 3s opens Allora with a fun seed.
-  // Uses refs (not state) so the header doesn't re-render on each click.
-  const aiClicksRef = useRef(0);
-  const aiClickTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  const handleAiClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (aiClickTimerRef.current) clearTimeout(aiClickTimerRef.current);
-    aiClicksRef.current += 1;
-    if (aiClicksRef.current >= 5) {
-      aiClicksRef.current = 0;
-      window.dispatchEvent(
-        new CustomEvent("allora:open", {
-          detail: {
-            seed:
-              "You found the easter egg. Yes — the brackets in our logo are an AI joke. So now... want to actually talk about how AI fits in your business?",
-          },
-        })
-      );
-    } else {
-      aiClickTimerRef.current = setTimeout(() => {
-        aiClicksRef.current = 0;
-      }, 3000);
-    }
-  };
 
   // Smooth scroll on home page; navigate to /#anchor from other pages
   const handleAnchorClick = (
@@ -74,7 +47,7 @@ export default function Header() {
         {/* Logo + FAIIR Seal */}
         <div className="flex items-center gap-2 flex-shrink-0">
           <Link href="/" className="flex items-center font-heading text-lg font-semibold text-[#1F1810]">
-            Av<span onClick={handleAiClick} className="cursor-default select-none" role="button" tabIndex={-1} aria-label="Easter egg"><span className="text-[#C17832]">{"{"}</span>ai<span className="text-[#C17832]">{"}"}</span></span>lable Law
+            Av<span className="text-[#C17832]">{"{"}</span>ai<span className="text-[#C17832]">{"}"}</span>lable Law
           </Link>
           <Link
             href="/faiir"
@@ -119,6 +92,14 @@ export default function Header() {
             className="text-[#6B5B4E] hover:text-[#1F1810] relative group transition-colors cursor-pointer text-sm"
           >
             Pricing
+            <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-[#C17832] group-hover:w-full transition-all duration-300" />
+          </a>
+          <a
+          href="#testimonials"
+            onClick={(e) => handleAnchorClick(e, "#testimonials")}
+            className="text-[#6B5B4E] hover:text-[#1F1810] relative group transition-colors cursor-pointer text-sm"
+          >
+            Reviews
             <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-[#C17832] group-hover:w-full transition-all duration-300" />
           </a>
           <Link
