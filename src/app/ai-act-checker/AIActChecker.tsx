@@ -148,18 +148,34 @@ export default function AIActChecker() {
             overall_score: result.score,
             overall_max: 100,
             overall_tier: result.rag,
-            area_scores: [],
+            // Aggregate score per category so the notification + results
+            // emails can render Weakest Areas / Where You Scored Lowest with
+            // real data instead of an empty list.
+            area_scores: (() => {
+              const totals = new Map<string, { score: number; max: number }>();
+              for (const q of QUESTIONS) {
+                const ans = q.answers.find((a) => a.key === responses[q.id]);
+                if (!ans) continue;
+                const cur = totals.get(q.category) ?? { score: 0, max: 0 };
+                cur.score += ans.points;
+                cur.max += 10;
+                totals.set(q.category, cur);
+              }
+              return [...totals.entries()].map(([id, { score, max }]) => {
+                const pct = max > 0 ? score / max : 0;
+                const tier: "green" | "amber" | "red" =
+                  pct >= 0.8 ? "green" : pct >= 0.5 ? "amber" : "red";
+                return { id, score, max, tier };
+              });
+            })(),
             // Map each question to its prompt + the answer label they picked,
             // so the notification email reads like a transcript instead of
             // a faceless score number.
             questions_with_answers: QUESTIONS.map((q) => {
-              const answerKey = responses[q.id];
-              const opt = (q.options as Array<{ key: string; label: string }> | undefined)?.find(
-                (o) => o.key === answerKey,
-              );
+              const ans = q.answers.find((a) => a.key === responses[q.id]);
               return {
                 prompt: q.prompt,
-                answer: opt?.label ?? String(answerKey ?? ""),
+                answer: ans?.label ?? "(no answer)",
               };
             }),
             referer:
