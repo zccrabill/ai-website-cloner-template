@@ -7,6 +7,22 @@ import { supabase } from "@/lib/supabase";
 import { getTier, OVERAGE_PRICE_PER_PAGE_USD } from "@/lib/tiers";
 import { CreditCard, Mail, Shield, ExternalLink } from "lucide-react";
 
+// Stripe Billing Portal entry URL. Set in Netlify env vars at build time
+// (NEXT_PUBLIC_* is inlined). Leave unset on test deploys to suppress the
+// link entirely rather than showing the placeholder test URL.
+//
+// Get this from: Stripe Dashboard → Settings → Billing → Customer portal →
+// "Login link" (login.stripe.com/.../login/...). Stripe will email the
+// customer a one-time code to authenticate into the portal.
+//
+// For a smoother UX (no email confirmation step), implement a
+// create-billing-portal-session edge function that calls stripe.billingPortal
+// .sessions.create({ customer: stripeCustomerId, return_url }) for the
+// logged-in member and returns the session url. Wire it here and you can
+// drop the static link entirely.
+const BILLING_PORTAL_URL =
+  process.env.NEXT_PUBLIC_STRIPE_BILLING_PORTAL_URL ?? "";
+
 export default function AccountPage() {
   const [email, setEmail] = useState("");
   const [fullName, setFullName] = useState("");
@@ -194,15 +210,25 @@ export default function AccountPage() {
             )}
           </div>
 
-          <a
-            href="https://billing.stripe.com/p/login/test_yourportallink"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 text-sm text-[#6B5B4E] hover:text-[#1F1810] transition-colors"
-          >
-            <ExternalLink className="w-4 h-4" />
-            Manage billing on Stripe
-          </a>
+          {BILLING_PORTAL_URL ? (
+            <a
+              href={BILLING_PORTAL_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 text-sm text-[#6B5B4E] hover:text-[#1F1810] transition-colors"
+            >
+              <ExternalLink className="w-4 h-4" />
+              Manage billing on Stripe
+            </a>
+          ) : (
+            <a
+              href="mailto:zachariah@availablelaw.com?subject=Billing%20change%20request"
+              className="inline-flex items-center gap-2 text-sm text-[#6B5B4E] hover:text-[#1F1810] transition-colors"
+            >
+              <Mail className="w-4 h-4" />
+              Email us for billing changes
+            </a>
+          )}
         </div>
 
         {/* Security */}

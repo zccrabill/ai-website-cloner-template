@@ -16,7 +16,9 @@ import {
   CreditCard,
   Plus,
   Minus,
+  Mail,
 } from "lucide-react";
+import FaiirIntakeForm from "@/components/FaiirIntakeForm";
 
 interface Faq {
   question: string;
@@ -356,6 +358,7 @@ function CheckerBand() {
 }
 
 function Hero() {
+  const [intakeOpen, setIntakeOpen] = useState(false);
   return (
     <section className="relative overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-b from-[#F5F0EB] via-[#FAF8F5] to-[#FAF8F5]" />
@@ -397,11 +400,25 @@ function Hero() {
               See pricing
             </a>
           </div>
+          {/* Secondary path for visitors who aren't ready to book a call —
+              opens the FaiirIntakeForm modal and writes to faiir_intakes. */}
+          <button
+            type="button"
+            onClick={() => setIntakeOpen(true)}
+            className="mt-4 inline-flex items-center gap-1.5 text-sm text-[#6B5B4E] hover:text-[#C17832] underline underline-offset-4 decoration-[#A89279]/40 hover:decoration-[#C17832] transition-colors"
+          >
+            <Mail className="w-3.5 h-3.5" />
+            Not ready for a call? Send us a message instead
+          </button>
           <p className="mt-6 text-xs text-[#A89279] uppercase tracking-widest">
             Free 30-min scoping call · Fixed-fee engagement · Colorado-licensed attorney
           </p>
         </div>
       </div>
+      <FaiirIntakeForm
+        isOpen={intakeOpen}
+        onClose={() => setIntakeOpen(false)}
+      />
     </section>
   );
 }

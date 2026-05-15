@@ -18,6 +18,14 @@
 
 import { useEffect, useState, useRef } from "react";
 import { Briefcase, Layers, TrendingUp, Sparkles } from "lucide-react";
+import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
+
+// NEXT_PUBLIC_* env vars are inlined at build time, so this is a build-time
+// constant. Checked at render to short-circuit before any state machinery —
+// avoids a setState-in-effect to mark the component hidden when misconfigured.
+const ENV_MISSING =
+  !process.env.NEXT_PUBLIC_SUPABASE_URL ||
+  !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
 // ------------------------------------------------------------------------
 // Types — practice_area values are already human-readable strings (e.g.
@@ -49,35 +57,36 @@ interface PracticeSnapshot {
 // ------------------------------------------------------------------------
 
 function useCountUp(target: number, duration = 900, enabled = true): number {
-  const [value, setValue] = useState(0);
+  const prefersReducedMotion = usePrefersReducedMotion();
+  // Same trick as CountUp: store animation progress (0..1) as state and
+  // derive the displayed value at render. Lets us snap to `target` when
+  // motion is disabled or target is 0 without a synchronous setState
+  // inside the effect.
+  const [progress, setProgress] = useState(0);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
     if (!enabled) return;
 
-    const prefersReduced = window.matchMedia(
-      "(prefers-reduced-motion: reduce)"
-    ).matches;
-
-    if (prefersReduced || target === 0) {
-      setValue(target);
+    if (prefersReducedMotion || target === 0) {
+      queueMicrotask(() => setProgress(1));
       return;
     }
 
     const start = performance.now();
     let raf = 0;
     const tick = (t: number) => {
-      const progress = Math.min((t - start) / duration, 1);
+      const p = Math.min((t - start) / duration, 1);
       // ease-out cubic for a satisfying deceleration
-      const eased = 1 - Math.pow(1 - progress, 3);
-      setValue(Math.round(target * eased));
-      if (progress < 1) raf = requestAnimationFrame(tick);
+      const eased = 1 - Math.pow(1 - p, 3);
+      setProgress(eased);
+      if (p < 1) raf = requestAnimationFrame(tick);
     };
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
-  }, [target, duration, enabled]);
+  }, [target, duration, enabled, prefersReducedMotion]);
 
-  return value;
+  return Math.round(target * progress);
 }
 
 // ------------------------------------------------------------------------
@@ -138,23 +147,24 @@ function StatCard({
 
 export default function PracticeSnapshotSection() {
   const [snapshot, setSnapshot] = useState<PracticeSnapshot | null>(null);
+  // Failure-mode hidden: env var missing is handled by the module-level
+  // ENV_MISSING constant + the early return below. This state covers the
+  // remaining cases (empty dataset, fetch error) where we discover at
+  // runtime that we shouldn't render.
   const [hidden, setHidden] = useState(false);
 
   useEffect(() => {
+    if (ENV_MISSING) return;
+
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-    if (!supabaseUrl || !anonKey) {
-      setHidden(true);
-      return;
-    }
 
     const controller = new AbortController();
 
     fetch(`${supabaseUrl}/functions/v1/get-matters-stats`, {
       signal: controller.signal,
       headers: {
-        apikey: anonKey,
+        apikey: anonKey as string,
         Authorization: `Bearer ${anonKey}`,
       },
     })
@@ -178,7 +188,7 @@ export default function PracticeSnapshotSection() {
     return () => controller.abort();
   }, []);
 
-  if (hidden) return null;
+  if (ENV_MISSING || hidden) return null;
 
   const active_clients = snapshot?.active_clients ?? 0;
   const matters_ytd = snapshot?.matters_ytd ?? 0;

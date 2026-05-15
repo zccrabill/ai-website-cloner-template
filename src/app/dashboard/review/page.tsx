@@ -261,6 +261,26 @@ export default function ReviewQueuePage() {
       );
     }
 
+    // Notify the member that their attorney just sent a deliverable. Fire-and-
+    // forget — notify-event resolves the recipient email via members.user_id,
+    // so we don't need to pre-fetch it here. The draft is already durably
+    // saved as status='sent', so even if this fails the member will see the
+    // doc on their next /dashboard/documents visit.
+    void supabase.functions
+      .invoke("notify-event", {
+        body: {
+          event_type: "draft.sent",
+          user_id: selectedDraft.user_id,
+          data: {
+            title: selectedDraft.title,
+            draft_id: selectedDraft.id,
+          },
+        },
+      })
+      .catch((err: unknown) => {
+        console.error("[review] notify-event invoke failed", err);
+      });
+
     closeDraft();
     await loadDrafts();
   };

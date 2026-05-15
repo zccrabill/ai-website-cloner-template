@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useReveal } from "@/hooks/useReveal";
+import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 
 /**
  * <CountUp end={247} suffix=" matters" /> — animates 0 → end when
@@ -30,17 +31,19 @@ export default function CountUp({
   className = "",
 }: CountUpProps) {
   const { ref, revealed } = useReveal<HTMLSpanElement>();
-  const [value, setValue] = useState(0);
+  const prefersReducedMotion = usePrefersReducedMotion();
+  // Animation progress 0 → 1. Derived value is `end * progress` so that
+  // when `end` changes (e.g. async data lands), the snap-to-final value
+  // updates without re-running an effect that synchronously setStates.
+  const [progress, setProgress] = useState(0);
   const startTimeRef = useRef<number | null>(null);
 
   useEffect(() => {
     if (!revealed) return;
-
-    if (
-      typeof window !== "undefined" &&
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches
-    ) {
-      setValue(end);
+    if (prefersReducedMotion) {
+      // Snap to final via a microtask so the setState isn't synchronous
+      // inside the effect body (React 19 lint rule).
+      queueMicrotask(() => setProgress(1));
       return;
     }
 
@@ -50,7 +53,7 @@ export default function CountUp({
       const elapsed = now - startTimeRef.current;
       const t = Math.min(1, elapsed / duration);
       const eased = 1 - Math.pow(1 - t, 3);
-      setValue(end * eased);
+      setProgress(eased);
       if (t < 1) rafId = requestAnimationFrame(tick);
     }
 
@@ -59,8 +62,9 @@ export default function CountUp({
       cancelAnimationFrame(rafId);
       startTimeRef.current = null;
     };
-  }, [revealed, end, duration]);
+  }, [revealed, duration, prefersReducedMotion]);
 
+  const value = end * progress;
   const display =
     decimals > 0 ? value.toFixed(decimals) : Math.round(value).toString();
 

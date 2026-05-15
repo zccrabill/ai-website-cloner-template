@@ -58,8 +58,15 @@ export default function FooterTerminal() {
         );
         return () => clearTimeout(t);
       }
-      setAphorismIndex((i) => (i + 1) % APHORISMS.length);
-      setPhase("typing");
+      // Empty-text transition: schedule the move to the next aphorism via a
+      // setTimeout so React commits the empty-text render before we restart
+      // the typing phase. Avoids the React 19 set-state-in-effect warning
+      // and adds a barely-perceptible breath between aphorisms.
+      const t = setTimeout(() => {
+        setAphorismIndex((i) => (i + 1) % APHORISMS.length);
+        setPhase("typing");
+      }, 120);
+      return () => clearTimeout(t);
     }
   }, [phase, displayedText, aphorismIndex]);
 

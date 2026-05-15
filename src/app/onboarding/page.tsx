@@ -77,6 +77,7 @@ export default function OnboardingPage() {
   const handleNext = async () => {
     if (currentStep === "engagement") {
       // Save everything to Supabase
+      let saveSucceeded = false;
       try {
         const { error } = await supabase.from("members").upsert({
           user_id: userId,
@@ -97,10 +98,37 @@ export default function OnboardingPage() {
         if (error) {
           console.error("Save error:", error);
           // Still proceed — data can be re-collected
+        } else {
+          saveSucceeded = true;
         }
       } catch (err) {
         console.error("Onboarding save error:", err);
       }
+
+      // Fire admin notification once the row is durably in. Fire-and-forget so
+      // a Resend/edge-function blip never blocks the user from advancing.
+      if (saveSucceeded) {
+        void supabase.functions
+          .invoke("notify-event", {
+            body: {
+              event_type: "member.onboarded",
+              user_id: userId,
+              member_email: email,
+              data: {
+                full_name: fullName,
+                business_name: businessName,
+                business_type: businessType,
+                industry: industry || null,
+                state,
+                referral_source: referralSource || null,
+              },
+            },
+          })
+          .catch((err: unknown) => {
+            console.error("[onboarding] notify-event invoke failed", err);
+          });
+      }
+
       setCurrentStep("complete");
     } else {
       const nextIndex = currentStepIndex + 1;

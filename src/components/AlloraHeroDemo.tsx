@@ -30,6 +30,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 
 // ----------------------------------------------------------------------------
 // Scenarios — keep these tight. The hero shouldn't feel like an essay.
@@ -279,11 +280,23 @@ function AlloraBubble({
 // ----------------------------------------------------------------------------
 
 export default function AlloraHeroDemo() {
+  const prefersReduced = usePrefersReducedMotion();
+  // Snapshot the PRM value at first render so initial state matches.
+  // useState's lazy initializer runs exactly once on mount; we ignore the
+  // setter because we don't want this snapshot to drift over the component's
+  // lifetime — runtime PRM toggles are handled below via queueMicrotask.
+  const [initialPRM] = useState(() => prefersReduced);
+
   const [scenarioIdx, setScenarioIdx] = useState(0);
-  const [phase, setPhase] = useState<Phase>("typing-user");
-  const [userProgress, setUserProgress] = useState(0);
-  const [alloraProgress, setAlloraProgress] = useState(0);
-  const [prefersReduced, setPrefersReduced] = useState(false);
+  const [phase, setPhase] = useState<Phase>(
+    initialPRM ? "hold" : "typing-user",
+  );
+  const [userProgress, setUserProgress] = useState(
+    initialPRM ? SCENARIOS[0].messages[0].text.length : 0,
+  );
+  const [alloraProgress, setAlloraProgress] = useState(
+    initialPRM ? SCENARIOS[0].messages[1].text.length : 0,
+  );
 
   // Modal + hover state. When either is active, we pause the autoplay loop so
   // the visitor has time to click the document chip and read the preview.
@@ -303,17 +316,6 @@ export default function AlloraHeroDemo() {
     return () => window.removeEventListener("keydown", onKey);
   }, [modalOpen]);
 
-  // Detect prefers-reduced-motion once on mount. If set, we render the first
-  // scenario in its final state and skip all timers.
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    setPrefersReduced(mq.matches);
-    const handler = (e: MediaQueryListEvent) => setPrefersReduced(e.matches);
-    mq.addEventListener("change", handler);
-    return () => mq.removeEventListener("change", handler);
-  }, []);
-
   const scenario = SCENARIOS[scenarioIdx];
   const userText = scenario.messages[0].text;
   const alloraText = scenario.messages[1].text;
@@ -322,10 +324,16 @@ export default function AlloraHeroDemo() {
   // re-run the effect so each char-tick schedules itself.
   useEffect(() => {
     if (prefersReduced) {
-      // Static state: full first scenario, no auto-advance.
-      setUserProgress(SCENARIOS[0].messages[0].text.length);
-      setAlloraProgress(SCENARIOS[0].messages[1].text.length);
-      setPhase("hold");
+      // PRM toggled on at runtime (initial mount handled by lazy init above).
+      // Snap to the completed-scenario state via a microtask so the setStates
+      // aren't synchronous inside the effect (React 19 lint rule). React's
+      // identity bail-out skips re-render when values are unchanged, so
+      // re-firing this on every dep change is cheap.
+      queueMicrotask(() => {
+        setUserProgress(SCENARIOS[0].messages[0].text.length);
+        setAlloraProgress(SCENARIOS[0].messages[1].text.length);
+        setPhase("hold");
+      });
       return;
     }
 
@@ -336,7 +344,10 @@ export default function AlloraHeroDemo() {
 
     if (phase === "typing-user") {
       if (userProgress >= userText.length) {
-        setPhase("thinking");
+        // Phase transition. Deferred to a microtask so React commits the
+        // final char-render before re-entering the state machine — required
+        // to satisfy react-hooks/set-state-in-effect.
+        queueMicrotask(() => setPhase("thinking"));
         return;
       }
       timer = window.setTimeout(
@@ -353,7 +364,8 @@ export default function AlloraHeroDemo() {
 
     if (phase === "typing-allora") {
       if (alloraProgress >= alloraText.length) {
-        setPhase("hold");
+        // Same deferral pattern as the typing-user → thinking transition.
+        queueMicrotask(() => setPhase("hold"));
         return;
       }
       timer = window.setTimeout(

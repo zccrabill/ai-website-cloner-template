@@ -88,6 +88,9 @@ export default function DocumentsPage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [userId, setUserId] = useState<string | null>(null);
+  // Captured alongside userId so the upload notification can include the
+  // member's email without an extra round-trip.
+  const [userEmail, setUserEmail] = useState<string | null>(null);
   const [viewing, setViewing] = useState<AttorneyDoc | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -98,17 +101,20 @@ export default function DocumentsPage() {
     const load = async () => {
       const { data: sess } = await supabase.auth.getSession();
       const uid = sess.session?.user.id;
+      const uemail = sess.session?.user.email ?? null;
       if (!uid) {
         if (mounted) {
           setUploads([]);
           setAttorneyDocs([]);
           setUserId(null);
+          setUserEmail(null);
           setLoading(false);
         }
         return;
       }
       if (!mounted) return;
       setUserId(uid);
+      setUserEmail(uemail);
 
       // Pull both sources in parallel. Both are scoped by explicit user_id
       // filter + RLS.
@@ -196,6 +202,7 @@ export default function DocumentsPage() {
         setAttorneyDocs([]);
         setViewing(null);
         setUserId(session?.user?.id ?? null);
+        setUserEmail(session?.user?.email ?? null);
         setLoading(true);
         load();
       }
@@ -283,8 +290,28 @@ export default function DocumentsPage() {
         created_at: row.uploaded_at,
       };
       setUploads((prev) => prev.map((d) => (d.id === tempId ? realRow : d)));
+
+      // Notify the firm a new doc just landed. Fire-and-forget — the upload
+      // is already durable in Storage + DB at this point; a notification
+      // failure shouldn't surface to the member.
+      void supabase.functions
+        .invoke("notify-event", {
+          body: {
+            event_type: "document.uploaded",
+            user_id: uid,
+            member_email: userEmail,
+            data: {
+              filename: row.filename,
+              size_bytes: row.size_bytes,
+              mime_type: row.mime_type,
+            },
+          },
+        })
+        .catch((err: unknown) => {
+          console.error("[documents] notify-event invoke failed", err);
+        });
     },
-    []
+    [userEmail]
   );
 
   const handleFiles = useCallback(

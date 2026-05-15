@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 
 /**
  * useReveal — IntersectionObserver hook for scroll-triggered animations.
@@ -35,27 +36,25 @@ export function useReveal<T extends HTMLElement = HTMLDivElement>(
   } = options;
 
   const ref = useRef<T>(null);
-  const [revealed, setRevealed] = useState(false);
+  const prefersReducedMotion = usePrefersReducedMotion();
+  const [observerRevealed, setObserverRevealed] = useState(false);
+
+  // Under prefers-reduced-motion we report revealed=true immediately and skip
+  // the observer entirely. Derived at render — no setState-in-effect needed.
+  const revealed = prefersReducedMotion || observerRevealed;
 
   useEffect(() => {
+    if (prefersReducedMotion) return;
     const node = ref.current;
     if (!node) return;
-
-    if (
-      typeof window !== "undefined" &&
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches
-    ) {
-      setRevealed(true);
-      return;
-    }
 
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          setRevealed(true);
+          setObserverRevealed(true);
           if (once) observer.disconnect();
         } else if (!once) {
-          setRevealed(false);
+          setObserverRevealed(false);
         }
       },
       { threshold, rootMargin }
@@ -63,7 +62,7 @@ export function useReveal<T extends HTMLElement = HTMLDivElement>(
 
     observer.observe(node);
     return () => observer.disconnect();
-  }, [threshold, rootMargin, once]);
+  }, [prefersReducedMotion, threshold, rootMargin, once]);
 
   return { ref, revealed };
 }

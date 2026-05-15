@@ -9,7 +9,6 @@ import {
   Strong,
   InlineLink,
   Callout,
-  Blockquote,
   LegalDisclaimer,
 } from "./typography";
 
