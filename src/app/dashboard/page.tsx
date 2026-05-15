@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import DashboardShell from "@/components/DashboardShell";
+import AdminDashboard from "@/components/AdminDashboard";
 import { supabase } from "@/lib/supabase";
 import { getTier, OVERAGE_PRICE_PER_PAGE_USD } from "@/lib/tiers";
 import {
@@ -14,7 +15,14 @@ import {
   Users,
 } from "lucide-react";
 
+type Role = "member" | "admin" | "attorney" | null;
+
 export default function DashboardPage() {
+  // Role drives which view we render. null = still resolving.
+  // 'member' (or any non-staff value) gets the existing member dashboard.
+  // 'admin' / 'attorney' get the firm-operations view.
+  const [role, setRole] = useState<Role>(null);
+
   const [rawTier, setRawTier] = useState<string>("explore");
   const [subStatus, setSubStatus] = useState<string>("inactive");
   const [conversationsCount, setConversationsCount] = useState(0);
@@ -25,6 +33,7 @@ export default function DashboardPage() {
     const { data: sess } = await supabase.auth.getSession();
     const session = sess.session;
     if (!session) {
+      setRole("member");
       setRawTier("explore");
       setSubStatus("inactive");
       setConversationsCount(0);
@@ -33,12 +42,21 @@ export default function DashboardPage() {
       return;
     }
 
-    // Subscription tier + status from members table
+    // Pull role + member profile in one query. Role gates the view; tier and
+    // status power the member-side widgets if we render that branch.
     const { data: member } = await supabase
       .from("members")
-      .select("subscription_tier, subscription_status")
+      .select("subscription_tier, subscription_status, role")
       .eq("user_id", session.user.id)
       .maybeSingle();
+
+    const memberRole = (member?.role ?? "member") as Role;
+    setRole(memberRole);
+
+    // Staff users see AdminDashboard instead — skip the member-specific
+    // queries entirely. Saves a round-trip and avoids RLS-empty results
+    // showing up as 0 counts in admin state.
+    if (memberRole === "admin" || memberRole === "attorney") return;
 
     setRawTier(member?.subscription_tier ?? "explore");
     setSubStatus(member?.subscription_status ?? "inactive");
@@ -77,6 +95,17 @@ export default function DashboardPage() {
       authListener.subscription.unsubscribe();
     };
   }, [loadDashboard]);
+
+  // Render the admin/attorney view instead of the member widgets for staff.
+  // DashboardShell stays as the chrome (sidebar, header, sign-out) so
+  // navigation feels identical to the member experience.
+  if (role === "admin" || role === "attorney") {
+    return (
+      <DashboardShell title="Dashboard">
+        <AdminDashboard />
+      </DashboardShell>
+    );
+  }
 
   const tier = getTier(rawTier);
   const tierLabel = tier.label;
