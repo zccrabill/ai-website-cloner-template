@@ -12,8 +12,43 @@ const TURNSTILE_SITE_KEY = "0x4AAAAAADKgYilWl-LRewOy";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
+/**
+ * Webmail jump targets, keyed by email domain. Lets us send the user
+ * straight into their inbox after the magic link is fired off, instead of
+ * leaving them to context-switch on their own. Falls back to `mailto:` for
+ * unknown domains — opens the OS default mail client (Mail.app on macOS,
+ * the system handler elsewhere).
+ */
+function getMailJump(email: string): { label: string; url: string } {
+  const domain = email.split("@")[1]?.toLowerCase() ?? "";
+  const providers: Record<string, { label: string; url: string }> = {
+    "gmail.com": { label: "Open Gmail", url: "https://mail.google.com" },
+    "googlemail.com": { label: "Open Gmail", url: "https://mail.google.com" },
+    "outlook.com": { label: "Open Outlook", url: "https://outlook.live.com" },
+    "hotmail.com": { label: "Open Outlook", url: "https://outlook.live.com" },
+    "live.com": { label: "Open Outlook", url: "https://outlook.live.com" },
+    "msn.com": { label: "Open Outlook", url: "https://outlook.live.com" },
+    "icloud.com": { label: "Open iCloud Mail", url: "https://www.icloud.com/mail" },
+    "me.com": { label: "Open iCloud Mail", url: "https://www.icloud.com/mail" },
+    "mac.com": { label: "Open iCloud Mail", url: "https://www.icloud.com/mail" },
+    "yahoo.com": { label: "Open Yahoo Mail", url: "https://mail.yahoo.com" },
+    "ymail.com": { label: "Open Yahoo Mail", url: "https://mail.yahoo.com" },
+    "proton.me": { label: "Open Proton Mail", url: "https://mail.proton.me" },
+    "protonmail.com": { label: "Open Proton Mail", url: "https://mail.proton.me" },
+    "pm.me": { label: "Open Proton Mail", url: "https://mail.proton.me" },
+    "fastmail.com": { label: "Open Fastmail", url: "https://app.fastmail.com" },
+  };
+  // Hosted Google Workspace domains aren't in the lookup; Gmail still works
+  // for many of them, but we can't tell from the domain alone. Default to
+  // the OS mailto: handler so the user still has one click into their mail.
+  return providers[domain] ?? { label: "Open Mail", url: "mailto:" };
+}
+
 export default function LoginPage() {
   const [email, setEmail] = useState("");
+  // Captured at submit so the success state's Open-Mail button can route to
+  // the right webmail provider after we've cleared the input field.
+  const [submittedEmail, setSubmittedEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [error, setError] = useState("");
@@ -99,6 +134,7 @@ export default function LoginPage() {
         throw signInError;
       }
 
+      setSubmittedEmail(email.trim());
       setIsSuccess(true);
       setEmail("");
     } catch (err) {
@@ -141,13 +177,30 @@ export default function LoginPage() {
             </p>
 
             {/* Success Message */}
-            {isSuccess && (
-              <div className="mb-6 p-4 bg-green-500/10 border border-green-500/20 rounded-lg">
-                <p className="text-sm text-green-400 text-center">
-                  Check your email for a magic link to sign in
-                </p>
-              </div>
-            )}
+            {isSuccess && (() => {
+              const jump = getMailJump(submittedEmail);
+              return (
+                <div className="mb-6 p-4 bg-[#7A8B6F]/10 border border-[#7A8B6F]/30 rounded-lg">
+                  <p className="text-sm text-[#5A6B53] text-center mb-3">
+                    Check your email for a magic link to sign in
+                    {submittedEmail && (
+                      <>
+                        {" — sent to "}
+                        <span className="font-semibold">{submittedEmail}</span>
+                      </>
+                    )}
+                  </p>
+                  <a
+                    href={jump.url}
+                    target={jump.url.startsWith("mailto:") ? undefined : "_blank"}
+                    rel={jump.url.startsWith("mailto:") ? undefined : "noopener noreferrer"}
+                    className="block w-full text-center py-2.5 px-4 bg-[#1F1810] text-white rounded-lg text-sm font-semibold hover:bg-[#C17832] transition-all"
+                  >
+                    {jump.label} →
+                  </a>
+                </div>
+              );
+            })()}
 
             {/* Error Message */}
             {error && (

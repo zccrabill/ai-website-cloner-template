@@ -25,11 +25,22 @@ interface UserData {
   };
 }
 
-const sidebarItems = [
+// Sidebar nav. memberOnly=true hides the item from staff users — the page is
+// framed for the member POV (e.g. Documents' "From Your Attorney" badge) and
+// gives admins/attorneys no operational value. Dashboard and My Account are
+// shown to everyone (admin gets a different /dashboard view via the role
+// branch in src/app/dashboard/page.tsx; My Account stays useful for managing
+// the staff member's own profile).
+const sidebarItems: {
+  icon: typeof LayoutDashboard;
+  label: string;
+  href: string;
+  memberOnly?: boolean;
+}[] = [
   { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard" },
-  { icon: MessageSquare, label: "Chat with Allora", href: "/dashboard/chat" },
-  { icon: FileText, label: "Documents", href: "/dashboard/documents" },
-  { icon: Calendar, label: "Schedule", href: "/dashboard/schedule" },
+  { icon: MessageSquare, label: "Chat with Allora", href: "/dashboard/chat", memberOnly: true },
+  { icon: FileText, label: "Documents", href: "/dashboard/documents", memberOnly: true },
+  { icon: Calendar, label: "Schedule", href: "/dashboard/schedule", memberOnly: true },
   { icon: User, label: "My Account", href: "/dashboard/account" },
 ];
 
@@ -185,24 +196,26 @@ export default function DashboardShell({
         </div>
 
         <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
-          {sidebarItems.map((item) => {
-            const IconComponent = item.icon;
-            const isActive = pathname === item.href;
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all ${
-                  isActive
-                    ? "bg-[#C17832]/10 text-[#C17832] border border-[#C17832]/20"
-                    : "text-[#6B5B4E] hover:bg-[#F5F0EB] hover:text-[#1F1810]"
-                }`}
-              >
-                <IconComponent className="w-5 h-5" />
-                <span>{item.label}</span>
-              </Link>
-            );
-          })}
+          {sidebarItems
+            .filter((item) => !item.memberOnly || !isAdmin)
+            .map((item) => {
+              const IconComponent = item.icon;
+              const isActive = pathname === item.href;
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all ${
+                    isActive
+                      ? "bg-[#C17832]/10 text-[#C17832] border border-[#C17832]/20"
+                      : "text-[#6B5B4E] hover:bg-[#F5F0EB] hover:text-[#1F1810]"
+                  }`}
+                >
+                  <IconComponent className="w-5 h-5" />
+                  <span>{item.label}</span>
+                </Link>
+              );
+            })}
 
           {isAdmin && (
             <div className="pt-4 mt-4 border-t border-[#1F1810]/8">
