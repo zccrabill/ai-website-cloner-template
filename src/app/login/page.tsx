@@ -54,18 +54,8 @@ export default function LoginPage() {
   const [isSuccess, setIsSuccess] = useState(false);
   const [error, setError] = useState("");
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
-  // Apple-device detection drives whether the success state offers a native
-  // Mail.app jump (via the `message:` URL scheme) for unknown email domains.
-  // The detection runs in useEffect because navigator isn't available during
-  // the static export's prerender pass.
-  const [isAppleDevice, setIsAppleDevice] = useState(false);
   const turnstileRef = useRef<HTMLDivElement>(null);
   const widgetIdRef = useRef<string | null>(null);
-
-  useEffect(() => {
-    if (typeof navigator === "undefined") return;
-    setIsAppleDevice(/Mac|iPhone|iPad|iPod/i.test(navigator.userAgent));
-  }, []);
 
   // Load Cloudflare Turnstile and mount its widget. Without this guard,
   // every email submission triggers a magic-link send — bots discovered
@@ -210,26 +200,16 @@ export default function LoginPage() {
                     >
                       {jump.label} →
                     </a>
-                  ) : isAppleDevice ? (
-                    // On macOS / iOS / iPadOS, the `message:` scheme is
-                    // registered to Mail.app. With a message ID it opens a
-                    // specific message; without one it brings Mail.app to
-                    // the front (and on iOS opens the inbox). This is the
-                    // closest Apple offers to "just open my mail app" —
-                    // mailto: would open compose, which is the bug we're
-                    // working around.
-                    <a
-                      href="message:"
-                      className="block w-full text-center py-2.5 px-4 bg-[#1F1810] text-white rounded-lg text-sm font-semibold hover:bg-[#C17832] transition-all"
-                    >
-                      Open Mail →
-                    </a>
                   ) : (
-                    // Most non-Apple custom-domain users are on Google
-                    // Workspace or Microsoft 365 — offer both so they can
-                    // pick the right one without us guessing. Self-hosted
-                    // mail users will just ignore both and go to their
-                    // client.
+                    // Unknown domain. macOS Mail.app rejects bare
+                    // `message:` (MCMailErrorDomain 1030) and `mailto:`
+                    // opens compose, so there's no reliable URL to "just
+                    // open the native Mail app" on macOS. Most custom-
+                    // domain users are on Google Workspace or Microsoft
+                    // 365 — offer both webmail entry points so they can
+                    // pick the right one without us guessing. Native-
+                    // client users (Mail.app, Thunderbird, Outlook
+                    // desktop) ignore the links and switch apps directly.
                     <p className="text-xs text-[#5A6B53]/80 text-center">
                       Hosted on Google Workspace or Microsoft 365? Open{" "}
                       <a
