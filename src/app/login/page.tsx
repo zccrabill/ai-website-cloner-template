@@ -15,11 +15,15 @@ import Footer from "@/components/Footer";
 /**
  * Webmail jump targets, keyed by email domain. Lets us send the user
  * straight into their inbox after the magic link is fired off, instead of
- * leaving them to context-switch on their own. Falls back to `mailto:` for
- * unknown domains — opens the OS default mail client (Mail.app on macOS,
- * the system handler elsewhere).
+ * leaving them to context-switch on their own. Returns null for unknown
+ * domains — the `mailto:` protocol is for composing new mail, not opening
+ * the inbox, so the previous fallback opened a compose window instead of
+ * launching the user's mail app. Better to hide the button than tease an
+ * action we can't deliver. Hosted Google Workspace domains aren't covered
+ * here (Gmail does work for many of them, but we can't tell from the
+ * domain alone) — they'll see the success message without the jump button.
  */
-function getMailJump(email: string): { label: string; url: string } {
+function getMailJump(email: string): { label: string; url: string } | null {
   const domain = email.split("@")[1]?.toLowerCase() ?? "";
   const providers: Record<string, { label: string; url: string }> = {
     "gmail.com": { label: "Open Gmail", url: "https://mail.google.com" },
@@ -38,10 +42,7 @@ function getMailJump(email: string): { label: string; url: string } {
     "pm.me": { label: "Open Proton Mail", url: "https://mail.proton.me" },
     "fastmail.com": { label: "Open Fastmail", url: "https://app.fastmail.com" },
   };
-  // Hosted Google Workspace domains aren't in the lookup; Gmail still works
-  // for many of them, but we can't tell from the domain alone. Default to
-  // the OS mailto: handler so the user still has one click into their mail.
-  return providers[domain] ?? { label: "Open Mail", url: "mailto:" };
+  return providers[domain] ?? null;
 }
 
 export default function LoginPage() {
@@ -181,7 +182,7 @@ export default function LoginPage() {
               const jump = getMailJump(submittedEmail);
               return (
                 <div className="mb-6 p-4 bg-[#7A8B6F]/10 border border-[#7A8B6F]/30 rounded-lg">
-                  <p className="text-sm text-[#5A6B53] text-center mb-3">
+                  <p className={`text-sm text-[#5A6B53] text-center${jump ? " mb-3" : ""}`}>
                     Check your email for a magic link to sign in
                     {submittedEmail && (
                       <>
@@ -190,14 +191,16 @@ export default function LoginPage() {
                       </>
                     )}
                   </p>
-                  <a
-                    href={jump.url}
-                    target={jump.url.startsWith("mailto:") ? undefined : "_blank"}
-                    rel={jump.url.startsWith("mailto:") ? undefined : "noopener noreferrer"}
-                    className="block w-full text-center py-2.5 px-4 bg-[#1F1810] text-white rounded-lg text-sm font-semibold hover:bg-[#C17832] transition-all"
-                  >
-                    {jump.label} →
-                  </a>
+                  {jump && (
+                    <a
+                      href={jump.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block w-full text-center py-2.5 px-4 bg-[#1F1810] text-white rounded-lg text-sm font-semibold hover:bg-[#C17832] transition-all"
+                    >
+                      {jump.label} →
+                    </a>
+                  )}
                 </div>
               );
             })()}
