@@ -34,6 +34,8 @@ import {
   Mail,
   ArrowRight,
   Loader2,
+  Plus,
+  Briefcase,
 } from "lucide-react";
 
 interface DashboardStats {
@@ -41,6 +43,7 @@ interface DashboardStats {
   new_intakes: number;
   paying_members: number;
   total_members: number;
+  manual_clients: number;
 }
 
 interface ActivityEvent {
@@ -157,26 +160,35 @@ export default function AdminDashboard() {
   return (
     <div>
       {/* Greeting + refresh */}
-      <div className="mb-10 flex items-end justify-between gap-4">
+      <div className="mb-10 flex items-end justify-between gap-4 flex-wrap">
         <div>
           <h2 className="text-3xl font-bold text-[#1F1810] mb-2">
             Practice overview
           </h2>
           <p className="text-[#6B5B4E]">
-            Workload, recent activity, and member pulse.
+            Workload, recent activity, and client pulse.
           </p>
         </div>
-        <button
-          type="button"
-          onClick={() => {
-            setLoading(true);
-            void load();
-          }}
-          disabled={loading}
-          className="text-sm font-medium text-[#6B5B4E] hover:text-[#1F1810] transition-colors disabled:opacity-50"
-        >
-          {loading ? "Refreshing…" : "Refresh"}
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={() => {
+              setLoading(true);
+              void load();
+            }}
+            disabled={loading}
+            className="text-sm font-medium text-[#6B5B4E] hover:text-[#1F1810] transition-colors disabled:opacity-50"
+          >
+            {loading ? "Refreshing…" : "Refresh"}
+          </button>
+          <Link
+            href="/dashboard/clients"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-[#1F1810] text-white rounded-lg text-sm font-semibold hover:bg-[#C17832] transition-colors"
+          >
+            <Plus className="w-4 h-4" />
+            Add Client
+          </Link>
+        </div>
       </div>
 
       {error && (
@@ -186,7 +198,7 @@ export default function AdminDashboard() {
       )}
 
       {/* Stats row */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-10">
         <StatCard
           icon={Clock}
           label="Pending reviews"
@@ -208,12 +220,21 @@ export default function AdminDashboard() {
           label="Paying members"
           value={stats?.paying_members}
           loading={loading}
+          href="/dashboard/clients"
         />
         <StatCard
           icon={Users}
           label="Total members"
           value={stats?.total_members}
           loading={loading}
+          href="/dashboard/clients"
+        />
+        <StatCard
+          icon={Briefcase}
+          label="Manual clients"
+          value={stats?.manual_clients}
+          loading={loading}
+          href="/dashboard/clients"
         />
       </div>
 

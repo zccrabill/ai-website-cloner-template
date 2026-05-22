@@ -15,6 +15,7 @@ import {
   Menu,
   X,
   ShieldCheck,
+  Users,
 } from "lucide-react";
 
 interface UserData {
@@ -45,6 +46,7 @@ const sidebarItems: {
 ];
 
 const adminItems = [
+  { icon: Users, label: "Clients", href: "/dashboard/clients" },
   { icon: ShieldCheck, label: "Review Queue", href: "/dashboard/review" },
 ];
 
