@@ -182,7 +182,7 @@ export default function LoginPage() {
               const jump = getMailJump(submittedEmail);
               return (
                 <div className="mb-6 p-4 bg-[#7A8B6F]/10 border border-[#7A8B6F]/30 rounded-lg">
-                  <p className={`text-sm text-[#5A6B53] text-center${jump ? " mb-3" : ""}`}>
+                  <p className="text-sm text-[#5A6B53] text-center mb-3">
                     Check your email for a magic link to sign in
                     {submittedEmail && (
                       <>
@@ -191,7 +191,7 @@ export default function LoginPage() {
                       </>
                     )}
                   </p>
-                  {jump && (
+                  {jump ? (
                     <a
                       href={jump.url}
                       target="_blank"
@@ -200,6 +200,32 @@ export default function LoginPage() {
                     >
                       {jump.label} →
                     </a>
+                  ) : (
+                    // Most custom-domain users are on Google Workspace or
+                    // Microsoft 365 — offer both so they can pick the right
+                    // one without us guessing. Self-hosted mail users will
+                    // just ignore both and go to their client.
+                    <p className="text-xs text-[#5A6B53]/80 text-center">
+                      Hosted on Google Workspace or Microsoft 365? Open{" "}
+                      <a
+                        href="https://mail.google.com"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="font-semibold underline decoration-[#5A6B53]/40 hover:decoration-[#5A6B53] hover:text-[#5A6B53]"
+                      >
+                        Gmail
+                      </a>
+                      {" or "}
+                      <a
+                        href="https://outlook.office.com/mail"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="font-semibold underline decoration-[#5A6B53]/40 hover:decoration-[#5A6B53] hover:text-[#5A6B53]"
+                      >
+                        Outlook
+                      </a>
+                      .
+                    </p>
                   )}
                 </div>
               );
