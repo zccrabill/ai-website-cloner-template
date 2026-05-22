@@ -16,7 +16,7 @@ export const dynamic = "force-static";
 const TITLE =
   "Zachariah Crabill, JD — Founder & Attorney, Available Law";
 const DESCRIPTION =
-  "Zachariah Crabill is a Colorado-licensed attorney, founder of Available Law, and creator of the FAIIR certification framework for the Colorado AI Act (SB24-205). Writing and practice focus: AI governance, AI vendor contracts, and small-business legal ops.";
+  "Zachariah Crabill is a Colorado-licensed attorney, founder of Available Law, and creator of the FAIIR certification framework for the Colorado AI Act (SB 26-189). Writing and practice focus: AI governance, AI vendor contracts, and small-business legal ops.";
 
 export const metadata: Metadata = {
   title: TITLE,
@@ -126,10 +126,10 @@ export default function AboutZachariahPage() {
             </p>
 
             <p>
-              His practice focuses on artificial intelligence law — the Colorado
-              AI Act (SB24-205), AI vendor contracts, AI governance programs,
+              His practice focuses on artificial intelligence law — the
+              Colorado AI Act (SB 26-189), AI vendor contracts, AI governance,
               and the documentation regulators will ask for when enforcement
-              begins on June 30, 2026. He built{" "}
+              begins on January 1, 2027. He built{" "}
               <Link href="/faiir" className="text-[#C17832] hover:text-[#D4893F] underline">
                 FAIIR — the Foundation for AI Integrity &amp; Regulation
               </Link>{" "}
@@ -141,12 +141,12 @@ export default function AboutZachariahPage() {
             <p>
               Beyond AI, Zachariah handles the legal work most Colorado small
               businesses actually run into: entity formation, operating
-              agreements, employment questions, vendor contracts, and the
-              occasional hard conversation with a co-founder. He uses Allora,
-              Available Law&apos;s AI legal assistant, to prepare drafts and
-              research faster — but every deliverable is reviewed by a human
-              attorney before it reaches a client. Allora is a tool; the legal
-              judgment is his.
+              agreements, business succession planning, vendor contracts, and
+              the occasional hard conversation with a co-founder. He uses
+              Allora, Available Law&apos;s AI legal assistant, to prepare
+              drafts and research faster — but every deliverable is reviewed
+              by a human attorney before it reaches a client. Allora is a
+              tool; the legal judgment is his.
             </p>
 
             {/* Every claim below is independently verifiable — law school
@@ -163,7 +163,7 @@ export default function AboutZachariahPage() {
               Speaker at the NBCOT Regulatory Webinar in 2025 — both audiences
               focused on professional regulation and compliance frameworks,
               which overlap directly with the documented governance the
-              Colorado AI Act requires of any business deploying high-risk AI.
+              Colorado AI Act requires of any business deploying covered ADMT.
             </p>
           </div>
         </section>
@@ -226,11 +226,11 @@ export default function AboutZachariahPage() {
             </h2>
             <ul className="grid grid-cols-1 md:grid-cols-2 gap-3 text-[#1F1810]">
               {[
-                "Colorado AI Act (SB24-205) compliance",
-                "AI governance and risk management programs",
+                "Colorado AI Act (SB 26-189) compliance",
+                "AI governance and ADMT compliance programs",
                 "FAIIR — Foundation for AI Integrity & Regulation",
                 "AI vendor contract review and negotiation",
-                "NIST AI Risk Management Framework implementation",
+                "Business succession planning and buy-sell agreements",
                 "Technology contracts",
                 "Colorado LLC formation and operating agreements",
                 "Fractional general counsel for small business",
@@ -259,6 +259,11 @@ export default function AboutZachariahPage() {
             <ul className="space-y-4">
               {[
                 {
+                  slug: "colorado-ai-act-rewrite-2026-smb-impact",
+                  title:
+                    "Colorado Just Rewrote Its AI Law — What It Means for Your Small Business",
+                },
+                {
                   slug: "colorado-ai-act-2026",
                   title:
                     "Colorado AI Act 2026: The Plain-Language Guide for Businesses",
@@ -272,11 +277,6 @@ export default function AboutZachariahPage() {
                   slug: "5-ai-vendor-contract-clauses",
                   title:
                     "5 AI Vendor Contract Clauses Your Company Is Missing",
-                },
-                {
-                  slug: "ai-employee-training-requirements",
-                  title:
-                    "AI Employee Training Requirements Under the Colorado AI Act",
                 },
                 {
                   slug: "ai-liability-insurance-coverage",

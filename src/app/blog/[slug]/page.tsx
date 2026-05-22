@@ -11,9 +11,9 @@ import {
   DEFAULT_OG_IMAGE,
 } from "@/lib/seo";
 import ColoradoAiAct2026Article from "@/content/blog/colorado-ai-act-2026";
+import ColoradoAiActRewrite2026SmbImpactArticle from "@/content/blog/colorado-ai-act-rewrite-2026-smb-impact";
 import AiVendorContractClausesArticle from "@/content/blog/5-ai-vendor-contract-clauses";
 import DocumentAiDecisionMakingArticle from "@/content/blog/document-ai-decision-making";
-import AiEmployeeTrainingRequirementsArticle from "@/content/blog/ai-employee-training-requirements";
 import WhatIsFaiirFrameworkArticle from "@/content/blog/what-is-faiir-framework";
 import AiLiabilityInsuranceCoverageArticle from "@/content/blog/ai-liability-insurance-coverage";
 import WhenSmallBusinessNeedsLawyerArticle from "@/content/blog/when-small-business-needs-lawyer";
@@ -36,9 +36,9 @@ interface PostMeta {
 // metadata above, (3) register the component here, (4) add to sitemap.ts.
 const postContent: Record<string, ReactNode> = {
   "colorado-ai-act-2026": <ColoradoAiAct2026Article />,
+  "colorado-ai-act-rewrite-2026-smb-impact": <ColoradoAiActRewrite2026SmbImpactArticle />,
   "5-ai-vendor-contract-clauses": <AiVendorContractClausesArticle />,
   "document-ai-decision-making": <DocumentAiDecisionMakingArticle />,
-  "ai-employee-training-requirements": <AiEmployeeTrainingRequirementsArticle />,
   "what-is-faiir-framework": <WhatIsFaiirFrameworkArticle />,
   "ai-liability-insurance-coverage": <AiLiabilityInsuranceCoverageArticle />,
   "when-small-business-needs-lawyer": <WhenSmallBusinessNeedsLawyerArticle />,
@@ -57,12 +57,20 @@ const postMetadata: Record<string, PostMeta> = {
   },
   "colorado-ai-act-2026": {
     title: "Colorado AI Act 2026: The Plain-Language Guide for Businesses",
-    date: "April 2, 2026 (Updated April 20, 2026)",
+    date: "April 2, 2026 (Updated May 22, 2026)",
     isoDate: "2026-04-02",
-    isoDateModified: "2026-04-20",
+    isoDateModified: "2026-05-22",
     author: "Zachariah Crabill, JD",
     excerpt:
-      "Colorado's AI Act (SB24-205) takes effect June 30, 2026 — pushed back from February 1 during the August 2025 special session. Here's what businesses actually owe as deployers of high-risk AI, and how to build a compliance program that survives an AG inquiry.",
+      "Colorado SB 26-189 — the repeal-and-replace of the original Colorado AI Act — was signed May 14, 2026 and takes effect January 1, 2027. Here's what businesses actually owe as deployers of covered ADMT, and how to build a compliance program that survives an AG cure window.",
+  },
+  "colorado-ai-act-rewrite-2026-smb-impact": {
+    title: "Colorado Just Rewrote Its AI Law — What It Means for Your Small Business",
+    date: "May 22, 2026",
+    isoDate: "2026-05-22",
+    author: "Zachariah Crabill, JD",
+    excerpt:
+      "Governor Polis signed SB 26-189 on May 14, 2026, repealing and replacing the Colorado AI Act before it ever took effect. Here's what actually changed, what Colorado SMBs should do this week, and what to ignore from the SB 24-205 prep cycle.",
   },
   "document-ai-decision-making": {
     title: "How to Document AI Decision-Making for Colorado AI Act Compliance",
@@ -70,15 +78,7 @@ const postMetadata: Record<string, PostMeta> = {
     isoDate: "2026-03-28",
     author: "Zachariah Crabill, JD",
     excerpt:
-      "The Colorado AI Act requires deployers of high-risk AI to maintain a documented record of consequential decisions. Here's the practical logging and audit-trail system we use for FAIIR-certified clients.",
-  },
-  "ai-employee-training-requirements": {
-    title: "AI Employee Training Requirements Under the Colorado AI Act",
-    date: "April 11, 2026",
-    isoDate: "2026-04-11",
-    author: "Zachariah Crabill, JD",
-    excerpt:
-      "The Colorado AI Act requires businesses to train employees who interact with high-risk AI systems. Here's what the law actually requires and how to build a compliant training program.",
+      "The Colorado AI Act requires deployers of covered ADMT to maintain a documented record of consequential decisions. Here's the practical logging and audit-trail system we use for FAIIR-certified clients.",
   },
   "what-is-faiir-framework": {
     title: "What Is the FAIIR Framework? AI Compliance for Colorado Businesses",

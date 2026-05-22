@@ -1,10 +1,20 @@
 /**
  * Colorado AI Act Readiness Assessment
  *
- * A 10-question business-facing assessment mapped to Colorado SB24-205
- * (the Colorado AI Act) and adjacent best practices. Used on /ai-act-checker
+ * A 10-question business-facing assessment mapped to Colorado SB 26-189
+ * (the Colorado AI Act, repeal-and-replace of SB 24-205, signed May 14, 2026
+ * by Governor Polis and effective January 1, 2027). Used on /ai-act-checker
  * to generate a readiness score, RAG status, and a list of specific gaps
  * that feeds the FAIIR sales funnel.
+ *
+ * Why this rewrite: SB 26-189 repeals SB 24-205 in full and replaces the
+ * risk-management framework (duty of care, risk management programs, impact
+ * assessments, AG notification of algorithmic discrimination) with a much
+ * lighter disclosure-based framework. The new statute is built around
+ * "covered ADMT" — automated decision-making technology that materially
+ * influences a consequential decision — and the duties center on pre-use
+ * notice, post-adverse-outcome notice, meaningful human review, developer
+ * documentation, and 3-year recordkeeping.
  *
  * Design notes:
  * - All questions are framed in plain business language — no legal jargon.
@@ -13,8 +23,8 @@
  * - Each option has an associated `gap` string that describes what's missing
  *   when the respondent chooses that option. These are concatenated into the
  *   final report. "Best answer" options have empty gap strings.
- * - The `category` field lets us group gaps in the final report ("Governance,"
- *   "Disclosure," etc.) without hardcoding that grouping elsewhere.
+ * - The `category` field lets us group gaps in the final report ("Notice,"
+ *   "Human Review," etc.) without hardcoding that grouping elsewhere.
  * - Nothing in this file is legal advice — language is intentionally general.
  */
 
@@ -31,12 +41,13 @@ export interface AssessmentQuestion {
   id: string;
   category:
     | "Scope"
-    | "Governance"
-    | "Impact Assessment"
-    | "Disclosure"
+    | "Pre-Use Notice"
+    | "Adverse-Outcome Notice"
     | "Human Review"
-    | "Bias & Fairness"
-    | "Documentation"
+    | "Consumer Data Rights"
+    | "Developer Documentation"
+    | "Recordkeeping"
+    | "Anti-Discrimination"
     | "Incident Response"
     | "Vendor Management";
   prompt: string;
@@ -49,13 +60,13 @@ export const QUESTIONS: AssessmentQuestion[] = [
     id: "ai_use",
     category: "Scope",
     prompt:
-      "Does your business use AI systems to make or inform decisions that affect people?",
+      "Does your business use automated decision-making technology (ADMT) to make or materially influence decisions that affect people?",
     helpText:
-      "Examples: hiring tools, loan or pricing decisions, content moderation, fraud detection, eligibility screening, or employee monitoring.",
+      "Examples: resume screening, loan or pricing models, content moderation, fraud scoring, eligibility decisions, tenant screening, or insurance underwriting.",
     answers: [
       {
         key: "best",
-        label: "Yes, and we have a list of which systems and what they decide",
+        label: "Yes, and we have a written list of which systems and what they decide",
         points: 10,
         gap: "",
       },
@@ -63,27 +74,27 @@ export const QUESTIONS: AssessmentQuestion[] = [
         key: "partial",
         label: "Yes, but we haven't formally inventoried them",
         points: 5,
-        gap: "You haven't built an AI inventory. Colorado's AI Act requires deployers of high-risk AI to know which systems they operate and what decisions those systems influence. Without an inventory, you can't meet the disclosure or impact-assessment duties.",
+        gap: "You haven't built an ADMT inventory. SB 26-189 obligations attach to 'covered ADMT' — technology that processes personal data to materially influence a consequential decision. Without an inventory, you can't determine which of your systems are in scope or which notice and human-review duties apply.",
       },
       {
         key: "none",
         label: "Not sure / probably",
         points: 0,
-        gap: "The first step under the Colorado AI Act is knowing whether you're a 'deployer' of a 'high-risk AI system.' Without that determination, every other duty under the statute is impossible to meet.",
+        gap: "The first step under the new Colorado AI Act is identifying every ADMT your business uses and which consequential decisions each one influences. Without that determination, you cannot meet the statute's notice, human-review, or recordkeeping duties.",
       },
     ],
   },
   {
-    id: "high_risk_classification",
+    id: "covered_admt_classification",
     category: "Scope",
     prompt:
-      "Do you know which of your AI tools would qualify as 'high-risk' under state AI laws like Colorado's AI Act?",
+      "Have you determined which of your tools count as 'covered ADMT' under the new Colorado AI Act?",
     helpText:
-      "'High-risk' generally includes AI used in employment, lending, housing, insurance, healthcare, education, legal services, and essential government services.",
+      "'Covered ADMT' is automated technology that materially influences a consequential decision in education, employment, housing, lending, insurance, healthcare, or government services. Spell-checkers, calculators, and incidental clerical uses are excluded.",
     answers: [
       {
         key: "best",
-        label: "Yes, we've classified them in writing",
+        label: "Yes, classified in writing for each system",
         points: 10,
         gap: "",
       },
@@ -91,96 +102,69 @@ export const QUESTIONS: AssessmentQuestion[] = [
         key: "partial",
         label: "We've discussed it but not documented the classification",
         points: 5,
-        gap: "You've identified high-risk systems informally but haven't created a written classification. The statute's duties attach to high-risk systems specifically, and regulators will expect a documented basis for the classifications you've made.",
+        gap: "An informal classification is not enough. The statute's deployer duties attach to covered ADMT specifically, and the Attorney General will expect a documented basis for the classifications you've made — including which exemptions you relied on.",
       },
       {
         key: "none",
         label: "No — we haven't looked at it",
         points: 0,
-        gap: "Without classifying your AI systems against the 'high-risk' definition, you can't scope your compliance program. This is the single highest-priority action for most Colorado businesses right now.",
+        gap: "Without classifying your ADMT against the 'covered ADMT' definition, you can't scope your compliance program. This is the single highest-priority action for Colorado businesses ahead of the January 1, 2027 effective date.",
       },
     ],
   },
   {
-    id: "governance_policy",
-    category: "Governance",
-    prompt: "Do you have a written AI governance or risk management policy?",
-    helpText:
-      "A policy covering how you procure, deploy, monitor, and retire AI systems in your business.",
-    answers: [
-      {
-        key: "best",
-        label: "Yes, we have a written policy that's actively used",
-        points: 10,
-        gap: "",
-      },
-      {
-        key: "partial",
-        label: "We have a draft or an informal approach",
-        points: 5,
-        gap: "The Colorado AI Act requires deployers of high-risk AI to implement a risk management policy 'reasonable' in light of the NIST AI Risk Management Framework or an equivalent standard. A draft policy that hasn't been finalized and adopted will likely not satisfy the duty of care.",
-      },
-      {
-        key: "none",
-        label: "No",
-        points: 0,
-        gap: "An AI risk management policy is one of the core obligations under the Colorado AI Act for deployers of high-risk AI. Without one, you have no defensible position if something goes wrong with an AI-driven decision.",
-      },
-    ],
-  },
-  {
-    id: "impact_assessment",
-    category: "Impact Assessment",
+    id: "pre_use_notice",
+    category: "Pre-Use Notice",
     prompt:
-      "Before deploying a new AI system, do you conduct a documented impact assessment?",
+      "Do you provide a clear and conspicuous notice that ADMT is used in decisions, and instructions for consumers to learn more?",
     helpText:
-      "An impact assessment looks at what the AI will do, what data it uses, who it affects, and what could go wrong.",
+      "SB 26-189 requires a public-facing notice — typically on your website at points of consumer interaction — that ADMT is involved and how consumers can request additional information.",
     answers: [
       {
         key: "best",
-        label: "Always, and we store the documentation",
+        label: "Yes, posted publicly with clear instructions",
         points: 10,
         gap: "",
       },
       {
         key: "partial",
-        label: "Sometimes, or informally",
+        label: "Buried in a privacy policy or only on some pages",
         points: 5,
-        gap: "Impact assessments are required under the Colorado AI Act for deployers of high-risk AI, and they must be documented and periodically updated. Informal assessments are unlikely to meet the statutory standard.",
-      },
-      {
-        key: "none",
-        label: "Never",
-        points: 0,
-        gap: "Colorado's AI Act requires deployers of high-risk AI to complete and document an impact assessment before deployment and annually thereafter. Not doing this is one of the most common and most citable compliance gaps.",
-      },
-    ],
-  },
-  {
-    id: "disclosure",
-    category: "Disclosure",
-    prompt:
-      "Do you disclose to the people affected when AI is involved in a decision about them?",
-    helpText:
-      "For example, notifying job applicants that AI is used in resume screening, or telling customers that AI generated a pricing decision.",
-    answers: [
-      {
-        key: "best",
-        label: "Yes, clearly and in plain language",
-        points: 10,
-        gap: "",
-      },
-      {
-        key: "partial",
-        label: "Sometimes, or buried in a privacy policy",
-        points: 5,
-        gap: "Disclosure obligations under the Colorado AI Act require clear, consumer-facing notice when a high-risk AI system is used to make a consequential decision. Privacy-policy burial is generally insufficient because consumers do not read those policies.",
+        gap: "Privacy-policy burial does not satisfy the statute's 'clear and conspicuous' standard. The notice has to be reasonably accessible at points of consumer interaction and has to spell out how to get more information.",
       },
       {
         key: "none",
         label: "We don't disclose this",
         points: 0,
-        gap: "Failure to disclose the use of AI in consequential decisions is a direct violation of the Colorado AI Act's consumer-notice provisions. This is also the gap most likely to trigger a consumer complaint.",
+        gap: "Failure to provide pre-use notice is a direct violation of SB 26-189's core disclosure duty and is the gap most likely to surface in a consumer complaint or AG inquiry.",
+      },
+    ],
+  },
+  {
+    id: "adverse_outcome_notice",
+    category: "Adverse-Outcome Notice",
+    prompt:
+      "When ADMT contributes to an adverse outcome for a person, do you send them a plain-language explanation within 30 days?",
+    helpText:
+      "The notice must describe the decision, the ADMT's role, instructions for requesting additional information about the inputs, and the consumer's rights.",
+    answers: [
+      {
+        key: "best",
+        label: "Yes, on a documented 30-day timeline with templated language",
+        points: 10,
+        gap: "",
+      },
+      {
+        key: "partial",
+        label: "We notify, but ad-hoc or beyond 30 days",
+        points: 5,
+        gap: "SB 26-189 requires a plain-language adverse-outcome notice within 30 days, with a defined set of contents (description, ADMT role, request-for-information instructions, consumer rights). Late or inconsistent notices do not meet the statutory standard.",
+      },
+      {
+        key: "none",
+        label: "We don't send adverse-outcome notices",
+        points: 0,
+        gap: "Adverse-outcome notice is one of the two affirmative deployer duties under SB 26-189. Not sending it is a direct compliance failure and exposes the business to enforcement once the statute takes effect on January 1, 2027.",
       },
     ],
   },
@@ -188,41 +172,125 @@ export const QUESTIONS: AssessmentQuestion[] = [
     id: "human_review",
     category: "Human Review",
     prompt:
-      "When AI makes a consequential decision about a person, do you offer them a way to get a human to review it?",
+      "When ADMT contributes to an adverse outcome, can consumers request meaningful human review by a trained person with authority to overturn the decision?",
     helpText:
-      "A 'consequential decision' is anything that affects someone's access to employment, housing, credit, healthcare, insurance, or essential services.",
+      "'Meaningful human review' requires a person with authority to approve, modify, or override the decision, who considers relevant evidence, is trained, and does not default to the system's output.",
     answers: [
       {
         key: "best",
-        label: "Yes, with a clear process and response time",
+        label: "Yes, with named reviewers, training, and a documented process",
         points: 10,
         gap: "",
       },
       {
         key: "partial",
-        label: "Yes, but the process is ad-hoc or undocumented",
+        label: "Yes, but the process is informal or untrained",
         points: 5,
-        gap: "The right to human review under the Colorado AI Act must be meaningful — the statute expects a documented process with reasonable response times. Ad-hoc review does not demonstrate compliance.",
+        gap: "Ad-hoc review does not meet the statute's 'meaningful human review' standard. SB 26-189 requires the reviewer to have authority, training, and access to enough information about the system to second-guess it — not just rubber-stamp it.",
       },
       {
         key: "none",
-        label: "No — the AI decision is final",
+        label: "No — adverse ADMT outcomes are final",
         points: 0,
-        gap: "The Colorado AI Act creates a right to human review of adverse consequential decisions made by AI. Not offering one exposes the business to both statutory liability and individual discrimination claims.",
+        gap: "Consumers have a right to meaningful human review of adverse consequential decisions to the extent commercially reasonable. Offering no review path is a direct violation and the surest way to draw an enforcement action.",
       },
     ],
   },
   {
-    id: "bias_audit",
-    category: "Bias & Fairness",
+    id: "data_access",
+    category: "Consumer Data Rights",
     prompt:
-      "Do you audit your AI systems for bias or discriminatory outcomes?",
+      "Can consumers access and correct the personal data that ADMT uses about them?",
     helpText:
-      "Checking whether the system produces different outcomes across race, gender, age, disability, or other protected groups.",
+      "SB 26-189 ties access and correction rights to the Colorado Privacy Act. Consumers cannot correct opinions, predictions, scores, or protected evaluations — only factually incorrect or materially inaccurate personal data.",
     answers: [
       {
         key: "best",
-        label: "Yes, on a regular schedule",
+        label: "Yes, we have a documented intake and response process",
+        points: 10,
+        gap: "",
+      },
+      {
+        key: "partial",
+        label: "Sometimes, or only on request to support",
+        points: 5,
+        gap: "Without a documented access-and-correction workflow, you cannot reliably meet the response windows the statute incorporates from the Colorado Privacy Act. Inconsistent handling is also a litigation risk if a consumer can show their request went unanswered.",
+      },
+      {
+        key: "none",
+        label: "No process for this",
+        points: 0,
+        gap: "Access and correction are the core consumer rights SB 26-189 preserves from the prior law. Not having a process exposes you to both AG enforcement and reputational damage when a consumer complains publicly.",
+      },
+    ],
+  },
+  {
+    id: "developer_documentation",
+    category: "Developer Documentation",
+    prompt:
+      "For each ADMT vendor, have you obtained the developer documentation the statute requires — intended uses, data categories, known limitations, and human-review instructions?",
+    helpText:
+      "SB 26-189 requires developers to give deployers documentation sufficient to comply, including a statement of intended uses, training data categories (to the extent known), limitations and risks, and instructions for meaningful human review.",
+    answers: [
+      {
+        key: "best",
+        label: "Yes, on file for every covered ADMT vendor",
+        points: 10,
+        gap: "",
+      },
+      {
+        key: "partial",
+        label: "Some vendors, not all",
+        points: 5,
+        gap: "Partial developer documentation leaves you without the inputs you need to draft accurate consumer notices, do meaningful human review, or defend a regulatory inquiry. The developer's documentation is the deployer's foundation.",
+      },
+      {
+        key: "none",
+        label: "We've never asked for this",
+        points: 0,
+        gap: "Without developer documentation, you cannot complete the deployer-side duties under SB 26-189. This is a gap most Colorado businesses don't realize they have because their vendors haven't proactively offered the documentation.",
+      },
+    ],
+  },
+  {
+    id: "recordkeeping",
+    category: "Recordkeeping",
+    prompt:
+      "Do you keep records for at least three years showing how each covered ADMT was used and what notices were sent?",
+    helpText:
+      "Decision logs, copies of notices sent, vendor documentation, human-review outcomes, and any consumer access or correction responses.",
+    answers: [
+      {
+        key: "best",
+        label: "Yes, on a documented 3-year retention schedule",
+        points: 10,
+        gap: "",
+      },
+      {
+        key: "partial",
+        label: "Some records, but not on a defined schedule",
+        points: 5,
+        gap: "Inconsistent recordkeeping makes it impossible to demonstrate compliance during the AG's 60-day cure window. The statute expects a 3-year retention floor and structured records.",
+      },
+      {
+        key: "none",
+        label: "No structured records",
+        points: 0,
+        gap: "Recordkeeping is the spine of SB 26-189 compliance. Without records, you cannot defend a consumer complaint or respond to an AG cure notice with anything other than 'trust us.'",
+      },
+    ],
+  },
+  {
+    id: "anti_discrimination",
+    category: "Anti-Discrimination",
+    prompt:
+      "Do you monitor ADMT outcomes for disparate impact across protected classes?",
+    helpText:
+      "SB 26-189 removed the prior law's algorithmic-discrimination duty, but state anti-discrimination law still applies — and the statute now expressly preserves liability for discriminatory outcomes materially influenced by ADMT.",
+    answers: [
+      {
+        key: "best",
+        label: "Yes, on a regular schedule with documented results",
         points: 10,
         gap: "",
       },
@@ -230,69 +298,13 @@ export const QUESTIONS: AssessmentQuestion[] = [
         key: "partial",
         label: "Only when a problem comes up",
         points: 5,
-        gap: "Reactive bias auditing is not enough under the Colorado AI Act's duty to use 'reasonable care' to avoid algorithmic discrimination. Ongoing, scheduled audits are the expected standard of care.",
+        gap: "Reactive monitoring is not enough. Under SB 26-189, developers and deployers can still be held liable in discrimination actions arising from ADMT-influenced decisions, and indemnity clauses purporting to shift that liability are void. Ongoing monitoring is the practical defense.",
       },
       {
         key: "none",
-        label: "No",
+        label: "No monitoring",
         points: 0,
-        gap: "The Colorado AI Act imposes a duty of reasonable care on deployers to prevent algorithmic discrimination. A business that has never audited its AI for bias will have no defense if disparate outcomes surface later.",
-      },
-    ],
-  },
-  {
-    id: "documentation",
-    category: "Documentation",
-    prompt:
-      "Do you keep records of the data your AI systems were trained on and how they operate?",
-    helpText:
-      "Training data sources, vendor documentation, model versions, and decision logs.",
-    answers: [
-      {
-        key: "best",
-        label: "Yes, comprehensive records for each system",
-        points: 10,
-        gap: "",
-      },
-      {
-        key: "partial",
-        label: "Some records, mostly from the vendor",
-        points: 5,
-        gap: "Vendor documentation alone is not enough — the Colorado AI Act places independent documentation duties on deployers, including records sufficient to show the business is meeting its risk-management and disclosure obligations.",
-      },
-      {
-        key: "none",
-        label: "No records",
-        points: 0,
-        gap: "Documentation is the backbone of every AI compliance regime. Without records, you can't demonstrate compliance, respond to a consumer complaint, or defend a regulatory inquiry.",
-      },
-    ],
-  },
-  {
-    id: "incident_response",
-    category: "Incident Response",
-    prompt:
-      "Do you have an incident response plan for AI system failures or harmful outputs?",
-    helpText:
-      "What happens when the AI makes a wrong call, produces a harmful output, or affects a protected group disproportionately?",
-    answers: [
-      {
-        key: "best",
-        label: "Yes, with clear escalation and notification steps",
-        points: 10,
-        gap: "",
-      },
-      {
-        key: "partial",
-        label: "Informal — we'd handle it case by case",
-        points: 5,
-        gap: "Informal incident handling does not meet the Colorado AI Act's risk management expectations. Deployers of high-risk AI must have a documented response process, including timelines for notifying affected individuals and, in some cases, the Attorney General.",
-      },
-      {
-        key: "none",
-        label: "No plan",
-        points: 0,
-        gap: "A documented incident response plan is a core requirement of any AI risk management program. The Colorado AI Act's notification duties give regulators and consumers a right to prompt, structured responses to AI harms.",
+        gap: "The new statute did not eliminate algorithmic-discrimination risk — it preserved it by tying liability into state anti-discrimination law. A business that has never tested its ADMT for disparate outcomes has no defense if disparate outcomes surface later.",
       },
     ],
   },
@@ -300,13 +312,13 @@ export const QUESTIONS: AssessmentQuestion[] = [
     id: "vendor_contracts",
     category: "Vendor Management",
     prompt:
-      "Have you reviewed your contracts with AI vendors for compliance and liability protections?",
+      "Have you reviewed your ADMT vendor contracts for developer-documentation, audit, and indemnity terms?",
     helpText:
-      "Including indemnification for IP, data rights, bias audits, and who bears the cost of a regulatory failure.",
+      "Including the right to receive ongoing documentation, indemnification for vendor-caused failures, data ownership, and clarification that indemnity for the deployer's own discriminatory conduct is unenforceable in Colorado.",
     answers: [
       {
         key: "best",
-        label: "Yes, every AI vendor contract has been reviewed",
+        label: "Yes, every ADMT vendor contract has been reviewed",
         points: 10,
         gap: "",
       },
@@ -314,13 +326,13 @@ export const QUESTIONS: AssessmentQuestion[] = [
         key: "partial",
         label: "We've reviewed some, not all",
         points: 5,
-        gap: "Partial vendor contract review leaves gaps — a single unreviewed vendor can introduce liability you haven't accounted for. The Colorado AI Act assumes deployers have contractual visibility into vendor practices.",
+        gap: "Partial review leaves gaps — a single unreviewed vendor can introduce documentation, audit, or indemnity risk you haven't accounted for. SB 26-189 expects deployers to have contractual visibility into the vendor's compliance posture.",
       },
       {
         key: "none",
         label: "No — we use standard vendor terms as-is",
         points: 0,
-        gap: "Standard vendor terms almost always push risk onto the customer. Without a targeted review, you are likely bearing indemnification risk, data liability, and regulatory exposure that belongs on the vendor's side of the contract.",
+        gap: "Standard ADMT vendor terms almost always shift documentation and audit burdens to the deployer. Without a targeted review, you are likely bearing risks that should be on the vendor's side of the contract.",
       },
     ],
   },
@@ -365,15 +377,15 @@ export function scoreAssessment(
     rag === "green"
       ? "Strong foundation — keep it maintained"
       : rag === "amber"
-        ? "Material gaps to close before 2026"
-        : "High exposure under the Colorado AI Act";
+        ? "Material gaps to close before January 1, 2027"
+        : "High exposure under the new Colorado AI Act";
 
   const summary =
     rag === "green"
-      ? "Your business has the core elements of an AI compliance program in place. The remaining work is mostly maintenance, documentation refinement, and periodic audit. Our FAIIR certification can formalize what you already have and give you a defensible certificate to show customers, partners, and regulators."
+      ? "Your business has the core elements of an ADMT compliance program in place. The remaining work is mostly maintenance, notice-language refinement, and periodic monitoring. Our FAIIR certification can formalize what you already have and give you a defensible certificate to show customers, partners, and regulators."
       : rag === "amber"
-        ? "You have some of the pieces but not a cohesive program. The Colorado AI Act takes effect June 30, 2026 and most of the missing work takes 4–8 weeks to stand up properly. A FAIIR assessment will prioritize which gaps to close first and give you a written roadmap."
-        : "You are running AI in ways that the Colorado AI Act will regulate, without the policies, disclosures, or documentation the statute requires. This is a material legal and reputational risk. A FAIIR assessment is the fastest way to get organized, document what you already do, and build the missing pieces before the enforcement window opens.";
+        ? "You have some of the pieces but not a cohesive program. Colorado SB 26-189 takes effect January 1, 2027 and the disclosure-based framework is much faster to stand up than the prior law's risk-management regime — typically 3–6 weeks. A FAIIR assessment will prioritize which gaps to close first and give you a written roadmap."
+        : "You are running ADMT in ways that the new Colorado AI Act regulates, without the notices, human-review process, or documentation the statute requires. This is a material legal and reputational risk. A FAIIR assessment is the fastest way to get organized and build the missing pieces before the January 1, 2027 effective date.";
 
   const ctaText =
     rag === "green"

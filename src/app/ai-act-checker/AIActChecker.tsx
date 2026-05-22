@@ -247,9 +247,11 @@ function IntroScreen({ onStart }: { onStart: () => void }) {
         <span className="italic">Colorado AI Act</span>?
       </h1>
       <p className="text-lg md:text-xl text-[#6B5B4E] leading-relaxed mb-8">
-        Colorado Senate Bill 24-205 takes effect on June 30, 2026 and creates
-        new duties for any business that uses AI to make consequential
-        decisions about people. This 10-question assessment — built by a Colorado attorney —
+        Colorado Senate Bill 26-189 — the May 2026 repeal-and-replace of the
+        original Colorado AI Act — takes effect on January 1, 2027 and
+        creates new duties for any business that uses automated
+        decision-making technology to make consequential decisions about
+        people. This 10-question assessment — built by a Colorado attorney —
         will show you exactly where you stand and what to fix first.
       </p>
 

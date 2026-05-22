@@ -42,7 +42,7 @@ export const CITIES: CityData[] = [
     city: "Denver",
     titleSuffix: "Denver Small Business Attorney",
     description:
-      "Subscription legal counsel for Denver small businesses — flat $50–$300/month. AI vendor contracts, Colorado AI Act compliance, employment, and business formation.",
+      "Subscription legal counsel for Denver small businesses — flat $50–$300/month. AI vendor contracts, Colorado AI Act compliance, succession planning, and business formation.",
     latitude: 39.7392,
     longitude: -104.9903,
     heroIntro:
@@ -55,14 +55,14 @@ export const CITIES: CityData[] = [
       "Cannabis and dispensary operators",
     ],
     aiActLocalAngle:
-      "Denver's tech sector — especially Boulder-adjacent AI startups, HR-tech vendors, and healthcare AI deployers — sits squarely inside the Colorado AI Act's (SB24-205) definition of high-risk AI. Denver companies that hire, lend, or deliver healthcare decisions through AI need a documented governance program by June 30, 2026.",
+      "Denver's tech sector — especially Boulder-adjacent AI startups, HR-tech vendors, and healthcare AI deployers — sits squarely inside SB 26-189's definition of covered ADMT. Denver companies that screen hires, score loans, or assist healthcare decisions through AI need a notice-and-human-review program in place by January 1, 2027.",
   },
   {
     slug: "colorado-springs",
     city: "Colorado Springs",
     titleSuffix: "Colorado Springs Small Business Attorney",
     description:
-      "Subscription legal counsel for Colorado Springs small businesses — flat $50–$300/month. AI vendor contracts, Colorado AI Act compliance, employment, and business formation.",
+      "Subscription legal counsel for Colorado Springs small businesses — flat $50–$300/month. AI vendor contracts, Colorado AI Act compliance, succession planning, and business formation.",
     latitude: 38.8339,
     longitude: -104.8214,
     heroIntro:
@@ -75,14 +75,14 @@ export const CITIES: CityData[] = [
       "Home services and trades",
     ],
     aiActLocalAngle:
-      "Colorado Springs' defense and cybersecurity ecosystem means a disproportionate number of local employers screen applicants with AI-assisted tools — exactly the use case the Colorado AI Act treats as high-risk. Local employment decisions made with AI will need documented bias testing and consumer notice once SB24-205 takes effect on June 30, 2026.",
+      "Colorado Springs' defense and cybersecurity ecosystem means a disproportionate number of local employers screen applicants with AI-assisted tools — exactly the use case Colorado SB 26-189 treats as covered ADMT in the employment domain. Local hiring decisions made with AI will need pre-use notices, 30-day adverse-outcome notices, and a meaningful human-review path once the statute takes effect on January 1, 2027.",
   },
   {
     slug: "fort-collins",
     city: "Fort Collins",
     titleSuffix: "Fort Collins Small Business Attorney",
     description:
-      "Subscription legal counsel for Fort Collins small businesses — flat $50–$300/month. AI vendor contracts, Colorado AI Act compliance, employment, and business formation.",
+      "Subscription legal counsel for Fort Collins small businesses — flat $50–$300/month. AI vendor contracts, Colorado AI Act compliance, succession planning, and business formation.",
     latitude: 40.5853,
     longitude: -105.0844,
     heroIntro:
@@ -95,14 +95,14 @@ export const CITIES: CityData[] = [
       "Construction and engineering firms",
     ],
     aiActLocalAngle:
-      "Fort Collins is a small-business hub with a heavy cluster of CSU spinouts working in AI, robotics, and cleantech. Spinouts that sell AI products into hiring, lending, or healthcare markets fall under the Colorado AI Act's developer duties — a distinct compliance track from simple deployer obligations, and one most local founders haven't planned for.",
+      "Fort Collins is a small-business hub with a heavy cluster of CSU spinouts working in AI, robotics, and cleantech. Spinouts that sell ADMT into hiring, lending, or healthcare markets fall under SB 26-189's developer duties — a distinct compliance track from deployer obligations, and one most local founders haven't planned for.",
   },
   {
     slug: "boulder",
     city: "Boulder",
     titleSuffix: "Boulder Small Business Attorney",
     description:
-      "Subscription legal counsel for Boulder small businesses — flat $50–$300/month. AI vendor contracts, Colorado AI Act compliance, employment, and business formation.",
+      "Subscription legal counsel for Boulder small businesses — flat $50–$300/month. AI vendor contracts, Colorado AI Act compliance, succession planning, and business formation.",
     latitude: 40.015,
     longitude: -105.2705,
     heroIntro:
@@ -115,14 +115,14 @@ export const CITIES: CityData[] = [
       "Climate tech and cleantech",
     ],
     aiActLocalAngle:
-      "Boulder has one of the densest concentrations of early-stage AI companies in the Mountain West. Founders building models, APIs, or agents for consumer-facing decisions are developers under the Colorado AI Act — with documentation, impact assessment, and downstream-notice duties that are materially more demanding than the obligations on their customers.",
+      "Boulder has one of the densest concentrations of early-stage AI companies in the Mountain West. Founders building models, APIs, or agents for consumer-facing decisions are developers under SB 26-189 — with documentation and downstream-disclosure duties to deployers that most local founders haven't yet built.",
   },
   {
     slug: "aurora",
     city: "Aurora",
     titleSuffix: "Aurora Small Business Attorney",
     description:
-      "Subscription legal counsel for Aurora small businesses — flat $50–$300/month. AI vendor contracts, Colorado AI Act compliance, employment, and business formation.",
+      "Subscription legal counsel for Aurora small businesses — flat $50–$300/month. AI vendor contracts, Colorado AI Act compliance, succession planning, and business formation.",
     latitude: 39.7294,
     longitude: -104.8319,
     heroIntro:
@@ -135,6 +135,6 @@ export const CITIES: CityData[] = [
       "Immigrant-owned small businesses",
     ],
     aiActLocalAngle:
-      "Aurora's healthcare density — particularly around the Anschutz Medical Campus — makes Colorado AI Act compliance especially pointed for local providers. Any clinical decision-support or patient-triage AI used by Aurora providers is a high-risk system under SB24-205 once it takes effect on June 30, 2026.",
+      "Aurora's healthcare density — particularly around the Anschutz Medical Campus — makes Colorado AI Act compliance especially pointed for local providers. Any clinical decision-support or patient-triage tool used by Aurora providers is covered ADMT under SB 26-189 once it takes effect on January 1, 2027.",
   },
 ];

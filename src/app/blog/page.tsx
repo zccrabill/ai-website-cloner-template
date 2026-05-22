@@ -8,7 +8,7 @@ import { breadcrumbSchema } from "@/lib/seo";
 export const metadata: Metadata = {
   title: "Colorado AI Act & Small Business Legal Blog",
   description:
-    "Plain-language analysis of the Colorado AI Act (SB24-205), AI vendor contracts, FAIIR compliance, and small-business legal questions — written by Zachariah Crabill, JD, founder of Available Law.",
+    "Plain-language analysis of the Colorado AI Act (SB 26-189), AI vendor contracts, FAIIR compliance, and small-business legal questions — written by Zachariah Crabill, JD, founder of Available Law.",
   alternates: { canonical: "/blog" },
   openGraph: {
     type: "website",
@@ -27,11 +27,11 @@ interface BlogPost {
 
 const blogPosts: BlogPost[] = [
   {
-    slug: "ai-employee-training-requirements",
-    title: "AI Employee Training Requirements Under the Colorado AI Act",
-    date: "April 11, 2026",
+    slug: "colorado-ai-act-rewrite-2026-smb-impact",
+    title: "Colorado Just Rewrote Its AI Law — What It Means for Your Small Business",
+    date: "May 22, 2026",
     excerpt:
-      "The Colorado AI Act requires businesses to train employees who interact with high-risk AI systems. Here's what the law actually requires and how to build a compliant training program.",
+      "Governor Polis signed SB 26-189 on May 14, 2026, repealing and replacing the Colorado AI Act before it ever took effect. Here's what actually changed, what Colorado SMBs should do this week, and what to ignore from the SB 24-205 prep cycle.",
   },
   {
     slug: "what-is-faiir-framework",
@@ -78,9 +78,9 @@ const blogPosts: BlogPost[] = [
   {
     slug: "colorado-ai-act-2026",
     title: "Colorado AI Act 2026: The Plain-Language Guide for Businesses",
-    date: "Updated April 20, 2026",
+    date: "Updated May 22, 2026",
     excerpt:
-      "SB24-205 takes effect June 30, 2026 — pushed back from February 1 in the August 2025 special session. What your business actually owes as a deployer of high-risk AI.",
+      "SB 26-189 — the repeal-and-replace of the original Colorado AI Act — was signed May 14, 2026 and takes effect January 1, 2027. What your business actually owes as a deployer of covered ADMT.",
   },
   {
     slug: "document-ai-decision-making",

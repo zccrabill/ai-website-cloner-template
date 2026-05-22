@@ -17,7 +17,7 @@ export const SITE_TAGLINE = "Legal Solutions for All";
  * Open Graph. Keep under 160 so Google doesn't truncate.
  */
 export const SITE_DESCRIPTION =
-  "Colorado subscription law firm for small business — flat $50–$300/month. Contracts, employment, AI vendor review, and Colorado AI Act (SB24-205) compliance. No billable hours.";
+  "Colorado subscription law firm for small business — flat $50–$300/month. Contracts, succession planning, AI vendor review, and Colorado AI Act (SB 26-189) compliance. No billable hours.";
 
 /**
  * Long-form entity description for JSON-LD schema. Search engines and LLM
@@ -28,7 +28,7 @@ export const SITE_DESCRIPTION =
  * can quote it cleanly.
  */
 export const SITE_DESCRIPTION_LONG =
-  "Available Law is a Colorado-licensed, FAIIR-certified virtual law firm serving small businesses on a flat monthly subscription. It handles contracts, employment, AI vendor review, and Colorado AI Act (SB24-205) compliance through four subscription tiers — Explore, Build, Grow, and Lead — without billable hours. Available Law is also the home of FAIIR, the Foundation for AI Integrity & Regulation, an AI certification framework for the Colorado AI Act.";
+  "Available Law is a Colorado-licensed, FAIIR-certified virtual law firm serving small businesses on a flat monthly subscription. It handles contracts, business succession planning, AI vendor review, and Colorado AI Act (SB 26-189) compliance through four subscription tiers — Explore, Build, Grow, and Lead — without billable hours. Available Law is also the home of FAIIR, the Foundation for AI Integrity & Regulation, an AI certification framework for the Colorado AI Act.";
 export const CONTACT_EMAIL = "zachariah@availablelaw.com";
 export const FOUNDER_NAME = "Zachariah Crabill";
 export const FOUNDER_CREDENTIAL = "JD";
@@ -101,13 +101,14 @@ export function organizationSchema() {
     ],
     knowsAbout: [
       "Colorado AI Act",
-      "Colorado Senate Bill 24-205",
+      "Colorado Senate Bill 26-189",
+      "Automated Decision-Making Technology",
       "Artificial Intelligence Compliance",
       "AI Governance",
       "Vendor Contracts",
       "Technology Law",
       "Business Formation",
-      "Employment Contracts",
+      "Business Succession Planning",
     ],
     priceRange: "$$",
     address: {
@@ -270,21 +271,22 @@ export function personSchema() {
     honorificSuffix: FOUNDER_CREDENTIAL,
     jobTitle: "Founder & Attorney",
     description:
-      "Zachariah Crabill is a Colorado-licensed attorney and the founder of Available Law, LLC. He built FAIIR — the Foundation for AI Integrity & Regulation — a compliance certification framework for the Colorado AI Act. He writes and speaks regularly on artificial intelligence law, the Colorado AI Act (SB24-205), and how small businesses can build defensible AI governance programs without a big-firm budget.",
+      "Zachariah Crabill is a Colorado-licensed attorney and the founder of Available Law, LLC. He built FAIIR — the Foundation for AI Integrity & Regulation — a compliance certification framework for the Colorado AI Act. He writes and speaks regularly on artificial intelligence law, the Colorado AI Act (SB 26-189), and how small businesses can build defensible AI governance programs without a big-firm budget.",
     url: FOUNDER_URL,
     image: `${SITE_URL}/images/logo-transparent.png`,
     worksFor: { "@id": `${SITE_URL}/#organization` },
     memberOf: { "@id": `${SITE_URL}/#organization` },
     knowsAbout: [
       "Colorado AI Act",
-      "Colorado Senate Bill 24-205",
+      "Colorado Senate Bill 26-189",
+      "Automated Decision-Making Technology",
       "Artificial Intelligence Law",
       "AI Governance",
       "AI Vendor Contracts",
       "Technology Contracts",
       "Business Formation",
+      "Business Succession Planning",
       "Startup Law",
-      "NIST AI Risk Management Framework",
       "AI Compliance Auditing",
     ],
     // alumniOf and hasCredential are intentionally omitted from the schema
@@ -410,7 +412,7 @@ export const HOMEPAGE_FAQS: Array<{ question: string; answer: string }> = [
   {
     question: "What is Available Law?",
     answer:
-      "Available Law is a Colorado-licensed, FAIIR-certified virtual law firm serving small businesses on a flat monthly subscription. Instead of billable hours, clients pay a predictable monthly fee for contracts, employment support, AI vendor review, and Colorado AI Act (SB24-205) compliance. Available Law pairs licensed Colorado attorneys with Allora, an AI legal assistant, to deliver work faster without sacrificing attorney review.",
+      "Available Law is a Colorado-licensed, FAIIR-certified virtual law firm serving small businesses on a flat monthly subscription. Instead of billable hours, clients pay a predictable monthly fee for contracts, business succession planning, AI vendor review, and Colorado AI Act (SB 26-189) compliance. Available Law pairs licensed Colorado attorneys with Allora, an AI legal assistant, to deliver work faster without sacrificing attorney review.",
   },
   {
     question: "What is FAIIR?",
@@ -435,6 +437,6 @@ export const HOMEPAGE_FAQS: Array<{ question: string; answer: string }> = [
   {
     question: "What is the Colorado AI Act?",
     answer:
-      "The Colorado AI Act (Senate Bill 24-205) is a 2024 Colorado law that regulates the development and deployment of high-risk artificial intelligence systems. It imposes duties on developers and deployers to prevent algorithmic discrimination, maintain risk management programs, and disclose when AI is used to make consequential decisions. The law takes effect on June 30, 2026 — pushed back from its original February 1, 2026 effective date by the Colorado General Assembly in the August 2025 special session.",
+      "The Colorado AI Act is now Senate Bill 26-189, the repeal-and-replace law signed by Governor Polis on May 14, 2026 and effective January 1, 2027. SB 26-189 fully repeals the 2024 law (SB 24-205) and substitutes a disclosure-and-human-review framework. It regulates 'covered ADMT' — automated decision-making technology that materially influences a consequential decision in education, employment, housing, lending, insurance, healthcare, or government services — and requires deployers to post a clear and conspicuous pre-use notice, send a 30-day adverse-outcome notice, offer meaningful human review of adverse outcomes, and maintain three years of records. The Colorado Attorney General has exclusive enforcement authority with a 60-day cure period sunsetting January 1, 2030.",
   },
 ];

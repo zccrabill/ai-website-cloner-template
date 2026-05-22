@@ -89,20 +89,20 @@ const ASSESSMENT_TIERS: AssessmentTier[] = [
   {
     key: "starter",
     name: "Starter",
-    tagline: "For SMBs with one or two high-risk AI systems in production.",
+    tagline: "For SMBs with one or two AI systems making consequential decisions.",
     priceUsd: 2500,
     priceLabel: "$2,500",
     priceSuffix: "one-time",
     footnote:
-      "Fixed fee for 1–2 high-risk systems, single business unit. Scoped on a free 30-min discovery call.",
+      "Fixed fee for 1–2 in-scope ADMT systems, single business unit. Scoped on a free 30-min discovery call.",
     badge: "Start here",
     features: [
-      "Attorney-led AI inventory and high-risk classification (up to 2 systems)",
-      "Written impact assessments (1 per high-risk system)",
-      "Gap analysis mapped to SB24-205 duties",
-      "Draft AI governance policy and consumer disclosure language",
+      "Attorney-led ADMT inventory and covered-ADMT classification (up to 2 systems)",
+      "Written system review (1 per covered ADMT)",
+      "Gap analysis mapped to SB 26-189 duties",
+      "Draft pre-use notice and 30-day adverse-outcome notice templates",
       "Vendor contract review (up to 5 agreements)",
-      "Written incident response plan template",
+      "Meaningful human-review process documentation",
       "Final report with prioritized remediation roadmap",
       "FAIIR certification letter on completion",
       "Typical delivery: 3 weeks",
@@ -123,9 +123,9 @@ const ASSESSMENT_TIERS: AssessmentTier[] = [
     featured: true,
     features: [
       "Everything in Starter, plus:",
-      "Up to 5 written impact assessments",
+      "Up to 5 written ADMT system reviews",
       "Vendor contract review (up to 10 agreements)",
-      "Bias audit methodology design + first pass",
+      "Disparate-impact monitoring methodology + first pass",
       "Board-ready executive summary + risk register",
       "Stakeholder workshop (1 hour, virtual)",
       "Priority delivery: 2–3 weeks",
@@ -141,13 +141,13 @@ const ASSESSMENT_TIERS: AssessmentTier[] = [
     priceLabel: "From $15,000",
     priceSuffix: "one-time",
     footnote:
-      "Custom scope for 6+ high-risk systems, multiple business units, or regulated industries (legal services, healthcare, finance, insurance, employment, education, housing, or essential government services).",
+      "Custom scope for 6+ covered ADMT systems, multiple business units, or regulated industries (healthcare, finance, insurance, education, housing, or essential government services).",
     features: [
       "Everything in Professional, plus:",
-      "Unlimited impact assessments and vendor reviews",
-      "Multi-business-unit scoping and governance mapping",
+      "Unlimited ADMT system reviews and vendor reviews",
+      "Multi-business-unit scoping and notice rollout",
       "Dedicated engagement attorney",
-      "Custom bias-audit working sessions with your data team",
+      "Custom disparate-impact working sessions with your data team",
       "Expert-witness-quality documentation",
       "White-glove delivery: 4–6 weeks",
       "Quarterly partner debriefs through Year 1",
@@ -165,11 +165,11 @@ const MEMBERSHIP_TIERS: MembershipTier[] = [
     monthlyUsd: 49,
     annualUsd: 490,
     features: [
-      "Coverage for 1–2 high-risk AI systems",
-      "Quarterly policy refresh + re-certification review",
-      "Regulatory update briefings when SB24-205 guidance issues",
+      "Coverage for 1–2 covered ADMT systems",
+      "Quarterly notice + process refresh + re-certification review",
+      "Regulatory update briefings when SB 26-189 guidance issues",
       "Email attorney Q&A — 1 business day response",
-      "Audit-trail templates and logging guidance",
+      "Recordkeeping templates and decision-log guidance",
       "5 vendor contract spot-checks per year",
       "Allora AI legal assistant access",
       "Cancel anytime",
@@ -185,11 +185,11 @@ const MEMBERSHIP_TIERS: MembershipTier[] = [
     annualUsd: 1490,
     featured: true,
     features: [
-      "Coverage for up to 5 high-risk AI systems",
-      "Monthly policy refresh + ad-hoc updates when guidance issues",
+      "Coverage for up to 5 covered ADMT systems",
+      "Monthly notice + process refresh, ad-hoc updates when guidance issues",
       "Email + chat attorney Q&A — same-day response",
       "15 vendor contract spot-checks per year",
-      "Incident response coordination — same-day engagement",
+      "Consumer complaint / AG inquiry coordination — same-day engagement",
       "Quarterly virtual business review with your attorney",
       "Priority Allora queue",
       "Annual re-certification audit included (a $1,250 value)",
@@ -245,13 +245,6 @@ const MAX_MEMBERSHIP_PERCENT_OFF = Math.max(
   0,
   ...MEMBERSHIP_TIERS.map((t) => annualPercentOff(t) ?? 0),
 );
-
-// Cohort credit offer — founding-member promo tied to the June 2026
-// Legal Defense Cohort launch. Sign up for both an assessment and a
-// 12-month annual membership before the cutoff and the assessment fee
-// credits toward the first year of membership.
-const COHORT_OFFER_DEADLINE = "May 31, 2026";
-const COHORT_OFFER_NAME = "Founding Cohort offer";
 
 export default function FaiirLanding({ faqs }: FaiirLandingProps) {
   return (
@@ -366,21 +359,21 @@ function Hero() {
         <div className="max-w-3xl mx-auto text-center">
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#C17832]/10 border border-[#C17832]/30 text-[#C17832] text-xs font-semibold uppercase tracking-widest mb-6">
             <ShieldCheck className="w-3.5 h-3.5" />
-            Colorado AI Act · SB24-205
+            Colorado AI Act · SB 26-189
           </div>
           <h1
             className="text-[44px] md:text-[64px] leading-[1.05] text-[#1F1810] mb-6"
             style={{ fontFamily: "'Playfair Display', serif", fontWeight: 400 }}
           >
-            Colorado&rsquo;s AI Act is here.
+            Colorado&rsquo;s new AI Act is here.
             <br />
             <span className="italic text-[#C17832]">Prove your business is ready.</span>
           </h1>
           <p className="text-lg md:text-xl text-[#6B5B4E] leading-relaxed mb-10 max-w-2xl mx-auto">
             FAIIR is the attorney-led compliance certification for businesses
-            deploying high-risk AI in Colorado. One assessment, one written
-            report, ongoing monitoring — built around the statutory duties in
-            Senate Bill 24-205.
+            deploying covered ADMT in Colorado. One assessment, one written
+            report, ongoing monitoring — built around the disclosure and
+            human-review duties in Senate Bill 26-189.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <a
@@ -431,18 +424,18 @@ function ProblemSection() {
   const facts = [
     {
       icon: AlertTriangle,
-      headline: "Enforcement starts in 2026",
-      body: "Colorado's Attorney General has exclusive authority to enforce SB24-205 against deployers of high-risk AI systems. Violations can carry civil penalties of up to $20,000 per violation.",
+      headline: "Enforcement starts January 1, 2027",
+      body: "Colorado's Attorney General has exclusive authority to enforce SB 26-189 against developers and deployers of covered ADMT. A 60-day cure period applies until 2030 — and disappears after that.",
     },
     {
       icon: Scale,
       headline: "The law applies broadly",
-      body: "Any business using AI to make — or substantially assist in making — consequential decisions about hiring, lending, insurance, housing, education, healthcare, legal services, or essential government services is a deployer under the statute.",
+      body: "Any business using ADMT to materially influence consequential decisions about education, employment, residential real estate, lending, insurance, healthcare, or government services is a deployer under the statute.",
     },
     {
       icon: FileSearch,
       headline: "Most businesses have no plan",
-      body: "Risk management programs, impact assessments, consumer disclosures, bias audits, and incident response plans are all required. Most Colorado businesses do not yet have any of these in writing.",
+      body: "Pre-use notices, 30-day adverse-outcome notices, meaningful human review, developer documentation, and 3-year recordkeeping are all required. Most Colorado businesses do not yet have any of these in writing.",
     },
   ];
 
@@ -457,12 +450,12 @@ function ProblemSection() {
             className="text-3xl md:text-4xl text-[#1F1810] leading-tight mb-4"
             style={{ fontFamily: "'Playfair Display', serif", fontWeight: 400 }}
           >
-            The Colorado AI Act is the first comprehensive state AI law in the U.S.
+            Colorado&rsquo;s 2026 rewrite of its AI law is the most far-reaching state AI law in the U.S.
           </h2>
           <p className="text-[#6B5B4E] leading-relaxed">
-            It imposes affirmative duties on the deployers of high-risk AI —
+            It imposes affirmative duties on the deployers of covered ADMT —
             not just the developers. If your business uses AI to decide who
-            gets hired, approved, admitted, insured, or served, SB24-205
+            gets hired, approved, admitted, insured, or served, SB 26-189
             reaches you.
           </p>
         </div>
@@ -513,8 +506,8 @@ function WhatIsFaiir() {
         </h2>
         <p className="text-lg text-white/70 leading-relaxed max-w-2xl mx-auto">
           A FAIIR-certified business has completed a structured audit of its
-          AI governance, impact assessments, human-review processes, vendor
-          contracts, and incident response plans — and maintains those
+          ADMT inventory, consumer notices, meaningful human-review process,
+          vendor documentation, and recordkeeping — and maintains those
           standards through ongoing monitoring. Certification is delivered
           by a Colorado-licensed attorney, so the work product is legal
           analysis, not a generic audit checklist.
@@ -532,23 +525,23 @@ function PillarsSection() {
   const pillars = [
     {
       icon: FileSearch,
-      title: "Risk management program",
-      body: "A documented, iterative process for identifying and mitigating risks of algorithmic discrimination in every high-risk AI system your business deploys.",
+      title: "Pre-use &amp; adverse-outcome notices",
+      body: "A clear and conspicuous public notice that ADMT is used, plus a templated 30-day adverse-outcome notice that meets every statutory content requirement.",
     },
     {
       icon: ClipboardCheck,
-      title: "Impact assessments",
-      body: "Written impact assessments for every high-risk AI system, refreshed whenever the system materially changes. Covers purpose, data inputs, known limitations, and mitigations.",
+      title: "ADMT system reviews",
+      body: "Plain-language reviews for every covered ADMT, refreshed when the system materially changes. Covers purpose, data inputs, known limitations, and the basis for the covered-ADMT classification.",
     },
     {
       icon: Users,
-      title: "Human review &amp; disclosure",
-      body: "Consumer-facing disclosures about AI use, a documented right of appeal to a human reviewer, and clear escalation paths when an AI-driven decision is challenged.",
+      title: "Meaningful human review",
+      body: "Named reviewers with authority and training, a documented workflow, and access to the developer documentation reviewers need to second-guess an adverse outcome instead of rubber-stamping it.",
     },
     {
       icon: ShieldCheck,
-      title: "Vendor &amp; incident response",
-      body: "AI vendor contracts reviewed against SB24-205's developer-disclosure duties, plus a written incident response plan for algorithmic discrimination events.",
+      title: "Vendor docs &amp; recordkeeping",
+      body: "ADMT vendor contracts reviewed against SB 26-189's developer-documentation duties, plus a 3-year recordkeeping framework that survives an AG cure notice.",
     },
   ];
 
@@ -626,9 +619,6 @@ function PricingSection() {
             the AI you actually run.
           </p>
         </div>
-
-        {/* Cohort credit banner — founding-member promo */}
-        <CohortCreditBanner />
 
         {/* Assessment row */}
         <div className="mt-16 mb-6 flex items-end justify-between gap-4 flex-wrap">
@@ -734,38 +724,6 @@ function PricingSection() {
 /* ------------------------------------------------------------------ */
 /* Pricing sub-components                                              */
 /* ------------------------------------------------------------------ */
-
-function CohortCreditBanner() {
-  return (
-    <div className="mt-12 rounded-2xl border-2 border-[#C17832] bg-gradient-to-r from-[#C17832]/10 via-[#F2B870]/15 to-[#C17832]/10 p-6 md:p-7">
-      <div className="flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-6">
-        <div className="flex-shrink-0 inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#1F1810] text-[#F2B870] text-[10px] font-semibold uppercase tracking-widest">
-          <ShieldCheck className="w-3.5 h-3.5" />
-          {COHORT_OFFER_NAME}
-        </div>
-        <div className="flex-1">
-          <p className="text-[15px] md:text-base text-[#1F1810] leading-relaxed">
-            <span className="font-semibold">
-              Sign up for an assessment + 12-month annual membership before{" "}
-              {COHORT_OFFER_DEADLINE}
-            </span>{" "}
-            and we&rsquo;ll credit your full assessment fee toward your first
-            year of membership. Limited to the inaugural Legal Defense Cohort.
-          </p>
-        </div>
-        <a
-          href={DISCOVERY_CALL_URL}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex-shrink-0 inline-flex items-center gap-2 px-5 py-2.5 bg-[#1F1810] text-white rounded-full text-sm font-medium hover:bg-[#C17832] transition-colors"
-        >
-          Claim the offer
-          <ArrowRight className="w-4 h-4" />
-        </a>
-      </div>
-    </div>
-  );
-}
 
 function AssessmentCard({ tier }: { tier: AssessmentTier }) {
   const featured = tier.featured;
@@ -999,7 +957,7 @@ function ProcessSection() {
     {
       n: "01",
       title: "Free discovery call",
-      body: "30-minute video call to identify the AI systems your business deploys, confirm which fall under SB24-205's high-risk definition, and scope the assessment. No obligation.",
+      body: "30-minute video call to identify the AI systems your business deploys, confirm which qualify as covered ADMT under SB 26-189, and scope the assessment. No obligation.",
     },
     {
       n: "02",
@@ -1009,12 +967,12 @@ function ProcessSection() {
     {
       n: "03",
       title: "Document review &amp; interviews",
-      body: "Share existing vendor contracts, privacy policies, AI inventories, and incident logs. Short interviews with your team leads covering how AI is used and overseen day-to-day.",
+      body: "Share existing vendor contracts, privacy policies, ADMT inventories, and any prior consumer-notice language. Short interviews with your team leads covering how AI is used and overseen day-to-day.",
     },
     {
       n: "04",
       title: "Gap analysis &amp; remediation",
-      body: "Structured gap analysis against every SB24-205 duty. Prioritized remediation roadmap. Draft governance policy, consumer disclosure language, and incident response plan.",
+      body: "Structured gap analysis against every SB 26-189 duty. Prioritized remediation roadmap. Draft pre-use notice, adverse-outcome notice template, and meaningful human-review workflow.",
     },
     {
       n: "05",
@@ -1087,7 +1045,7 @@ function MidCheckerCta() {
             Start with the free 2-minute readiness check.
           </h3>
           <p className="text-[#6B5B4E] mb-7 max-w-xl mx-auto leading-relaxed">
-            Ten questions mapped to Colorado SB24-205. Get a personalized
+            Ten questions mapped to Colorado SB 26-189. Get a personalized
             score and gap analysis before deciding whether a full assessment
             is the right fit.
           </p>
@@ -1189,8 +1147,8 @@ function FinalCta() {
         </h2>
         <p className="text-lg text-white/70 leading-relaxed mb-10 max-w-2xl mx-auto">
           Book a free 30-minute discovery call. We&rsquo;ll identify your
-          high-risk systems, walk through the SB24-205 duties that apply,
-          and scope a fixed-fee FAIIR assessment for your business.
+          covered ADMT systems, walk through the SB 26-189 duties that
+          apply, and scope a fixed-fee FAIIR assessment for your business.
         </p>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
           <a

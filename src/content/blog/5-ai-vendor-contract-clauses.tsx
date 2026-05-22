@@ -37,11 +37,13 @@ export default function AiVendorContractClausesArticle() {
         If your business deploys AI — whether you built it or you are just a
         customer of a SaaS tool with AI features — you are responsible for
         what that AI does to your customers, your employees, and anyone else
-        who interacts with it. The Colorado AI Act and similar laws emerging
-        in other states assume that the business deploying the AI has
-        contractual visibility into what the vendor built. If your contract
-        does not give you that visibility, you are taking on risk the vendor
-        should be bearing.
+        who interacts with it. Colorado SB 26-189 (the new Colorado AI Act)
+        and similar laws emerging in other states assume that the business
+        deploying the AI has contractual visibility into what the vendor
+        built. SB 26-189 goes further: it makes developer documentation a
+        statutory duty owed to deployers. If your contract does not give you
+        that visibility, you are taking on risk the vendor should be
+        bearing.
       </P>
 
       <P>
@@ -140,10 +142,10 @@ export default function AiVendorContractClausesArticle() {
       <P>
         If your customers&apos; or employees&apos; data is flowing into a
         vendor&apos;s training pipeline, you have a privacy problem, a
-        confidentiality problem, and a Colorado AI Act documentation problem
-        all at once. You cannot demonstrate compliance with disclosure and
-        documentation duties if you do not know what the vendor is doing with
-        your data.
+        confidentiality problem, and a Colorado AI Act recordkeeping problem
+        all at once. You cannot demonstrate compliance with SB 26-189&apos;s
+        pre-use notice and adverse-outcome notice duties if you do not know
+        what the vendor is doing with your data.
       </P>
 
       <H3>What to ask for instead</H3>
@@ -167,11 +169,11 @@ export default function AiVendorContractClausesArticle() {
         </P>
       </Callout>
 
-      <H2>4. Bias audits and transparency</H2>
+      <H2>4. Developer documentation and transparency</H2>
 
       <H3>What the default usually says</H3>
       <P>
-        Most AI vendor contracts are silent on bias auditing and model
+        Most AI vendor contracts are silent on documentation and model
         transparency. Some have aspirational language in a &ldquo;responsible
         AI&rdquo; section that commits the vendor to industry best practices,
         but that language is rarely operational. You cannot enforce
@@ -180,20 +182,26 @@ export default function AiVendorContractClausesArticle() {
 
       <H3>Why that matters</H3>
       <P>
-        The Colorado AI Act requires deployers to use reasonable care to
-        avoid algorithmic discrimination. If you cannot get the vendor to
-        share bias audit results, disparate-impact testing, or at least the
-        structure of the model, you cannot meet that duty. A deployer who
-        argues &ldquo;the vendor wouldn&apos;t tell us&rdquo; is making a
-        compliance argument, not a defense.
+        SB 26-189 makes developer documentation a statutory duty. Developers
+        must give deployers a statement of intended uses and known harmful
+        uses, the categories of data used to train the system (to the
+        extent known), known limitations and risks, and instructions for
+        meaningful human review. Separately, deployers and developers
+        remain liable under state anti-discrimination law for outcomes
+        materially influenced by ADMT — and indemnity clauses purporting
+        to shift that liability are void by statute. If you cannot get the
+        documentation, you cannot draft accurate consumer notices, conduct
+        meaningful human review, or defend an AG inquiry.
       </P>
 
       <H3>What to ask for instead</H3>
       <P>
-        Require the vendor to share, at least annually, a written summary of
-        the bias audits and fairness testing they have run on the model. For
-        high-risk use cases, require them to run additional testing against
-        the specific demographics and outcome categories your business cares
+        Require the vendor to deliver, on signing and on every material
+        update, the SB 26-189 developer-documentation package — intended
+        uses, training data categories, limitations, risks, and human-review
+        instructions. Require an annual disparate-impact summary in writing.
+        For high-risk use cases, require additional testing against the
+        specific demographics and outcome categories your business cares
         about. Require prompt notice if the vendor discovers a material
         disparate-impact issue in production.
       </P>
@@ -211,12 +219,14 @@ export default function AiVendorContractClausesArticle() {
 
       <H3>Why that matters</H3>
       <P>
-        2026 is going to see a lot of new state AI legislation. Colorado is
-        first, but California, New York, Connecticut, Texas, and several
-        others have drafts in circulation. If a new law makes the
-        vendor&apos;s product non-compliant in a key jurisdiction for your
-        business, and your contract is a three-year lock-in, you are paying
-        for something you cannot lawfully use.
+        State AI legislation continues to move fast. Colorado was first to
+        pass and then rewrote its law in May 2026; California ADMT rules,
+        New York employment AI rules, Illinois, Connecticut, Texas, and
+        several others have provisions in circulation or already on the
+        books. If a new law makes the vendor&apos;s product non-compliant
+        in a key jurisdiction for your business, and your contract is a
+        three-year lock-in, you are paying for something you cannot lawfully
+        use.
       </P>
 
       <H3>What to ask for instead</H3>
@@ -250,8 +260,9 @@ export default function AiVendorContractClausesArticle() {
         </LI>
         <LI>
           If the vendor refuses to negotiate and the contract is materially
-          problematic, document that fact. That documentation is part of the
-          paper trail that proves you exercised reasonable care.
+          problematic, document that fact. That documentation is part of
+          the three-year record SB 26-189 requires and is also a useful
+          defense in any anti-discrimination claim that follows.
         </LI>
         <LI>
           On every new AI vendor procurement going forward, bake the five

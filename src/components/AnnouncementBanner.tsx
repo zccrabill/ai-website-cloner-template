@@ -15,7 +15,7 @@ import { X } from "lucide-react";
  * from setState-in-effect (React 19 rule: react-hooks/set-state-in-effect).
  */
 
-const DISMISS_KEY = "al-announcement-dismissed-v1";
+const DISMISS_KEY = "al-announcement-dismissed-v2";
 const DISMISS_EVENT = "al-announcement-dismissed";
 
 function subscribe(callback: () => void): () => void {
@@ -65,7 +65,7 @@ export default function AnnouncementBanner() {
           <span className="sm:hidden font-semibold text-[#F2B870] mr-1">
             Colorado AI Act →
           </span>
-          Is your business ready for June 2026?{" "}
+          Is your business ready for January 2027?{" "}
           <Link
             href="/ai-act-checker"
             className="underline decoration-[#C17832]/60 hover:decoration-[#F2B870] font-medium whitespace-nowrap"

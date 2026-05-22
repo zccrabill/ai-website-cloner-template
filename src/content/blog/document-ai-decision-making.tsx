@@ -48,12 +48,14 @@ export default function DocumentAiDecisionMakingArticle() {
       <H2>Why documentation is the load-bearing beam</H2>
 
       <P>
-        The Colorado AI Act, like most emerging AI regulation, imposes duties
+        Colorado SB 26-189, like most emerging AI regulation, imposes duties
         that are difficult to prove you met without a paper trail. You have to
-        demonstrate reasonable care. You have to show you ran impact
-        assessments. You have to prove the human review process actually
-        happened when a consumer asked for it. You have to be able to explain,
-        after the fact, why a specific decision was made.
+        show you posted a clear and conspicuous pre-use notice. You have to
+        prove you sent a 30-day adverse-outcome notice when ADMT contributed
+        to a denial. You have to prove the meaningful human review process
+        actually happened when a consumer asked for it. You have to be able
+        to explain, after the fact, why a specific decision was made — and
+        you have to keep the records for three years.
       </P>
 
       <P>
@@ -79,13 +81,15 @@ export default function DocumentAiDecisionMakingArticle() {
       <H2>What you actually need to document</H2>
 
       <P>
-        There are seven categories of documentation every deployer of
-        high-risk AI should maintain. They map loosely to the seven duties in
-        the Colorado AI Act, but they also reflect what a reasonable business
-        would want for its own risk management — regardless of the statute.
+        There are seven categories of documentation every deployer of covered
+        ADMT should maintain. The first four track statutory duties under SB
+        26-189. The last three aren&apos;t strictly required by the AI statute
+        but reflect what a reasonable business would want for its own risk
+        management — and what state anti-discrimination law and the Attorney
+        General will look for during a 60-day cure window.
       </P>
 
-      <H3>1. The AI inventory</H3>
+      <H3>1. The ADMT inventory</H3>
       <P>
         A written list of every AI system your business uses, including
         third-party tools. For each entry, record the vendor, the product name
@@ -96,15 +100,17 @@ export default function DocumentAiDecisionMakingArticle() {
         no one is auditing it, documenting it, or monitoring it.
       </P>
 
-      <H3>2. Impact assessments</H3>
+      <H3>2. System reviews and covered-ADMT classifications</H3>
       <P>
-        For each high-risk AI system, a written impact assessment that
-        describes the system, the data it uses, the decisions it influences,
-        the foreseeable harms, the mitigations in place, and the residual risk.
-        These have to be dated and signed. They have to be updated at least
-        annually and any time the system is meaningfully changed. The common
-        failure mode is treating an impact assessment as a one-time intake
-        form rather than a living document.
+        For each ADMT, a written review that describes the system, the data
+        it uses, the decisions it influences, the foreseeable harms, the
+        mitigations in place, and the basis for classifying it as either
+        in-scope or out-of-scope &ldquo;covered ADMT&rdquo; under SB 26-189.
+        These have to be dated and signed. They should be refreshed any time
+        the system is meaningfully changed. SB 26-189 dropped the prior law&apos;s
+        mandatory annual impact assessment — but a current, honest system
+        review is still the single most useful artifact you can produce when
+        a regulator or plaintiff asks how your AI works.
       </P>
 
       <H3>3. Decision logs</H3>
@@ -158,9 +164,10 @@ export default function DocumentAiDecisionMakingArticle() {
         finding, a data exposure, a vendor compromise — you open an incident
         record. It captures what happened, when it was detected, who was
         notified, what the triage looked like, what remediation was performed,
-        and when the incident was closed. If the statute requires notification
-        to the Attorney General or to affected consumers, the notification
-        artifacts attach to this record.
+        and when the incident was closed. SB 26-189 removed the prior law&apos;s
+        AG-notification obligation for algorithmic discrimination — but the
+        AG can still demand records during a cure window, and an honest
+        incident record is the cleanest defense.
       </P>
 
       <H2>How to actually build the logging system</H2>
@@ -197,13 +204,14 @@ export default function DocumentAiDecisionMakingArticle() {
       <H3>Set retention periods in writing</H3>
       <P>
         Documentation is only useful if it exists for as long as you might
-        need it. For most of the artifacts above, a reasonable default is the
-        longer of the applicable statute of limitations for the underlying
-        claim or the regulator&apos;s explicit retention requirement. For
-        consequential decisions in employment, credit, housing, and
-        healthcare, four to six years is a typical floor. Write the retention
-        schedule down, apply it consistently, and do not delete early just to
-        save storage.
+        need it. SB 26-189 sets a hard floor of <Strong>three years</Strong>{" "}
+        from the date of the consequential decision. For most artifacts, a
+        more conservative default is the longer of the applicable statute of
+        limitations for the underlying claim or the regulator&apos;s explicit
+        retention requirement. For consequential decisions in employment,
+        credit, housing, and healthcare, four to six years is a sensible
+        practical floor. Write the retention schedule down, apply it
+        consistently, and do not delete early just to save storage.
       </P>
 
       <Callout title="Retention is not the same as access">
@@ -238,36 +246,40 @@ export default function DocumentAiDecisionMakingArticle() {
 
       <OL>
         <LI>
-          A <Strong>one-page AI inventory</Strong> listing every tool, owner,
-          and whether it is classified as high-risk under the Colorado AI Act.
+          A <Strong>one-page ADMT inventory</Strong> listing every tool, owner,
+          and whether it is classified as covered ADMT under SB 26-189.
         </LI>
         <LI>
-          A <Strong>two-to-three-page impact assessment</Strong> for each
-          high-risk system, using a consistent template, dated and signed.
+          A <Strong>two-to-three-page system review</Strong> for each covered
+          ADMT, using a consistent template, dated and signed.
         </LI>
         <LI>
-          An <Strong>automatic decision log</Strong> for each high-risk system
+          An <Strong>automatic decision log</Strong> for each covered ADMT
           capturing timestamp, system version, a reference to inputs, and the
-          output. Retained for at least four years.
+          output. Retained for at least three years (longer if a related claim
+          has a longer limitations period).
         </LI>
         <LI>
-          A <Strong>human review workflow</Strong> with a defined response
-          time, a template for consumer-facing explanations, and a log that
-          captures each request and its resolution.
+          A <Strong>pre-use notice</Strong> posted at points of consumer
+          interaction and a templated{" "}
+          <Strong>30-day adverse-outcome notice</Strong> ready to send.
         </LI>
         <LI>
-          A <Strong>vendor file</Strong> for each AI vendor holding the DPA,
-          the relevant contract sections, any bias audit summaries the vendor
-          has shared, and the date of the last review.
+          A <Strong>meaningful human review workflow</Strong> naming
+          authorized reviewers, training, a defined response time, and a log
+          that captures each request and its resolution.
+        </LI>
+        <LI>
+          A <Strong>vendor file</Strong> for each ADMT vendor holding the
+          developer documentation SB 26-189 requires (intended uses, training
+          data categories, limitations, human-review instructions), plus the
+          DPA and any disparate-impact monitoring the vendor has shared.
         </LI>
         <LI>
           An <Strong>incident response runbook</Strong>, even if it is a one
           page document, naming the triage lead, escalation contacts, and
-          notification obligations.
-        </LI>
-        <LI>
-          A <Strong>written risk management policy</Strong> that references
-          all of the above and is signed by an owner.
+          any reporting obligations under state anti-discrimination or
+          privacy law.
         </LI>
       </OL>
 

@@ -35,7 +35,7 @@ const CHECKER_FAQS = [
   {
     question: "What is the Colorado AI Act Readiness Checker?",
     answer:
-      "A free 10-question assessment from Available Law that helps Colorado businesses evaluate their readiness for Colorado Senate Bill 24-205 (the Colorado AI Act). It produces a readiness score, a RAG (red/amber/green) status, and a personalized list of compliance gaps mapped to the statute.",
+      "A free 10-question assessment from Available Law that helps Colorado businesses evaluate their readiness for Colorado Senate Bill 26-189 (the Colorado AI Act, the repeal-and-replace of SB 24-205 signed May 14, 2026 and effective January 1, 2027). It produces a readiness score, a RAG (red/amber/green) status, and a personalized list of compliance gaps mapped to the statute.",
   },
   {
     question: "How long does it take?",
@@ -50,7 +50,7 @@ const CHECKER_FAQS = [
   {
     question: "Who built this?",
     answer:
-      "The assessment was built by Available Law, a Colorado virtual law firm founded by attorney Zachariah Crabill. The questions are mapped to the core duties under Colorado SB24-205 (the Colorado AI Act) and related AI governance best practices.",
+      "The assessment was built by Available Law, a Colorado virtual law firm founded by attorney Zachariah Crabill. The questions are mapped to the core duties under Colorado SB 26-189 (the new Colorado AI Act) and related AI governance best practices.",
   },
 ];
 

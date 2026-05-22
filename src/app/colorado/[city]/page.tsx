@@ -142,7 +142,7 @@ export default async function CityPage({
             <p className="text-[#6B5B4E] text-lg leading-relaxed mb-8 max-w-[760px]">
               Available Law is a Colorado-licensed virtual law firm. Every
               subscription includes attorney-reviewed work product — contracts,
-              vendor agreements, employment documents, formation filings, and
+              vendor agreements, succession documents, formation filings, and
               ongoing compliance questions — without billable hours or retainer
               burn-down statements.
             </p>
@@ -150,15 +150,15 @@ export default async function CityPage({
               {[
                 {
                   title: "AI vendor contract review",
-                  body: "If you're buying AI tools for hiring, lending, healthcare, or customer scoring, your vendor contracts probably leave you holding the bag. We review and redline the five clauses that matter most under the Colorado AI Act.",
+                  body: "If you're buying AI tools for hiring, lending, healthcare, or customer scoring, your vendor contracts probably leave you holding the bag. We review and redline the clauses that matter most under SB 26-189 — developer documentation, audit rights, and indemnity.",
                 },
                 {
                   title: "Colorado AI Act compliance",
-                  body: "SB24-205 takes effect June 30, 2026. If your business uses AI to make consequential decisions, we help you build the documentation, impact assessments, and consumer-notice program the statute requires.",
+                  body: "SB 26-189 takes effect January 1, 2027. If your business uses AI to make or materially influence consequential decisions, we help you build the pre-use notice, 30-day adverse-outcome notice, meaningful-human-review process, and three-year records the statute requires.",
                 },
                 {
-                  title: "Employment agreements and handbooks",
-                  body: "Offer letters, NDAs, non-solicits, employee handbooks, and terminations — written for Colorado's wage, non-compete, and paid-leave rules.",
+                  title: "Business succession planning",
+                  body: "Buy-sell agreements, ownership-transition documents, and exit planning for closely held Colorado businesses. Built for owners thinking past the next quarter.",
                 },
                 {
                   title: "Business formation",

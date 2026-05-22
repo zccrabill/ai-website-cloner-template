@@ -119,7 +119,7 @@ export default function DashboardPage() {
     { icon: Briefcase, label: "Form a Business", href: "/dashboard/chat?action=business-formation" },
     { icon: Shield, label: "Protect My IP", href: "/dashboard/chat?action=ip-protection" },
     { icon: CheckCircle, label: "Check Compliance", href: "/dashboard/chat?action=compliance" },
-    { icon: Scale, label: "Employment Law", href: "/dashboard/chat?action=employment" },
+    { icon: Scale, label: "Succession Planning", href: "/dashboard/chat?action=succession-planning" },
     { icon: Users, label: "Book Attorney", href: "/dashboard/schedule" },
   ];
 

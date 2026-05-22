@@ -40,7 +40,7 @@ const SOLUTIONS: Solution[] = [
     category: "Contracts",
     title: "Contract Review & Drafting",
     description:
-      "Every contract you touch — vendor, customer, employment, NDA — drafted and reviewed by a Colorado-licensed attorney, with AI handling the heavy lifting underneath.",
+      "Every contract you touch — vendor, customer, NDA, buy-sell — drafted and reviewed by a Colorado-licensed attorney, with AI handling the heavy lifting underneath.",
     href: "/#pricing",
   },
   {
@@ -56,9 +56,9 @@ const SOLUTIONS: Solution[] = [
     icon: FileSignature,
     number: "03",
     category: "Deals",
-    title: "Business & Transactional Work",
+    title: "Business & Succession Planning",
     description:
-      "Entity formation, operating agreements, financing documents, and M&amp;A paperwork — structured and reviewed without the billable-hours clock.",
+      "Entity formation, operating agreements, buy-sell agreements, and ownership-transition paperwork — structured and reviewed without the billable-hours clock.",
     href: "/#pricing",
   },
   {

@@ -115,7 +115,7 @@ const SCENARIOS: Scenario[] = [
       },
       {
         role: "allora",
-        text: "Resume screening falls under SB24-205's \"consequential decision\" bucket — which typically triggers pre-decision notice, AI-involvement disclosure, annual impact assessment, and a right-to-appeal process, all live by the June 2026 effective date. Send over the tool and your hiring flow and I'll have an attorney map out your specific compliance plan.",
+        text: "Resume screening counts as a \"consequential decision\" under Colorado SB 26-189 — which triggers a clear pre-use notice, a 30-day adverse-outcome notice when someone is turned down, and a meaningful-human-review path, all live by the January 2027 effective date. Send over the tool and your hiring flow and I'll have an attorney map out your specific compliance plan.",
       },
     ],
   },

@@ -110,10 +110,9 @@ export default function AiLiabilityInsuranceCoverageArticle() {
           your employee blindly relied on an AI recommendation without
           exercising professional judgment, the carrier may deny coverage
           on the theory that the error was not in the AI but in the human
-          failure to oversee it. This connects directly to your{" "}
-          <InlineLink href="/blog/ai-employee-training-requirements">
-            employee training obligations
-          </InlineLink>.
+          failure to oversee it. This connects directly to the meaningful
+          human review process SB 26-189 expects deployers to run for
+          adverse outcomes.
         </LI>
       </UL>
 
@@ -185,10 +184,7 @@ export default function AiLiabilityInsuranceCoverageArticle() {
         severity of claims in the first place. That means proper{" "}
         <InlineLink href="/blog/document-ai-decision-making">
           documentation of AI decisions
-        </InlineLink>,{" "}
-        <InlineLink href="/blog/ai-employee-training-requirements">
-          employee training
-        </InlineLink>,{" "}
+        </InlineLink>, a meaningful human review workflow,{" "}
         <InlineLink href="/blog/5-ai-vendor-contract-clauses">
           vendor contract protections
         </InlineLink>, and a structured compliance framework like{" "}

@@ -224,9 +224,9 @@ export const smbCheckup: AssessmentDefinition = {
       id: "a1-coaia",
       areaId: "ai",
       prompt:
-        "If my business uses AI to make consequential decisions about people (hiring, lending, housing, healthcare, insurance, education, legal services, or essential government services), I know what the Colorado AI Act requires of me.",
+        "If my business uses AI to make consequential decisions about people (hiring, lending, housing, healthcare, insurance, education, or government services), I know what the Colorado AI Act requires of me.",
       helper:
-        "The Colorado AI Act (effective June 30, 2026) regulates 'high-risk' AI decision systems. Ignorance isn't a defense.",
+        "The Colorado AI Act (SB 26-189, effective January 1, 2027) regulates 'covered ADMT' — automated decision-making technology used in consequential decisions. Ignorance isn't a defense.",
       options: [
         { label: "I use AI that way and haven't checked", value: 0 },
         { label: "I've read about it but haven't acted", value: 1 },

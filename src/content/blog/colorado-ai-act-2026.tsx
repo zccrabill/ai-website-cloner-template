@@ -13,308 +13,386 @@ import {
 } from "./typography";
 
 /**
- * Colorado AI Act (SB24-205) — the 2026 business explainer.
+ * Colorado AI Act — the SB 26-189 explainer.
  *
  * Editorial notes:
- * - Primary keyword targets: "Colorado AI Act", "SB24-205", "Colorado AI Act 2026",
- *   "Colorado AI Act compliance", "high-risk AI Colorado".
+ * - Primary keyword targets: "Colorado AI Act", "SB 26-189", "Colorado AI Act 2027",
+ *   "Colorado AI Act compliance", "covered ADMT".
  * - Written for business owners, not lawyers. No Latin, no section numbers in the
  *   body (they go in the sidebar). Plain-language summaries first; statutory
  *   specificity second.
- * - Everything material here is already reflected in /ai-act-checker and
- *   /faiir — keep in sync when the statute's implementing rules land.
+ * - SB 26-189 fully repealed SB 24-205 (signed May 14, 2026 by Gov. Polis) and
+ *   replaced it with a disclosure-based regime. Everything material here is
+ *   already reflected in /ai-act-checker and /faiir — keep in sync when
+ *   implementing rules from the AG land.
  */
 export default function ColoradoAiAct2026Article() {
   return (
     <>
       <Lead>
-        Colorado is about to become the first U.S. state to enforce a
-        comprehensive law regulating how businesses use artificial
-        intelligence. If you run a Colorado company and any AI system helps
-        decide who gets hired, fired, approved for a loan, priced for
-        insurance, admitted to a program, or evaluated for housing or
-        healthcare, the Colorado AI Act almost certainly applies to you.
+        In May 2026 Colorado scrapped its first AI law and replaced it with a
+        much lighter one. If you run a Colorado business and any automated
+        decision tool helps decide who gets hired, fired, approved for a loan,
+        priced for insurance, admitted to a program, or evaluated for housing
+        or healthcare, the new Colorado AI Act applies to you — but the
+        obligations look very different from what the legal industry was
+        bracing for.
       </Lead>
 
       <P>
-        This is the plain-language walkthrough we wish every small-business
-        owner in Colorado had read six months ago. We will cover what the
-        statute actually requires, who it applies to, what happens if you
-        ignore it, and what a realistic compliance plan looks like for a
+        This is the plain-language walkthrough of what actually passed, what
+        changed, and what a realistic compliance plan looks like now for a
         business that does not have a general counsel on staff.
       </P>
 
-      <H2>What is the Colorado AI Act?</H2>
+      <H2>What is the new Colorado AI Act?</H2>
 
       <P>
-        The Colorado AI Act is the shorthand name for{" "}
-        <Strong>Senate Bill 24-205</Strong>, passed in 2024 and now scheduled to
-        take effect on <Strong>June 30, 2026</Strong>. (The original effective
-        date was February 1, 2026; the Colorado General Assembly pushed it back
-        to June 30 during the August 2025 special session to give businesses and
-        the Attorney General&apos;s office additional time to prepare.) It is
-        the first state-level law in the United States that imposes ongoing
-        duties on any business using so-called{" "}
-        <Strong>high-risk AI systems</Strong> to make decisions about real
-        people. Other states are watching closely and several have already
-        introduced copycat legislation, which means whatever Colorado businesses
-        build to comply is likely to double as a template for the rest of the
-        country.
+        The new Colorado AI Act is{" "}
+        <Strong>Senate Bill 26-189</Strong>, signed by Governor Polis on{" "}
+        <Strong>May 14, 2026</Strong> after passing the legislature by a
+        bipartisan 34-1 vote in the Senate and 57-6 in the House. It{" "}
+        <Strong>repeals and replaces</Strong> the prior Colorado AI Act
+        (Senate Bill 24-205, the 2024 law that was scheduled to take effect
+        first in February 2026 and then in June 2026). The 2024 statute will
+        not take effect. The 2026 statute does, on{" "}
+        <Strong>January 1, 2027</Strong>.
       </P>
 
       <P>
-        The core idea of the statute is borrowed from the European Union&apos;s
-        AI Act, but applied with a Colorado accent: instead of banning certain
-        uses outright, it says that if your business deploys AI in a
-        high-stakes context, you have to treat it the way a regulated industry
-        would — with governance, documentation, disclosure, human oversight,
-        and a paper trail that a regulator can audit.
+        The core idea has shifted. SB 24-205 borrowed from the European Union&apos;s
+        AI Act and treated high-risk AI like a regulated industry —
+        ongoing risk management, written impact assessments, an affirmative
+        duty of care to avoid algorithmic discrimination, and Attorney General
+        notification when things went wrong. SB 26-189 throws most of that
+        out. The new regime is a{" "}
+        <Strong>disclosure-and-human-review framework</Strong>: tell people
+        when you&apos;re using ADMT, tell them more after an adverse
+        outcome, and give them a way to get a real person to look at the
+        decision.
       </P>
+
+      <Callout title="The short version of what changed">
+        <P>
+          <Strong>Gone:</Strong> duty of care, risk management programs,
+          annual impact assessments, AG notification of algorithmic
+          discrimination, consumer appeal rights, the &ldquo;high-risk AI
+          system&rdquo; terminology.
+        </P>
+        <P>
+          <Strong>Kept and refined:</Strong> pre-use notice that ADMT is being
+          used; 30-day adverse-outcome notice; meaningful human review of
+          adverse outcomes; developer documentation duties; three-year
+          recordkeeping.
+        </P>
+      </Callout>
 
       <H2>Who does it apply to?</H2>
 
       <P>
-        The Colorado AI Act splits the world into two categories of regulated
-        parties:
+        SB 26-189 keeps the same two categories of regulated parties from the
+        old law:
       </P>
 
       <UL>
         <LI>
           <Strong>Developers</Strong> — the businesses that build or
-          meaningfully modify an AI system. If your company trains a model, or
-          licenses one and fine-tunes it for a specific use, you are probably a
-          developer.
+          meaningfully modify the underlying technology. If your company
+          trains a model, or licenses one and fine-tunes it for a specific
+          use, you are probably a developer.
         </LI>
         <LI>
-          <Strong>Deployers</Strong> — the businesses that use an AI system to
-          make or substantially assist in making a consequential decision about
-          a consumer. Most Colorado small businesses will end up in this
-          bucket.
+          <Strong>Deployers</Strong> — the businesses that use ADMT to make,
+          or to materially influence, a consequential decision about a
+          consumer. Most Colorado small businesses will end up in this bucket.
         </LI>
       </UL>
 
       <P>
-        Both categories carry duties, but the deployer duties are the ones most
-        Colorado businesses will need to worry about. A SaaS company that uses
-        an off-the-shelf applicant-tracking tool with AI resume screening is a
-        deployer. A lender that uses a third-party model to evaluate credit
-        risk is a deployer. A landlord running tenant applications through an
-        AI-powered background check is a deployer.
+        The deployer duties are the ones most Colorado businesses will need to
+        worry about. A SaaS company that uses an off-the-shelf
+        applicant-tracking tool with AI resume screening is a deployer. A
+        lender that uses a third-party model to evaluate credit risk is a
+        deployer. A landlord running tenant applications through an AI-powered
+        background check is a deployer.
+      </P>
+
+      <H2>What is &ldquo;covered ADMT&rdquo;?</H2>
+
+      <P>
+        The new statute drops &ldquo;high-risk AI system&rdquo; and replaces
+        it with <Strong>covered ADMT</Strong> — automated decision-making
+        technology that processes personal data and{" "}
+        <Strong>materially influences</Strong> a{" "}
+        <Strong>consequential decision</Strong>. Three pieces have to line up
+        before the duties attach:
+      </P>
+
+      <UL>
+        <LI>
+          <Strong>ADMT</Strong> — technology that processes personal data and
+          uses computation to generate output that makes, guides, or assists a
+          decision. The statute explicitly excludes spell-checkers,
+          calculators, and tools used for human review or administrative
+          processing.
+        </LI>
+        <LI>
+          <Strong>Materially influences</Strong> — the ADMT&apos;s output is a
+          non-de-minimis factor in the outcome. Incidental, trivial, or
+          clerical uses do not count.
+        </LI>
+        <LI>
+          <Strong>Consequential decision</Strong> — a decision about a
+          consumer affecting access, eligibility, or terms in one of the seven
+          covered sectors listed below.
+        </LI>
+      </UL>
+
+      <H3>The seven covered sectors</H3>
+
+      <UL>
+        <LI>Education enrollment and opportunity</LI>
+        <LI>Employment and the employer-employee relationship</LI>
+        <LI>Residential real estate lease or purchase</LI>
+        <LI>Financial and lending services</LI>
+        <LI>Insurance underwriting, pricing, coverage, and claims</LI>
+        <LI>Healthcare services</LI>
+        <LI>Government services and public benefits</LI>
+      </UL>
+
+      <P>
+        Two things to notice. First, this list covers a huge portion of the
+        Colorado economy. Second, <Strong>legal services</Strong> — which was
+        in the 2024 law&apos;s scope — has been dropped from the 2026 law.
       </P>
 
       <Callout title="Quick gut check">
         <P>
-          If your business uses any AI system — including tools from a third
-          party — to make or influence decisions about hiring, firing,
-          promotion, credit, insurance, housing, healthcare access, education,
-          legal services, or essential government services, you are very
-          likely a <Strong>deployer of high-risk AI</Strong> under the
-          Colorado AI Act.
+          If your business uses any automated tool — including software from a
+          third party — to make or materially influence decisions about
+          hiring, firing, promotion, credit, insurance, housing, healthcare
+          access, education, or government services, you are very likely a{" "}
+          <Strong>deployer of covered ADMT</Strong> under the new Colorado AI
+          Act.
         </P>
       </Callout>
 
-      <H2>What counts as &ldquo;high-risk AI&rdquo;?</H2>
+      <H2>The five duties deployers actually owe</H2>
 
       <P>
-        The statute defines a high-risk AI system as one that is a substantial
-        factor in a consequential decision about a consumer. &ldquo;Consequential
-        decision&rdquo; is a term of art and it covers the categories the
-        legislature singled out as high-stakes:
+        If the statute applies to your business, the affirmative obligations
+        are shorter and more concrete than under the 2024 law:
+      </P>
+
+      <H3>1. Pre-use notice (clear and conspicuous)</H3>
+      <P>
+        You have to tell people that covered ADMT is used in your
+        consequential decisions, with instructions for how to request more
+        information. The statute says &ldquo;clear and conspicuous&rdquo; —
+        buried disclosure at the bottom of a privacy policy does not count. A
+        public-facing notice that is reasonably accessible at the points of
+        consumer interaction generally does.
+      </P>
+
+      <H3>2. Adverse-outcome notice within 30 days</H3>
+      <P>
+        When ADMT contributes to an adverse outcome — a denial, a rejection,
+        an unfavorable price — the deployer has 30 days to send the affected
+        person a plain-language notice describing the decision, the ADMT&apos;s
+        role, how to request more information about the inputs the ADMT
+        considered, and an explanation of the consumer&apos;s rights and how
+        to exercise them.
+      </P>
+
+      <H3>3. Meaningful human review of adverse outcomes</H3>
+      <P>
+        After an adverse outcome, consumers have a right to a real human
+        review — to the extent commercially reasonable. The statute defines{" "}
+        <Strong>meaningful human review</Strong> as review by someone with
+        authority to approve, modify, or override the decision, who is
+        trained, who considers relevant evidence, who does not default to the
+        system&apos;s output, and who has access to the system&apos;s intended
+        use, material limitations, input categories, and principal factors.
+        Ad-hoc rubber-stamping does not satisfy the duty.
+      </P>
+
+      <H3>4. Consumer access and correction of personal data</H3>
+      <P>
+        Consumers can request access to the personal data the ADMT relied on,
+        and can ask to correct factually incorrect or materially inaccurate
+        data. The rights are tied to the Colorado Privacy Act, which means
+        regulated-entity exemptions (GLBA-covered financial institutions,
+        public utilities, employment records in part, and higher education
+        records) carry over. Consumers cannot correct opinions, predictions,
+        scores, or protected evaluations — only the underlying facts.
+      </P>
+
+      <H3>5. Recordkeeping for three years</H3>
+      <P>
+        Deployers must keep records sufficient to demonstrate compliance for
+        three years after the relevant consequential decision. That generally
+        means decision logs, copies of notices sent, vendor documentation, and
+        records of human-review outcomes and consumer-data requests.
+      </P>
+
+      <H2>What developers owe</H2>
+
+      <P>
+        Developer-side duties are lighter and primarily documentation-based.
+        Developers must give deployers enough information to comply, including
+        a statement of intended uses and known harmful or inappropriate uses,
+        the categories of data used to train the system (to the extent
+        known), known limitations and risks, and instructions for meaningful
+        human review. Developers can satisfy the duty through public release
+        notes plus direct notice to deployers. Developers also retain records
+        for three years and must update deployers about material changes.
+      </P>
+
+      <H2>What you no longer have to do</H2>
+
+      <P>
+        If you were following the 2024 law&apos;s prep cycle, these duties
+        are gone:
       </P>
 
       <UL>
-        <LI>Employment and employment opportunities</LI>
-        <LI>Education and vocational training</LI>
-        <LI>Financial and lending services</LI>
-        <LI>Essential government services</LI>
-        <LI>Healthcare services</LI>
-        <LI>Housing</LI>
-        <LI>Insurance</LI>
-        <LI>Legal services</LI>
+        <LI>
+          <Strong>No more duty of care</Strong> to avoid algorithmic
+          discrimination as a freestanding statutory obligation.
+        </LI>
+        <LI>
+          <Strong>No more risk management program</Strong> requirement under
+          the AI statute (NIST AI RMF alignment is still good practice — just
+          not legally compelled by this statute).
+        </LI>
+        <LI>
+          <Strong>No more annual impact assessments</Strong> as a statutory
+          deliverable.
+        </LI>
+        <LI>
+          <Strong>No more Attorney General notification</Strong> of
+          algorithmic discrimination incidents.
+        </LI>
+        <LI>
+          <Strong>No more broad consumer appeal rights</Strong> — meaningful
+          human review is now scoped to adverse outcomes.
+        </LI>
       </UL>
 
+      <H2>Anti-discrimination liability did not go away</H2>
+
       <P>
-        A couple of things to notice. First, the list covers a huge portion of
-        the economy. Second, the statute uses the phrase{" "}
-        <Strong>substantial factor</Strong>, not &ldquo;sole factor.&rdquo; That
-        means if an AI system meaningfully contributes to a decision — even
-        alongside human judgment — you are still in scope. You do not get out
-        of the statute by having a human rubber-stamp the AI&apos;s output.
+        This is the part the headlines miss. SB 26-189 deleted the
+        algorithmic-discrimination language from the AI statute, but the bill
+        expressly preserves liability under{" "}
+        <Strong>existing state anti-discrimination laws</Strong> for
+        consequential decisions materially influenced by covered ADMT.
+        Liability is allocated by relative fault among developer, deployer,
+        and any intermediary — and contracts trying to{" "}
+        <Strong>indemnify a party for its own discriminatory conduct</Strong>{" "}
+        are explicitly declared void.
       </P>
 
-      <H2>The seven duties you will owe as a deployer</H2>
-
       <P>
-        If the statute applies to your business, you owe a set of ongoing
-        duties that together make up a basic AI governance program. We think of
-        them as the seven pillars:
-      </P>
-
-      <H3>1. Risk management policy</H3>
-      <P>
-        You need a written AI risk management policy. The statute explicitly
-        points to the{" "}
-        <Strong>NIST AI Risk Management Framework</Strong> as a reasonable
-        standard, so if you model your policy on NIST AI RMF 1.0 you are in
-        the fairway. The policy has to cover procurement, deployment,
-        monitoring, and retirement of AI systems, and it has to be actually
-        used — a draft in a shared drive does not count.
-      </P>
-
-      <H3>2. Impact assessments</H3>
-      <P>
-        Before deploying a high-risk AI system, you have to complete a written
-        impact assessment describing what the system does, what data it uses,
-        who it affects, what could go wrong, and what mitigations you have in
-        place. You have to update these assessments at least annually and any
-        time the system is meaningfully modified. These are the single most
-        common compliance gap we see in assessments of existing Colorado
-        businesses.
-      </P>
-
-      <H3>3. Consumer notice and disclosure</H3>
-      <P>
-        You have to tell people when AI is being used to make or meaningfully
-        influence a decision about them, in clear, plain language — not buried
-        at the bottom of a 12,000-word privacy policy. If a consumer asks what
-        the system considered, you generally need to be able to explain it.
-      </P>
-
-      <H3>4. Right to human review</H3>
-      <P>
-        When an AI system produces an adverse consequential decision, the
-        affected consumer has a right to request human review, to correct data,
-        and in some cases to appeal. You need a documented process with
-        reasonable response times — ad-hoc review is not enough.
-      </P>
-
-      <H3>5. Duty of reasonable care to avoid algorithmic discrimination</H3>
-      <P>
-        This is the heart of the statute. Deployers have an affirmative duty
-        to use reasonable care to protect consumers from algorithmic
-        discrimination — defined as unlawful differential treatment based on a
-        protected class. In practice this looks like scheduled bias audits,
-        disparate-impact testing, and documented remediation when issues
-        surface.
-      </P>
-
-      <H3>6. Documentation</H3>
-      <P>
-        You need records. Training data sources, vendor attestations, model
-        versions, audit results, decision logs for consequential decisions, and
-        the minutes of whatever internal governance you put in place. If a
-        regulator comes calling after 2026, your documentation is the first
-        thing they will ask for. If it does not exist, you are already in
-        trouble.
-      </P>
-
-      <H3>7. Incident response and Attorney General notification</H3>
-      <P>
-        You need an incident response plan. When something goes wrong — a
-        harmful output, a disparate impact, a systemic error — you need a
-        documented process for triage, remediation, consumer notice, and in
-        some cases notification to the Colorado Attorney General&apos;s office
-        within a defined window. Having this plan in writing is the whole
-        point; &ldquo;we would have figured it out&rdquo; is not a defense.
+        Translation: you can still get sued for discriminatory AI outcomes
+        under Colorado&apos;s existing anti-discrimination laws, and you
+        cannot contract out of that exposure. The practical defense is the
+        same as it has always been — ongoing bias testing, documented
+        remediation, and a human review path that actually works.
       </P>
 
       <H2>Who enforces it and what are the penalties?</H2>
 
       <P>
-        The Colorado Attorney General is the primary enforcement authority.
-        The statute creates civil enforcement powers and the AG&apos;s office
-        can bring actions for injunctive relief and civil penalties. There is
-        no private right of action in the statute itself, but unlawful
-        algorithmic discrimination can still give rise to separate claims
-        under federal and state anti-discrimination laws, and consumer
-        complaints can trigger AG investigations.
-      </P>
-
-      <P>
-        Practically, the most immediate risk for a small business is not a
-        direct AG enforcement action on day one. It is the chain reaction that
-        starts when a job applicant, tenant, or customer files a complaint,
-        the AG&apos;s office asks to see your documentation, and you have
-        nothing to hand over.
+        The Colorado Attorney General is the exclusive enforcement authority,
+        operating under the Colorado Consumer Protection Act. There is no
+        private right of action under the AI statute. Before bringing an
+        enforcement action, the AG must give a notice of violation and a{" "}
+        <Strong>60-day cure period</Strong>, unless the violation is knowing
+        or repeated. The cure period sunsets on January 1, 2030 — so after
+        that, the AG can move straight to enforcement.
       </P>
 
       <Callout title="What enforcement actually looks like">
         <P>
-          The first wave of Colorado AI Act enforcement is unlikely to target
+          The first wave of SB 26-189 enforcement is unlikely to target
           businesses that made a good-faith effort and have a defensible
           paper trail. It is going to target businesses that ignored the
-          statute entirely and cannot show any evidence of governance,
-          assessment, or oversight. The goal of your compliance program is
-          not perfection — it is to have real, dated, documented work product
-          you can point to.
+          statute and cannot show any evidence of notices sent,
+          human-review processes, or vendor documentation. The goal of your
+          compliance program is not perfection — it is to have real, dated,
+          documented work product you can point to during a 60-day cure
+          window.
         </P>
       </Callout>
 
       <H2>What to do right now</H2>
 
       <P>
-        You do not need to become an AI compliance expert. You need to take
-        five concrete steps, in roughly this order:
+        The compliance lift is significantly smaller than under the 2024
+        law. Five concrete steps, roughly in this order:
       </P>
 
       <OL>
         <LI>
-          <Strong>Inventory your AI systems.</Strong> Make a written list of
-          every tool your business uses that has AI or machine-learning
+          <Strong>Inventory your ADMT.</Strong> Make a written list of every
+          tool your business uses that has automated decision-making
           components, and what decisions each one influences. Include
           third-party tools — your HR platform, your credit model, your
           customer support copilot, your pricing engine.
         </LI>
         <LI>
-          <Strong>Classify them against the statute.</Strong> For each system,
-          decide in writing whether it is a substantial factor in a
-          consequential decision. If the answer is yes, it is high-risk and
-          the full deployer duties attach.
+          <Strong>Classify against the new definition.</Strong> For each
+          system, decide in writing whether it materially influences a
+          consequential decision in one of the seven covered sectors. Note
+          any exemptions you relied on.
         </LI>
         <LI>
-          <Strong>Stand up a governance policy.</Strong> You can start with a
-          NIST AI RMF-aligned template. The first version does not need to be
-          perfect — it needs to exist, be adopted, and actually be used.
+          <Strong>Draft the two notices.</Strong> A clear-and-conspicuous
+          pre-use notice for your public-facing properties, and a templated
+          plain-language adverse-outcome notice you can send within 30 days
+          of any unfavorable decision.
         </LI>
         <LI>
-          <Strong>Write an impact assessment for each high-risk system.</Strong>{" "}
-          Keep it short and honest. A three-page assessment that accurately
-          describes the system, the data, the risks, and the mitigations is
-          worth more than a thirty-page assessment full of boilerplate.
+          <Strong>Stand up a meaningful human review process.</Strong> Name
+          who reviews, train them, document the workflow, and give them
+          access to the developer documentation they need to second-guess
+          the system. The process has to be real, not a rubber stamp.
         </LI>
         <LI>
-          <Strong>Review your vendor contracts.</Strong> Every AI vendor
-          contract should be re-read with three questions in mind: who owns the
-          training data, who indemnifies you for regulatory failures, and do
-          you have the audit rights you need to meet your own deployer duties.
-          (<InlineLink href="/blog/5-ai-vendor-contract-clauses">
-            More on that in our AI vendor contract clauses article.
+          <Strong>Collect developer documentation from every ADMT vendor.</Strong>{" "}
+          Intended uses, training data categories, limitations, risks, and
+          human-review instructions. You need these on file to draft
+          accurate consumer notices and to defend an AG inquiry.
+          (
+          <InlineLink href="/blog/5-ai-vendor-contract-clauses">
+            More on the contract clauses that get you there.
           </InlineLink>
           )
         </LI>
       </OL>
 
       <P>
-        If you want to know how your business would score against these duties
-        right now, take our{" "}
+        If you want to know how your business would score against these
+        duties right now, take our{" "}
         <InlineLink href="/ai-act-checker">
           free Colorado AI Act Readiness Checker
         </InlineLink>
-        . It takes about two minutes and produces a specific, prioritized gap
-        list mapped to the statute.
+        . It takes about two minutes and produces a specific, prioritized
+        gap list mapped to SB 26-189.
       </P>
 
       <H2>The honest bottom line</H2>
 
       <P>
-        The Colorado AI Act is serious but it is not scary. Most of the duties
-        it imposes are things a well-run business would want to do anyway:
-        know what tools you are using, be honest with customers, have a
-        paper trail, plan for what happens when something breaks. The businesses
-        that get hurt after the June 30, 2026 effective date will not be the
-        ones that got every detail right — they will be the ones that ignored
-        the statute until the enforcement window opened and then tried to
-        back-date a compliance program under pressure.
+        The new Colorado AI Act is less onerous than the law it replaced,
+        but it is also more concrete. The duties are shorter, more public,
+        and more measurable — which means a regulator can tell at a glance
+        whether you complied. The businesses that get hurt after January 1,
+        2027 will not be the ones that got every detail right; they will be
+        the ones that did not post a pre-use notice, did not respond to an
+        adverse-outcome request, or could not produce three years of
+        records.
       </P>
 
       <P>
@@ -323,9 +401,10 @@ export default function ColoradoAiAct2026Article() {
           FAIIR — the Foundation for AI Integrity &amp; Regulation
         </InlineLink>{" "}
         specifically to get Colorado businesses through this statute without
-        paying big-firm rates. If your business is running AI in any of the
-        high-risk categories above and you do not yet have governance,
-        assessments, or documentation in place, that is what we are here for.
+        paying big-firm rates. If your business is running covered ADMT in
+        any of the seven sectors above and you do not yet have notices,
+        human review, or vendor documentation in place, that is what we are
+        here for.
       </P>
 
       <LegalDisclaimer />
