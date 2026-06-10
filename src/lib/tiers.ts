@@ -13,7 +13,7 @@ export interface TierConfig {
   label: string;
   tagline: string;
   /**
-   * Monthly allotment of attorney work items. A work item is ANY of:
+   * Monthly allotment of attorney tasks. An attorney task is ANY of:
    *   - a matter review (Allora-drafted document the attorney approves
    *     and sends to the client)
    *   - a consultation (30-minute attorney call)
@@ -34,61 +34,70 @@ export interface TierConfig {
  */
 export const OVERAGE_PRICE_PER_PAGE_USD = 50;
 
+/**
+ * Plain-language name + definition for the monthly attorney allotment. Use
+ * these everywhere instead of the old internal phrase "work item" so members
+ * always see the same, jargon-free wording.
+ */
+export const ATTORNEY_TASK_LABEL = "attorney task";
+export const ATTORNEY_TASK_DEFINITION =
+  "One attorney task = a document our AI drafts and a licensed attorney reviews and sends you, or a 30-minute attorney consult — your choice each time.";
+
 export const TIERS: Record<TierKey, TierConfig> = {
   explore: {
     key: "explore",
     label: "Explore",
-    tagline: "See what's possible, no commitment.",
+    tagline: "Kicking the tires — no commitment.",
     workItemsPerMonth: 0,
     monthlyPriceUsd: 0,
     annualPriceUsd: 0,
     features: [
-      "Allora chat (limited usage)",
-      "Secure document storage",
+      "Chat with Allora, our AI legal assistant",
+      "Encrypted document storage",
     ],
   },
   build: {
     key: "build",
     label: "Build",
-    tagline: "For founders getting the basics locked down.",
+    tagline: "Get your legal basics locked down.",
     workItemsPerMonth: 1,
     monthlyPriceUsd: 50,
     annualPriceUsd: 500,
     features: [
-      "Unlimited AI chat & drafts with Allora",
-      "Secure document storage",
+      "Unlimited Allora AI chat & drafting",
+      "Encrypted document storage",
     ],
   },
   grow: {
     key: "grow",
     label: "Grow",
-    tagline: "For teams shipping contracts and closing deals.",
+    tagline: "When contracts and deals pick up.",
     workItemsPerMonth: 2,
     monthlyPriceUsd: 150,
     annualPriceUsd: 1500,
     features: [
-      "Priority attorney response (2 business days)",
+      "Priority attorney replies (2 business days)",
+      "Contract template library",
       "Monthly Practice Letter",
-      "Starter contract template library",
-      "Unlimited AI chat & drafts with Allora",
-      "Secure document storage",
+      "Unlimited Allora AI chat & drafting",
+      "Encrypted document storage",
     ],
   },
   lead: {
     key: "lead",
     label: "Lead",
-    tagline: "For operators who need depth and speed.",
+    tagline: "Your on-call outside legal department.",
     workItemsPerMonth: 3,
     monthlyPriceUsd: 300,
     annualPriceUsd: 3000,
     features: [
-      "Priority attorney response (1 business day)",
+      "Fastest attorney replies (1 business day)",
       "Quarterly legal roadmap review",
       "Early access to new Allora features",
+      "Contract template library",
       "Monthly Practice Letter",
-      "Starter contract template library",
-      "Unlimited AI chat & drafts with Allora",
-      "Secure document storage",
+      "Unlimited Allora AI chat & drafting",
+      "Encrypted document storage",
     ],
   },
 };

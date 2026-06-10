@@ -204,7 +204,7 @@ export default function AccountPage() {
                 <p className="text-xs text-[#6B5B4E] mt-1">
                   {isOverLimit
                     ? `You've used your allotment. Additional reviews bill at $${OVERAGE_PRICE_PER_PAGE_USD}/page.`
-                    : `${workItemsRemaining} remaining. A work item is any matter review or 30-min consultation.`}
+                    : `${workItemsRemaining} remaining. An attorney task is any reviewed document or 30-min consult.`}
                 </p>
               </>
             )}

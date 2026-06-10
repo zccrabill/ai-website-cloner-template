@@ -19,12 +19,38 @@ export default function AuthCallbackPage() {
         }
 
         const routeUser = async (userId: string) => {
+          // Claim any pending FAIIR workspace invite for this email. Idempotent,
+          // and matched server-side against the *authenticated* email — a
+          // forwarded magic link cannot claim someone else's seat.
+          await supabase.rpc("claim_org_memberships");
+
+          // FAIIR engagement clients skip the SMB onboarding wizard entirely:
+          // their engagement letter is signed offline (countersigned PDF), and
+          // the wizard's built-in agreement is the subscription contract — the
+          // wrong document for an engagement client to ever see.
+          const { data: seat } = await supabase
+            .from("org_members")
+            .select("org_id")
+            .eq("user_id", userId)
+            .eq("status", "active")
+            .limit(1)
+            .maybeSingle();
+
+          if (seat) {
+            router.push("/dashboard");
+            return;
+          }
+
           // Check if user has completed onboarding
+          // maybeSingle (not single): a brand-new user has no members row yet,
+          // and single() treats "0 rows" as an error (PGRST116 + a 406) on the
+          // happy-path first sign-in. maybeSingle returns null cleanly so we
+          // route them to /onboarding without spurious console noise.
           const { data: profile } = await supabase
             .from("members")
             .select("onboarding_complete")
             .eq("user_id", userId)
-            .single();
+            .maybeSingle();
 
           if (profile?.onboarding_complete) {
             router.push("/dashboard");

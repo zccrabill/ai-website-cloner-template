@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { TIERS, TierKey, annualSavingsUsd } from "@/lib/tiers";
+import { TIERS, TierKey, annualSavingsUsd, ATTORNEY_TASK_DEFINITION } from "@/lib/tiers";
 import { useState } from "react";
 
 /**
@@ -15,7 +15,7 @@ import { useState } from "react";
  *   3. Price (large) + billing note ("billed annually · save $X/yr")
  *   4. Tagline (min-height aligned across cards)
  *   5. Work-item callout (tight, one line where possible) — the hero feature
- *      of each paid tier. Strings like "1 work item / month" live here so
+ *      of each paid tier. Strings like "1 attorney task / month" live here so
  *      they don't duplicate into the feature bullets below.
  *   6. Features (flex-grow):
  *        - "Everything in [prior], plus:" header for non-explore tiers
@@ -180,6 +180,9 @@ export default function PricingSection() {
             </span>
           )}
         </div>
+        <p className="text-xs text-[#A89279] mt-5 max-w-[560px] mx-auto leading-relaxed">
+          {ATTORNEY_TASK_DEFINITION}
+        </p>
       </div>
 
       {/* Pricing Cards */}
@@ -288,11 +291,11 @@ export default function PricingSection() {
                     <span className="font-semibold">
                       {tier.workItemsPerMonth}{" "}
                       {tier.workItemsPerMonth === 1
-                        ? "work item"
-                        : "work items"}{" "}
+                        ? "attorney task"
+                        : "attorney tasks"}{" "}
                       / month.
                     </span>{" "}
-                    Matter review or consult — your call.
+                    A reviewed document or a 30-min consult — your call.
                   </>
                 )}
               </div>

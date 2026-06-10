@@ -199,7 +199,7 @@ export default function CheckoutClient({ initialTier }: CheckoutClientProps) {
                       )}
                     </div>
                     <div className="text-sm text-[#6B5B4E] mb-2">
-                      {t.workItemsPerMonth} attorney work item
+                      {t.workItemsPerMonth} attorney task
                       {t.workItemsPerMonth === 1 ? "" : "s"} / month
                     </div>
                     <div className="text-[#1F1810] font-semibold">
@@ -270,11 +270,11 @@ export default function CheckoutClient({ initialTier }: CheckoutClientProps) {
               {tier.workItemsPerMonth > 0 && (
                 <div className="mb-5 rounded-lg bg-[#7A8B6F]/10 border border-[#7A8B6F]/20 px-4 py-3">
                   <p className="text-[15px] font-semibold text-[#1F1810]">
-                    {tier.workItemsPerMonth} attorney work item
+                    {tier.workItemsPerMonth} attorney task
                     {tier.workItemsPerMonth === 1 ? "" : "s"} / month
                   </p>
                   <p className="text-xs text-[#6B5B4E] mt-1">
-                    Matter review or consult &mdash; your call.
+                    A reviewed document or a 30-min consult &mdash; your call.
                   </p>
                 </div>
               )}

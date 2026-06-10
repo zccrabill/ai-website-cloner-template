@@ -273,7 +273,7 @@ export default function AiVendorContractClausesArticle() {
       <P>
         Available Law reviews AI vendor contracts as a standard part of{" "}
         <InlineLink href="/faiir">FAIIR certification</InlineLink> and as a
-        standalone work item under our{" "}
+        standalone attorney task under our{" "}
         <InlineLink href="/#pricing">flat-rate subscription plans</InlineLink>
         . If you want to see how your current AI vendor contracts stack up
         against the Colorado AI Act&apos;s deployer duties, our{" "}

@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import DashboardShell from "@/components/DashboardShell";
 import AdminDashboard from "@/components/AdminDashboard";
+import EngagementWorkspace from "@/components/EngagementWorkspace";
 import { supabase } from "@/lib/supabase";
 import { getTier, OVERAGE_PRICE_PER_PAGE_USD } from "@/lib/tiers";
 import {
@@ -23,6 +24,10 @@ export default function DashboardPage() {
   // 'admin' / 'attorney' get the firm-operations view.
   const [role, setRole] = useState<Role>(null);
 
+  // FAIIR engagement clients (active org seat) get the engagement workspace
+  // as their dashboard home instead of the SMB member widgets.
+  const [engagementOrgId, setEngagementOrgId] = useState<string | null>(null);
+
   const [rawTier, setRawTier] = useState<string>("explore");
   const [subStatus, setSubStatus] = useState<string>("inactive");
   const [conversationsCount, setConversationsCount] = useState(0);
@@ -34,6 +39,7 @@ export default function DashboardPage() {
     const session = sess.session;
     if (!session) {
       setRole("member");
+      setEngagementOrgId(null);
       setRawTier("explore");
       setSubStatus("inactive");
       setConversationsCount(0);
@@ -51,12 +57,36 @@ export default function DashboardPage() {
       .maybeSingle();
 
     const memberRole = (member?.role ?? "member") as Role;
-    setRole(memberRole);
 
     // Staff users see AdminDashboard instead — skip the member-specific
     // queries entirely. Saves a round-trip and avoids RLS-empty results
     // showing up as 0 counts in admin state.
-    if (memberRole === "admin" || memberRole === "attorney") return;
+    if (memberRole === "admin" || memberRole === "attorney") {
+      setRole(memberRole);
+      return;
+    }
+
+    // FAIIR engagement seat check, before setRole so the member widgets never
+    // flash for engagement clients. Claim first (idempotent, matches the
+    // authenticated email server-side) so an invite sent after the user's
+    // last sign-in still lands without a fresh magic link.
+    await supabase.rpc("claim_org_memberships");
+    const { data: seat } = await supabase
+      .from("org_members")
+      .select("org_id")
+      .eq("user_id", session.user.id)
+      .eq("status", "active")
+      .limit(1)
+      .maybeSingle();
+
+    if (seat?.org_id) {
+      setEngagementOrgId(seat.org_id);
+      setRole(memberRole);
+      return;
+    }
+
+    setEngagementOrgId(null);
+    setRole(memberRole);
 
     setRawTier(member?.subscription_tier ?? "explore");
     setSubStatus(member?.subscription_status ?? "inactive");
@@ -103,6 +133,27 @@ export default function DashboardPage() {
     return (
       <DashboardShell title="Dashboard">
         <AdminDashboard />
+      </DashboardShell>
+    );
+  }
+
+  // FAIIR engagement clients: the workspace is their dashboard home.
+  if (engagementOrgId) {
+    return (
+      <DashboardShell title="FAIIR Engagement">
+        <EngagementWorkspace orgId={engagementOrgId} />
+      </DashboardShell>
+    );
+  }
+
+  // Still resolving role/seat — hold the chrome with a spinner rather than
+  // flashing the SMB widgets at a user who may be an engagement client.
+  if (role === null) {
+    return (
+      <DashboardShell title="Dashboard">
+        <div className="py-16 text-center">
+          <div className="w-10 h-10 border-4 border-[#C17832]/20 border-t-[#C17832] rounded-full animate-spin mx-auto" />
+        </div>
       </DashboardShell>
     );
   }

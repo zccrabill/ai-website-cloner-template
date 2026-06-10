@@ -111,11 +111,14 @@ export default function FaiirIntakeForm({ isOpen, onClose }: FaiirIntakeFormProp
       notes: notes.trim() || null,
     };
 
-    const { data: inserted, error: insertErr } = await supabase
+    // Do NOT chain .select() here. faiir_intakes SELECT is admin-only, so a
+    // read-back would trip the SELECT RLS policy and make the whole insert
+    // fail for anonymous visitors (Postgres 42501 → HTTP 401). A bare insert
+    // uses Prefer: return=minimal and needs only the anon-allowed INSERT
+    // policy. (We don't need the new row's id — notify-event doesn't use it.)
+    const { error: insertErr } = await supabase
       .from("faiir_intakes")
-      .insert(payload)
-      .select("id")
-      .single();
+      .insert(payload);
 
     if (insertErr) {
       setError(
@@ -134,10 +137,7 @@ export default function FaiirIntakeForm({ isOpen, onClose }: FaiirIntakeFormProp
         body: {
           event_type: "faiir.intake_received",
           member_email: payload.email,
-          data: {
-            ...payload,
-            intake_id: inserted?.id ?? null,
-          },
+          data: payload,
         },
       })
       .catch((err: unknown) => {

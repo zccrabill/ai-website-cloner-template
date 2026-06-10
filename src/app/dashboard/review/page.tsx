@@ -620,7 +620,7 @@ export default function ReviewQueuePage() {
                         <p className="font-semibold text-[#1F1810]">
                           Client plan: {tier.label}
                           {!isFreeTier && (
-                            <> — {used} / {limit} work items used</>
+                            <> — {used} / {limit} attorney tasks used</>
                           )}
                         </p>
                         {isFreeTier ? (
@@ -659,7 +659,7 @@ export default function ReviewQueuePage() {
                         ) : (
                           <p className="text-xs text-[#6B5B4E] mt-1">
                             Approving will use 1 of the client&apos;s{" "}
-                            {limit - used} remaining work item
+                            {limit - used} remaining attorney task
                             {limit - used === 1 ? "" : "s"} this period.
                           </p>
                         )}

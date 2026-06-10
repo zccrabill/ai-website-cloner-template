@@ -432,7 +432,7 @@ export default function OnboardingPage() {
                   </p>
                   <p className="font-semibold text-[#1F1810]">DATA SECURITY</p>
                   <p>
-                    We implement industry-standard encryption, access controls, and security practices to protect your information. Data is stored in SOC 2 compliant infrastructure provided by Supabase. Payment processing is handled by Stripe, a PCI-DSS Level 1 certified provider.
+                    Your data is encrypted at rest with AES-256 and in transit via TLS, and stored on SOC 2 Type 2 and ISO 27001-certified infrastructure (Supabase). We apply strict access controls so that only you and your supervising attorney can access your matter files. Payment processing is handled by Stripe, a PCI-DSS Level 1 certified provider.
                   </p>
                   <p className="font-semibold text-[#1F1810]">DATA RETENTION</p>
                   <p>

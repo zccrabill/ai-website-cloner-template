@@ -427,7 +427,7 @@ export const HOMEPAGE_FAQS: Array<{ question: string; answer: string }> = [
   {
     question: "How much does Available Law cost?",
     answer:
-      "Available Law offers four flat-rate subscription tiers: Explore is free and gives access to Allora's self-serve tools, Build is $50/month and includes 1 attorney work item, Grow is $150/month and includes 2 attorney work items, and Lead is $300/month and includes 3 attorney work items.",
+      "Available Law offers four flat-rate subscription tiers: Explore is free and gives access to Allora's self-serve tools, Build is $50/month and includes 1 attorney task, Grow is $150/month and includes 2 attorney tasks, and Lead is $300/month and includes 3 attorney tasks.",
   },
   {
     question: "Is Allora an AI lawyer?",

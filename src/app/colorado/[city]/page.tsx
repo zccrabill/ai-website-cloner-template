@@ -170,7 +170,7 @@ export default async function CityPage({
                 },
                 {
                   title: "Fractional general counsel",
-                  body: "The Lead tier ($300/month, 3 attorney work items) gives growing businesses a predictable legal partner without the overhead of in-house counsel.",
+                  body: "The Lead tier ($300/month, 3 attorney tasks) gives growing businesses a predictable legal partner without the overhead of in-house counsel.",
                 },
               ].map((svc) => (
                 <div
