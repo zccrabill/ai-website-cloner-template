@@ -54,9 +54,14 @@ export default function ColoradoAiAct2026Article() {
         bipartisan 34-1 vote in the Senate and 57-6 in the House. It{" "}
         <Strong>repeals and replaces</Strong> the prior Colorado AI Act
         (Senate Bill 24-205, the 2024 law that was scheduled to take effect
-        first in February 2026 and then in June 2026). The 2024 statute will
-        not take effect. The 2026 statute does, on{" "}
-        <Strong>January 1, 2027</Strong>.
+        first in February 2026 and then on June 30, 2026). The replacement
+        is not instant, though. The repeal and the new framework both take
+        effect <Strong>January 1, 2027</Strong>, and the new duties apply
+        to consequential decisions made on or after that date — which
+        means the 2024 statute still takes effect{" "}
+        <Strong>June 30, 2026</Strong> and is technically the law on the
+        books for the last six months of 2026. More on that interim window
+        below.
       </P>
 
       <P>
@@ -162,8 +167,14 @@ export default function ColoradoAiAct2026Article() {
 
       <P>
         Two things to notice. First, this list covers a huge portion of the
-        Colorado economy. Second, <Strong>legal services</Strong> — which was
-        in the 2024 law&apos;s scope — has been dropped from the 2026 law.
+        Colorado economy. Second, <Strong>legal services</Strong> — which is
+        in the 2024 law&apos;s scope — is not on the 2026 list.{" "}
+        <Strong>That drop does not happen until January 1, 2027.</Strong>{" "}
+        Because the 2024 law takes effect June 30, 2026 and is not repealed
+        until the new framework starts, AI used in decisions about
+        consumers&apos; access to legal services remains covered for the
+        rest of 2026. A business in that category should not treat itself
+        as out of scope until the calendar actually turns.
       </P>
 
       <Callout title="Quick gut check">
@@ -323,6 +334,45 @@ export default function ColoradoAiAct2026Article() {
           compliance program is not perfection — it is to have real, dated,
           documented work product you can point to during a 60-day cure
           window.
+        </P>
+      </Callout>
+
+      <H2>What governs the rest of 2026?</H2>
+
+      <P>
+        This is the part the press releases get wrong, so here is the
+        timeline plainly. SB 26-189&apos;s repeal of the 2024 law is dated{" "}
+        <Strong>January 1, 2027</Strong> — the same day the new framework
+        begins. Nothing in the new bill cancels the 2024 law&apos;s June
+        30, 2026 effective date. So from{" "}
+        <Strong>June 30 through December 31, 2026</Strong>, the original
+        Colorado AI Act — duty of care, impact assessments, legal services
+        in scope, all of it — is technically the law of Colorado.
+      </P>
+
+      <P>
+        What makes this less alarming than it sounds is the courtroom. In
+        a pending federal challenge to the 2024 law (filed by xAI, with
+        the U.S. Department of Justice intervening in support), the
+        Colorado Attorney General agreed in an April 2026 court filing{" "}
+        <Strong>not to initiate enforcement or investigate alleged
+        violations</Strong> while that litigation plays out. The 2024 law
+        also has no private right of action — the AG is the only
+        enforcer. Paused enforcement, however, is not the same thing as
+        repeal: the obligations exist on paper, and the prudent posture
+        for the interim is the same work the 2027 framework requires
+        anyway — notices, human review, vendor documentation, and
+        records.
+      </P>
+
+      <Callout title="If your business touches legal services">
+        <P>
+          The interim window matters most if AI helps decide
+          consumers&apos; access to <Strong>legal services</Strong> —
+          the one covered category in the 2024 law that the 2027
+          framework drops. For the rest of 2026 that use is inside the
+          statute&apos;s scope, so keep it in your ADMT inventory and
+          governance program now, and re-classify it in January.
         </P>
       </Callout>
 

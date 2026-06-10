@@ -31,13 +31,15 @@ export default function WhatIsFaiirFrameworkArticle() {
   return (
     <>
       <Lead>
-        FAIIR stands for <Strong>Fairness, Accountability,
-        Impact&nbsp;assessment, Informed&nbsp;consent,</Strong> and{" "}
-        <Strong>Risk&nbsp;management</Strong>. It is the compliance
-        framework we built at Available Law to help Colorado businesses
-        meet — and go past — the requirements of the new Colorado AI Act
-        (SB 26-189), without drowning in legalese or six-figure consulting
-        engagements.
+        FAIIR is the <Strong>Foundation for AI Integrity &amp;
+        Regulation</Strong> — the compliance framework we built at
+        Available Law around five pillars:{" "}
+        <Strong>Fitness&nbsp;for&nbsp;Purpose, Accountability,
+        Integrity&nbsp;of&nbsp;Data, Informed&nbsp;Use,</Strong> and{" "}
+        <Strong>Risk&nbsp;Management</Strong>. It exists to help Colorado
+        businesses meet — and go past — the requirements of the new
+        Colorado AI Act (SB 26-189), without drowning in legalese or
+        six-figure consulting engagements.
       </Lead>
 
       <P>
@@ -54,19 +56,25 @@ export default function WhatIsFaiirFrameworkArticle() {
 
       <H2>The five pillars</H2>
 
-      <H3>F — Fairness</H3>
+      <H3>F — Fitness for Purpose</H3>
       <P>
-        Fairness is the foundation. SB 26-189 dropped the prior law&apos;s
-        algorithmic-discrimination duty of care, but it expressly preserved
-        liability under state anti-discrimination laws for outcomes
-        materially influenced by ADMT — and made indemnity for the deployer&apos;s
-        own discriminatory conduct unenforceable. FAIIR operationalizes
-        fairness with a structured disparate-impact review: we identify the
-        decision categories your AI touches, map the protected classes at
-        risk, and test for differential outcomes using the data you
-        actually have. The output is a documented fairness analysis that
-        gives you a real defense, not a vague promise that your vendor
-        &ldquo;tested for bias.&rdquo;
+        Most AI liability does not come from exotic failures. It comes
+        from deploying a general-purpose model in a domain where it was
+        never validated — a chatbot acting as a customer-service policy,
+        a language model acting as a screener of real people. Fitness for
+        Purpose asks you to prove you thought about the match between the
+        tool and the job, and to test it. That includes bias: SB 26-189
+        dropped the prior law&apos;s algorithmic-discrimination duty of
+        care, but it expressly preserved liability under state
+        anti-discrimination laws for outcomes materially influenced by
+        ADMT — and made indemnity for the deployer&apos;s own
+        discriminatory conduct unenforceable. FAIIR operationalizes this
+        pillar with a structured fitness and disparate-impact review: we
+        identify the decision categories your AI touches, map the
+        protected classes at risk, and test for differential outcomes
+        using the data you actually have. The output is a documented
+        analysis that gives you a real defense, not a vague promise that
+        your vendor &ldquo;tested for bias.&rdquo;
       </P>
 
       <H3>A — Accountability</H3>
@@ -81,20 +89,55 @@ export default function WhatIsFaiirFrameworkArticle() {
         60-day AG cure notice without scrambling.
       </P>
 
-      <H3>I — Impact assessment</H3>
+      <H3>I — Integrity of Data</H3>
       <P>
-        Before you deploy (or continue deploying) covered ADMT, you need
-        to understand the impact it has on consumers. FAIIR walks you
-        through a structured assessment that documents the purpose of the
-        system, the categories of decisions it influences, the data it
-        ingests, the populations it affects, and the potential for harm.
-        SB 26-189 did away with the mandatory annual impact assessment of
-        the prior law — but the document itself remains the single most
-        useful artifact you can produce when a regulator or plaintiff
-        comes asking how your AI works.
+        This is the pillar most small businesses fail on — because most
+        of their employees are pasting customer data, internal documents,
+        and trade secrets into free AI tools every day without anyone
+        tracking it. Integrity of Data is about knowing your data
+        perimeter and enforcing it: which systems see what data, which
+        vendors can train on it (and whether you opted out), and where
+        personal data flows when an ADMT makes a decision. SB 26-189
+        gives consumers the right to access and correct the personal
+        data a covered ADMT relied on — a right you cannot honor if you
+        do not know where that data lives.
       </P>
 
-      <Callout title="Why a voluntary assessment still matters">
+      <H3>I — Informed Use</H3>
+      <P>
+        Most AI liability cases turn on a surprised person — a customer
+        surprised the chatbot was AI, an applicant surprised an
+        algorithm screened them. Informed Use is the pillar that
+        prevents surprise, and SB 26-189 makes it concrete. Deployers
+        must post a{" "}
+        <Strong>clear and conspicuous pre-use notice</Strong> that covered
+        ADMT is in use and send a{" "}
+        <Strong>30-day adverse-outcome notice</Strong> in plain language
+        when ADMT contributes to a denial or unfavorable decision. FAIIR
+        delivers templates calibrated to your actual systems — the
+        consumer-facing language has to track what your ADMT does and what
+        inputs it relies on. Generic privacy policy language is not
+        sufficient, and the AG will know the difference.
+      </P>
+
+      <H3>R — Risk Management</H3>
+      <P>
+        Risk Management is the audit-trail pillar — it converts
+        &ldquo;we&apos;re being careful&rdquo; into &ldquo;here is the
+        evidence we were being careful.&rdquo; FAIIR produces a
+        documented risk management program that covers ongoing
+        monitoring, complaint handling, employee orientation, vendor
+        oversight, periodic re-assessment, and written system reviews
+        for each covered ADMT. SB 26-189 did away with the prior
+        law&apos;s mandatory annual impact assessments and doesn&apos;t
+        require a formal risk-management program — but it does require
+        three years of records and a meaningful human-review process,
+        which together functionally demand one. This is not a static
+        document — it is a living program that evolves as your AI usage
+        changes and regulatory expectations sharpen.
+      </P>
+
+      <Callout title="Why voluntary documentation still matters">
         <P>
           Many businesses read the SB 26-189 repeal-and-replace as
           permission to skip the documentation work. That&apos;s a
@@ -106,32 +149,6 @@ export default function WhatIsFaiirFrameworkArticle() {
           it.
         </P>
       </Callout>
-
-      <H3>I — Informed consent</H3>
-      <P>
-        SB 26-189 makes this pillar concrete. Deployers must post a{" "}
-        <Strong>clear and conspicuous pre-use notice</Strong> that covered
-        ADMT is in use and send a{" "}
-        <Strong>30-day adverse-outcome notice</Strong> in plain language
-        when ADMT contributes to a denial or unfavorable decision. FAIIR
-        delivers templates calibrated to your actual systems — the
-        consumer-facing language has to track what your ADMT does and what
-        inputs it relies on. Generic privacy policy language is not
-        sufficient, and the AG will know the difference.
-      </P>
-
-      <H3>R — Risk management</H3>
-      <P>
-        Risk management ties everything together. FAIIR produces a
-        documented risk management program that covers ongoing monitoring,
-        complaint handling, employee orientation, vendor oversight, and
-        periodic re-assessment. SB 26-189 doesn&apos;t require a formal
-        risk-management program — but it does require three years of
-        records and a meaningful human-review process, which together
-        functionally demand one. This is not a static document — it is a
-        living program that evolves as your AI usage changes and
-        regulatory expectations sharpen.
-      </P>
 
       <H2>How the FAIIR process works</H2>
 

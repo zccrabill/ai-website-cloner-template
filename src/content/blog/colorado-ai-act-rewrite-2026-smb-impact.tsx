@@ -34,9 +34,12 @@ export default function ColoradoAiActRewrite2026SmbImpactArticle() {
         replacing the Colorado AI Act that lawyers (including us) had been
         prepping Colorado businesses for since 2024. If you spent the last
         two years hearing about high-risk AI systems, risk management
-        programs, and impact assessments — most of that is gone. What
-        replaced it is shorter, more concrete, and much friendlier to small
-        businesses.
+        programs, and impact assessments — most of that disappears on
+        January 1, 2027, when the new framework takes effect. What
+        replaces it is shorter, more concrete, and much friendlier to
+        small businesses. But the handoff between the two laws is messier
+        than the headlines suggest, and one piece of it matters this
+        month: the old law still takes effect June 30, 2026.
       </Lead>
 
       <P>
@@ -50,19 +53,29 @@ export default function ColoradoAiActRewrite2026SmbImpactArticle() {
         The Colorado General Assembly passed{" "}
         <Strong>Senate Bill 26-189</Strong> by a bipartisan 34-1 vote in
         the Senate and 57-6 in the House. The Governor signed it on May
-        14, 2026. It <Strong>fully repeals</Strong> Senate Bill 24-205
-        (the 2024 Colorado AI Act) before that law ever took effect. The
-        new statute is effective <Strong>January 1, 2027</Strong>.
+        14, 2026. It <Strong>repeals and replaces</Strong> Senate Bill
+        24-205 (the 2024 Colorado AI Act) — but not immediately. The
+        repeal and the new framework both take effect{" "}
+        <Strong>January 1, 2027</Strong>, and the new duties apply to
+        consequential decisions made on or after that date.
       </P>
 
       <P>
-        SB 24-205 had been pushed to a June 30, 2026 effective date in an
-        August 2025 special session and was widely expected to be the
-        most demanding state AI law in the country. The legislature
-        listened to two years of business and regulatory feedback and
-        scrapped most of the framework. What replaced it is a
-        disclosure-and-human-review regime that is far less expensive for
-        small businesses to comply with — but still has teeth.
+        Here is the wrinkle most of the coverage is missing. SB 24-205
+        had been pushed to a June 30, 2026 effective date in an August
+        2025 special session — and SB 26-189 did not cancel that date.
+        The 2024 law <Strong>still takes effect June 30, 2026</Strong>{" "}
+        and stays on the books through December 31, 2026. What defuses
+        it in practice is a courtroom, not the statute: in the pending
+        federal lawsuit challenging the old act (filed by xAI, with the
+        U.S. Department of Justice intervening in support), the Colorado
+        Attorney General agreed in an April 2026 court filing not to
+        enforce the act or investigate alleged violations while the
+        challenge plays out. So the old framework technically arrives
+        this month with enforcement paused, and the new
+        disclosure-and-human-review regime — far less expensive for
+        small businesses to comply with, but still with teeth — replaces
+        it on January 1, 2027.
       </P>
 
       <Callout title="If you do nothing else this week">
@@ -87,7 +100,9 @@ export default function ColoradoAiActRewrite2026SmbImpactArticle() {
         narrower in some ways (spell-checkers, calculators, and
         administrative tools are explicitly excluded) and clearer in
         others (the law spells out what counts as &ldquo;materially
-        influences&rdquo; and gives a list of nine sector exemptions).
+        influences&rdquo; and lists nine categories of decisions and
+        tools — routine scheduling, advertising, cybersecurity, fraud
+        controls, and the like — that are excluded outright).
       </P>
 
       <H3>The duties are shorter</H3>
@@ -122,12 +137,25 @@ export default function ColoradoAiActRewrite2026SmbImpactArticle() {
         </LI>
       </OL>
 
-      <H3>The sectors changed</H3>
+      <H3>The sectors change in January — and legal services is the one to watch</H3>
       <P>
-        Out: legal services. In: same as the 2024 law&apos;s other
-        sectors — education, employment, residential real estate,
-        financial and lending services, insurance, healthcare, and
-        government services and public benefits.
+        Starting <Strong>January 1, 2027</Strong>, the covered domains
+        are education, employment, residential real estate, financial
+        and lending services, insurance, healthcare, and essential
+        government services and public benefits.{" "}
+        <Strong>Legal services</Strong> — a covered category under the
+        2024 law — is not on the new list.
+      </P>
+      <P>
+        But do not act on that yet. Legal services are{" "}
+        <Strong>not out of scope today</Strong>: the 2024 law, which
+        covers them, takes effect June 30, 2026 and remains the statute
+        on the books through December 31, 2026. If your business uses AI
+        to make or influence decisions about consumers&apos; access to
+        legal services — or you sell AI tooling into law firms — the
+        broader 2024 scope is what applies for the rest of this year.
+        The legal-services category only drops out when the new
+        framework takes over on January 1, 2027.
       </P>
 
       <H3>The duty of care is gone</H3>
@@ -140,10 +168,23 @@ export default function ColoradoAiActRewrite2026SmbImpactArticle() {
         section.
       </P>
 
-      <H3>The effective date moved out</H3>
+      <H3>The effective dates are messier than the headlines</H3>
       <P>
-        Out: June 30, 2026. In: January 1, 2027. You got an extra six
-        months of runway, and the new framework is faster to stand up.
+        The new framework starts <Strong>January 1, 2027</Strong> and
+        applies to consequential decisions made on or after that date.
+        But because the repeal of the old law carries the same date, the
+        2024 law still takes effect <Strong>June 30, 2026</Strong> and
+        technically governs the last six months of this year. Three
+        things keep that from being an emergency: the Attorney
+        General&apos;s agreement in the xAI litigation not to enforce or
+        investigate while the case is pending, the old law&apos;s lack
+        of any private right of action, and the fact that work done
+        toward the new framework (notices, human review, vendor
+        documentation, records) is also the right posture under the old
+        one. Build toward January 1, 2027 — just do not tell yourself
+        the interim law does not exist, especially if you touch a
+        category like legal services that the old law covers and the
+        new one does not.
       </P>
 
       <H2>What did not change</H2>
@@ -212,8 +253,10 @@ export default function ColoradoAiActRewrite2026SmbImpactArticle() {
           <Strong>Pull together a one-page ADMT inventory.</Strong> List
           every AI-assisted tool your business uses that touches a
           decision about a person — hiring, lending, customer
-          eligibility, pricing, anything in the seven covered sectors.
-          Note the vendor, what it does, and who owns it internally.
+          eligibility, pricing, anything in the covered sectors
+          (including legal services, which stays covered through the end
+          of 2026). Note the vendor, what it does, and who owns it
+          internally.
         </LI>
         <LI>
           <Strong>Post a pre-use notice on the customer-facing surfaces.</Strong>{" "}

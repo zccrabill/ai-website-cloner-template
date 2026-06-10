@@ -29,16 +29,16 @@ const blogPosts: BlogPost[] = [
   {
     slug: "colorado-ai-act-rewrite-2026-smb-impact",
     title: "Colorado Just Rewrote Its AI Law — What It Means for Your Small Business",
-    date: "May 22, 2026",
+    date: "May 22, 2026 (Updated June 10, 2026)",
     excerpt:
-      "Governor Polis signed SB 26-189 on May 14, 2026, repealing and replacing the Colorado AI Act before it ever took effect. Here's what actually changed, what Colorado SMBs should do this week, and what to ignore from the SB 24-205 prep cycle.",
+      "Governor Polis signed SB 26-189 on May 14, 2026, replacing the Colorado AI Act with a lighter framework effective January 1, 2027. But the original act — legal services and all — still takes effect June 30, 2026, with enforcement paused. Here's what actually changed and what Colorado SMBs should do this week.",
   },
   {
     slug: "what-is-faiir-framework",
     title: "What Is the FAIIR Framework? AI Compliance for Colorado Businesses",
     date: "April 11, 2026",
     excerpt:
-      "FAIIR stands for Fairness, Accountability, Impact assessment, Informed consent, and Risk management. It's the compliance framework we built to help Colorado businesses meet the Colorado AI Act.",
+      "FAIIR is the Foundation for AI Integrity & Regulation — five pillars (Fitness for Purpose, Accountability, Integrity of Data, Informed Use, Risk Management) built to help Colorado businesses meet the Colorado AI Act and the wider AI-regulation patchwork.",
   },
   {
     slug: "ai-liability-insurance-coverage",
@@ -78,9 +78,9 @@ const blogPosts: BlogPost[] = [
   {
     slug: "colorado-ai-act-2026",
     title: "Colorado AI Act 2026: The Plain-Language Guide for Businesses",
-    date: "Updated May 22, 2026",
+    date: "Updated June 10, 2026",
     excerpt:
-      "SB 26-189 — the repeal-and-replace of the original Colorado AI Act — was signed May 14, 2026 and takes effect January 1, 2027. What your business actually owes as a deployer of covered ADMT.",
+      "SB 26-189 — the repeal-and-replace of the original Colorado AI Act — was signed May 14, 2026 and takes effect January 1, 2027, while the original act still takes effect June 30, 2026 with enforcement paused. What your business actually owes, and what governs the rest of 2026.",
   },
   {
     slug: "document-ai-decision-making",

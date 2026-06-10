@@ -57,20 +57,21 @@ const postMetadata: Record<string, PostMeta> = {
   },
   "colorado-ai-act-2026": {
     title: "Colorado AI Act 2026: The Plain-Language Guide for Businesses",
-    date: "April 2, 2026 (Updated May 22, 2026)",
+    date: "April 2, 2026 (Updated June 10, 2026)",
     isoDate: "2026-04-02",
-    isoDateModified: "2026-05-22",
+    isoDateModified: "2026-06-10",
     author: "Zachariah Crabill, JD",
     excerpt:
-      "Colorado SB 26-189 — the repeal-and-replace of the original Colorado AI Act — was signed May 14, 2026 and takes effect January 1, 2027. Here's what businesses actually owe as deployers of covered ADMT, and how to build a compliance program that survives an AG cure window.",
+      "Colorado SB 26-189 — the repeal-and-replace of the original Colorado AI Act — was signed May 14, 2026 and takes effect January 1, 2027, while the original act still takes effect June 30, 2026 with enforcement paused. Here's what businesses actually owe as deployers of covered ADMT, what governs the rest of 2026, and how to build a compliance program that survives an AG cure window.",
   },
   "colorado-ai-act-rewrite-2026-smb-impact": {
     title: "Colorado Just Rewrote Its AI Law — What It Means for Your Small Business",
-    date: "May 22, 2026",
+    date: "May 22, 2026 (Updated June 10, 2026)",
     isoDate: "2026-05-22",
+    isoDateModified: "2026-06-10",
     author: "Zachariah Crabill, JD",
     excerpt:
-      "Governor Polis signed SB 26-189 on May 14, 2026, repealing and replacing the Colorado AI Act before it ever took effect. Here's what actually changed, what Colorado SMBs should do this week, and what to ignore from the SB 24-205 prep cycle.",
+      "Governor Polis signed SB 26-189 on May 14, 2026, replacing the Colorado AI Act with a lighter framework effective January 1, 2027. But the original act — legal services and all — still takes effect June 30, 2026, with enforcement paused. Here's what actually changed and what Colorado SMBs should do this week.",
   },
   "document-ai-decision-making": {
     title: "How to Document AI Decision-Making for Colorado AI Act Compliance",
@@ -82,11 +83,12 @@ const postMetadata: Record<string, PostMeta> = {
   },
   "what-is-faiir-framework": {
     title: "What Is the FAIIR Framework? AI Compliance for Colorado Businesses",
-    date: "April 11, 2026",
+    date: "April 11, 2026 (Updated June 10, 2026)",
     isoDate: "2026-04-11",
+    isoDateModified: "2026-06-10",
     author: "Zachariah Crabill, JD",
     excerpt:
-      "FAIIR stands for Fairness, Accountability, Impact assessment, Informed consent, and Risk management. It's the compliance framework we built to help Colorado businesses meet the Colorado AI Act.",
+      "FAIIR is the Foundation for AI Integrity & Regulation — five pillars (Fitness for Purpose, Accountability, Integrity of Data, Informed Use, Risk Management) built to help Colorado businesses meet the Colorado AI Act and the wider AI-regulation patchwork.",
   },
   "ai-liability-insurance-coverage": {
     title: "Does Your Business Insurance Cover AI Liability?",
