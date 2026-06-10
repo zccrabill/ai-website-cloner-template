@@ -11,6 +11,9 @@ import {
   FileText,
   FolderLock,
   Award,
+  Upload,
+  Loader2,
+  ArrowDown,
 } from "lucide-react";
 
 // The FAIIR client engagement workspace. Rendered as the dashboard home for
@@ -43,7 +46,11 @@ interface DocCard {
   label: string;
   description: string | null;
   state: "needed" | "received" | "reviewed";
+  storage_path: string | null;
+  uploaded_at: string | null;
 }
+
+const MAX_UPLOAD_BYTES = 25 * 1024 * 1024; // mirrors the bucket's 25 MB cap
 
 interface StatusNote {
   id: string;
@@ -99,6 +106,8 @@ export default function EngagementWorkspace({ orgId }: { orgId: string }) {
   const [notes, setNotes] = useState<StatusNote[]>([]);
   const [deliverables, setDeliverables] = useState<Deliverable[]>([]);
   const [loading, setLoading] = useState(true);
+  const [uploadingDocId, setUploadingDocId] = useState<string | null>(null);
+  const [uploadErrors, setUploadErrors] = useState<Record<string, string>>({});
 
   const loadWorkspace = useCallback(async () => {
     const [orgRes, engRes] = await Promise.all([
@@ -125,7 +134,7 @@ export default function EngagementWorkspace({ orgId }: { orgId: string }) {
           .order("position", { ascending: true }),
         supabase
           .from("engagement_documents")
-          .select("id, label, description, state")
+          .select("id, label, description, state, storage_path, uploaded_at")
           .eq("engagement_id", eng.id)
           .order("position", { ascending: true }),
         supabase
@@ -154,6 +163,51 @@ export default function EngagementWorkspace({ orgId }: { orgId: string }) {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     loadWorkspace();
   }, [loadWorkspace]);
+
+  const handleUpload = async (doc: DocCard, file: File) => {
+    if (!engagement) return;
+    setUploadErrors((prev) => ({ ...prev, [doc.id]: "" }));
+
+    if (file.size > MAX_UPLOAD_BYTES) {
+      setUploadErrors((prev) => ({
+        ...prev,
+        [doc.id]: "That file is over the 25 MB limit — email it to us instead.",
+      }));
+      return;
+    }
+
+    setUploadingDocId(doc.id);
+    try {
+      // Path is namespaced by engagement + doc card; storage RLS only lets a
+      // client write inside their own engagement's folder. Timestamped name
+      // means a re-upload never needs UPDATE rights on the old object.
+      const safeName = file.name.replace(/[^a-zA-Z0-9._-]+/g, "-");
+      const path = `${engagement.id}/${doc.id}/${Date.now()}-${safeName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from("engagement-docs")
+        .upload(path, file, { upsert: false });
+      if (uploadError) throw new Error(uploadError.message);
+
+      const { error: rpcError } = await supabase.rpc("mark_document_received", {
+        p_document_id: doc.id,
+        p_storage_path: path,
+      });
+      if (rpcError) throw new Error(rpcError.message);
+
+      await loadWorkspace();
+    } catch (err) {
+      setUploadErrors((prev) => ({
+        ...prev,
+        [doc.id]:
+          err instanceof Error && err.message
+            ? `Upload failed: ${err.message}`
+            : "Upload failed — please try again or email it to us.",
+      }));
+    } finally {
+      setUploadingDocId(null);
+    }
+  };
 
   if (loading) {
     return (
@@ -253,6 +307,15 @@ export default function EngagementWorkspace({ orgId }: { orgId: string }) {
                 {phase.client_summary && phase.status !== "pending" && (
                   <p className="text-xs text-[#6B5B4E] mt-1">{phase.client_summary}</p>
                 )}
+                {phase.status === "waiting_on_client" && (
+                  <a
+                    href="#doc-room"
+                    className="inline-flex items-center gap-1 mt-2 text-xs font-medium text-[#C17832] hover:text-[#A8621F] transition-colors"
+                  >
+                    See what we need from you
+                    <ArrowDown className="w-3.5 h-3.5" />
+                  </a>
+                )}
               </div>
             </div>
           ))}
@@ -260,7 +323,7 @@ export default function EngagementWorkspace({ orgId }: { orgId: string }) {
       </div>
 
       {/* Document room */}
-      <div className="mb-10">
+      <div id="doc-room" className="mb-10 scroll-mt-6">
         <div className="flex items-center gap-2 mb-4">
           <FolderLock className="w-5 h-5 text-[#C17832]" />
           <h3 className="text-lg font-semibold text-[#1F1810]">
@@ -296,6 +359,70 @@ export default function EngagementWorkspace({ orgId }: { orgId: string }) {
                   {doc.description && (
                     <p className="text-xs text-[#6B5B4E] mt-1">{doc.description}</p>
                   )}
+
+                  {doc.state === "needed" && (
+                    <label
+                      className={`mt-3 inline-flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium transition-all cursor-pointer ${
+                        uploadingDocId === doc.id
+                          ? "bg-[#C17832]/50 text-white"
+                          : "bg-[#C17832] text-white hover:bg-[#A8621F]"
+                      }`}
+                    >
+                      {uploadingDocId === doc.id ? (
+                        <>
+                          <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                          Uploading…
+                        </>
+                      ) : (
+                        <>
+                          <Upload className="w-3.5 h-3.5" />
+                          Upload document
+                        </>
+                      )}
+                      <input
+                        type="file"
+                        className="hidden"
+                        disabled={uploadingDocId !== null}
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          e.target.value = "";
+                          if (file) handleUpload(doc, file);
+                        }}
+                      />
+                    </label>
+                  )}
+
+                  {doc.state === "received" && (
+                    <div className="mt-3">
+                      <p className="text-xs text-[#6B5B4E]">
+                        Received {formatDate(doc.uploaded_at)} — your attorney
+                        will review it.
+                      </p>
+                      <label className="inline-flex items-center gap-1 mt-1 text-xs text-[#A89279] hover:text-[#6B5B4E] transition-colors cursor-pointer">
+                        <Upload className="w-3 h-3" />
+                        {uploadingDocId === doc.id
+                          ? "Uploading…"
+                          : "Replace file"}
+                        <input
+                          type="file"
+                          className="hidden"
+                          disabled={uploadingDocId !== null}
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            e.target.value = "";
+                            if (file) handleUpload(doc, file);
+                          }}
+                        />
+                      </label>
+                    </div>
+                  )}
+
+                  {uploadErrors[doc.id] && (
+                    <p className="text-xs text-red-600 mt-2">
+                      {uploadErrors[doc.id]}
+                    </p>
+                  )}
+
                   <p className="text-[10px] text-[#A89279] mt-3">
                     Encrypted · visible only to your team and your attorney · never
                     used to train AI
@@ -306,8 +433,8 @@ export default function EngagementWorkspace({ orgId }: { orgId: string }) {
           </div>
         )}
         <p className="text-xs text-[#A89279] mt-3">
-          Secure uploads open here shortly. Until then, reply to your engagement
-          email with anything marked “Needed.”
+          Files upload directly into your encrypted document room — nothing
+          travels by email.
         </p>
       </div>
 

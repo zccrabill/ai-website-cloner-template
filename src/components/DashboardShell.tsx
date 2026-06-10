@@ -5,6 +5,7 @@ import { useRouter, usePathname } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
+import { getActiveOrgSeat } from "@/lib/engagement";
 import {
   LayoutDashboard,
   MessageSquare,
@@ -61,6 +62,10 @@ export default function DashboardShell({
   const pathname = usePathname();
   const [user, setUser] = useState<UserData | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
+  // FAIIR engagement clients get a trimmed nav: their relationship is the
+  // engagement workspace, not the SMB subscription product — Allora chat,
+  // the SMB document vault, and consult scheduling aren't part of it.
+  const [isEngagementClient, setIsEngagementClient] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
@@ -91,8 +96,11 @@ export default function DashboardShell({
 
         if (member?.role === "admin" || member?.role === "attorney") {
           setIsAdmin(true);
+          setIsEngagementClient(false);
         } else {
           setIsAdmin(false);
+          const orgId = await getActiveOrgSeat(session.user.id);
+          setIsEngagementClient(orgId !== null);
         }
 
         setIsLoading(false);
@@ -199,7 +207,9 @@ export default function DashboardShell({
 
         <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
           {sidebarItems
-            .filter((item) => !item.memberOnly || !isAdmin)
+            .filter(
+              (item) => !item.memberOnly || (!isAdmin && !isEngagementClient)
+            )
             .map((item) => {
               const IconComponent = item.icon;
               const isActive = pathname === item.href;

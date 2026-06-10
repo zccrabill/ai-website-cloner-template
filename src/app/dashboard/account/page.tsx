@@ -4,8 +4,9 @@ import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import DashboardShell from "@/components/DashboardShell";
 import { supabase } from "@/lib/supabase";
+import { getActiveOrgSeat } from "@/lib/engagement";
 import { getTier, OVERAGE_PRICE_PER_PAGE_USD } from "@/lib/tiers";
-import { CreditCard, Mail, Shield, ExternalLink } from "lucide-react";
+import { Briefcase, CreditCard, Mail, Shield, ExternalLink } from "lucide-react";
 
 // Stripe Billing Portal entry URL. Set in Netlify env vars at build time
 // (NEXT_PUBLIC_* is inlined). Leave unset on test deploys to suppress the
@@ -23,6 +24,22 @@ import { CreditCard, Mail, Shield, ExternalLink } from "lucide-react";
 const BILLING_PORTAL_URL =
   process.env.NEXT_PUBLIC_STRIPE_BILLING_PORTAL_URL ?? "";
 
+// Engagement summary shown to FAIIR clients in place of the SMB subscription
+// card — their relationship is a fixed-fee engagement, not a membership tier.
+interface EngagementSummary {
+  orgName: string;
+  title: string;
+  status: string;
+  feeCents: number | null;
+}
+
+const ENGAGEMENT_STATUS_LABEL: Record<string, string> = {
+  draft: "Preparing kickoff",
+  invited: "Getting started",
+  active: "In motion",
+  closed: "Complete",
+};
+
 export default function AccountPage() {
   const [email, setEmail] = useState("");
   const [fullName, setFullName] = useState("");
@@ -30,6 +47,7 @@ export default function AccountPage() {
   const [rawTier, setRawTier] = useState<string>("explore");
   const [subStatus, setSubStatus] = useState<string>("inactive");
   const [workItemsUsed, setWorkItemsUsed] = useState(0);
+  const [engagement, setEngagement] = useState<EngagementSummary | null>(null);
 
   const loadProfile = useCallback(async () => {
     const { data: sess } = await supabase.auth.getSession();
@@ -40,11 +58,41 @@ export default function AccountPage() {
       setRawTier("explore");
       setSubStatus("inactive");
       setWorkItemsUsed(0);
+      setEngagement(null);
       return;
     }
 
     setEmail(session.user.email ?? "");
 
+    // FAIIR engagement clients see their engagement, not subscription tiers.
+    const orgId = await getActiveOrgSeat(session.user.id);
+    if (orgId) {
+      const [orgRes, engRes, memberRes] = await Promise.all([
+        supabase.from("orgs").select("name").eq("id", orgId).maybeSingle(),
+        supabase
+          .from("engagements")
+          .select("title, status, fee_cents")
+          .eq("org_id", orgId)
+          .order("created_at", { ascending: false })
+          .limit(1)
+          .maybeSingle(),
+        supabase
+          .from("members")
+          .select("full_name")
+          .eq("user_id", session.user.id)
+          .maybeSingle(),
+      ]);
+      setFullName(memberRes.data?.full_name ?? "");
+      setEngagement({
+        orgName: orgRes.data?.name ?? "",
+        title: engRes.data?.title ?? "FAIIR Engagement",
+        status: engRes.data?.status ?? "active",
+        feeCents: engRes.data?.fee_cents ?? null,
+      });
+      return;
+    }
+
+    setEngagement(null);
     const [memberRes, usageRes] = await Promise.all([
       supabase
         .from("members")
@@ -75,11 +123,17 @@ export default function AccountPage() {
     try {
       const { data: sess } = await supabase.auth.getSession();
       const uid = sess.session?.user.id;
-      if (!uid) return;
+      const userEmail = sess.session?.user.email;
+      if (!uid || !userEmail) return;
+      // Upsert, not update: FAIIR engagement clients have no members row
+      // (they never go through the SMB onboarding wizard), so an update
+      // would silently match zero rows.
       await supabase
         .from("members")
-        .update({ full_name: fullName })
-        .eq("user_id", uid);
+        .upsert(
+          { user_id: uid, email: userEmail, full_name: fullName },
+          { onConflict: "user_id" }
+        );
     } finally {
       setSavingName(false);
     }
@@ -98,7 +152,9 @@ export default function AccountPage() {
       <div className="mb-8">
         <h2 className="text-2xl font-bold text-[#1F1810] mb-1">My Account</h2>
         <p className="text-sm text-[#6B5B4E]">
-          Manage your profile, subscription, and preferences
+          {engagement
+            ? "Manage your profile and preferences"
+            : "Manage your profile, subscription, and preferences"}
         </p>
       </div>
 
@@ -140,7 +196,43 @@ export default function AccountPage() {
           </div>
         </div>
 
-        {/* Subscription */}
+        {/* FAIIR engagement clients: engagement summary instead of tiers */}
+        {engagement && (
+          <div className="bg-white border border-[#1F1810]/8 rounded-lg p-6">
+            <div className="flex items-center gap-3 mb-6">
+              <Briefcase className="w-5 h-5 text-[#C17832]" />
+              <h3 className="text-lg font-semibold text-[#1F1810]">
+                Your Engagement
+              </h3>
+            </div>
+            <p className="text-sm font-medium text-[#1F1810]">
+              {engagement.title}
+            </p>
+            <p className="text-xs text-[#6B5B4E] mt-1">
+              {engagement.orgName}
+              {" · "}
+              <span className="text-[#C17832]">
+                {ENGAGEMENT_STATUS_LABEL[engagement.status] ?? engagement.status}
+              </span>
+              {engagement.feeCents !== null && (
+                <>
+                  {" · "}${(engagement.feeCents / 100).toLocaleString()} fixed
+                  fee
+                </>
+              )}
+            </p>
+            <a
+              href="mailto:zachariah@availablelaw.com?subject=Engagement%20question"
+              className="mt-4 inline-flex items-center gap-2 text-sm text-[#6B5B4E] hover:text-[#1F1810] transition-colors"
+            >
+              <Mail className="w-4 h-4" />
+              Questions about your engagement or billing? Email Zachariah
+            </a>
+          </div>
+        )}
+
+        {/* Subscription (SMB members only) */}
+        {!engagement && (
         <div className="bg-white border border-[#1F1810]/8 rounded-lg p-6">
           <div className="flex items-center gap-3 mb-6">
             <CreditCard className="w-5 h-5 text-[#C17832]" />
@@ -230,6 +322,7 @@ export default function AccountPage() {
             </a>
           )}
         </div>
+        )}
 
         {/* Security */}
         <div className="bg-white border border-[#1F1810]/8 rounded-lg p-6">
