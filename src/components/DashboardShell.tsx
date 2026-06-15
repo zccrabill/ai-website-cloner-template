@@ -17,6 +17,7 @@ import {
   X,
   ShieldCheck,
   Users,
+  Briefcase,
 } from "lucide-react";
 
 interface UserData {
@@ -48,6 +49,7 @@ const sidebarItems: {
 
 const adminItems = [
   { icon: Users, label: "Clients", href: "/dashboard/clients" },
+  { icon: Briefcase, label: "Engagements", href: "/dashboard/engagements" },
   { icon: ShieldCheck, label: "Review Queue", href: "/dashboard/review" },
 ];
 
