@@ -253,7 +253,7 @@ export default function EngagementWorkspace({ orgId }: { orgId: string }) {
       </div>
 
       {/* Confidentiality posture — stated before anything is asked of them */}
-      <div className="mb-8 p-4 bg-white border border-[#7A8B6F]/30 rounded-lg flex gap-3">
+      <div className="mb-8 p-4 bg-white border border-[#7A8B6F]/30 rounded-lg shadow-[0_2px_8px_rgb(31_24_16/0.06)] flex gap-3">
         <ShieldCheck className="w-5 h-5 text-[#7A8B6F] shrink-0 mt-0.5" />
         <div className="text-sm text-[#6B5B4E]">
           <p>
@@ -278,7 +278,7 @@ export default function EngagementWorkspace({ orgId }: { orgId: string }) {
             {completed} of {phases.length} phases complete
           </span>
         </div>
-        <div className="bg-white border border-[#1F1810]/8 rounded-lg divide-y divide-[#1F1810]/6">
+        <div className="bg-white border border-[#1F1810]/10 rounded-lg shadow-[0_2px_8px_rgb(31_24_16/0.06)] divide-y divide-[#1F1810]/6">
           {phases.map((phase) => (
             <div key={phase.id} className="flex gap-4 p-4">
               <div className="mt-0.5 shrink-0">
@@ -336,7 +336,7 @@ export default function EngagementWorkspace({ orgId }: { orgId: string }) {
           )}
         </div>
         {docs.length === 0 ? (
-          <div className="bg-white border border-[#1F1810]/8 rounded-lg p-6 text-center">
+          <div className="bg-white border border-[#1F1810]/10 rounded-lg shadow-[0_2px_8px_rgb(31_24_16/0.06)] p-6 text-center">
             <p className="text-sm text-[#6B5B4E]">Nothing needed from you right now.</p>
           </div>
         ) : (
@@ -346,7 +346,7 @@ export default function EngagementWorkspace({ orgId }: { orgId: string }) {
               return (
                 <div
                   key={doc.id}
-                  className="bg-white border border-[#1F1810]/8 rounded-lg p-4"
+                  className="bg-white border border-[#1F1810]/10 rounded-lg shadow-[0_2px_8px_rgb(31_24_16/0.06)] p-4"
                 >
                   <div className="flex items-start justify-between gap-3">
                     <p className="text-sm font-semibold text-[#1F1810]">{doc.label}</p>
@@ -444,7 +444,7 @@ export default function EngagementWorkspace({ orgId }: { orgId: string }) {
           Notes from your attorney
         </h3>
         {notes.length === 0 ? (
-          <div className="bg-white border border-[#1F1810]/8 rounded-lg p-6 text-center">
+          <div className="bg-white border border-[#1F1810]/10 rounded-lg shadow-[0_2px_8px_rgb(31_24_16/0.06)] p-6 text-center">
             <p className="text-sm text-[#6B5B4E]">
               Notes will appear here as work begins.
             </p>
@@ -452,7 +452,7 @@ export default function EngagementWorkspace({ orgId }: { orgId: string }) {
         ) : (
           <div className="space-y-3">
             {notes.map((note) => (
-              <div key={note.id} className="bg-white border border-[#1F1810]/8 rounded-lg p-4">
+              <div key={note.id} className="bg-white border border-[#1F1810]/10 rounded-lg shadow-[0_2px_8px_rgb(31_24_16/0.06)] p-4">
                 <p className="text-sm text-[#1F1810] whitespace-pre-line">{note.body}</p>
                 <p className="text-[10px] text-[#A89279] mt-2">
                   {note.author} · {formatDate(note.posted_at)}
@@ -470,7 +470,7 @@ export default function EngagementWorkspace({ orgId }: { orgId: string }) {
           <h3 className="text-lg font-semibold text-[#1F1810]">Your deliverables</h3>
         </div>
         {deliverables.length === 0 ? (
-          <div className="bg-white border border-[#1F1810]/8 rounded-lg p-6 text-center">
+          <div className="bg-white border border-[#1F1810]/10 rounded-lg shadow-[0_2px_8px_rgb(31_24_16/0.06)] p-6 text-center">
             <p className="text-sm text-[#6B5B4E]">
               Deliverables release here as each phase completes.
             </p>
@@ -483,7 +483,7 @@ export default function EngagementWorkspace({ orgId }: { orgId: string }) {
             {deliverables.map((d) => (
               <div
                 key={d.id}
-                className="bg-white border border-[#1F1810]/8 rounded-lg p-4 flex items-start gap-3"
+                className="bg-white border border-[#1F1810]/10 rounded-lg shadow-[0_2px_8px_rgb(31_24_16/0.06)] p-4 flex items-start gap-3"
               >
                 <FileText className="w-5 h-5 text-[#C17832] shrink-0 mt-0.5" />
                 <div>

@@ -448,7 +448,7 @@ function ManagePanel({
                 <PostNoteForm engagementId={row.id} busy={busy} run={run} />
                 <ul className="space-y-2 mt-3">
                   {notes.map((n) => (
-                    <li key={n.id} className="bg-white border border-[#1F1810]/8 rounded-lg p-3">
+                    <li key={n.id} className="bg-white border border-[#1F1810]/10 rounded-lg shadow-[0_2px_8px_rgb(31_24_16/0.06)] p-3">
                       <p className="text-sm text-[#1F1810] whitespace-pre-line">{n.body}</p>
                       <p className="text-[10px] text-[#A89279] mt-1">{n.author} · {shortDate(n.posted_at)}</p>
                     </li>
@@ -463,7 +463,7 @@ function ManagePanel({
               <Block title="Deliverables">
                 <ul className="space-y-2 mb-3">
                   {deliverables.map((dl) => (
-                    <li key={dl.id} className="flex items-center gap-3 bg-white border border-[#1F1810]/8 rounded-lg p-3">
+                    <li key={dl.id} className="flex items-center gap-3 bg-white border border-[#1F1810]/10 rounded-lg shadow-[0_2px_8px_rgb(31_24_16/0.06)] p-3">
                       <FileText className="w-4 h-4 text-[#C17832] flex-shrink-0" />
                       <div className="min-w-0 flex-1">
                         <p className="text-sm font-medium text-[#1F1810] truncate">{dl.title}</p>
@@ -535,7 +535,7 @@ function DocRow({ doc, busy, run }: { doc: DocCard; busy: boolean; run: RunFn })
   };
 
   return (
-    <li className="bg-white border border-[#1F1810]/8 rounded-lg p-3">
+    <li className="bg-white border border-[#1F1810]/10 rounded-lg shadow-[0_2px_8px_rgb(31_24_16/0.06)] p-3">
       <div className="flex items-center gap-2">
         <span className="text-sm font-medium text-[#1F1810] flex-1 min-w-0 truncate">{doc.label}</span>
         <span className={`px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase ${badge[doc.state]}`}>
