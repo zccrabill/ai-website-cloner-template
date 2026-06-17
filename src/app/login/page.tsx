@@ -3,75 +3,42 @@
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { SITE_URL } from "@/lib/seo";
-
-// Cloudflare Turnstile site key — public, safe to commit. The matching
-// secret key lives only in Supabase (Auth → Attack Protection).
-const TURNSTILE_SITE_KEY = "0x4AAAAAADKgYilWl-LRewOy";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
-/**
- * Webmail jump targets, keyed by email domain. Lets us send the user
- * straight into their inbox after the magic link is fired off, instead of
- * leaving them to context-switch on their own. Returns null for unknown
- * domains — the `mailto:` protocol is for composing new mail, not opening
- * the inbox, so the previous fallback opened a compose window instead of
- * launching the user's mail app. Better to hide the button than tease an
- * action we can't deliver. Hosted Google Workspace domains aren't covered
- * here (Gmail does work for many of them, but we can't tell from the
- * domain alone) — they'll see the success message without the jump button.
- */
-function getMailJump(email: string): { label: string; url: string } | null {
-  const domain = email.split("@")[1]?.toLowerCase() ?? "";
-  const providers: Record<string, { label: string; url: string }> = {
-    "gmail.com": { label: "Open Gmail", url: "https://mail.google.com" },
-    "googlemail.com": { label: "Open Gmail", url: "https://mail.google.com" },
-    "outlook.com": { label: "Open Outlook", url: "https://outlook.live.com" },
-    "hotmail.com": { label: "Open Outlook", url: "https://outlook.live.com" },
-    "live.com": { label: "Open Outlook", url: "https://outlook.live.com" },
-    "msn.com": { label: "Open Outlook", url: "https://outlook.live.com" },
-    "icloud.com": { label: "Open iCloud Mail", url: "https://www.icloud.com/mail" },
-    "me.com": { label: "Open iCloud Mail", url: "https://www.icloud.com/mail" },
-    "mac.com": { label: "Open iCloud Mail", url: "https://www.icloud.com/mail" },
-    "yahoo.com": { label: "Open Yahoo Mail", url: "https://mail.yahoo.com" },
-    "ymail.com": { label: "Open Yahoo Mail", url: "https://mail.yahoo.com" },
-    "proton.me": { label: "Open Proton Mail", url: "https://mail.proton.me" },
-    "protonmail.com": { label: "Open Proton Mail", url: "https://mail.proton.me" },
-    "pm.me": { label: "Open Proton Mail", url: "https://mail.proton.me" },
-    "fastmail.com": { label: "Open Fastmail", url: "https://app.fastmail.com" },
-  };
-  return providers[domain] ?? null;
-}
+// Cloudflare Turnstile site key — public, safe to commit. The matching secret
+// lives only in Supabase (Auth → Attack Protection). Captcha is enforced on the
+// password, signup, and recovery flows, so every submit needs a fresh token.
+const TURNSTILE_SITE_KEY = "0x4AAAAAADKgYilWl-LRewOy";
+
+type Mode = "signin" | "signup" | "forgot";
+
+const MIN_PASSWORD = 8;
 
 export default function LoginPage() {
+  const router = useRouter();
+  const [mode, setMode] = useState<Mode>("signin");
   const [email, setEmail] = useState("");
-  // Captured at submit so the success state's Open-Mail button can route to
-  // the right webmail provider after we've cleared the input field.
-  const [submittedEmail, setSubmittedEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
   const [error, setError] = useState("");
+  const [notice, setNotice] = useState("");
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const turnstileRef = useRef<HTMLDivElement>(null);
   const widgetIdRef = useRef<string | null>(null);
 
-  // Load Cloudflare Turnstile and mount its widget. Without this guard,
-  // every email submission triggers a magic-link send — bots discovered
-  // this and burned ~80 emails in 14 days before we wired the captcha in.
-  // The token returned here gets passed to signInWithOtp; Supabase Auth
-  // verifies it server-side before sending the magic link.
+  // Load + mount the Turnstile widget once. Its token is passed to Supabase,
+  // which verifies it server-side before processing the auth request.
   useEffect(() => {
     if (typeof window === "undefined") return;
 
     const renderWidget = () => {
       const w = window as unknown as {
         turnstile?: {
-          render: (
-            el: HTMLElement,
-            opts: Record<string, unknown>
-          ) => string;
+          render: (el: HTMLElement, opts: Record<string, unknown>) => string;
           reset: (id: string) => void;
         };
       };
@@ -98,62 +65,104 @@ export default function LoginPage() {
     }
   }, []);
 
+  // Turnstile tokens are single-use; reset the widget after every attempt so a
+  // retry (or a mode switch) gets a fresh token.
+  const resetCaptcha = () => {
+    const w = window as unknown as { turnstile?: { reset: (id: string) => void } };
+    if (widgetIdRef.current && w.turnstile) w.turnstile.reset(widgetIdRef.current);
+    setCaptchaToken(null);
+  };
+
+  const switchMode = (next: Mode) => {
+    setMode(next);
+    setError("");
+    setNotice("");
+    setPassword("");
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
-    setIsSuccess(false);
+    setNotice("");
     setIsLoading(true);
 
     try {
-      if (!email) {
-        throw new Error("Please enter your email address");
-      }
-
+      if (!email.trim()) throw new Error("Please enter your email address.");
       if (!captchaToken) {
         throw new Error("Please complete the verification challenge.");
       }
 
-      const { error: signInError } = await supabase.auth.signInWithOtp({
-        email,
-        options: {
-          emailRedirectTo: `${SITE_URL}/auth/callback`,
-          captchaToken,
-        },
-      });
-
-      // Reset Turnstile so a second submit (e.g., user mistyped email and
-      // wants to retry) requires a fresh token.
-      const w = window as unknown as {
-        turnstile?: { reset: (id: string) => void };
-      };
-      if (widgetIdRef.current && w.turnstile) {
-        w.turnstile.reset(widgetIdRef.current);
+      if (mode === "forgot") {
+        const { error: rErr } = await supabase.auth.resetPasswordForEmail(
+          email.trim(),
+          { captchaToken, redirectTo: `${SITE_URL}/auth/reset` },
+        );
+        if (rErr) throw rErr;
+        setNotice(
+          "If an account exists for that email, a password-reset link is on its way. Check your inbox.",
+        );
+      } else if (mode === "signup") {
+        if (password.length < MIN_PASSWORD) {
+          throw new Error(`Password must be at least ${MIN_PASSWORD} characters.`);
+        }
+        const { data, error: sErr } = await supabase.auth.signUp({
+          email: email.trim(),
+          password,
+          options: { captchaToken, emailRedirectTo: `${SITE_URL}/auth/callback` },
+        });
+        if (sErr) throw sErr;
+        if (data.session) {
+          router.push("/auth/callback");
+          return;
+        }
+        // Email-confirmation is on: no session until they confirm.
+        setNotice(
+          "Account created. Check your email to confirm your address, then sign in below.",
+        );
+        switchMode("signin");
+      } else {
+        const { error: iErr } = await supabase.auth.signInWithPassword({
+          email: email.trim(),
+          password,
+          options: { captchaToken },
+        });
+        if (iErr) throw iErr;
+        router.push("/auth/callback");
+        return;
       }
-      setCaptchaToken(null);
-
-      if (signInError) {
-        throw signInError;
-      }
-
-      setSubmittedEmail(email.trim());
-      setIsSuccess(true);
-      setEmail("");
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "An error occurred";
-      setError(errorMessage);
+      setError(err instanceof Error ? err.message : "Something went wrong.");
     } finally {
+      resetCaptcha();
       setIsLoading(false);
     }
   };
+
+  const heading =
+    mode === "signup"
+      ? "Create your account"
+      : mode === "forgot"
+        ? "Reset your password"
+        : "Member Login";
+  const subtitle =
+    mode === "signup"
+      ? "Set up your Available Law portal access."
+      : mode === "forgot"
+        ? "We'll email you a link to set a new password."
+        : "Sign in with your email and password.";
+  const cta =
+    mode === "signup"
+      ? "Create account"
+      : mode === "forgot"
+        ? "Send reset link"
+        : "Sign in";
 
   return (
     <>
       <Header />
       <main className="min-h-screen bg-[#FAF8F5] flex items-center justify-center px-6 py-12">
         <div className="w-full max-w-md">
-          {/* Card Container */}
           <div className="bg-white border border-[#1F1810]/8 rounded-2xl p-8">
-            {/* Logo */}
             <div className="flex justify-center mb-8">
               <Image
                 src="/images/logo-arrow.png"
@@ -164,88 +173,26 @@ export default function LoginPage() {
               />
             </div>
 
-            {/* Heading */}
             <h1
               className="text-3xl font-bold text-[#1F1810] text-center mb-3"
               style={{ fontFamily: "var(--font-display), 'Playfair Display', serif" }}
             >
-              Member Login
+              {heading}
             </h1>
+            <p className="text-center text-[#6B5B4E] text-sm mb-8">{subtitle}</p>
 
-            {/* Subtitle */}
-            <p className="text-center text-[#6B5B4E] text-sm mb-8">
-              Sign in with your email to access your dashboard
-            </p>
-
-            {/* Success Message */}
-            {isSuccess && (() => {
-              const jump = getMailJump(submittedEmail);
-              return (
-                <div className="mb-6 p-4 bg-[#7A8B6F]/10 border border-[#7A8B6F]/30 rounded-lg">
-                  <p className="text-sm text-[#5A6B53] text-center mb-3">
-                    Check your email for a magic link to sign in
-                    {submittedEmail && (
-                      <>
-                        {" — sent to "}
-                        <span className="font-semibold">{submittedEmail}</span>
-                      </>
-                    )}
-                  </p>
-                  {jump ? (
-                    <a
-                      href={jump.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="block w-full text-center py-2.5 px-4 bg-[#1F1810] text-white rounded-lg text-sm font-semibold hover:bg-[#C17832] transition-all"
-                    >
-                      {jump.label} →
-                    </a>
-                  ) : (
-                    // Unknown domain. macOS Mail.app rejects bare
-                    // `message:` (MCMailErrorDomain 1030) and `mailto:`
-                    // opens compose, so there's no reliable URL to "just
-                    // open the native Mail app" on macOS. Most custom-
-                    // domain users are on Google Workspace or Microsoft
-                    // 365 — offer both webmail entry points so they can
-                    // pick the right one without us guessing. Native-
-                    // client users (Mail.app, Thunderbird, Outlook
-                    // desktop) ignore the links and switch apps directly.
-                    <p className="text-xs text-[#5A6B53]/80 text-center">
-                      Hosted on Google Workspace or Microsoft 365? Open{" "}
-                      <a
-                        href="https://mail.google.com"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="font-semibold underline decoration-[#5A6B53]/40 hover:decoration-[#5A6B53] hover:text-[#5A6B53]"
-                      >
-                        Gmail
-                      </a>
-                      {" or "}
-                      <a
-                        href="https://outlook.office.com/mail"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="font-semibold underline decoration-[#5A6B53]/40 hover:decoration-[#5A6B53] hover:text-[#5A6B53]"
-                      >
-                        Outlook
-                      </a>
-                      .
-                    </p>
-                  )}
-                </div>
-              );
-            })()}
-
-            {/* Error Message */}
+            {notice && (
+              <div className="mb-6 p-4 bg-[#7A8B6F]/10 border border-[#7A8B6F]/30 rounded-lg">
+                <p className="text-sm text-[#5A6B53] text-center">{notice}</p>
+              </div>
+            )}
             {error && (
               <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-lg">
-                <p className="text-sm text-red-400 text-center">{error}</p>
+                <p className="text-sm text-red-500 text-center">{error}</p>
               </div>
             )}
 
-            {/* Form */}
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Email Input */}
+            <form onSubmit={handleSubmit} className="space-y-5">
               <div>
                 <label htmlFor="email" className="block text-xs font-medium text-[#6B5B4E] mb-2">
                   Email Address
@@ -253,52 +200,94 @@ export default function LoginPage() {
                 <input
                   id="email"
                   type="email"
+                  autoComplete="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="you@example.com"
-                  disabled={isLoading || isSuccess}
-                  className="w-full px-4 py-2.5 bg-[#F5F0EB] border border-[#1F1810]/8 text-[#1F1810] placeholder-[#A89279] rounded-lg focus:outline-none focus:border-[#C17832]/50 focus:ring-1 focus:ring-[#C17832]/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  disabled={isLoading}
+                  className="w-full px-4 py-2.5 bg-[#F5F0EB] border border-[#1F1810]/8 text-[#1F1810] placeholder-[#A89279] rounded-lg focus:outline-none focus:border-[#C17832]/50 focus:ring-1 focus:ring-[#C17832]/20 transition-all disabled:opacity-50"
                 />
               </div>
 
-              {/* Cloudflare Turnstile widget. Renders invisibly (Managed mode)
-                  for legit traffic; pops a challenge for suspicious clients. */}
+              {mode !== "forgot" && (
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <label htmlFor="password" className="block text-xs font-medium text-[#6B5B4E]">
+                      Password
+                    </label>
+                    {mode === "signin" && (
+                      <button
+                        type="button"
+                        onClick={() => switchMode("forgot")}
+                        className="text-xs text-[#C17832] font-medium hover:text-[#D4893F] transition-colors"
+                      >
+                        Forgot password?
+                      </button>
+                    )}
+                  </div>
+                  <input
+                    id="password"
+                    type="password"
+                    autoComplete={mode === "signup" ? "new-password" : "current-password"}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder={mode === "signup" ? `At least ${MIN_PASSWORD} characters` : "Your password"}
+                    disabled={isLoading}
+                    className="w-full px-4 py-2.5 bg-[#F5F0EB] border border-[#1F1810]/8 text-[#1F1810] placeholder-[#A89279] rounded-lg focus:outline-none focus:border-[#C17832]/50 focus:ring-1 focus:ring-[#C17832]/20 transition-all disabled:opacity-50"
+                  />
+                </div>
+              )}
+
               <div className="flex justify-center">
                 <div ref={turnstileRef} />
               </div>
 
-                            {/* Send Magic Link Button */}
               <button
                 type="submit"
-                disabled={isLoading || isSuccess || !captchaToken}
+                disabled={isLoading || !captchaToken}
                 className="btn-al btn-al-primary w-full py-2.5 px-4 rounded-lg text-sm font-semibold transition-all disabled:opacity-70 disabled:cursor-not-allowed"
               >
-                {isLoading ? "Sending..." : "Send Magic Link"}
+                {isLoading ? "Please wait…" : cta}
               </button>
             </form>
 
-            {/* Divider */}
             <div className="my-6 flex items-center gap-3">
               <div className="flex-1 h-px bg-[#1F1810]/8" />
-              <span className="text-xs text-[#A89279]">or</span>
+              <span className="text-xs text-[#A89279]">
+                {mode === "signin" ? "New to Available Law?" : "Already a member?"}
+              </span>
               <div className="flex-1 h-px bg-[#1F1810]/8" />
             </div>
 
-            {/* Get Started Link */}
             <div className="text-center text-sm text-[#6B5B4E]">
-              Not a member yet?{" "}
-              <Link
-                href="/#pricing"
-                className="text-[#C17832] font-medium hover:text-[#D4893F] transition-colors"
-              >
-                Get Started
-              </Link>
+              {mode === "signin" ? (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => switchMode("signup")}
+                    className="text-[#C17832] font-medium hover:text-[#D4893F] transition-colors"
+                  >
+                    Create an account
+                  </button>
+                  {" · "}
+                  <Link href="/#pricing" className="text-[#6B5B4E] hover:text-[#1F1810] transition-colors">
+                    View plans
+                  </Link>
+                </>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => switchMode("signin")}
+                  className="text-[#C17832] font-medium hover:text-[#D4893F] transition-colors"
+                >
+                  Back to sign in
+                </button>
+              )}
             </div>
           </div>
 
-          {/* Footer Text */}
           <p className="text-center text-xs text-[#A89279] mt-8">
-            We&apos;ll send you a secure magic link to sign in. No password needed.
+            Protected by Cloudflare Turnstile. Your data is encrypted at rest and in transit.
           </p>
         </div>
       </main>
