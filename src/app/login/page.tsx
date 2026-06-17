@@ -27,6 +27,9 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  // Set when the visitor arrived via an invite link (?signup=1). Drives the
+  // welcoming "open your workspace" copy instead of the generic signup copy.
+  const [invited, setInvited] = useState(false);
   const turnstileRef = useRef<HTMLDivElement>(null);
   const widgetIdRef = useRef<string | null>(null);
 
@@ -62,6 +65,22 @@ export default function LoginPage() {
       document.head.appendChild(s);
     } else {
       renderWidget();
+    }
+  }, []);
+
+  // Invited clients (FAIIR engagements) arrive via a link that opens straight
+  // into account creation — they have no password yet, so defaulting to the
+  // sign-in form would dead-end them. ?signup=1 opens signup mode; ?email=
+  // prefills their address so they only choose a password. Read the URL
+  // directly to avoid a useSearchParams Suspense boundary under output:export.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    const invitedEmail = params.get("email");
+    if (invitedEmail) setEmail(invitedEmail);
+    if (params.get("signup") === "1" || params.get("mode") === "signup") {
+      setMode("signup");
+      setInvited(true);
     }
   }, []);
 
@@ -117,7 +136,7 @@ export default function LoginPage() {
         }
         // Email-confirmation is on: no session until they confirm.
         setNotice(
-          "Account created. Check your email to confirm your address, then sign in below.",
+          "Account created — check your email and click the confirmation link to open your workspace. (If you land back here, just sign in with the password you chose.)",
         );
         switchMode("signin");
       } else {
@@ -140,13 +159,17 @@ export default function LoginPage() {
 
   const heading =
     mode === "signup"
-      ? "Create your account"
+      ? invited
+        ? "Open your workspace"
+        : "Create your account"
       : mode === "forgot"
         ? "Reset your password"
         : "Member Login";
   const subtitle =
     mode === "signup"
-      ? "Set up your Available Law portal access."
+      ? invited
+        ? "Choose a password to finish setting up your secure workspace."
+        : "Set up your Available Law portal access."
       : mode === "forgot"
         ? "We'll email you a link to set a new password."
         : "Sign in with your email and password.";
