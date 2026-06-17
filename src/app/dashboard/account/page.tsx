@@ -48,6 +48,11 @@ export default function AccountPage() {
   const [subStatus, setSubStatus] = useState<string>("inactive");
   const [workItemsUsed, setWorkItemsUsed] = useState(0);
   const [engagement, setEngagement] = useState<EngagementSummary | null>(null);
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [savingPassword, setSavingPassword] = useState(false);
+  const [pwError, setPwError] = useState("");
+  const [pwNotice, setPwNotice] = useState("");
 
   const loadProfile = useCallback(async () => {
     const { data: sess } = await supabase.auth.getSession();
@@ -137,6 +142,29 @@ export default function AccountPage() {
     } finally {
       setSavingName(false);
     }
+  };
+
+  const handleChangePassword = async () => {
+    setPwError("");
+    setPwNotice("");
+    if (newPassword.length < 8) {
+      setPwError("Password must be at least 8 characters.");
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      setPwError("Passwords don't match.");
+      return;
+    }
+    setSavingPassword(true);
+    const { error } = await supabase.auth.updateUser({ password: newPassword });
+    setSavingPassword(false);
+    if (error) {
+      setPwError(error.message);
+      return;
+    }
+    setNewPassword("");
+    setConfirmPassword("");
+    setPwNotice("Password updated.");
   };
 
   const tier = getTier(rawTier);
@@ -324,19 +352,60 @@ export default function AccountPage() {
         </div>
         )}
 
-        {/* Security */}
+        {/* Security — change password */}
         <div className="bg-white border border-[#1F1810]/8 rounded-lg p-6">
           <div className="flex items-center gap-3 mb-6">
             <Shield className="w-5 h-5 text-[#C17832]" />
             <h3 className="text-lg font-semibold text-[#1F1810]">Security</h3>
           </div>
           <p className="text-sm text-[#6B5B4E] mb-4">
-            Your account uses passwordless magic link authentication. A secure
-            link is sent to your email each time you sign in.
+            Update the password you use to sign in.
           </p>
-          <p className="text-xs text-[#A89279]">
-            Last sign-in: Today
-          </p>
+          {pwNotice && (
+            <div className="mb-4 p-3 bg-[#7A8B6F]/10 border border-[#7A8B6F]/30 rounded-lg">
+              <p className="text-sm text-[#5A6B53]">{pwNotice}</p>
+            </div>
+          )}
+          {pwError && (
+            <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg">
+              <p className="text-sm text-red-500">{pwError}</p>
+            </div>
+          )}
+          <div className="space-y-4">
+            <div>
+              <label className="block text-xs font-medium text-[#6B5B4E] mb-1.5">
+                New Password
+              </label>
+              <input
+                type="password"
+                autoComplete="new-password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                placeholder="At least 8 characters"
+                className="w-full px-4 py-2.5 bg-white border border-[#1F1810]/8 rounded-lg text-sm text-[#1F1810] placeholder-[#A89279] focus:outline-none focus:border-[#C17832]/50 focus:ring-1 focus:ring-[#C17832]/20 transition-all"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-[#6B5B4E] mb-1.5">
+                Confirm New Password
+              </label>
+              <input
+                type="password"
+                autoComplete="new-password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder="Re-enter your new password"
+                className="w-full px-4 py-2.5 bg-white border border-[#1F1810]/8 rounded-lg text-sm text-[#1F1810] placeholder-[#A89279] focus:outline-none focus:border-[#C17832]/50 focus:ring-1 focus:ring-[#C17832]/20 transition-all"
+              />
+            </div>
+            <button
+              onClick={handleChangePassword}
+              disabled={savingPassword || !newPassword || !confirmPassword}
+              className="px-4 py-2 bg-[#1F1810] text-white rounded-lg text-sm font-medium hover:bg-[#C17832] transition-all disabled:opacity-50"
+            >
+              {savingPassword ? "Updating…" : "Update Password"}
+            </button>
+          </div>
         </div>
       </div>
     </DashboardShell>
