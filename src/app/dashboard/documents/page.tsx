@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 
 // -------- Types --------
-// A client-uploaded or Allora-produced document that lives in the `documents`
+// A client-uploaded or Ava-produced document that lives in the `documents`
 // table and has a file in storage.
 interface UploadDoc {
   kind: "upload";
@@ -436,7 +436,7 @@ export default function DocumentsPage() {
         return (
           <span className="inline-flex items-center gap-1.5 px-2 py-0.5 bg-[#C17832]/15 text-[#C17832] text-[10px] font-medium rounded-full uppercase tracking-wider">
             <span className="w-1.5 h-1.5 bg-[#C17832] rounded-full animate-pulse" />
-            Allora reviewing
+            Ava reviewing
           </span>
         );
       case "ready":
@@ -705,13 +705,13 @@ export default function DocumentsPage() {
         <p className="text-xs text-center text-[#A89279] mt-4">
           {tab === "attorney"
             ? "Nothing from your attorney yet. Documents your attorney reviews and sends will show up here."
-            : "Documents created by Allora or uploaded by you appear here. Need help?"}{" "}
+            : "Documents created by Ava or uploaded by you appear here. Need help?"}{" "}
           {tab !== "attorney" && (
             <a
               href="/dashboard/chat"
               className="text-[#C17832] hover:underline font-medium"
             >
-              Chat with Allora →
+              Chat with Ava →
             </a>
           )}
         </p>

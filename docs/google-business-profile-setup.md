@@ -50,7 +50,7 @@ This is the step most people skip and it is where the ranking juice comes from.
 
 **Business description (paste this, edit as needed):**
 
-> Available Law is a Colorado-based virtual law firm helping small and mid-sized businesses navigate AI compliance, technology contracts, and the Colorado AI Act. Founded by attorney Zachariah Crabill, we pair licensed Colorado attorneys with Allora — our AI legal assistant — to deliver transparent, flat-rate legal help from anywhere in the state. We also offer FAIIR certification, a framework for auditing how businesses use artificial intelligence for fairness, accountability, and compliance. Every matter is attorney-reviewed before it reaches the client. No hourly billing, no surprises, no gatekeeping.
+> Available Law is a Colorado-based virtual law firm helping small and mid-sized businesses navigate AI compliance, technology contracts, and the Colorado AI Act. Founded by attorney Zachariah Crabill, we pair licensed Colorado attorneys with Ava — our AI legal assistant — to deliver transparent, flat-rate legal help from anywhere in the state. We also offer FAIIR certification, a framework for auditing how businesses use artificial intelligence for fairness, accountability, and compliance. Every matter is attorney-reviewed before it reaches the client. No hourly billing, no surprises, no gatekeeping.
 
 **Services to add** (each one is its own searchable entity):
 - AI Act Compliance Review
@@ -77,7 +77,7 @@ For each service add a short description (Google allows 300 chars) and a price o
 - Logo (square, 1080x1080, transparent background version preferred)
 - Cover photo (1080x608 — use the hero image from availablelaw.com or a custom graphic)
 - Team photo — real photo of Zachariah, professional but approachable
-- Product/service graphics — screenshots of the Allora interface (blurred client data), FAIIR badge, the Available Law dashboard
+- Product/service graphics — screenshots of the Ava interface (blurred client data), FAIIR badge, the Available Law dashboard
 - Office / workspace — even a clean desk shot adds trust
 
 ### 5. Connect to Search Console + Analytics

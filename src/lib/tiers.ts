@@ -14,7 +14,7 @@ export interface TierConfig {
   tagline: string;
   /**
    * Monthly allotment of attorney tasks. An attorney task is ANY of:
-   *   - a matter review (Allora-drafted document the attorney approves
+   *   - a matter review (Ava-drafted document the attorney approves
    *     and sends to the client)
    *   - a consultation (30-minute attorney call)
    * The client spends the allotment however they want.
@@ -52,7 +52,7 @@ export const TIERS: Record<TierKey, TierConfig> = {
     monthlyPriceUsd: 0,
     annualPriceUsd: 0,
     features: [
-      "Chat with Allora, our AI legal assistant",
+      "Chat with Ava, our AI legal assistant",
       "Encrypted document storage",
     ],
   },
@@ -64,7 +64,7 @@ export const TIERS: Record<TierKey, TierConfig> = {
     monthlyPriceUsd: 50,
     annualPriceUsd: 500,
     features: [
-      "Unlimited Allora AI chat & drafting",
+      "Unlimited Ava AI chat & drafting",
       "Encrypted document storage",
     ],
   },
@@ -79,7 +79,7 @@ export const TIERS: Record<TierKey, TierConfig> = {
       "Priority attorney replies (2 business days)",
       "Contract template library",
       "Monthly Practice Letter",
-      "Unlimited Allora AI chat & drafting",
+      "Unlimited Ava AI chat & drafting",
       "Encrypted document storage",
     ],
   },
@@ -93,10 +93,10 @@ export const TIERS: Record<TierKey, TierConfig> = {
     features: [
       "Fastest attorney replies (1 business day)",
       "Quarterly legal roadmap review",
-      "Early access to new Allora features",
+      "Early access to new Ava features",
       "Contract template library",
       "Monthly Practice Letter",
-      "Unlimited Allora AI chat & drafting",
+      "Unlimited Ava AI chat & drafting",
       "Encrypted document storage",
     ],
   },

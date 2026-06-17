@@ -244,7 +244,7 @@ export default function DashboardPage() {
         </div>
         <div className="bg-white border border-[#1F1810]/8 rounded-lg p-6 hover:border-[#1F1810]/12 transition-all">
           <p className="text-xs font-medium text-[#6B5B4E] mb-2">
-            Allora Conversations
+            Ava Conversations
           </p>
           <p className="text-3xl font-bold text-[#1F1810]">{conversationsCount}</p>
         </div>
@@ -284,7 +284,7 @@ export default function DashboardPage() {
             <div className="text-center py-8">
               <p className="text-[#6B5B4E] text-sm">No activity yet</p>
               <p className="text-[#A89279] text-xs mt-1">
-                Start by chatting with Allora or scheduling a consultation
+                Start by chatting with Ava or scheduling a consultation
               </p>
             </div>
           ) : (

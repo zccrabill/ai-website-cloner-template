@@ -12,7 +12,7 @@ interface ChatMessage {
   content: string;
 }
 
-export default function AlloraFloatingWidget() {
+export default function AvaFloatingWidget() {
   const [isOpen, setIsOpen] = useState(false);
   const [showTyping, setShowTyping] = useState(false);
   const [showGreeting, setShowGreeting] = useState(false);
@@ -37,9 +37,9 @@ export default function AlloraFloatingWidget() {
   const lastSpokenIndexRef = useRef(-1);
 
   // External "open with seed" trigger. Any component on the page can call:
-  //   window.dispatchEvent(new CustomEvent("allora:open", { detail: { seed: "..." } }))
+  //   window.dispatchEvent(new CustomEvent("ava:open", { detail: { seed: "..." } }))
   // to pop the widget open with a pre-filled prompt. First use is the
-  // "Ask Allora" CTA in PricingSection — keeps the pattern reusable for
+  // "Ask Ava" CTA in PricingSection — keeps the pattern reusable for
   // future CTAs (Solutions section, FAIIR landing, etc.).
   useEffect(() => {
     const handler = (e: Event) => {
@@ -48,12 +48,12 @@ export default function AlloraFloatingWidget() {
       setDismissed(false);
       if (seed) setMessage(seed);
     };
-    window.addEventListener("allora:open", handler);
-    return () => window.removeEventListener("allora:open", handler);
+    window.addEventListener("ava:open", handler);
+    return () => window.removeEventListener("ava:open", handler);
   }, []);
 
   // --- Free-tier message cap ---------------------------------------------
-  // Visitors get a taste of Allora (2 user turns) before we lock the input
+  // Visitors get a taste of Ava (2 user turns) before we lock the input
   // behind a signup CTA. Members get unlimited access + voice.
   const FREE_MESSAGE_LIMIT = 2;
   const userMessageCount = messages.filter((m) => m.role === "user").length;
@@ -240,7 +240,7 @@ export default function AlloraFloatingWidget() {
       return;
     }
     if (voice.status === "speaking") {
-      // Interrupt Allora and immediately start listening.
+      // Interrupt Ava and immediately start listening.
       voice.cancelSpeak();
     }
     setVoiceModeOn(true);
@@ -293,7 +293,7 @@ export default function AlloraFloatingWidget() {
                 <X className="w-3 h-3" />
               </button>
               <p className="text-xs font-semibold text-[#C17832] mb-1">
-                Allora · AI Legal Assistant
+                Ava · AI Legal Assistant
               </p>
               <p className="text-sm text-[#1F1810] leading-relaxed">
                 Hi there! Let me know if I can help you with anything legal.
@@ -310,14 +310,14 @@ export default function AlloraFloatingWidget() {
 
         {/* The Circle Button */}
         {!isOpen && (
-          <div className="allora-float-bob-wrapper"><button
+          <div className="ava-float-bob-wrapper"><button
             onClick={handleOpenChat}
-            className="group allora-float-bob-shadow relative w-16 h-16 bg-white/10 backdrop-blur-2xl backdrop-saturate-150 border-2 border-[#C17832] rounded-full hover:scale-105 transition-all duration-200 flex items-center justify-center"
-            aria-label="Chat with Allora"
+            className="group ava-float-bob-shadow relative w-16 h-16 bg-white/10 backdrop-blur-2xl backdrop-saturate-150 border-2 border-[#C17832] rounded-full hover:scale-105 transition-all duration-200 flex items-center justify-center"
+            aria-label="Chat with Ava"
           >
             <Image
               src="/images/logo-arrow.png"
-              alt="Allora"
+              alt="Ava"
               width={36}
               height={36}
               loading="lazy"
@@ -344,7 +344,7 @@ export default function AlloraFloatingWidget() {
               <div className="relative w-10 h-10 bg-white border-2 border-[#C17832] rounded-full flex items-center justify-center">
                 <Image
                   src="/images/logo-arrow.png"
-                  alt="Allora"
+                  alt="Ava"
                   width={22}
                   height={22}
                   loading="lazy"
@@ -357,7 +357,7 @@ export default function AlloraFloatingWidget() {
                 <span className="absolute bottom-0 right-0 w-3 h-3 bg-[#7A8B6F] border-2 border-white rounded-full" />
               </div>
               <div>
-                <p className="text-sm font-semibold text-[#1F1810]">Allora</p>
+                <p className="text-sm font-semibold text-[#1F1810]">Ava</p>
                 <p className="text-[10px] text-[#6B5B4E]">
                   AI Legal Assistant · Online
                 </p>
@@ -384,8 +384,8 @@ export default function AlloraFloatingWidget() {
                   <div className="bg-[#FAF8F5] border border-[#1F1810]/8 rounded-2xl rounded-tl-sm px-4 py-3 max-w-[85%]">
                     <p className="text-sm text-[#1F1810] leading-relaxed">
                       {isAuthed
-                        ? "Welcome back! I\u2019m Allora \u2014 your AI legal assistant. I can help you with contracts, compliance, formation, and more."
-                        : "Hi! I\u2019m Allora \u2014 Available Law\u2019s AI legal assistant. Ask me a couple of questions to see how I can help your business."}
+                        ? "Welcome back! I\u2019m Ava \u2014 your AI legal assistant. I can help you with contracts, compliance, formation, and more."
+                        : "Hi! I\u2019m Ava \u2014 Available Law\u2019s AI legal assistant. Ask me a couple of questions to see how I can help your business."}
                     </p>
                     {!isAuthed && (
                       <p className="text-[11px] text-[#A89279] mt-2">
@@ -461,7 +461,7 @@ export default function AlloraFloatingWidget() {
                         Want to keep going?
                       </p>
                       <p className="text-xs text-[#6B5B4E] leading-relaxed mb-3">
-                        Members get unlimited Allora access, voice mode, document
+                        Members get unlimited Ava access, voice mode, document
                         reviews, and attorney consultations.
                       </p>
                       <Link
@@ -507,7 +507,7 @@ export default function AlloraFloatingWidget() {
                   <>
                     <Volume2 className="w-3 h-3 text-[#7A8B6F]" />
                     <span className="text-[11px] font-medium text-[#7A8B6F]">
-                      Allora is speaking
+                      Ava is speaking
                     </span>
                     <button
                       onClick={voice.cancelSpeak}
@@ -537,7 +537,7 @@ export default function AlloraFloatingWidget() {
                 placeholder={
                   voice.status === "listening"
                     ? "Listening…"
-                    : "Ask Allora a legal question..."
+                    : "Ask Ava a legal question..."
                 }
                 disabled={voice.status === "listening"}
                 className="flex-1 px-3 py-2.5 bg-[#FAF8F5] border border-[#1F1810]/8 rounded-lg text-sm text-[#1F1810] placeholder-[#A89279] focus:outline-none focus:border-[#C17832]/50 focus:ring-1 focus:ring-[#C17832]/20 transition-all disabled:opacity-60"
@@ -574,7 +574,7 @@ export default function AlloraFloatingWidget() {
                   className="w-10 h-10 rounded-lg border border-[#1F1810]/15 bg-white text-[#6B5B4E] hover:text-[#C17832] hover:border-[#C17832]/60 transition-all flex items-center justify-center flex-shrink-0"
                   aria-label={
                     voice.status === "speaking"
-                      ? "Stop Allora from speaking"
+                      ? "Stop Ava from speaking"
                       : "Mute voice replies"
                   }
                 >
@@ -597,7 +597,7 @@ export default function AlloraFloatingWidget() {
             </div>
             <p className="text-[10px] text-[#A89279] text-center mt-2">
               {isAuthed && voice.supported
-                ? "Powered by AI · Tap the mic to talk to Allora"
+                ? "Powered by AI · Tap the mic to talk to Ava"
                 : "Powered by AI · Attorney-reviewed answers for members"}
             </p>
           </div>

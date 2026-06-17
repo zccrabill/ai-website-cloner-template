@@ -232,8 +232,8 @@ export default function ChatPage() {
   };
 
   // Manual escape hatch when the client is ready to hand the matter off
-  // and Allora hasn't proactively summarized. Sends a one-liner AND sets
-  // force_ready so the server nudges Allora to emit handoff tokens.
+  // and Ava hasn't proactively summarized. Sends a one-liner AND sets
+  // force_ready so the server nudges Ava to emit handoff tokens.
   const handleSendToAttorney = () => {
     void handleSend(
       "I'm ready — please finalize the intake and send this matter to the attorney for review now.",
@@ -242,7 +242,7 @@ export default function ChatPage() {
   };
 
   return (
-    <DashboardShell title="Chat with Allora">
+    <DashboardShell title="Chat with Ava">
       <div className="flex flex-col h-[calc(100vh-12rem)]">
         {messages.length === 0 ? (
           /* Empty State */
@@ -251,11 +251,11 @@ export default function ChatPage() {
               <Bot className="w-8 h-8 text-[#C17832]" />
             </div>
             <h2 className="text-2xl font-bold text-[#1F1810] mb-2">
-              Chat with Allora
+              Chat with Ava
             </h2>
             <p className="text-[#6B5B4E] text-center max-w-md mb-8">
               Your AI legal assistant. Ask a legal question, request a document,
-              or get guidance — Allora will gather what she needs and deliver an
+              or get guidance — Ava will gather what she needs and deliver an
               attorney-reviewed response within 24 hours.
             </p>
 
@@ -413,7 +413,7 @@ export default function ChatPage() {
               </div>
             )}
 
-            {/* Quick-reply chips — Allora asked a structured multiple-choice
+            {/* Quick-reply chips — Ava asked a structured multiple-choice
                 question. Clicking a chip sends that option immediately; the
                 free-text input below still works for custom answers. */}
             {pendingQuestion && !isTyping && (
@@ -433,7 +433,7 @@ export default function ChatPage() {
               </div>
             )}
 
-            {/* 24hr notice — shown when Allora signals a deliverable is
+            {/* 24hr notice — shown when Ava signals a deliverable is
                 queued for review. Sending another message starts a brand-new
                 matter thread (Option B completion flow). */}
             {readyForReview && !isTyping && (
@@ -458,7 +458,7 @@ export default function ChatPage() {
         {/* Input */}
         <div className="border-t border-[#1F1810]/8 pt-4">
           {/* Manual handoff escape hatch — shown once the conversation has
-              a few substantive turns, in case Allora hasn't proactively
+              a few substantive turns, in case Ava hasn't proactively
               wrapped up the intake. Hidden after a matter is sent. */}
           {messages.length >= 4 && !readyForReview && !isTyping && (
             <div className="flex justify-center mb-3">
@@ -476,7 +476,7 @@ export default function ChatPage() {
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder="Ask Allora a legal question..."
+              placeholder="Ask Ava a legal question..."
               className="flex-1 px-4 py-3 bg-white border border-[#1F1810]/8 rounded-lg text-[#1F1810] placeholder-[#A89279] focus:outline-none focus:border-[#C17832]/50 focus:ring-1 focus:ring-[#C17832]/20 transition-all"
             />
             <button
@@ -488,7 +488,7 @@ export default function ChatPage() {
             </button>
           </div>
           <p className="text-xs text-[#A89279] text-center mt-3">
-            Allora gathers your details and hands the matter off to an
+            Ava gathers your details and hands the matter off to an
             attorney — you&apos;ll get a final answer within 24 hours.
           </p>
         </div>

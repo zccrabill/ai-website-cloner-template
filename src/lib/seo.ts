@@ -412,7 +412,7 @@ export const HOMEPAGE_FAQS: Array<{ question: string; answer: string }> = [
   {
     question: "What is Available Law?",
     answer:
-      "Available Law is a Colorado-licensed, FAIIR-certified virtual law firm serving small businesses on a flat monthly subscription. Instead of billable hours, clients pay a predictable monthly fee for contracts, business succession planning, AI vendor review, and Colorado AI Act (SB 26-189) compliance. Available Law pairs licensed Colorado attorneys with Allora, an AI legal assistant, to deliver work faster without sacrificing attorney review.",
+      "Available Law is a Colorado-licensed, FAIIR-certified virtual law firm serving small businesses on a flat monthly subscription. Instead of billable hours, clients pay a predictable monthly fee for contracts, business succession planning, AI vendor review, and Colorado AI Act (SB 26-189) compliance. Available Law pairs licensed Colorado attorneys with Ava, an AI legal assistant, to deliver work faster without sacrificing attorney review.",
   },
   {
     question: "What is FAIIR?",
@@ -427,12 +427,12 @@ export const HOMEPAGE_FAQS: Array<{ question: string; answer: string }> = [
   {
     question: "How much does Available Law cost?",
     answer:
-      "Available Law offers four flat-rate subscription tiers: Explore is free and gives access to Allora's self-serve tools, Build is $50/month and includes 1 attorney task, Grow is $150/month and includes 2 attorney tasks, and Lead is $300/month and includes 3 attorney tasks.",
+      "Available Law offers four flat-rate subscription tiers: Explore is free and gives access to Ava's self-serve tools, Build is $50/month and includes 1 attorney task, Grow is $150/month and includes 2 attorney tasks, and Lead is $300/month and includes 3 attorney tasks.",
   },
   {
-    question: "Is Allora an AI lawyer?",
+    question: "Is Ava an AI lawyer?",
     answer:
-      "No. Allora is an AI legal assistant, not a lawyer. Allora can draft documents, research issues, and prepare matters for review, but every deliverable is reviewed by a licensed Colorado attorney before it reaches the client. Allora does not autonomously provide legal advice.",
+      "No. Ava is an AI legal assistant, not a lawyer. Ava can draft documents, research issues, and prepare matters for review, but every deliverable is reviewed by a licensed Colorado attorney before it reaches the client. Ava does not autonomously provide legal advice.",
   },
   {
     question: "What is the Colorado AI Act?",

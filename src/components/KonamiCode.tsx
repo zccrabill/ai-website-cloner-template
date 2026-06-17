@@ -5,11 +5,11 @@ import { useEffect } from "react";
 /**
  * KonamiCode — global keyboard listener for the classic
  * Up Up Down Down Left Right Left Right B A sequence. On match,
- * dispatches the same allora:open custom event the Pricing band and
+ * dispatches the same ava:open custom event the Pricing band and
  * {ai} logo egg use, so the floating widget pops with a fun seed prompt.
  *
  * Skips keystrokes typed inside inputs/textareas/contenteditable so the
- * Allora chat input itself doesnt accidentally trigger it.
+ * Ava chat input itself doesnt accidentally trigger it.
  */
 const KONAMI_CODE = [
   "ArrowUp", "ArrowUp",
@@ -45,7 +45,7 @@ export default function KonamiCode() {
         buffer.every((k, i) => k === KONAMI_CODE[i])
       ) {
         window.dispatchEvent(
-          new CustomEvent("allora:open", {
+          new CustomEvent("ava:open", {
             detail: {
               seed:
                 "Wait — you actually did the Konami code? That is 30+ years of muscle memory in motion. So... what is the legal question?",

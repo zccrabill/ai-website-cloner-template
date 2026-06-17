@@ -5,7 +5,7 @@
  * TypeScript's default `lib.dom.d.ts` covers the `SpeechSynthesis` side of the
  * Web Speech API (text-to-speech) but NOT `SpeechRecognition` (speech-to-text),
  * which is still behind a prefix in most browsers (`webkitSpeechRecognition`).
- * We use it for Allora's voice mode, so we declare the minimum interface our
+ * We use it for Ava's voice mode, so we declare the minimum interface our
  * hook touches. Widening this beyond what we actually call is a liability —
  * the spec is still moving and vendor implementations disagree.
  *

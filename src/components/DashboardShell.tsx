@@ -41,7 +41,7 @@ const sidebarItems: {
   memberOnly?: boolean;
 }[] = [
   { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard" },
-  { icon: MessageSquare, label: "Chat with Allora", href: "/dashboard/chat", memberOnly: true },
+  { icon: MessageSquare, label: "Chat with Ava", href: "/dashboard/chat", memberOnly: true },
   { icon: FileText, label: "Documents", href: "/dashboard/documents", memberOnly: true },
   { icon: Calendar, label: "Schedule", href: "/dashboard/schedule", memberOnly: true },
   { icon: User, label: "My Account", href: "/dashboard/account" },
@@ -65,7 +65,7 @@ export default function DashboardShell({
   const [user, setUser] = useState<UserData | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   // FAIIR engagement clients get a trimmed nav: their relationship is the
-  // engagement workspace, not the SMB subscription product — Allora chat,
+  // engagement workspace, not the SMB subscription product — Ava chat,
   // the SMB document vault, and consult scheduling aren't part of it.
   const [isEngagementClient, setIsEngagementClient] = useState(false);
   const [isLoading, setIsLoading] = useState(true);

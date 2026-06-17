@@ -65,9 +65,9 @@ const SOLUTIONS: Solution[] = [
     icon: Sparkles,
     number: "04",
     category: "AI Assistant",
-    title: "Allora, Your 24/7 Legal Assistant",
+    title: "Ava, Your 24/7 Legal Assistant",
     description:
-      "Members get always-on access to Allora for general guidance, document drafting, and research — with licensed attorney escalation built in.",
+      "Members get always-on access to Ava for general guidance, document drafting, and research — with licensed attorney escalation built in.",
     href: "/#pricing",
   },
 ];

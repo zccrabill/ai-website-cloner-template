@@ -347,7 +347,7 @@ export default function ReviewQueuePage() {
               Attorney Review Queue
             </h1>
             <p className="text-sm text-[#6B5B4E]">
-              Review Allora&apos;s drafts and approve, edit, or send to clients.
+              Review Ava&apos;s drafts and approve, edit, or send to clients.
             </p>
           </div>
         </div>
@@ -402,7 +402,7 @@ export default function ReviewQueuePage() {
               </h2>
               {pendingDrafts.length === 0 ? (
                 <div className="bg-white border border-[#1F1810]/8 rounded-xl p-8 text-center text-sm text-[#A89279]">
-                  No drafts waiting for review. Allora&apos;s queue is clear.
+                  No drafts waiting for review. Ava&apos;s queue is clear.
                 </div>
               ) : (
                 <div className="space-y-3">
@@ -558,7 +558,7 @@ export default function ReviewQueuePage() {
 
               <div>
                 <label className="block text-xs font-semibold text-[#1F1810] uppercase tracking-wider mb-2">
-                  Allora&apos;s Draft (editable)
+                  Ava&apos;s Draft (editable)
                 </label>
                 <textarea
                   value={editedContent}

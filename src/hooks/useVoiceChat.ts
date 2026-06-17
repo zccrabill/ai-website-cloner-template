@@ -3,12 +3,12 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
 /**
- * useVoiceChat — browser-native voice mode for Allora.
+ * useVoiceChat — browser-native voice mode for Ava.
  *
  * Why this instead of OpenAI Realtime / Vapi / ElevenLabs:
  * - OpenAI Realtime is ~$0.30/min out-of-pocket. At even modest usage that's
  *   $1k+/month before Available Law has the revenue to absorb it.
- * - We already have a working Allora text chat backend. Voice is "just" a new
+ * - We already have a working Ava text chat backend. Voice is "just" a new
  *   input/output modality — the LLM call doesn't change.
  * - The browser ships `SpeechRecognition` (STT) and `speechSynthesis` (TTS)
  *   for free, runs locally, no API keys, no network tax on top of chat.
@@ -30,7 +30,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
  *   idle → listening (mic open) → idle (on stop / silence timeout / final)
  *   idle → speaking (TTS playback) → idle (on end / cancelSpeak)
  *
- * The hook deliberately does NOT call the Allora chat endpoint itself —
+ * The hook deliberately does NOT call the Ava chat endpoint itself —
  * that's the widget's job. We just hand the final transcript to
  * `onFinalTranscript` and let the caller decide how to route it.
  */
@@ -127,7 +127,7 @@ export function useVoiceChat(
       return;
     }
 
-    // If TTS is mid-sentence, stop it — user wants to talk over Allora.
+    // If TTS is mid-sentence, stop it — user wants to talk over Ava.
     window.speechSynthesis?.cancel();
 
     // Always rebuild the instance. Safari is flaky about reuse, and Chrome
@@ -209,7 +209,7 @@ export function useVoiceChat(
       if (!synth) return;
 
       // Interrupt any in-flight utterance first — users rarely want two
-      // Alloras overlapping.
+      // Avas overlapping.
       synth.cancel();
 
       const utterance = new SpeechSynthesisUtterance(text);

@@ -4,11 +4,11 @@ export default function HowItWorksSection() {
       number: "01",
       title: "Choose Your Plan",
       description:
-        "Start free or pick the membership tier that matches your needs. All plans include Allora AI access and can be changed anytime.",
+        "Start free or pick the membership tier that matches your needs. All plans include Ava AI access and can be changed anytime.",
     },
     {
       number: "02",
-      title: "Connect with Allora",
+      title: "Connect with Ava",
       description:
         "Access your AI legal assistant through your member dashboard. Ask questions, upload contracts, and get instant guidance.",
     },
@@ -42,7 +42,7 @@ export default function HowItWorksSection() {
             Three steps to smarter legal support
           </h2>
           <p className="text-white/60 text-base md:text-lg max-w-2xl mx-auto">
-            Get started with Allora in minutes and access legal guidance whenever you need it.
+            Get started with Ava in minutes and access legal guidance whenever you need it.
           </p>
         </div>
 

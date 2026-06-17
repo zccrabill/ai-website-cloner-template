@@ -103,7 +103,7 @@ export default function FaiirPage() {
           serviceSchema({
             name: "FAIIR Compliance Membership",
             description:
-              "Monthly Colorado AI Act compliance support for businesses maintaining FAIIR readiness. Offered in three tiers — Standard ($49/month), Plus ($149/month, includes annual re-certification audit), and Enterprise (custom, from $499/month). All tiers include attorney Q&A, regulatory update briefings, recordkeeping templates, and Allora AI legal assistant access. Annual billing saves ~17%.",
+              "Monthly Colorado AI Act compliance support for businesses maintaining FAIIR readiness. Offered in three tiers — Standard ($49/month), Plus ($149/month, includes annual re-certification audit), and Enterprise (custom, from $499/month). All tiers include attorney Q&A, regulatory update briefings, recordkeeping templates, and Ava AI legal assistant access. Annual billing saves ~17%.",
             url: `${PAGE_URL}#membership`,
             serviceType: "AI Compliance Subscription",
             price: "49",

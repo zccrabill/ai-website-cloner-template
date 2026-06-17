@@ -13,7 +13,7 @@ This already meets a "reasonable security" bar. Envelope encryption is the next 
 
 ## Threat model — what this does and doesn't do
 **Protects against:** storage bucket exfiltration, Postgres dump, infrastructure-level snooping — the ciphertext is useless without the key, which lives separately.
-**Does NOT protect against:** a compromised attorney/admin account or a compromised decrypt function — by design the firm must be able to read client documents (attorney review + Allora). This is **firm-held-key** encryption, not zero-knowledge. Zero-knowledge (client-only keys) is explicitly rejected: it would lock the firm out of its own clients' files and break Allora.
+**Does NOT protect against:** a compromised attorney/admin account or a compromised decrypt function — by design the firm must be able to read client documents (attorney review + Ava). This is **firm-held-key** encryption, not zero-knowledge. Zero-knowledge (client-only keys) is explicitly rejected: it would lock the firm out of its own clients' files and break Ava.
 
 ## Key architecture (envelope / KEK–DEK)
 - **KEK (Key Encryption Key):** one master key, 256-bit, stored in **Supabase Vault** (or an external KMS later). Never leaves the server; never sent to the browser. Versioned (`key_version`) for rotation.
@@ -39,11 +39,11 @@ Existing rows stay `is_encrypted = false` and keep working unchanged — back-co
 3. Returns the row. (Replaces the current direct `supabase.storage.upload` in `documents/page.tsx`.)
 
 **Download / preview** — new edge function `doc-decrypt`:
-1. Caller (member, attorney, or Allora via service role) requests `document_id`.
+1. Caller (member, attorney, or Ava via service role) requests `document_id`.
 2. Function authorizes (member owns it, or `is_admin()`), fetches ciphertext + wrapped DEK, unwraps DEK with KEK (by `key_version`), decrypts, and **streams plaintext back** (or writes to a private temp object and returns a 30s signed URL for big files).
 3. Browser never sees the key; the signed URL (if used) points at a short-lived decrypted copy that's deleted after.
 
-**Allora** reads documents through the same `doc-decrypt` path (service role) so AI review keeps working.
+**Ava** reads documents through the same `doc-decrypt` path (service role) so AI review keeps working.
 
 ## Crypto details
 - Algorithm: **AES-256-GCM** (confidentiality + integrity; the GCM tag detects tampering).

@@ -143,9 +143,9 @@ export default function AboutZachariahPage() {
               businesses actually run into: entity formation, operating
               agreements, business succession planning, vendor contracts, and
               the occasional hard conversation with a co-founder. He uses
-              Allora, Available Law&apos;s AI legal assistant, to prepare
+              Ava, Available Law&apos;s AI legal assistant, to prepare
               drafts and research faster — but every deliverable is reviewed
-              by a human attorney before it reaches a client. Allora is a
+              by a human attorney before it reaches a client. Ava is a
               tool; the legal judgment is his.
             </p>
 

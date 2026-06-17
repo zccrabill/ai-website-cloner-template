@@ -356,7 +356,7 @@ export default function OnboardingPage() {
                   </p>
                   <p className="font-semibold text-[#1F1810]">1. NATURE OF SERVICES</p>
                   <p>
-                    Available Law provides AI-assisted legal services through our proprietary assistant, Allora, combined with oversight and review by licensed Colorado attorneys. All legal advice, document drafting, and legal opinions delivered through the Platform are reviewed by a licensed attorney before delivery to you.
+                    Available Law provides AI-assisted legal services through our proprietary assistant, Ava, combined with oversight and review by licensed Colorado attorneys. All legal advice, document drafting, and legal opinions delivered through the Platform are reviewed by a licensed attorney before delivery to you.
                   </p>
                   <p className="font-semibold text-[#1F1810]">2. MEMBERSHIP TIERS</p>
                   <p>
@@ -428,7 +428,7 @@ export default function OnboardingPage() {
                   </p>
                   <p className="font-semibold text-[#1F1810]">AI PROCESSING</p>
                   <p>
-                    Information you share may be processed by our AI assistant, Allora, to facilitate legal research and document drafting. This processing occurs within secure, encrypted environments. AI-processed content is always reviewed by a licensed attorney before delivery. We do not use your confidential legal information to train general AI models.
+                    Information you share may be processed by our AI assistant, Ava, to facilitate legal research and document drafting. This processing occurs within secure, encrypted environments. AI-processed content is always reviewed by a licensed attorney before delivery. We do not use your confidential legal information to train general AI models.
                   </p>
                   <p className="font-semibold text-[#1F1810]">DATA SECURITY</p>
                   <p>
@@ -491,7 +491,7 @@ export default function OnboardingPage() {
                 </p>
                 <p className="font-semibold text-[#1F1810]">3. AI-ASSISTED PRACTICE DISCLOSURE</p>
                 <p>
-                  Client acknowledges and consents to the Firm&apos;s use of artificial intelligence tools, including the proprietary assistant known as &ldquo;Allora,&rdquo; in the provision of legal services. Client understands that: (a) AI tools assist attorneys in research, drafting, and analysis; (b) all AI-generated work product is reviewed and approved by a licensed Colorado attorney before delivery; (c) the supervising attorney maintains professional responsibility for all work product; and (d) the use of AI does not diminish the Firm&apos;s professional obligations or duty of care.
+                  Client acknowledges and consents to the Firm&apos;s use of artificial intelligence tools, including the proprietary assistant known as &ldquo;Ava,&rdquo; in the provision of legal services. Client understands that: (a) AI tools assist attorneys in research, drafting, and analysis; (b) all AI-generated work product is reviewed and approved by a licensed Colorado attorney before delivery; (c) the supervising attorney maintains professional responsibility for all work product; and (d) the use of AI does not diminish the Firm&apos;s professional obligations or duty of care.
                 </p>
                 <p className="font-semibold text-[#1F1810]">4. FEES</p>
                 <p>
@@ -553,7 +553,7 @@ export default function OnboardingPage() {
               </h2>
               <p className="text-sm text-[#6B5B4E] mb-8 max-w-md mx-auto">
                 Your account is ready. You can now access your dashboard, chat
-                with Allora, and start getting legal support for{" "}
+                with Ava, and start getting legal support for{" "}
                 {businessName}.
               </p>
               <button

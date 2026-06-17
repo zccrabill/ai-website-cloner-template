@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import AlloraHeroDemo from "./AlloraHeroDemo";
+import AvaHeroDemo from "./AvaHeroDemo";
 
 export default function HeroSection() {
   // Animations start immediately on mount. There's no server/client divergence
@@ -95,9 +95,9 @@ export default function HeroSection() {
             </div>
           </div>
 
-          {/* Right: Allora chat demo — auto-plays scripted conversations
+          {/* Right: Ava chat demo — auto-plays scripted conversations
               across 3 scenarios (lease review, formation, CO AI Act). Full
-              state machine + timing details in AlloraHeroDemo.tsx. */}
+              state machine + timing details in AvaHeroDemo.tsx. */}
           <div
             className={`relative ${
               isAnimating
@@ -109,7 +109,7 @@ export default function HeroSection() {
               animation: isAnimating ? "fadeUp 0.8s ease-out forwards" : "none",
             }}
           >
-            <AlloraHeroDemo />
+            <AvaHeroDemo />
           </div>
         </div>
       </div>

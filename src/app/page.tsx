@@ -10,7 +10,7 @@ import PracticeSnapshotSection from "@/components/PracticeSnapshotSection";
 import TestimonialsSection from "@/components/TestimonialsSection";
 import CTASection from "@/components/CTASection";
 import Footer from "@/components/Footer";
-import AlloraFloatingWidget from "@/components/AlloraFloatingWidget";
+import AvaFloatingWidget from "@/components/AvaFloatingWidget";
 import Reveal from "@/components/Reveal";
 import JsonLd from "@/components/JsonLd";
 import { faqPageSchema, HOMEPAGE_FAQS } from "@/lib/seo";
@@ -50,7 +50,7 @@ export default function Home() {
         <Reveal><CTASection /></Reveal>
       </main>
       <Footer />
-      <AlloraFloatingWidget />
+      <AvaFloatingWidget />
     </>
   );
 }

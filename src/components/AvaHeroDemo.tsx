@@ -1,22 +1,22 @@
 /**
- * AlloraHeroDemo — auto-playing chat demo that replaces the static card
+ * AvaHeroDemo — auto-playing chat demo that replaces the static card
  * showcase on the homepage hero.
  *
  * A three-act narrative cycles on loop:
- *   1. Lease intake    — client brings a lease question; Allora triages
+ *   1. Lease intake    — client brings a lease question; Ava triages
  *                         and promises to route to an attorney.
- *   2. Lease delivery  — attorney has finished; Allora returns the
+ *   2. Lease delivery  — attorney has finished; Ava returns the
  *                         redlined work product. An "Attorney-verified"
  *                         badge with a pulsing green dot gently floats
  *                         above the chat card ONLY during this scene.
  *   3. Colorado AI Act — second practice area, demonstrating breadth.
  *
  * Each scenario runs through five phases:
- *   typing-user → thinking → typing-allora → hold → fade-out
+ *   typing-user → thinking → typing-ava → hold → fade-out
  *
  * Timing is tuned to feel real rather than fast:
  *   - User types at ~40 WPM (40ms/char)
- *   - Allora replies at ~80 WPM (20ms/char)
+ *   - Ava replies at ~80 WPM (20ms/char)
  *   - A brief "thinking" dot animation bridges the two
  *   - ~2.4s hold after the reply lands so a scanning visitor can read it
  *
@@ -37,7 +37,7 @@ import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 // ----------------------------------------------------------------------------
 
 interface Message {
-  role: "user" | "allora";
+  role: "user" | "ava";
   text: string;
 }
 
@@ -54,17 +54,17 @@ interface Scenario {
   /** 'intake' is triage/routing; 'delivery' returns attorney work product. */
   kind: "intake" | "delivery";
   messages: Message[];
-  /** Optional document attachment rendered inside Allora's reply bubble.
+  /** Optional document attachment rendered inside Ava's reply bubble.
    *  Clicking opens a preview modal with a stylized redlined lease page. */
   chip?: DocumentChip;
 }
 
 /**
  * Three-act scripted demo. Every exchange is patterned after a real matter
- * Zachariah has run through the Allora pipeline — but they are fully
+ * Zachariah has run through the Ava pipeline — but they are fully
  * fictional client prompts with no identifiable details.
  *
- *   1. Lease intake     — client surfaces a clause concern, Allora describes
+ *   1. Lease intake     — client surfaces a clause concern, Ava describes
  *                          patterns and routes the work to an attorney.
  *   2. Lease delivery   — same matter, next stage: attorney-reviewed work
  *                          product returned to the client. Floating
@@ -82,7 +82,7 @@ const SCENARIOS: Scenario[] = [
         text: "New landlord wants me on the hook for all structural repairs. 3-year lease. Is that normal?",
       },
       {
-        role: "allora",
+        role: "ava",
         text: "That's a clause we see pushed on small tenants a lot — and it's usually negotiable. On short-term holds, landlords typically keep structural, roof, and foundation; tenants take non-structural interior. Drop the lease in and I'll have an attorney review it and let you know what's worth pushing back on.",
       },
     ],
@@ -96,7 +96,7 @@ const SCENARIOS: Scenario[] = [
         text: "Any update on the lease review?",
       },
       {
-        role: "allora",
+        role: "ava",
         text: "Just back from our attorney. Three clauses redlined — structural repairs, CAM caps, and the default/cure window. Attorney-verified and ready to send to the landlord whenever you are.",
       },
     ],
@@ -114,7 +114,7 @@ const SCENARIOS: Scenario[] = [
         text: "Using an AI tool to screen resumes. Any issue under the Colorado AI Act?",
       },
       {
-        role: "allora",
+        role: "ava",
         text: "Resume screening counts as a \"consequential decision\" under Colorado SB 26-189 — which triggers a clear pre-use notice, a 30-day adverse-outcome notice when someone is turned down, and a meaningful-human-review path, all live by the January 2027 effective date. Send over the tool and your hiring flow and I'll have an attorney map out your specific compliance plan.",
       },
     ],
@@ -126,7 +126,7 @@ const SCENARIOS: Scenario[] = [
 // ----------------------------------------------------------------------------
 
 const USER_CHAR_MS = 40;         // ~40 WPM typing
-const ALLORA_CHAR_MS = 20;       // ~80 WPM streaming
+const AVA_CHAR_MS = 20;       // ~80 WPM streaming
 const THINKING_DELAY_MS = 1100;  // "thinking..." dots
 const SCENARIO_HOLD_MS = 2400;   // pause after reply lands
 const FADE_MS = 450;             // cross-scenario fade
@@ -134,7 +134,7 @@ const FADE_MS = 450;             // cross-scenario fade
 type Phase =
   | "typing-user"
   | "thinking"
-  | "typing-allora"
+  | "typing-ava"
   | "hold"
   | "fade-out";
 
@@ -147,15 +147,15 @@ function ThinkingDots() {
     <div className="flex items-center gap-1.5 px-4 py-3 bg-white rounded-2xl rounded-bl-sm border border-[#1F1810]/8 w-fit">
       <span
         className="w-1.5 h-1.5 rounded-full bg-[#A89279]"
-        style={{ animation: "alloraDot 1.2s ease-in-out infinite" }}
+        style={{ animation: "avaDot 1.2s ease-in-out infinite" }}
       />
       <span
         className="w-1.5 h-1.5 rounded-full bg-[#A89279]"
-        style={{ animation: "alloraDot 1.2s ease-in-out 0.2s infinite" }}
+        style={{ animation: "avaDot 1.2s ease-in-out 0.2s infinite" }}
       />
       <span
         className="w-1.5 h-1.5 rounded-full bg-[#A89279]"
-        style={{ animation: "alloraDot 1.2s ease-in-out 0.4s infinite" }}
+        style={{ animation: "avaDot 1.2s ease-in-out 0.4s infinite" }}
       />
     </div>
   );
@@ -176,7 +176,7 @@ function UserBubble({
           {showCursor && (
             <span
               className="inline-block w-[2px] h-[14px] bg-white/80 ml-0.5 align-middle"
-              style={{ animation: "alloraCursor 1s steps(2) infinite" }}
+              style={{ animation: "avaCursor 1s steps(2) infinite" }}
               aria-hidden
             />
           )}
@@ -186,7 +186,7 @@ function UserBubble({
   );
 }
 
-function AlloraBubble({
+function AvaBubble({
   text,
   showCursor,
   chip,
@@ -199,7 +199,7 @@ function AlloraBubble({
   onChipClick?: () => void;
   onChipHoverChange?: (hovered: boolean) => void;
 }) {
-  // The chip appears only after Allora has finished "typing" — so it reads as
+  // The chip appears only after Ava has finished "typing" — so it reads as
   // an attachment the attorney just delivered, not something auto-generated.
   const chipVisible = chip && !showCursor;
 
@@ -211,7 +211,7 @@ function AlloraBubble({
           {showCursor && (
             <span
               className="inline-block w-[2px] h-[14px] bg-[#C17832] ml-0.5 align-middle"
-              style={{ animation: "alloraCursor 1s steps(2) infinite" }}
+              style={{ animation: "avaCursor 1s steps(2) infinite" }}
               aria-hidden
             />
           )}
@@ -276,10 +276,10 @@ function AlloraBubble({
 }
 
 // ----------------------------------------------------------------------------
-// AlloraHeroDemo
+// AvaHeroDemo
 // ----------------------------------------------------------------------------
 
-export default function AlloraHeroDemo() {
+export default function AvaHeroDemo() {
   const prefersReduced = usePrefersReducedMotion();
   // Snapshot the PRM value at first render so initial state matches.
   // useState's lazy initializer runs exactly once on mount; we ignore the
@@ -294,7 +294,7 @@ export default function AlloraHeroDemo() {
   const [userProgress, setUserProgress] = useState(
     initialPRM ? SCENARIOS[0].messages[0].text.length : 0,
   );
-  const [alloraProgress, setAlloraProgress] = useState(
+  const [avaProgress, setAvaProgress] = useState(
     initialPRM ? SCENARIOS[0].messages[1].text.length : 0,
   );
 
@@ -318,7 +318,7 @@ export default function AlloraHeroDemo() {
 
   const scenario = SCENARIOS[scenarioIdx];
   const userText = scenario.messages[0].text;
-  const alloraText = scenario.messages[1].text;
+  const avaText = scenario.messages[1].text;
 
   // State machine. Each phase schedules the next transition; progress updates
   // re-run the effect so each char-tick schedules itself.
@@ -331,7 +331,7 @@ export default function AlloraHeroDemo() {
       // re-firing this on every dep change is cheap.
       queueMicrotask(() => {
         setUserProgress(SCENARIOS[0].messages[0].text.length);
-        setAlloraProgress(SCENARIOS[0].messages[1].text.length);
+        setAvaProgress(SCENARIOS[0].messages[1].text.length);
         setPhase("hold");
       });
       return;
@@ -358,19 +358,19 @@ export default function AlloraHeroDemo() {
     }
 
     if (phase === "thinking") {
-      timer = window.setTimeout(() => setPhase("typing-allora"), THINKING_DELAY_MS);
+      timer = window.setTimeout(() => setPhase("typing-ava"), THINKING_DELAY_MS);
       return () => window.clearTimeout(timer);
     }
 
-    if (phase === "typing-allora") {
-      if (alloraProgress >= alloraText.length) {
+    if (phase === "typing-ava") {
+      if (avaProgress >= avaText.length) {
         // Same deferral pattern as the typing-user → thinking transition.
         queueMicrotask(() => setPhase("hold"));
         return;
       }
       timer = window.setTimeout(
-        () => setAlloraProgress((p) => p + 1),
-        ALLORA_CHAR_MS,
+        () => setAvaProgress((p) => p + 1),
+        AVA_CHAR_MS,
       );
       return () => window.clearTimeout(timer);
     }
@@ -384,7 +384,7 @@ export default function AlloraHeroDemo() {
       timer = window.setTimeout(() => {
         setScenarioIdx((i) => (i + 1) % SCENARIOS.length);
         setUserProgress(0);
-        setAlloraProgress(0);
+        setAvaProgress(0);
         setPhase("typing-user");
       }, FADE_MS);
       return () => window.clearTimeout(timer);
@@ -392,10 +392,10 @@ export default function AlloraHeroDemo() {
   }, [
     phase,
     userProgress,
-    alloraProgress,
+    avaProgress,
     scenarioIdx,
     userText,
-    alloraText,
+    avaText,
     prefersReduced,
     isPaused,
   ]);
@@ -405,13 +405,13 @@ export default function AlloraHeroDemo() {
     const el = transcriptRef.current;
     if (!el) return;
     el.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
-  }, [userProgress, alloraProgress, phase]);
+  }, [userProgress, avaProgress, phase]);
 
   const showUserCursor = phase === "typing-user" && userProgress < userText.length;
-  const showAlloraCursor =
-    phase === "typing-allora" && alloraProgress < alloraText.length;
+  const showAvaCursor =
+    phase === "typing-ava" && avaProgress < avaText.length;
   const visibleUser = userText.slice(0, userProgress);
-  const visibleAllora = alloraText.slice(0, alloraProgress);
+  const visibleAva = avaText.slice(0, avaProgress);
 
   // Progress dots indicate which of 3 scenarios is currently playing.
   return (
@@ -434,7 +434,7 @@ export default function AlloraHeroDemo() {
             </div>
             <div>
               <p className="text-sm font-semibold text-[#1F1810] leading-tight">
-                Allora
+                Ava
               </p>
               <p className="text-[11px] text-[#A89279] leading-tight">
                 Your legal intake assistant
@@ -471,13 +471,13 @@ export default function AlloraHeroDemo() {
           {/* Thinking dots */}
           {phase === "thinking" && <ThinkingDots />}
 
-          {/* Allora message — shown during typing-allora / hold / fade-out */}
-          {(phase === "typing-allora" ||
+          {/* Ava message — shown during typing-ava / hold / fade-out */}
+          {(phase === "typing-ava" ||
             phase === "hold" ||
             phase === "fade-out") && (
-            <AlloraBubble
-              text={visibleAllora || " "}
-              showCursor={showAlloraCursor}
+            <AvaBubble
+              text={visibleAva || " "}
+              showCursor={showAvaCursor}
               chip={scenario.chip}
               onChipClick={() => setModalOpen(true)}
               onChipHoverChange={setChipHovered}
@@ -488,7 +488,7 @@ export default function AlloraHeroDemo() {
         {/* Footer / composer */}
         <div className="px-5 py-4 border-t border-[#1F1810]/6 bg-white flex items-center gap-3">
           <div className="flex-1 px-4 py-2.5 rounded-full bg-[#F5F0EB] text-xs text-[#A89279]">
-            Ask Allora anything about your business...
+            Ask Ava anything about your business...
           </div>
           <div className="w-9 h-9 rounded-full bg-[#D4893F] flex items-center justify-center text-white shadow-sm">
             <svg
@@ -539,7 +539,7 @@ export default function AlloraHeroDemo() {
         style={{
           animation:
             scenario.kind === "delivery" && !prefersReduced
-              ? "alloraFloat 3.6s ease-in-out infinite"
+              ? "avaFloat 3.6s ease-in-out infinite"
               : "none",
         }}
         aria-hidden={scenario.kind !== "delivery"}
@@ -548,7 +548,7 @@ export default function AlloraHeroDemo() {
           <span
             className="absolute w-3.5 h-3.5 rounded-full bg-[#7A8B6F]/35"
             style={{
-              animation: !prefersReduced ? "alloraPulse 1.8s ease-in-out infinite" : "none",
+              animation: !prefersReduced ? "avaPulse 1.8s ease-in-out infinite" : "none",
             }}
             aria-hidden
           />
@@ -562,7 +562,7 @@ export default function AlloraHeroDemo() {
       {/* Component-scoped keyframes. Live here (not globals.css) so this demo
           is fully portable — drop the file in, everything works. */}
       <style jsx>{`
-        @keyframes alloraDot {
+        @keyframes avaDot {
           0%, 80%, 100% {
             opacity: 0.25;
             transform: translateY(0);
@@ -572,7 +572,7 @@ export default function AlloraHeroDemo() {
             transform: translateY(-3px);
           }
         }
-        @keyframes alloraCursor {
+        @keyframes avaCursor {
           0%, 50% {
             opacity: 1;
           }
@@ -580,7 +580,7 @@ export default function AlloraHeroDemo() {
             opacity: 0;
           }
         }
-        @keyframes alloraFloat {
+        @keyframes avaFloat {
           0%, 100% {
             transform: translateY(0);
           }
@@ -588,7 +588,7 @@ export default function AlloraHeroDemo() {
             transform: translateY(-6px);
           }
         }
-        @keyframes alloraPulse {
+        @keyframes avaPulse {
           0%, 100% {
             opacity: 0.55;
             transform: scale(1);
@@ -601,7 +601,7 @@ export default function AlloraHeroDemo() {
       `}</style>
     </div>
 
-    {/* Redlined-lease preview modal. Opened from the document chip in Allora's
+    {/* Redlined-lease preview modal. Opened from the document chip in Ava's
         delivery bubble. Rendered as a sibling of the demo wrapper (not a
         child) so the backdrop can cover the whole viewport without inheriting
         the wrapper's fade-out opacity. */}
@@ -614,7 +614,7 @@ export default function AlloraHeroDemo() {
 // PreviewModal — stylized "redlined lease" page that opens when the visitor
 // clicks the document chip. Fully client-side mock content; the visual goal
 // is to let prospects feel what attorney-verified work product looks like
-// inside Allora, not to render a real lease PDF.
+// inside Ava, not to render a real lease PDF.
 // ----------------------------------------------------------------------------
 
 function PreviewModal({ onClose }: { onClose: () => void }) {
@@ -623,7 +623,7 @@ function PreviewModal({ onClose }: { onClose: () => void }) {
       className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-[#1F1810]/60 backdrop-blur-sm"
       role="dialog"
       aria-modal="true"
-      aria-labelledby="allora-preview-title"
+      aria-labelledby="ava-preview-title"
       onClick={onClose}
     >
       <div
@@ -654,7 +654,7 @@ function PreviewModal({ onClose }: { onClose: () => void }) {
             </div>
             <div className="min-w-0">
               <p
-                id="allora-preview-title"
+                id="ava-preview-title"
                 className="text-sm font-semibold text-[#1F1810] truncate"
               >
                 Redlined_Lease.pdf
@@ -794,7 +794,7 @@ function PreviewModal({ onClose }: { onClose: () => void }) {
         {/* Footer */}
         <div className="px-6 py-4 border-t border-[#1F1810]/8 bg-white flex items-center justify-between gap-4 flex-wrap">
           <p className="text-[11px] text-[#A89279] max-w-xs leading-snug">
-            Demo preview. In Allora, attorney-verified deliverables land
+            Demo preview. In Ava, attorney-verified deliverables land
             directly in your matter — ready to send, download, or discuss.
           </p>
           <a

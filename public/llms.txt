@@ -1,6 +1,6 @@
 # Available Law
 
-> Available Law is a Colorado-based virtual law firm that pairs licensed attorneys with Allora, an AI legal assistant, to deliver flat-rate legal services focused on AI compliance, business formation, and technology contracts. Available Law also offers FAIIR — the Foundation for AI Integrity & Regulation — an AI certification framework for businesses navigating the Colorado AI Act.
+> Available Law is a Colorado-based virtual law firm that pairs licensed attorneys with Ava, an AI legal assistant, to deliver flat-rate legal services focused on AI compliance, business formation, and technology contracts. Available Law also offers FAIIR — the Foundation for AI Integrity & Regulation — an AI certification framework for businesses navigating the Colorado AI Act.
 
 ## Who Available Law is for
 
@@ -9,7 +9,7 @@ Available Law serves Colorado small and mid-sized businesses, startups, and in-h
 ## What makes Available Law different
 
 - **Flat-rate subscriptions, no hourly billing.** Four tiers: Explore (free self-serve), Build ($50/mo, 1 attorney work item), Grow ($150/mo, 2 work items), Lead ($300/mo, 3 work items).
-- **Attorney-reviewed AI.** Every document Allora drafts is reviewed by a licensed Colorado attorney before reaching the client. Allora never autonomously provides legal advice.
+- **Attorney-reviewed AI.** Every document Ava drafts is reviewed by a licensed Colorado attorney before reaching the client. Ava never autonomously provides legal advice.
 - **FAIIR certification.** A structured audit framework for AI governance, fairness, and compliance — designed around the Colorado AI Act but applicable to any U.S. jurisdiction.
 - **Virtual-first.** Available statewide in Colorado. No physical office requirements for clients.
 
@@ -19,7 +19,7 @@ Zachariah Crabill, JD. Licensed Colorado attorney. Founder of Available Law, LLC
 
 ## Key pages
 
-- [Homepage](https://availablelaw.com/): Overview of services, Allora AI assistant, pricing, and FAIIR.
+- [Homepage](https://availablelaw.com/): Overview of services, Ava AI assistant, pricing, and FAIIR.
 - [About Zachariah Crabill](https://availablelaw.com/about/zachariah-crabill): Founder profile — Colorado bar status, credentials, areas of focus, and recent writing.
 - [Colorado AI Act Checker](https://availablelaw.com/ai-act-checker): Free interactive tool to determine whether a Colorado business is subject to SB24-205 and what obligations apply.
 - [FAIIR Certification](https://availablelaw.com/faiir): Dedicated page for the Foundation for AI Integrity & Regulation certification program — assessment process, pillars, and pricing.
