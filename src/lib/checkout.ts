@@ -13,7 +13,7 @@
  *   /checkout/[tier] page and the pricing cards always route through the same
  *   helper, so we never drift between "pricing shows $X" and "Stripe charges $Y".
  */
-import type { TierKey } from "@/lib/tiers";
+import type { TierKey, YLabTierKey, AnyTierKey } from "@/lib/tiers";
 
 export type BillingCycle = "monthly" | "annual";
 
@@ -50,16 +50,39 @@ export const CHECKOUT_LINKS: Record<TierKey, TierCheckoutLinks> = {
 };
 
 /**
+ * Y Lab (teen) Stripe Payment Links. EMPTY until the teen products are created
+ * in Stripe — see the launch checklist. While empty, getCheckoutLink returns
+ * null for these and the /ylab cards fall back to the waitlist CTA, so we
+ * never ship a broken buy button.
+ *
+ * When ready, create FOUR Stripe Payment Links (parent/guardian as the Stripe
+ * customer — minor-contract guard) and paste them here:
+ *   ylab_build monthly $40/mo    ylab_build annual $400/yr
+ *   ylab_grow  monthly $120/mo   ylab_grow  annual $1,200/yr
+ */
+export const YLAB_CHECKOUT_LINKS: Record<YLabTierKey, TierCheckoutLinks> = {
+  ylab_build: {},
+  ylab_grow: {},
+};
+
+/** Adult + Y Lab links merged, so getCheckoutLink resolves any tier key. */
+const ALL_CHECKOUT_LINKS: Record<AnyTierKey, TierCheckoutLinks> = {
+  ...CHECKOUT_LINKS,
+  ...YLAB_CHECKOUT_LINKS,
+};
+
+/**
  * Resolve the Stripe Payment Link for a given tier + billing cycle. Falls
  * back to monthly when the caller asked for annual and the tier only has a
  * monthly link configured (rare, but keeps the checkout page from breaking).
- * Returns null for free tiers or unconfigured entries.
+ * Returns null for free tiers or unconfigured entries (incl. Y Lab tiers
+ * whose Stripe products don't exist yet).
  */
 export function getCheckoutLink(
-  tier: TierKey,
+  tier: AnyTierKey,
   cycle: BillingCycle,
 ): string | null {
-  const links = CHECKOUT_LINKS[tier];
+  const links = ALL_CHECKOUT_LINKS[tier];
   if (!links) return null;
   if (cycle === "annual" && links.annual) return links.annual;
   if (links.monthly) return links.monthly;

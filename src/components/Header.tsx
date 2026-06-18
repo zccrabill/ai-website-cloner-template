@@ -109,6 +109,13 @@ export default function Header() {
             Blog
             <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-[#C17832] group-hover:w-full transition-all duration-300" />
           </Link>
+          <Link
+            href="/ylab"
+            className="text-[#6B5B4E] hover:text-[#1F1810] relative group transition-colors text-sm"
+          >
+            Y Lab
+            <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-[#C17832] group-hover:w-full transition-all duration-300" />
+          </Link>
         </nav>
 
         {/* Right side: CTA button (desktop) */}
@@ -173,6 +180,12 @@ export default function Header() {
               className="text-[#6B5B4E] hover:text-[#1F1810] transition-colors block text-sm"
             >
               Blog
+            </Link>
+            <Link
+              href="/ylab"
+              className="text-[#6B5B4E] hover:text-[#1F1810] transition-colors block text-sm"
+            >
+              Y Lab
             </Link>
             <hr className="border-[#1F1810]/8 my-2" />
             <Link

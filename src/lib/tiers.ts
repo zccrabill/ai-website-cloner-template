@@ -102,14 +102,77 @@ export const TIERS: Record<TierKey, TierConfig> = {
   },
 };
 
+/* ------------------------------------------------------------------ */
+/* Y Lab — teen / youth-entrepreneur tiers                            */
+/* ------------------------------------------------------------------ */
+
 /**
- * Resolve a tier config from a raw subscription_tier string. Defaults to
- * explore for unknown or missing values so UI never breaks on bad data.
+ * Y Lab is Available Law's youth program (see /ylab). Teen founders get their
+ * own membership that MIRRORS the adult Build & Grow tiers at a 20% youth
+ * discount. We keep these as distinct tier keys (not a coupon on the adult
+ * tiers) so teen members can be gated, counted, and served Y Lab-only content
+ * cleanly.
+ *
+ * Account-holder note: a minor's contract is generally voidable in Colorado,
+ * so the PARENT/GUARDIAN is the contracting account holder + payer and the
+ * teen is the named participant — until Y Lab helps change that law.
+ */
+export type YLabTierKey = "ylab_build" | "ylab_grow";
+
+/** Every tier key the system can store in members.subscription_tier. */
+export type AnyTierKey = TierKey | YLabTierKey;
+
+/** Youth discount applied to the mirrored adult price (20% off). */
+export const YLAB_DISCOUNT = 0.2;
+
+export const YLAB_TIERS: Record<YLabTierKey, TierConfig> = {
+  ylab_build: {
+    key: "ylab_build" as TierKey,
+    label: "Build",
+    tagline: "Lock down the legal basics for your first venture.",
+    workItemsPerMonth: 1,
+    monthlyPriceUsd: 40, // adult Build $50 − 20%
+    annualPriceUsd: 400, // adult Build $500 − 20%
+    features: [
+      "Unlimited Ava AI chat & drafting",
+      "Y Lab founder community + podcast drops",
+      "Encrypted document storage",
+    ],
+  },
+  ylab_grow: {
+    key: "ylab_grow" as TierKey,
+    label: "Grow",
+    tagline: "For teen founders shipping real products and signing real deals.",
+    workItemsPerMonth: 2,
+    monthlyPriceUsd: 120, // adult Grow $150 − 20%
+    annualPriceUsd: 1200, // adult Grow $1,500 − 20%
+    features: [
+      "Priority attorney replies (2 business days)",
+      "Contract template library",
+      "Y Lab founder community + podcast drops",
+      "Unlimited Ava AI chat & drafting",
+      "Encrypted document storage",
+    ],
+  },
+};
+
+/** All tiers (adult + Y Lab) keyed for resolution from a stored string. */
+const ALL_TIERS: Record<string, TierConfig> = { ...TIERS, ...YLAB_TIERS };
+
+/**
+ * Resolve a tier config from a raw subscription_tier string. Resolves both
+ * adult and Y Lab tiers. Defaults to explore for unknown or missing values so
+ * UI never breaks on bad data.
  */
 export function getTier(tier: string | null | undefined): TierConfig {
   if (!tier) return TIERS.explore;
-  const key = tier.toLowerCase() as TierKey;
-  return TIERS[key] ?? TIERS.explore;
+  return ALL_TIERS[tier.toLowerCase()] ?? TIERS.explore;
+}
+
+/** True when a stored tier key belongs to the Y Lab (teen) program. */
+export function isYLabTier(tier: string | null | undefined): boolean {
+  if (!tier) return false;
+  return tier.toLowerCase() in YLAB_TIERS;
 }
 
 /**
