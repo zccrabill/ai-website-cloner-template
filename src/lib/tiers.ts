@@ -103,19 +103,19 @@ export const TIERS: Record<TierKey, TierConfig> = {
 };
 
 /* ------------------------------------------------------------------ */
-/* Y Lab — teen / youth-entrepreneur tiers                            */
+/* YLab — teen / youth-entrepreneur tiers                            */
 /* ------------------------------------------------------------------ */
 
 /**
- * Y Lab is Available Law's youth program (see /ylab). Teen founders get their
+ * YLab is Available Law's youth program (see /ylab). Teen founders get their
  * own membership that MIRRORS the adult Build & Grow tiers at a 20% youth
  * discount. We keep these as distinct tier keys (not a coupon on the adult
- * tiers) so teen members can be gated, counted, and served Y Lab-only content
+ * tiers) so teen members can be gated, counted, and served YLab-only content
  * cleanly.
  *
  * Account-holder note: a minor's contract is generally voidable in Colorado,
  * so the PARENT/GUARDIAN is the contracting account holder + payer and the
- * teen is the named participant — until Y Lab helps change that law.
+ * teen is the named participant — until YLab helps change that law.
  */
 export type YLabTierKey = "ylab_build" | "ylab_grow";
 
@@ -135,7 +135,7 @@ export const YLAB_TIERS: Record<YLabTierKey, TierConfig> = {
     annualPriceUsd: 400, // adult Build $500 − 20%
     features: [
       "Unlimited Ava AI chat & drafting",
-      "Y Lab founder community + podcast drops",
+      "YLab founder community + podcast drops",
       "Encrypted document storage",
     ],
   },
@@ -149,19 +149,19 @@ export const YLAB_TIERS: Record<YLabTierKey, TierConfig> = {
     features: [
       "Priority attorney replies (2 business days)",
       "Contract template library",
-      "Y Lab founder community + podcast drops",
+      "YLab founder community + podcast drops",
       "Unlimited Ava AI chat & drafting",
       "Encrypted document storage",
     ],
   },
 };
 
-/** All tiers (adult + Y Lab) keyed for resolution from a stored string. */
+/** All tiers (adult + YLab) keyed for resolution from a stored string. */
 const ALL_TIERS: Record<string, TierConfig> = { ...TIERS, ...YLAB_TIERS };
 
 /**
  * Resolve a tier config from a raw subscription_tier string. Resolves both
- * adult and Y Lab tiers. Defaults to explore for unknown or missing values so
+ * adult and YLab tiers. Defaults to explore for unknown or missing values so
  * UI never breaks on bad data.
  */
 export function getTier(tier: string | null | undefined): TierConfig {
@@ -169,7 +169,7 @@ export function getTier(tier: string | null | undefined): TierConfig {
   return ALL_TIERS[tier.toLowerCase()] ?? TIERS.explore;
 }
 
-/** True when a stored tier key belongs to the Y Lab (teen) program. */
+/** True when a stored tier key belongs to the YLab (teen) program. */
 export function isYLabTier(tier: string | null | undefined): boolean {
   if (!tier) return false;
   return tier.toLowerCase() in YLAB_TIERS;

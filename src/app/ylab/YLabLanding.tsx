@@ -36,14 +36,14 @@ interface YLabLandingProps {
 
 const YLAB_TIER_ORDER: YLabTierKey[] = ["ylab_build", "ylab_grow"];
 
-/** Open Ava with a Y Lab–specific seed prompt — used for every waitlist CTA
+/** Open Ava with a YLab–specific seed prompt — used for every waitlist CTA
  *  while live teen checkout is still being wired (Stripe products pending). */
 function openYLabWaitlist(seed: string) {
   window.dispatchEvent(new CustomEvent("ava:open", { detail: { seed } }));
 }
 
 const WAITLIST_SEED =
-  "I'm interested in Y Lab for a teen entrepreneur. Can you tell me how to get on the founding-member waitlist and what a parent/guardian needs to do?";
+  "I'm interested in YLab for a teen entrepreneur. Can you tell me how to get on the founding-member waitlist and what a parent/guardian needs to do?";
 
 export default function YLabLanding({ faqs }: YLabLandingProps) {
   const [isAnnual, setIsAnnual] = useState(true);
@@ -68,7 +68,7 @@ export default function YLabLanding({ faqs }: YLabLandingProps) {
             <div className="inline-flex items-center gap-2 rounded-full border border-[#C17832]/30 bg-white/60 px-4 py-1.5 mb-7">
               <FlaskConical className="w-4 h-4 text-[#C17832]" />
               <span className="text-xs font-semibold uppercase tracking-[0.14em] text-[#6B5B4E]">
-                Y Lab · Youth Leadership &amp; Business
+                YLab · Youth Leadership &amp; Business
               </span>
             </div>
 
@@ -78,7 +78,7 @@ export default function YLabLanding({ faqs }: YLabLandingProps) {
             </h1>
 
             <p className="text-base md:text-xl text-[#6B5B4E] leading-relaxed max-w-[680px] mx-auto mb-9">
-              Y Lab is a youth-led legal and business lab for teen entrepreneurs.
+              YLab is a youth-led legal and business lab for teen entrepreneurs.
               You bring the problems worth solving. We help you build the
               solution, give you real legal backup, and organize to change the
               law that&apos;s holding your generation back — guided by an attorney
@@ -118,7 +118,7 @@ export default function YLabLanding({ faqs }: YLabLandingProps) {
               A lab isn&apos;t a classroom. Nobody hands you the answer. You spot
               a problem, test an idea, and figure out what actually works — only
               here, you&apos;ve got a licensed attorney in the room when the legal
-              questions come up. Y Lab is youth-led on purpose: the teens set the
+              questions come up. YLab is youth-led on purpose: the teens set the
               agenda, and the grown-ups are the guides, not the bosses.
             </p>
           </div>
@@ -176,7 +176,7 @@ export default function YLabLanding({ faqs }: YLabLandingProps) {
                 treats them like they don&apos;t count yet.
               </p>
               <p className="text-base md:text-lg text-[#D9CCBC] leading-relaxed mb-8">
-                Y Lab&apos;s north star is to change that — a youth-led push to
+                YLab&apos;s north star is to change that — a youth-led push to
                 update Colorado law so under-18 entrepreneurs can form LLCs and
                 enter enforceable contracts. The teens lead it. The attorney
                 guides it. And the podcast and the membership are how we build
@@ -207,7 +207,7 @@ export default function YLabLanding({ faqs }: YLabLandingProps) {
             </div>
             <div className="flex-1 text-center md:text-left">
               <p className="text-sm font-semibold text-[#C17832] uppercase tracking-wide mb-2">
-                The Y Lab Podcast
+                The YLab Podcast
               </p>
               <h2 className="font-heading text-3xl md:text-4xl mb-3">
                 Conversations with the next generation of founders.
@@ -224,7 +224,7 @@ export default function YLabLanding({ faqs }: YLabLandingProps) {
                 type="button"
                 onClick={() =>
                   openYLabWaitlist(
-                    "I want to be notified when the Y Lab podcast launches — and I might want to be a guest.",
+                    "I want to be notified when the YLab podcast launches — and I might want to be a guest.",
                   )
                 }
                 className="inline-flex items-center gap-2 text-sm font-semibold text-[#C17832] hover:text-[#1F1810] transition-colors"
@@ -401,7 +401,7 @@ export default function YLabLanding({ faqs }: YLabLandingProps) {
                 — because under current Colorado law a minor&apos;s contract
                 isn&apos;t fully enforceable. The teen is the founder who works
                 with Ava and the attorney day-to-day. (And yes — needing a
-                grown-up to sign is exactly the law Y Lab is out to change.)
+                grown-up to sign is exactly the law YLab is out to change.)
               </p>
             </div>
 
@@ -461,7 +461,7 @@ export default function YLabLanding({ faqs }: YLabLandingProps) {
               Are you a teen founder — or the parent of one?
             </h2>
             <p className="text-base md:text-lg text-[#6B5B4E] leading-relaxed max-w-[620px] mx-auto mb-8">
-              Get on the founding-member waitlist. We&apos;ll reach out as Y Lab
+              Get on the founding-member waitlist. We&apos;ll reach out as YLab
               opens its first cohort, the podcast launches, and the law-change
               campaign kicks off.
             </p>

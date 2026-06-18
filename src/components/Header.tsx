@@ -113,7 +113,7 @@ export default function Header() {
             href="/ylab"
             className="text-[#6B5B4E] hover:text-[#1F1810] relative group transition-colors text-sm"
           >
-            Y Lab
+            YLab
             <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-[#C17832] group-hover:w-full transition-all duration-300" />
           </Link>
         </nav>
@@ -185,7 +185,7 @@ export default function Header() {
               href="/ylab"
               className="text-[#6B5B4E] hover:text-[#1F1810] transition-colors block text-sm"
             >
-              Y Lab
+              YLab
             </Link>
             <hr className="border-[#1F1810]/8 my-2" />
             <Link
