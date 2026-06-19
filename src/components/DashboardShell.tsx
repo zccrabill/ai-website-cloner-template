@@ -18,6 +18,7 @@ import {
   ShieldCheck,
   Users,
   Briefcase,
+  Activity,
 } from "lucide-react";
 
 interface UserData {
@@ -51,6 +52,7 @@ const adminItems = [
   { icon: Users, label: "Clients", href: "/dashboard/clients" },
   { icon: Briefcase, label: "Engagements", href: "/dashboard/engagements" },
   { icon: ShieldCheck, label: "Review Queue", href: "/dashboard/review" },
+  { icon: Activity, label: "AI Usage", href: "/dashboard/usage" },
 ];
 
 export default function DashboardShell({
