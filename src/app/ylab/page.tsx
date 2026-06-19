@@ -67,7 +67,7 @@ const YLAB_FAQS = [
   {
     question: "How much does a YLab membership cost?",
     answer:
-      "YLab mirrors Available Law's regular memberships at a 20% youth discount. Build is $40/month (vs. $50) and Grow is $120/month (vs. $150), each including monthly attorney work — a reviewed document or a 30-minute consult — plus unlimited AI legal chat. Annual billing saves more.",
+      "YLab mirrors Available Law's regular memberships at a 20% youth discount. Build is $40/month (vs. $50) and Grow is $120/month (vs. $150), each including monthly attorney work — a reviewed document or a 30-minute consult — plus Ava AI legal chat. Annual billing saves more.",
   },
   {
     question: "What is the law you're trying to change?",
@@ -89,7 +89,7 @@ export default function YLabPage() {
           serviceSchema({
             name: "YLab Teen Founder Membership",
             description:
-              "Discounted legal membership for teen entrepreneurs from Available Law. Mirrors the regular Build and Grow memberships at a 20% youth discount — Build $40/month, Grow $120/month — each including monthly attorney work (a reviewed document or a 30-minute consult) and unlimited AI legal assistance. A parent or guardian is the account holder.",
+              "Discounted legal membership for teen entrepreneurs from Available Law. Mirrors the regular Build and Grow memberships at a 20% youth discount — Build $40/month, Grow $120/month — each including monthly attorney work (a reviewed document or a 30-minute consult) and Ava AI legal assistance. A parent or guardian is the account holder.",
             url: `${PAGE_URL}#membership`,
             serviceType: "Legal Subscription for Teen Entrepreneurs",
             price: "40",

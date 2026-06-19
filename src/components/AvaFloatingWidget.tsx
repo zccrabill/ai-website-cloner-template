@@ -54,7 +54,8 @@ export default function AvaFloatingWidget() {
 
   // --- Free-tier message cap ---------------------------------------------
   // Visitors get a taste of Ava (2 user turns) before we lock the input
-  // behind a signup CTA. Members get unlimited access + voice.
+  // behind a signup CTA. Members get more access + voice (caps enforced
+  // server-side in the allora-chat function: anon ~5/day, free ~15/day, paid ~150/day).
   const FREE_MESSAGE_LIMIT = 2;
   const userMessageCount = messages.filter((m) => m.role === "user").length;
   const isLocked = !isAuthed && userMessageCount >= FREE_MESSAGE_LIMIT;
@@ -389,7 +390,7 @@ export default function AvaFloatingWidget() {
                     </p>
                     {!isAuthed && (
                       <p className="text-[11px] text-[#A89279] mt-2">
-                        Members get unlimited access, voice mode, and
+                        Members get more access, voice mode, and
                         attorney-reviewed answers.
                       </p>
                     )}
@@ -461,7 +462,7 @@ export default function AvaFloatingWidget() {
                         Want to keep going?
                       </p>
                       <p className="text-xs text-[#6B5B4E] leading-relaxed mb-3">
-                        Members get unlimited Ava access, voice mode, document
+                        Members get more Ava access, voice mode, document
                         reviews, and attorney consultations.
                       </p>
                       <Link

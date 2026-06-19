@@ -64,7 +64,7 @@ export const TIERS: Record<TierKey, TierConfig> = {
     monthlyPriceUsd: 50,
     annualPriceUsd: 500,
     features: [
-      "Unlimited Ava AI chat & drafting",
+      "Ava AI chat & drafting",
       "Encrypted document storage",
     ],
   },
@@ -79,7 +79,7 @@ export const TIERS: Record<TierKey, TierConfig> = {
       "Priority attorney replies (2 business days)",
       "Contract template library",
       "Monthly Practice Letter",
-      "Unlimited Ava AI chat & drafting",
+      "Ava AI chat & drafting",
       "Encrypted document storage",
     ],
   },
@@ -96,7 +96,7 @@ export const TIERS: Record<TierKey, TierConfig> = {
       "Early access to new Ava features",
       "Contract template library",
       "Monthly Practice Letter",
-      "Unlimited Ava AI chat & drafting",
+      "Ava AI chat & drafting",
       "Encrypted document storage",
     ],
   },
@@ -134,7 +134,7 @@ export const YLAB_TIERS: Record<YLabTierKey, TierConfig> = {
     monthlyPriceUsd: 40, // adult Build $50 − 20%
     annualPriceUsd: 400, // adult Build $500 − 20%
     features: [
-      "Unlimited Ava AI chat & drafting",
+      "Ava AI chat & drafting",
       "YLab founder community + podcast drops",
       "Encrypted document storage",
     ],
@@ -150,7 +150,7 @@ export const YLAB_TIERS: Record<YLabTierKey, TierConfig> = {
       "Priority attorney replies (2 business days)",
       "Contract template library",
       "YLab founder community + podcast drops",
-      "Unlimited Ava AI chat & drafting",
+      "Ava AI chat & drafting",
       "Encrypted document storage",
     ],
   },
