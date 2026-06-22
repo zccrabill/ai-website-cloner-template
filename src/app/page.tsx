@@ -29,8 +29,10 @@ export default function Home() {
           <Reveal><FeaturedInSection /></Reveal>
         </div>
 
+        {/* Solutions cascades its own header + cards (staggered reveals),
+            so it is intentionally NOT wrapped in a block-level <Reveal>. */}
         <div id="solutions">
-          <Reveal><SolutionsSection /></Reveal>
+          <SolutionsSection />
         </div>
 
         <div id="how">

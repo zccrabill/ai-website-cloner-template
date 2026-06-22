@@ -4,6 +4,7 @@ import "./globals.css";
 import JsonLd from "@/components/JsonLd";
 import RegenScrollGlobalHandler from "@/components/RegenScrollGlobalHandler";
 import KonamiCode from "@/components/KonamiCode";
+import SmoothScroll from "@/components/SmoothScroll";
 import {
   SITE_URL,
   SITE_NAME,
@@ -122,6 +123,7 @@ export default function RootLayout({
         <meta name="x-hello-curious-dev" content="Looking at the source? Nice. Email zachariah@availablelaw.com if you want to talk shop." />
       </head>
       <body className="min-h-full bg-[#FAF8F5] text-[#1F1810] antialiased">
+        <SmoothScroll />
         <RegenScrollGlobalHandler />
         <KonamiCode />
         {children}

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { LucideIcon } from "lucide-react";
 import { FileSearch, Compass, FileSignature, Sparkles } from "lucide-react";
+import Reveal from "@/components/Reveal";
 
 /**
  * Solutions grid on the homepage. Editorial treatment: line icons (not
@@ -77,7 +78,7 @@ export default function SolutionsSection() {
     <section className="w-full py-20 lg:py-32 bg-[#FAF8F5]">
       <div className="max-w-7xl mx-auto px-6">
         {/* Section header */}
-        <div className="mb-16 text-center lg:text-left">
+        <Reveal className="mb-16 text-center lg:text-left">
           <p className="text-sm font-medium text-[#C17832] tracking-widest uppercase mb-3">
             Solutions
           </p>
@@ -89,19 +90,19 @@ export default function SolutionsSection() {
             monthly subscription instead of a billable-hours clock. Every
             output is reviewed by a Colorado-licensed attorney.
           </p>
-        </div>
+        </Reveal>
 
         {/* Solutions grid — four cards in a 2x2 on desktop. If a fifth
             card is added, bump back to lg:grid-cols-3 and audit for
             overlap with the FAIIR section first. */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {SOLUTIONS.map((solution) => {
+          {SOLUTIONS.map((solution, index) => {
             const Icon = solution.icon;
             return (
+              <Reveal key={solution.number} delay={index * 90} className="h-full">
               <Link
-                key={solution.number}
                 href={solution.href}
-                className="group relative bg-white rounded-[20px] p-8 border border-[#EDE5DB] transition-all duration-300 hover:-translate-y-1 hover:border-[#D9CCBC] hover:shadow-[0_20px_40px_rgba(31,24,16,0.08)] overflow-hidden flex flex-col"
+                className="group relative h-full bg-white rounded-[20px] p-8 border border-[#EDE5DB] transition-all duration-300 hover:-translate-y-1 hover:border-[#D9CCBC] hover:shadow-[0_20px_40px_rgba(31,24,16,0.08)] overflow-hidden flex flex-col"
               >
                 {/* Accent top line — reveals on hover */}
                 <span className="absolute top-0 left-0 right-0 h-[3px] bg-[#C17832] origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
@@ -141,6 +142,7 @@ export default function SolutionsSection() {
                   <span aria-hidden="true">&rarr;</span>
                 </span>
               </Link>
+              </Reveal>
             );
           })}
         </div>

@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { ShieldCheck } from "lucide-react";
+import { getLenis } from "@/lib/smoothScroll";
 import AnnouncementBanner from "@/components/AnnouncementBanner";
 
 export default function Header() {
@@ -28,7 +29,17 @@ export default function Header() {
     if (pathname === "/") {
       e.preventDefault();
       const target = document.querySelector(anchor);
-      if (target) target.scrollIntoView({ behavior: "smooth" });
+      if (target) {
+        const lenis = getLenis();
+        if (lenis) {
+          // Route through Lenis so anchor jumps share the momentum easing;
+          // offset clears the sticky header. Falls back to native smooth
+          // scroll for reduced-motion users, where Lenis never initializes.
+          lenis.scrollTo(target as HTMLElement, { offset: -80 });
+        } else {
+          target.scrollIntoView({ behavior: "smooth" });
+        }
+      }
     } else {
       e.preventDefault();
       router.push(`/${anchor}`);
