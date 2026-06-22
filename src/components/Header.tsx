@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
-import { ShieldCheck } from "lucide-react";
+import { ShieldCheck, FlaskConical } from "lucide-react";
 import AnnouncementBanner from "@/components/AnnouncementBanner";
 
 export default function Header() {
@@ -110,12 +110,22 @@ export default function Header() {
             Blog
             <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-[#C17832] group-hover:w-full transition-all duration-300" />
           </Link>
+          {/* YLab — represented by its lab flask (à la Google Labs). Icon-only
+              to keep it distinct from the text nav; tooltip names it. */}
           <Link
             href="/ylab"
-            className="text-[#6B5B4E] hover:text-[#1F1810] relative group transition-colors text-sm"
+            aria-label="YLab — teen entrepreneur lab"
+            title="YLab"
+            className="group relative flex items-center justify-center text-[#C17832] hover:text-[#A9652A] transition-colors"
           >
-            YLab
-            <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-[#C17832] group-hover:w-full transition-all duration-300" />
+            <FlaskConical
+              className="w-[1.15rem] h-[1.15rem] transition-transform duration-200 group-hover:scale-110 group-hover:-rotate-6"
+              strokeWidth={1.75}
+              aria-hidden="true"
+            />
+            <span className="absolute top-full mt-2 left-1/2 -translate-x-1/2 px-2 py-1 bg-[#1F1810] text-white text-[10px] font-medium rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+              YLab
+            </span>
           </Link>
         </nav>
 
@@ -191,8 +201,13 @@ export default function Header() {
             </Link>
             <Link
               href="/ylab"
-              className="text-[#6B5B4E] hover:text-[#1F1810] transition-colors block text-sm"
+              className="flex items-center gap-2 text-[#6B5B4E] hover:text-[#1F1810] transition-colors text-sm"
             >
+              <FlaskConical
+                className="w-4 h-4 text-[#C17832]"
+                strokeWidth={1.75}
+                aria-hidden="true"
+              />
               YLab
             </Link>
             <hr className="border-[#1F1810]/8 my-2" />
