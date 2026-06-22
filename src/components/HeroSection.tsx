@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import AvaHeroDemo from "./AvaHeroDemo";
+import { useParallax } from "@/hooks/useParallax";
 
 export default function HeroSection() {
   // Animations start immediately on mount. There's no server/client divergence
@@ -9,11 +10,12 @@ export default function HeroSection() {
   // pattern that used to flip this from false to true was a React anti-pattern
   // and also triggered react-hooks/set-state-in-effect.
   const isAnimating = true;
+  const orbsRef = useParallax<HTMLDivElement>(0.2);
 
   return (
     <section className="relative w-full min-h-screen bg-[#FAF8F5] overflow-hidden">
-      {/* Animated gradient orbs background */}
-      <div className="absolute inset-0 overflow-hidden">
+      {/* Animated gradient orbs background — drifts on scroll for depth */}
+      <div ref={orbsRef} className="absolute inset-0 overflow-hidden">
         {/* Accent orb */}
         <div
           className={`absolute w-96 h-96 rounded-full opacity-20 pointer-events-none mix-blend-multiply blur-3xl ${
