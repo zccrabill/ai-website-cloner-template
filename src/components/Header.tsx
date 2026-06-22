@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
+import { ShieldCheck } from "lucide-react";
 import AnnouncementBanner from "@/components/AnnouncementBanner";
 
 export default function Header() {
@@ -118,8 +119,15 @@ export default function Header() {
           </Link>
         </nav>
 
-        {/* Right side: CTA button (desktop) */}
+        {/* Right side: CTA buttons (desktop) */}
         <div className="hidden md:flex items-center gap-3">
+          <Link
+            href="/faiir"
+            className="flex items-center gap-1.5 px-5 py-2 bg-[#C17832] text-white rounded-full text-sm font-medium hover:bg-[#A9652A] transition-colors"
+          >
+            <ShieldCheck className="w-4 h-4" />
+            FAIIR
+          </Link>
           <Link
             href="/login"
             className="px-6 py-2 bg-[#1F1810] text-white rounded-full text-sm font-medium hover:bg-[#C17832] transition-colors"
@@ -188,6 +196,14 @@ export default function Header() {
               YLab
             </Link>
             <hr className="border-[#1F1810]/8 my-2" />
+            <Link
+              href="/faiir"
+              onClick={() => setMobileMenuOpen(false)}
+              className="flex items-center justify-center gap-1.5 px-6 py-2 bg-[#C17832] text-white rounded-full text-sm font-medium hover:bg-[#A9652A] transition-colors"
+            >
+              <ShieldCheck className="w-4 h-4" />
+              FAIIR Certification
+            </Link>
             <Link
               href="/login"
               className="px-6 py-2 bg-[#1F1810] text-white rounded-full text-sm font-medium hover:bg-[#C17832] transition-colors block text-center"
