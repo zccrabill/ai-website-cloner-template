@@ -21,6 +21,7 @@ import {
   Activity,
   FolderLock,
   Award,
+  ListChecks,
 } from "lucide-react";
 
 interface UserData {
@@ -62,6 +63,7 @@ const adminItems = [
 // Deliverables + My Account.
 const engagementItems = [
   { icon: LayoutDashboard, label: "Overview", href: "/dashboard" },
+  { icon: ListChecks, label: "Your Engagement", href: "/dashboard/journey" },
   { icon: FolderLock, label: "Documents", href: "/dashboard/files" },
   { icon: Award, label: "Deliverables", href: "/dashboard/deliverables" },
   { icon: User, label: "My Account", href: "/dashboard/account" },

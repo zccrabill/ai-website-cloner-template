@@ -28,13 +28,13 @@ function AssistantMessage({
   content: string;
   scrollToBottom: () => void;
 }) {
-  const { displayed } = useTypewriter(content);
+  const { displayed, isAnimating } = useTypewriter(content);
 
   useEffect(() => {
     scrollToBottom();
   }, [displayed, scrollToBottom]);
 
-  return <AvaMarkdown>{displayed}</AvaMarkdown>;
+  return <AvaMarkdown animating={isAnimating}>{displayed}</AvaMarkdown>;
 }
 
 export default function ChatPage() {

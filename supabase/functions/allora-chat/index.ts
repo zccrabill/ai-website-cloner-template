@@ -101,7 +101,12 @@ HOW TO RESPOND:
 
 FORMATTING — IMPORTANT:
 - Write in plain, conversational prose. Do NOT use markdown emphasis: no **bold**, no *italics*, no # headings, and no "Label:"-style bold mini-headers. They read as clunky and over-formatted in a small chat bubble.
-- The only formatting you may use is a simple dash-bullet list when you are genuinely listing options (for example, the membership plans). Keep the bullet text plain — no bold inside it. Example: "- Build — $50/mo, 1 attorney item per month".
+- LINKS: whenever you point someone to a page on the site, make it a clickable markdown link with a full https:// URL and a short, natural label — never paste a bare URL as plain text. Canonical links:
+  - Plans / upgrading: [see our plans](https://availablelaw.com/#pricing)
+  - Signing in: [sign in](https://availablelaw.com/login)
+  - Homepage: [availablelaw.com](https://availablelaw.com)
+  So instead of "upgrade at availablelaw.com/#pricing", write "you can [upgrade your plan](https://availablelaw.com/#pricing)".
+- A simple dash-bullet list is fine when you are genuinely listing options (for example, the membership plans). Keep the bullet text plain — no bold inside it. Example: "- Build — $50/mo, 1 attorney item per month".
 - No emoji.
 
 DOCUMENTS ON FILE:
@@ -143,7 +148,7 @@ function buildUsageSystemBlock(ctx: UsageContext | null): string {
   if (!ctx) return "";
 
   if (ctx.isFreeTier) {
-    return `\n\n--- CLIENT PLAN & USAGE (CRITICAL) ---\nThe client is on the FREE ${ctx.tierLabel} plan. This plan does NOT include any attorney work — no matter reviews, no consultations.\n\nDO NOT emit [READY_FOR_REVIEW] under any circumstances for a free-tier client. Instead, at the point where you would normally hand off, politely explain that attorney review requires a paid membership and point them at their upgrade options:\n  - Build: $50/mo, includes 1 attorney work item / month (matter review OR 30-min consultation)\n  - Grow: $150/mo, 2 / month\n  - Lead: $300/mo, 3 / month\nTell them they can upgrade at availablelaw.com/#pricing and come right back to finish the handoff. You can still help them gather facts and understand their situation in the chat — you just can't dispatch the matter to a human attorney until they're on a paid plan.`;
+    return `\n\n--- CLIENT PLAN & USAGE (CRITICAL) ---\nThe client is on the FREE ${ctx.tierLabel} plan. This plan does NOT include any attorney work — no matter reviews, no consultations.\n\nDO NOT emit [READY_FOR_REVIEW] under any circumstances for a free-tier client. Instead, at the point where you would normally hand off, politely explain that attorney review requires a paid membership and point them at their upgrade options:\n  - Build: $50/mo, includes 1 attorney work item / month (matter review OR 30-min consultation)\n  - Grow: $150/mo, 2 / month\n  - Lead: $300/mo, 3 / month\nTell them they can [upgrade your plan](https://availablelaw.com/#pricing) and come right back to finish the handoff. You can still help them gather facts and understand their situation in the chat — you just can't dispatch the matter to a human attorney until they're on a paid plan.`;
   }
 
   if (ctx.isOverLimit) {

@@ -11,13 +11,33 @@ export function balanceMarkdown(text: string): string {
   return text;
 }
 
+/** Hide a half-typed markdown link so the raw `[label](https://…` syntax never
+ *  reveals character-by-character — the link pops in complete instead. Only call
+ *  this on mid-animation text; a finished message keeps its real content (a
+ *  complete `[label](url)` at the tail is left untouched). */
+export function hideTrailingIncompleteLink(text: string): string {
+  const lastOpen = text.lastIndexOf("[");
+  if (lastOpen === -1) return text;
+  if (/^\[[^\]]*\]\([^)]*\)/.test(text.slice(lastOpen))) return text;
+  return text.slice(0, lastOpen);
+}
+
 /**
  * AvaMarkdown — the single renderer for Ava's replies, shared by the dashboard
  * chat and the floating widget so both format markdown identically and neither
  * ever shows raw `**` / `*` / `#` punctuation as literal text. Compact type
  * scale so it reads well inside a small chat bubble.
  */
-export function AvaMarkdown({ children }: { children: string }) {
+export function AvaMarkdown({
+  children,
+  animating = false,
+}: {
+  children: string;
+  animating?: boolean;
+}) {
+  // While typing, hide an in-progress link so its raw URL never reveals
+  // char-by-char; the finished message renders its real content untouched.
+  const partial = animating ? hideTrailingIncompleteLink(children) : children;
   return (
     <div className="text-sm leading-relaxed">
       <ReactMarkdown
@@ -79,7 +99,7 @@ export function AvaMarkdown({ children }: { children: string }) {
           hr: () => <hr className="border-[#D9CCBC] my-2" />,
         }}
       >
-        {balanceMarkdown(children)}
+        {balanceMarkdown(partial)}
       </ReactMarkdown>
     </div>
   );
