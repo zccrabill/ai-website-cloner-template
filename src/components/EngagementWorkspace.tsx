@@ -195,7 +195,23 @@ export default function EngagementWorkspace({ orgId }: { orgId: string }) {
       });
       if (rpcError) throw new Error(rpcError.message);
 
-      await loadWorkspace();
+      // Flip the card to "received" in local state instead of re-fetching the
+      // whole workspace. A full reload here can hang (supabase-js can deadlock
+      // its auth lock immediately after a storage upload, notably in Safari),
+      // which would freeze the button on "Uploading…". The RPC already
+      // committed, so the backend is authoritative; this just reflects it.
+      setDocs((prev) =>
+        prev.map((d) =>
+          d.id === doc.id
+            ? {
+                ...d,
+                state: "received" as const,
+                storage_path: path,
+                uploaded_at: new Date().toISOString(),
+              }
+            : d
+        )
+      );
     } catch (err) {
       setUploadErrors((prev) => ({
         ...prev,
