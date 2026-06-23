@@ -19,6 +19,8 @@ import {
   Users,
   Briefcase,
   Activity,
+  FolderLock,
+  Award,
 } from "lucide-react";
 
 interface UserData {
@@ -53,6 +55,16 @@ const adminItems = [
   { icon: Briefcase, label: "Engagements", href: "/dashboard/engagements" },
   { icon: ShieldCheck, label: "Review Queue", href: "/dashboard/review" },
   { icon: Activity, label: "AI Usage", href: "/dashboard/usage" },
+];
+
+// FAIIR engagement clients get their own portal nav: their workspace is the
+// engagement, not the SMB subscription product. Overview + Documents +
+// Deliverables + My Account.
+const engagementItems = [
+  { icon: LayoutDashboard, label: "Overview", href: "/dashboard" },
+  { icon: FolderLock, label: "Documents", href: "/dashboard/files" },
+  { icon: Award, label: "Deliverables", href: "/dashboard/deliverables" },
+  { icon: User, label: "My Account", href: "/dashboard/account" },
 ];
 
 export default function DashboardShell({
@@ -212,11 +224,10 @@ export default function DashboardShell({
         </div>
 
         <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
-          {sidebarItems
-            .filter(
-              (item) => !item.memberOnly || (!isAdmin && !isEngagementClient)
-            )
-            .map((item) => {
+          {(isEngagementClient
+            ? engagementItems
+            : sidebarItems.filter((item) => !item.memberOnly || !isAdmin)
+          ).map((item) => {
               const IconComponent = item.icon;
               const isActive = pathname === item.href;
               return (
