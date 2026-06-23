@@ -191,11 +191,13 @@ export default function DashboardShell({
       >
         <div className="h-16 flex items-center justify-between px-6 border-b border-[#1F1810]/8">
           <Link href="/dashboard" className="flex items-center gap-2">
+            {/* FAIIR engagement clients see the FAIIR seal; SMB members and
+                staff keep the Available Law arrow mark. */}
             <Image
-              src="/images/logo-arrow.png"
-              alt="Av{ai}lable Law"
-              width={32}
-              height={32}
+              src={isEngagementClient ? "/images/faiir-logo.png" : "/images/logo-arrow.png"}
+              alt={isEngagementClient ? "FAIIR — Foundation of AI Integrity & Regulation" : "Av{ai}lable Law"}
+              width={isEngagementClient ? 40 : 32}
+              height={isEngagementClient ? 40 : 32}
               className="object-contain"
             />
           </Link>

@@ -6,10 +6,31 @@ import Link from "next/link";
 import { X, Send, Sparkles, Mic, Volume2, VolumeX } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { useVoiceChat } from "@/hooks/useVoiceChat";
+import { useTypewriter } from "@/hooks/useTypewriter";
+import { AvaMarkdown } from "@/components/AvaMarkdown";
 
 interface ChatMessage {
   role: "user" | "assistant";
   content: string;
+}
+
+/** Ava's reply bubble in the widget — types the text out instead of popping
+ *  it in whole, renders markdown (so no raw `**` ever shows), and keeps the
+ *  panel scrolled to the bottom as it grows. */
+function TypewriterText({
+  content,
+  scrollToBottom,
+}: {
+  content: string;
+  scrollToBottom: () => void;
+}) {
+  const { displayed } = useTypewriter(content);
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [displayed, scrollToBottom]);
+
+  return <AvaMarkdown>{displayed}</AvaMarkdown>;
 }
 
 export default function AvaFloatingWidget() {
@@ -22,6 +43,12 @@ export default function AvaFloatingWidget() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Instant scroll the typewriter uses to follow text as it reveals; the
+  // [messages, isTyping] effect below still handles smooth scrolls on new turns.
+  const scrollToBottom = useCallback(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "auto" });
+  }, []);
 
   // --- Voice mode state -------------------------------------------------
   // Gate the mic button behind an authenticated session. Voice is a
@@ -431,9 +458,16 @@ export default function AvaFloatingWidget() {
                           : "bg-[#FAF8F5] border border-[#1F1810]/8 text-[#1F1810] rounded-tl-sm"
                       }`}
                     >
-                      <p className="text-sm whitespace-pre-line leading-relaxed">
-                        {msg.content}
-                      </p>
+                      {msg.role === "assistant" ? (
+                        <TypewriterText
+                          content={msg.content}
+                          scrollToBottom={scrollToBottom}
+                        />
+                      ) : (
+                        <p className="text-sm whitespace-pre-line leading-relaxed">
+                          {msg.content}
+                        </p>
+                      )}
                     </div>
                   </div>
                 ))}

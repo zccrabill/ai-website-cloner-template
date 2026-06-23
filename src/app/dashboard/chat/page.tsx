@@ -1,11 +1,11 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
+import { useCallback, useEffect, useRef, useState } from "react";
 import DashboardShell from "@/components/DashboardShell";
 import { Send, Bot, Sparkles, Clock, CheckCircle2 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
+import { useTypewriter } from "@/hooks/useTypewriter";
+import { AvaMarkdown } from "@/components/AvaMarkdown";
 
 interface ChatMessage {
   role: "user" | "assistant";
@@ -19,6 +19,24 @@ interface PendingQuestion {
   allow_custom: boolean;
 }
 
+/** Ava's reply bubble — types the markdown out instead of popping it in whole,
+ *  and keeps the transcript pinned to the bottom as the text grows. */
+function AssistantMessage({
+  content,
+  scrollToBottom,
+}: {
+  content: string;
+  scrollToBottom: () => void;
+}) {
+  const { displayed } = useTypewriter(content);
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [displayed, scrollToBottom]);
+
+  return <AvaMarkdown>{displayed}</AvaMarkdown>;
+}
+
 export default function ChatPage() {
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -29,6 +47,13 @@ export default function ChatPage() {
     null,
   );
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Stable, instant scroll used by the typewriter to follow text as it grows
+  // (the [messages, isTyping] effect below handles the smooth scroll on new
+  // turns). Instant avoids smooth-scroll animations stacking up per tick.
+  const scrollToBottom = useCallback(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "auto" });
+  }, []);
 
   const suggestions = [
     "Review my contractor agreement for red flags",
@@ -300,85 +325,10 @@ export default function ChatPage() {
                   }`}
                 >
                   {msg.role === "assistant" ? (
-                    <div className="text-sm leading-relaxed">
-                      <ReactMarkdown
-                        remarkPlugins={[remarkGfm]}
-                        components={{
-                          p: ({ children }) => (
-                            <p className="mb-2 last:mb-0">{children}</p>
-                          ),
-                          strong: ({ children }) => (
-                            <strong className="font-semibold text-[#1F1810]">
-                              {children}
-                            </strong>
-                          ),
-                          em: ({ children }) => (
-                            <em className="italic">{children}</em>
-                          ),
-                          ul: ({ children }) => (
-                            <ul className="list-disc pl-5 mb-2 space-y-1">
-                              {children}
-                            </ul>
-                          ),
-                          ol: ({ children }) => (
-                            <ol className="list-decimal pl-5 mb-2 space-y-1">
-                              {children}
-                            </ol>
-                          ),
-                          li: ({ children }) => <li>{children}</li>,
-                          h1: ({ children }) => (
-                            <h1 className="text-base font-semibold mt-2 mb-1">
-                              {children}
-                            </h1>
-                          ),
-                          h2: ({ children }) => (
-                            <h2 className="text-sm font-semibold mt-2 mb-1">
-                              {children}
-                            </h2>
-                          ),
-                          h3: ({ children }) => (
-                            <h3 className="text-sm font-semibold mt-2 mb-1">
-                              {children}
-                            </h3>
-                          ),
-                          h4: ({ children }) => (
-                            <h4 className="text-sm font-semibold mt-2 mb-1">
-                              {children}
-                            </h4>
-                          ),
-                          a: ({ children, href }) => (
-                            <a
-                              href={href}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-[#C17832] underline"
-                            >
-                              {children}
-                            </a>
-                          ),
-                          code: ({ children }) => (
-                            <code className="bg-[#F5F0EB] px-1 py-0.5 rounded text-[0.85em]">
-                              {children}
-                            </code>
-                          ),
-                          pre: ({ children }) => (
-                            <pre className="bg-[#F5F0EB] p-2 rounded text-[0.85em] overflow-x-auto mb-2">
-                              {children}
-                            </pre>
-                          ),
-                          blockquote: ({ children }) => (
-                            <blockquote className="border-l-2 border-[#D9CCBC] pl-3 italic my-2">
-                              {children}
-                            </blockquote>
-                          ),
-                          hr: () => (
-                            <hr className="border-[#D9CCBC] my-2" />
-                          ),
-                        }}
-                      >
-                        {msg.content}
-                      </ReactMarkdown>
-                    </div>
+                    <AssistantMessage
+                      content={msg.content}
+                      scrollToBottom={scrollToBottom}
+                    />
                   ) : (
                     <p className="text-sm whitespace-pre-line">{msg.content}</p>
                   )}
