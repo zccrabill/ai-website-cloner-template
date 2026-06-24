@@ -22,6 +22,7 @@ import {
   FolderLock,
   Award,
   ListChecks,
+  BadgeCheck,
 } from "lucide-react";
 
 interface UserData {
@@ -66,6 +67,7 @@ const engagementItems = [
   { icon: ListChecks, label: "Your Engagement", href: "/dashboard/journey" },
   { icon: FolderLock, label: "Documents", href: "/dashboard/files" },
   { icon: Award, label: "Deliverables", href: "/dashboard/deliverables" },
+  { icon: BadgeCheck, label: "Certification", href: "/dashboard/certification" },
   { icon: User, label: "My Account", href: "/dashboard/account" },
 ];
 
