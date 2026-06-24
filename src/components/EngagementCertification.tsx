@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
 import { supabase } from "@/lib/supabase";
 import { useEngagementRef } from "@/lib/useEngagementRef";
-import { Download, Copy, Check, ShieldCheck, Sparkles, Lock } from "lucide-react";
+import { Download, Copy, Check, ShieldCheck, Sparkles, Lock, Megaphone, Code } from "lucide-react";
 
 interface Certification {
   firm_name: string;
@@ -26,7 +26,7 @@ export default function EngagementCertification() {
   const { ref, loading: refLoading } = useEngagementRef();
   const [cert, setCert] = useState<Certification | null>(null);
   const [loading, setLoading] = useState(true);
-  const [copied, setCopied] = useState(false);
+  const [copiedKey, setCopiedKey] = useState<string | null>(null);
   const [printError, setPrintError] = useState("");
 
   const orgId = ref?.orgId;
@@ -50,15 +50,25 @@ export default function EngagementCertification() {
     load();
   }, [load]);
 
-  const embedSnippet = cert
-    ? `<a href="${DIRECTORY_URL}" target="_blank" rel="noopener">\n  <img src="${SEAL_URL}" alt="FAIIR Certified ${new Date(cert.issued_at).getFullYear()} — ${cert.firm_name}" width="120" height="120" />\n</a>`
+  const year = cert ? new Date(cert.issued_at).getFullYear() : new Date().getFullYear();
+
+  const linkedinPost = cert
+    ? `${cert.firm_name} is now FAIIR Certified. 🛡️\n\nWe completed an independent assessment of how our firm governs and uses AI — data handling, integrity, and responsible-use practices — conducted by Available Law.\n\nFor our clients, it means we hold our AI use to a real standard, and we keep it current through annual review.\n\nLearn what FAIIR certification involves: ${DIRECTORY_URL}\n\n#LegalTech #AIGovernance #FAIIRCertified`
     : "";
 
-  const copyEmbed = async () => {
+  const signatureLine = cert
+    ? `${cert.firm_name} · FAIIR Certified ${year} — independently assessed for responsible AI use · ${DIRECTORY_URL}`
+    : "";
+
+  const embedSnippet = cert
+    ? `<a href="${DIRECTORY_URL}" target="_blank" rel="noopener">\n  <img src="${SEAL_URL}" alt="FAIIR Certified ${year} — ${cert.firm_name}" width="120" height="120" />\n</a>`
+    : "";
+
+  const copyText = async (key: string, text: string) => {
     try {
-      await navigator.clipboard.writeText(embedSnippet);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+      await navigator.clipboard.writeText(text);
+      setCopiedKey(key);
+      setTimeout(() => setCopiedKey(null), 2000);
     } catch {
       /* clipboard unavailable */
     }
@@ -163,7 +173,6 @@ export default function EngagementCertification() {
   }
 
   // ---- Certified: the reveal ----
-  const year = new Date(cert.issued_at).getFullYear();
   return (
     <div>
       {/* Celebration */}
@@ -188,30 +197,78 @@ export default function EngagementCertification() {
       </div>
 
       {/* Marketing kit */}
-      <h3 className="text-lg font-semibold text-[#1F1810] mb-4">Share your certification</h3>
+      <h3 className="text-lg font-semibold text-[#1F1810] mb-1">Share your certification</h3>
+      <p className="text-sm text-[#6B5B4E] mb-4">
+        Everything you need to show clients you are FAIIR Certified — no website edits required.
+      </p>
 
       <div className="space-y-4">
-        {/* Embed the seal */}
+        {/* 1. Download the seal */}
         <div className="bg-white border border-[#1F1810]/10 rounded-lg shadow-[0_2px_8px_rgb(31_24_16/0.06)] p-5">
-          <div className="flex items-center justify-between gap-3 mb-2">
-            <p className="text-sm font-semibold text-[#1F1810]">Add the seal to your website</p>
-            <button
-              type="button"
-              onClick={copyEmbed}
-              className="inline-flex items-center gap-1.5 text-xs font-medium text-[#C17832] hover:text-[#A8621F] transition-colors"
-            >
-              {copied ? <><Check className="w-3.5 h-3.5" />Copied</> : <><Copy className="w-3.5 h-3.5" />Copy code</>}
-            </button>
+          <div className="flex items-start gap-4">
+            <Image src="/images/faiir-logo.png" alt="FAIIR Certified seal" width={56} height={56} className="object-contain shrink-0" />
+            <div className="min-w-0">
+              <p className="text-sm font-semibold text-[#1F1810]">Download your seal</p>
+              <p className="text-xs text-[#6B5B4E] mt-1 mb-3">
+                A high-resolution image — use it on your website, email signature, social profiles, or
+                proposals. Pair it with the approved language below.
+              </p>
+              <a
+                href="/images/faiir-logo.png"
+                download="FAIIR-Certified-Seal.png"
+                className="inline-flex items-center gap-2 px-4 py-2 bg-[#1F1810] text-white rounded-lg text-xs font-semibold hover:bg-[#C17832] transition-colors"
+              >
+                <Download className="w-3.5 h-3.5" />
+                Download seal (PNG)
+              </a>
+            </div>
           </div>
-          <p className="text-xs text-[#6B5B4E] mb-3">
-            Paste this where you want the seal to appear — it links visitors back to your FAIIR listing.
-          </p>
-          <pre className="text-[11px] bg-[#F5F0EB] border border-[#1F1810]/8 rounded-lg p-3 overflow-x-auto text-[#4a4036] whitespace-pre-wrap break-all">
-            {embedSnippet}
-          </pre>
         </div>
 
-        {/* Approved language */}
+        {/* 2. Announce it — ready-to-post copy */}
+        <div className="bg-white border border-[#1F1810]/10 rounded-lg shadow-[0_2px_8px_rgb(31_24_16/0.06)] p-5">
+          <p className="text-sm font-semibold text-[#1F1810] mb-1 flex items-center gap-2">
+            <Megaphone className="w-4 h-4 text-[#C17832]" />
+            Announce it
+          </p>
+          <p className="text-xs text-[#6B5B4E] mb-4">
+            Written for you, in plain, honest language. Copy and share — no editing required.
+          </p>
+
+          <div className="mb-4">
+            <div className="flex items-center justify-between gap-3 mb-2">
+              <p className="text-xs font-semibold text-[#1F1810]">LinkedIn / social post</p>
+              <button
+                type="button"
+                onClick={() => copyText("linkedin", linkedinPost)}
+                className="inline-flex items-center gap-1.5 text-xs font-medium text-[#C17832] hover:text-[#A8621F] transition-colors shrink-0"
+              >
+                {copiedKey === "linkedin" ? <><Check className="w-3.5 h-3.5" />Copied</> : <><Copy className="w-3.5 h-3.5" />Copy</>}
+              </button>
+            </div>
+            <div className="text-[13px] bg-[#F5F0EB] border border-[#1F1810]/8 rounded-lg p-3 text-[#4a4036] whitespace-pre-wrap leading-relaxed">
+              {linkedinPost}
+            </div>
+          </div>
+
+          <div>
+            <div className="flex items-center justify-between gap-3 mb-2">
+              <p className="text-xs font-semibold text-[#1F1810]">Email signature line</p>
+              <button
+                type="button"
+                onClick={() => copyText("signature", signatureLine)}
+                className="inline-flex items-center gap-1.5 text-xs font-medium text-[#C17832] hover:text-[#A8621F] transition-colors shrink-0"
+              >
+                {copiedKey === "signature" ? <><Check className="w-3.5 h-3.5" />Copied</> : <><Copy className="w-3.5 h-3.5" />Copy</>}
+              </button>
+            </div>
+            <div className="text-[13px] bg-[#F5F0EB] border border-[#1F1810]/8 rounded-lg p-3 text-[#4a4036] whitespace-pre-wrap leading-relaxed">
+              {signatureLine}
+            </div>
+          </div>
+        </div>
+
+        {/* 3. Approved language */}
         <div className="bg-white border border-[#1F1810]/10 rounded-lg shadow-[0_2px_8px_rgb(31_24_16/0.06)] p-5">
           <p className="text-sm font-semibold text-[#1F1810] mb-3">Approved language</p>
           <ul className="space-y-2 text-sm text-[#1F1810]">
@@ -221,7 +278,7 @@ export default function EngagementCertification() {
           </ul>
         </div>
 
-        {/* The honest boundaries */}
+        {/* 4. The honest boundaries */}
         <div className="bg-[#7A8B6F]/5 border border-[#7A8B6F]/30 rounded-lg p-5">
           <p className="text-sm font-semibold text-[#1F1810] mb-2 flex items-center gap-2">
             <ShieldCheck className="w-4 h-4 text-[#7A8B6F]" />
@@ -234,6 +291,32 @@ export default function EngagementCertification() {
             <li>It is an independent professional assessment, not a government or regulatory certification.</li>
           </ul>
         </div>
+
+        {/* 5. For your web team — embed, demoted into a disclosure */}
+        <details className="bg-white border border-[#1F1810]/10 rounded-lg shadow-[0_2px_8px_rgb(31_24_16/0.06)] p-5">
+          <summary className="text-sm font-semibold text-[#1F1810] cursor-pointer flex items-center gap-2">
+            <Code className="w-4 h-4 text-[#A89279]" />
+            Add the seal to your website
+            <span className="text-xs font-normal text-[#A89279]">(for your web person)</span>
+          </summary>
+          <div className="mt-3">
+            <div className="flex items-start justify-between gap-3 mb-2">
+              <p className="text-xs text-[#6B5B4E]">
+                Paste this where you want the seal to appear — it links visitors back to your FAIIR listing.
+              </p>
+              <button
+                type="button"
+                onClick={() => copyText("embed", embedSnippet)}
+                className="inline-flex items-center gap-1.5 text-xs font-medium text-[#C17832] hover:text-[#A8621F] transition-colors shrink-0"
+              >
+                {copiedKey === "embed" ? <><Check className="w-3.5 h-3.5" />Copied</> : <><Copy className="w-3.5 h-3.5" />Copy code</>}
+              </button>
+            </div>
+            <pre className="text-[11px] bg-[#F5F0EB] border border-[#1F1810]/8 rounded-lg p-3 overflow-x-auto text-[#4a4036] whitespace-pre-wrap break-all">
+              {embedSnippet}
+            </pre>
+          </div>
+        </details>
       </div>
     </div>
   );
