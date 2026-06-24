@@ -12,12 +12,15 @@ import {
   CircleDot,
   AlertCircle,
   Clock,
+  Upload,
+  MessageSquare,
+  Flag,
 } from "lucide-react";
 
 // FAIIR client portal — Overview. A calm welcome summary: where things stand,
-// what's needed now, the latest word from the attorney, and quick ways into
-// the Documents and Deliverables rooms. The full phase journey lives on
-// /dashboard/journey; the full document room on /dashboard/files.
+// what's needed now, the latest word from the attorney, recent activity, and
+// quick ways into the Documents and Deliverables rooms. The full phase journey
+// lives on /dashboard/journey; the full document room on /dashboard/files.
 
 interface Org {
   name: string;
@@ -32,11 +35,29 @@ interface Phase {
   position: number;
   title: string;
   status: "pending" | "in_progress" | "waiting_on_client" | "complete";
+  completed_at: string | null;
+}
+interface Doc {
+  label: string;
+  state: "needed" | "received" | "reviewed";
+  uploaded_at: string | null;
+  reviewed_at: string | null;
+}
+interface Deliverable {
+  title: string;
+  released_at: string | null;
 }
 interface Note {
   body: string;
   author: string;
   posted_at: string;
+}
+
+type ActivityKind = "upload" | "reviewed" | "released" | "note" | "phase";
+interface ActivityItem {
+  at: string;
+  text: string;
+  kind: ActivityKind;
 }
 
 const ENGAGEMENT_STATUS_LABEL: Record<Engagement["status"], string> = {
@@ -46,21 +67,33 @@ const ENGAGEMENT_STATUS_LABEL: Record<Engagement["status"], string> = {
   closed: "Complete",
 };
 
+const ACTIVITY_META: Record<ActivityKind, { icon: typeof Upload; tint: string }> = {
+  upload: { icon: Upload, tint: "text-[#C17832] bg-[#C17832]/10" },
+  reviewed: { icon: CheckCircle2, tint: "text-[#7A8B6F] bg-[#7A8B6F]/10" },
+  released: { icon: Award, tint: "text-[#C17832] bg-[#C17832]/10" },
+  note: { icon: MessageSquare, tint: "text-[#6B5B4E] bg-[#1F1810]/8" },
+  phase: { icon: Flag, tint: "text-[#7A8B6F] bg-[#7A8B6F]/10" },
+};
+
 function formatDate(iso: string): string {
-  return new Date(iso).toLocaleDateString("en-US", {
-    month: "long",
-    day: "numeric",
-    year: "numeric",
-  });
+  return new Date(iso).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
+}
+function relativeDate(iso: string): string {
+  const diff = Date.now() - new Date(iso).getTime();
+  const days = Math.floor(diff / 86400000);
+  if (days <= 0) return "today";
+  if (days === 1) return "yesterday";
+  if (days < 7) return `${days} days ago`;
+  return new Date(iso).toLocaleDateString("en-US", { month: "short", day: "numeric" });
 }
 
 export default function EngagementWorkspace({ orgId }: { orgId: string }) {
   const [org, setOrg] = useState<Org | null>(null);
   const [engagement, setEngagement] = useState<Engagement | null>(null);
   const [phases, setPhases] = useState<Phase[]>([]);
-  const [neededCount, setNeededCount] = useState(0);
-  const [releasedCount, setReleasedCount] = useState(0);
-  const [latestNote, setLatestNote] = useState<Note | null>(null);
+  const [docs, setDocs] = useState<Doc[]>([]);
+  const [deliverables, setDeliverables] = useState<Deliverable[]>([]);
+  const [notes, setNotes] = useState<Note[]>([]);
   const [firstName, setFirstName] = useState<string>("");
   const [loading, setLoading] = useState(true);
 
@@ -89,33 +122,31 @@ export default function EngagementWorkspace({ orgId }: { orgId: string }) {
     setFirstName(fullName ? fullName.trim().split(/\s+/)[0] : "");
 
     if (eng) {
-      const [phasesRes, neededRes, releasedRes, noteRes] = await Promise.all([
+      const [phasesRes, docsRes, delivRes, notesRes] = await Promise.all([
         supabase
           .from("engagement_phases")
-          .select("position, title, status")
+          .select("position, title, status, completed_at")
           .eq("engagement_id", eng.id)
           .order("position", { ascending: true }),
         supabase
           .from("engagement_documents")
-          .select("id", { count: "exact", head: true })
-          .eq("engagement_id", eng.id)
-          .eq("state", "needed"),
+          .select("label, state, uploaded_at, reviewed_at")
+          .eq("engagement_id", eng.id),
         supabase
           .from("deliverables")
-          .select("id", { count: "exact", head: true })
+          .select("title, released_at")
           .eq("engagement_id", eng.id),
         supabase
           .from("engagement_status_notes")
           .select("body, author, posted_at")
           .eq("engagement_id", eng.id)
           .order("posted_at", { ascending: false })
-          .limit(1)
-          .maybeSingle(),
+          .limit(5),
       ]);
       setPhases((phasesRes.data as Phase[]) ?? []);
-      setNeededCount(neededRes.count ?? 0);
-      setReleasedCount(releasedRes.count ?? 0);
-      setLatestNote((noteRes.data as Note) ?? null);
+      setDocs((docsRes.data as Doc[]) ?? []);
+      setDeliverables((delivRes.data as Deliverable[]) ?? []);
+      setNotes((notesRes.data as Note[]) ?? []);
     }
     setLoading(false);
   }, [orgId]);
@@ -157,6 +188,26 @@ export default function EngagementWorkspace({ orgId }: { orgId: string }) {
     phases.find((p) => p.status === "in_progress" || p.status === "waiting_on_client") ??
     phases.find((p) => p.status === "pending") ??
     null;
+  const neededCount = docs.filter((d) => d.state === "needed").length;
+  const releasedCount = deliverables.filter((d) => d.released_at).length;
+  const latestNote = notes[0] ?? null;
+
+  // Synthesize a curated activity feed from client-readable data only.
+  const activity: ActivityItem[] = [];
+  for (const d of docs) {
+    if (d.uploaded_at && (d.state === "received" || d.state === "reviewed"))
+      activity.push({ at: d.uploaded_at, text: `You shared “${d.label}”`, kind: "upload" });
+    if (d.reviewed_at && d.state === "reviewed")
+      activity.push({ at: d.reviewed_at, text: `“${d.label}” reviewed by your attorney`, kind: "reviewed" });
+  }
+  for (const dl of deliverables)
+    if (dl.released_at) activity.push({ at: dl.released_at, text: `“${dl.title}” released to your library`, kind: "released" });
+  for (const n of notes) activity.push({ at: n.posted_at, text: "New note from your attorney", kind: "note" });
+  for (const p of phases)
+    if (p.completed_at && p.status === "complete")
+      activity.push({ at: p.completed_at, text: `${p.title} completed`, kind: "phase" });
+  activity.sort((a, b) => new Date(b.at).getTime() - new Date(a.at).getTime());
+  const recent = activity.slice(0, 6);
 
   return (
     <div>
@@ -171,9 +222,7 @@ export default function EngagementWorkspace({ orgId }: { orgId: string }) {
         <p className="text-[#6B5B4E]">
           {org?.name ? `${org.name} · ` : ""}
           {engagement.title} ·{" "}
-          <span className="text-[#C17832] font-medium">
-            {ENGAGEMENT_STATUS_LABEL[engagement.status]}
-          </span>
+          <span className="text-[#C17832] font-medium">{ENGAGEMENT_STATUS_LABEL[engagement.status]}</span>
         </p>
       </div>
 
@@ -182,13 +231,13 @@ export default function EngagementWorkspace({ orgId }: { orgId: string }) {
         <ShieldCheck className="w-5 h-5 text-[#7A8B6F] shrink-0 mt-0.5" />
         <div className="text-sm text-[#6B5B4E]">
           <p>
-            Everything in this workspace is encrypted, visible only to your team and your attorney,
-            and never used to train any AI model.
+            Everything in this workspace is encrypted, visible only to your team and your attorney, and
+            never used to train any AI model.
           </p>
           {org?.holds_phi && (
             <p className="mt-2 text-amber-700">
-              Please redact patient- and client-identifying details before sharing documents — PHI
-              stays out of this workspace by design.
+              Please redact patient- and client-identifying details before sharing documents — PHI stays
+              out of this workspace by design.
             </p>
           )}
         </div>
@@ -203,10 +252,7 @@ export default function EngagementWorkspace({ orgId }: { orgId: string }) {
           </span>
         </div>
         <div className="h-2 w-full bg-[#1F1810]/8 rounded-full overflow-hidden">
-          <div
-            className="h-full bg-[#C17832] rounded-full transition-all"
-            style={{ width: `${pct}%` }}
-          />
+          <div className="h-full bg-[#C17832] rounded-full transition-all" style={{ width: `${pct}%` }} />
         </div>
         {current && (
           <p className="text-sm text-[#6B5B4E] mt-4 flex items-center gap-2">
@@ -269,7 +315,7 @@ export default function EngagementWorkspace({ orgId }: { orgId: string }) {
       </div>
 
       {/* Latest note */}
-      <div className="mb-8">
+      <div className="mb-6">
         <h3 className="text-sm font-semibold text-[#1F1810] mb-3">Latest from your attorney</h3>
         {latestNote ? (
           <div className="bg-white border border-[#1F1810]/10 rounded-lg shadow-[0_2px_8px_rgb(31_24_16/0.06)] p-4">
@@ -286,7 +332,7 @@ export default function EngagementWorkspace({ orgId }: { orgId: string }) {
       </div>
 
       {/* Quick links */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
         <Link
           href="/dashboard/files"
           className="group bg-white border border-[#1F1810]/10 rounded-lg shadow-[0_2px_8px_rgb(31_24_16/0.06)] p-5 hover:border-[#C17832]/40 transition-colors"
@@ -296,9 +342,7 @@ export default function EngagementWorkspace({ orgId }: { orgId: string }) {
             Documents
             <ArrowRight className="w-3.5 h-3.5 text-[#A89279] group-hover:translate-x-0.5 transition-transform" />
           </p>
-          <p className="text-xs text-[#6B5B4E] mt-1">
-            Share and download your documents, securely.
-          </p>
+          <p className="text-xs text-[#6B5B4E] mt-1">Share and download your documents, securely.</p>
         </Link>
         <Link
           href="/dashboard/deliverables"
@@ -314,11 +358,31 @@ export default function EngagementWorkspace({ orgId }: { orgId: string }) {
             )}
             <ArrowRight className="w-3.5 h-3.5 text-[#A89279] group-hover:translate-x-0.5 transition-transform" />
           </p>
-          <p className="text-xs text-[#6B5B4E] mt-1">
-            Pick up each finished work product as it is released.
-          </p>
+          <p className="text-xs text-[#6B5B4E] mt-1">Pick up each finished work product as it is released.</p>
         </Link>
       </div>
+
+      {/* Recent activity */}
+      {recent.length > 0 && (
+        <div>
+          <h3 className="text-sm font-semibold text-[#1F1810] mb-3">Recent activity</h3>
+          <div className="bg-white border border-[#1F1810]/10 rounded-lg shadow-[0_2px_8px_rgb(31_24_16/0.06)] divide-y divide-[#1F1810]/6">
+            {recent.map((item, idx) => {
+              const meta = ACTIVITY_META[item.kind];
+              const Icon = meta.icon;
+              return (
+                <div key={`${item.kind}-${item.at}-${idx}`} className="flex items-center gap-3 px-4 py-3">
+                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${meta.tint}`}>
+                    <Icon className="w-4 h-4" />
+                  </div>
+                  <p className="text-sm text-[#1F1810] flex-1 min-w-0 truncate">{item.text}</p>
+                  <span className="text-[11px] text-[#A89279] shrink-0">{relativeDate(item.at)}</span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
