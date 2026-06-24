@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
 import { supabase } from "@/lib/supabase";
 import { useEngagementRef } from "@/lib/useEngagementRef";
+import { downloadCertificatePdf } from "@/lib/certificatePdf";
 import { Download, Copy, Check, ShieldCheck, Sparkles, Lock, Megaphone, Code } from "lucide-react";
 
 interface Certification {
@@ -27,7 +28,8 @@ export default function EngagementCertification() {
   const [cert, setCert] = useState<Certification | null>(null);
   const [loading, setLoading] = useState(true);
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
-  const [printError, setPrintError] = useState("");
+  const [pdfError, setPdfError] = useState("");
+  const [generating, setGenerating] = useState(false);
 
   const orgId = ref?.orgId;
 
@@ -74,57 +76,23 @@ export default function EngagementCertification() {
     }
   };
 
-  const printCertificate = () => {
+  const handleDownloadPdf = async () => {
     if (!cert) return;
-    setPrintError("");
-    const w = window.open("", "_blank");
-    if (!w) {
-      setPrintError(
-        "Your browser blocked the certificate window. Allow pop-ups for availablelaw.com, then try again."
-      );
-      return;
+    setPdfError("");
+    setGenerating(true);
+    try {
+      await downloadCertificatePdf({
+        firm_name: cert.firm_name,
+        certificate_number: cert.certificate_number,
+        tier: cert.tier,
+        issued_at: cert.issued_at,
+        expires_at: cert.expires_at,
+      });
+    } catch {
+      setPdfError("We couldn't generate your certificate just now — please try again.");
+    } finally {
+      setGenerating(false);
     }
-    w.document.write(`<!doctype html><html><head><meta charset="utf-8" />
-<title>${cert.certificate_number}</title>
-<style>
-  @page { size: letter landscape; margin: 0; }
-  body { margin: 0; font-family: Georgia, 'Times New Roman', serif; color: #1F1810; }
-  .sheet { width: 11in; height: 8.5in; box-sizing: border-box; padding: 0.7in; display: flex; }
-  .frame { flex: 1; border: 2px solid #C17832; border-radius: 8px; padding: 0.5in 0.7in;
-           display: flex; flex-direction: column; align-items: center; text-align: center;
-           background: #FAF8F5; }
-  img { width: 260px; height: 260px; }
-  .kicker { letter-spacing: .35em; text-transform: uppercase; font-size: 11px; color: #C17832; margin: 10px 0 4px; }
-  h1 { font-size: 30px; margin: 4px 0 14px; }
-  .firm { font-size: 26px; font-weight: bold; margin: 6px 0; }
-  .body { font-size: 14px; color: #4a4036; max-width: 7in; line-height: 1.6; }
-  .meta { margin-top: auto; display: flex; justify-content: space-between; width: 100%; font-size: 12px; color: #6B5B4E; }
-  .sig { text-align: left; } .num { text-align: right; }
-  .sig .name { font-weight: bold; color: #1F1810; }
-</style></head>
-<body onload="window.print()">
-  <div class="sheet"><div class="frame">
-    <img src="${SEAL_URL}" alt="FAIIR" />
-    <div class="kicker">Foundation of AI Integrity &amp; Regulation</div>
-    <h1>Certificate of Completion</h1>
-    <div class="body">This certifies that</div>
-    <div class="firm">${cert.firm_name}</div>
-    <div class="body">has completed the <strong>${cert.tier}</strong>, an independent review of the firm&rsquo;s
-      artificial-intelligence governance, data handling, and use practices, conducted by Available Law.</div>
-    <div class="meta">
-      <div class="sig">
-        <div class="name">Zachariah Crabill, JD</div>
-        <div>Attorney &amp; Founder, Available Law &middot; Colorado Bar #56783</div>
-      </div>
-      <div class="num">
-        <div>${cert.certificate_number}</div>
-        <div>Issued ${longDate(cert.issued_at)} &middot; Valid through ${longDate(cert.expires_at)}</div>
-      </div>
-    </div>
-  </div></div>
-</body></html>`);
-    w.document.close();
-    w.focus();
   };
 
   if (refLoading || loading) {
@@ -187,13 +155,14 @@ export default function EngagementCertification() {
         </p>
         <button
           type="button"
-          onClick={printCertificate}
-          className="mt-5 inline-flex items-center gap-2 px-5 py-2.5 bg-[#1F1810] text-white rounded-lg text-sm font-semibold hover:bg-[#C17832] transition-colors"
+          onClick={handleDownloadPdf}
+          disabled={generating}
+          className="mt-5 inline-flex items-center gap-2 px-5 py-2.5 bg-[#1F1810] text-white rounded-lg text-sm font-semibold hover:bg-[#C17832] transition-colors disabled:opacity-60"
         >
           <Download className="w-4 h-4" />
-          Download your certificate
+          {generating ? "Preparing your certificate…" : "Download your certificate (PDF)"}
         </button>
-        {printError && <p className="text-xs text-red-600 mt-3">{printError}</p>}
+        {pdfError && <p className="text-xs text-red-600 mt-3">{pdfError}</p>}
       </div>
 
       {/* Marketing kit */}
