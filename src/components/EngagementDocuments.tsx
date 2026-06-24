@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { useEngagementRef } from "@/lib/useEngagementRef";
+import { openEngagementFile } from "@/lib/download";
 import {
   FolderLock,
   Upload,
@@ -46,16 +47,23 @@ export default function EngagementDocuments() {
   const [uploadingDocId, setUploadingDocId] = useState<string | null>(null);
   const [downloadingDocId, setDownloadingDocId] = useState<string | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [loadError, setLoadError] = useState(false);
 
   const engagementId = ref?.engagementId;
 
   const loadDocs = useCallback(async () => {
     if (!engagementId) return;
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from("engagement_documents")
       .select("id, label, description, state, storage_path, uploaded_at")
       .eq("engagement_id", engagementId)
       .order("position", { ascending: true });
+    if (error) {
+      setLoadError(true);
+      setLoading(false);
+      return;
+    }
+    setLoadError(false);
     setDocs((data as DocCard[]) ?? []);
     setLoading(false);
   }, [engagementId]);
@@ -105,14 +113,15 @@ export default function EngagementDocuments() {
   const handleDownload = async (doc: DocCard) => {
     if (!doc.storage_path) return;
     setDownloadingDocId(doc.id);
-    try {
-      const { data, error } = await supabase.storage
-        .from("engagement-docs")
-        .createSignedUrl(doc.storage_path, 60);
-      if (!error && data?.signedUrl) window.open(data.signedUrl, "_blank");
-    } finally {
-      setDownloadingDocId(null);
+    setErrors((prev) => ({ ...prev, [doc.id]: "" }));
+    const { ok } = await openEngagementFile(doc.storage_path);
+    if (!ok) {
+      setErrors((prev) => ({
+        ...prev,
+        [doc.id]: "Couldn’t open that file — please try again, or contact your attorney.",
+      }));
     }
+    setDownloadingDocId(null);
   };
 
   if (refLoading || loading) {
@@ -120,6 +129,20 @@ export default function EngagementDocuments() {
       <div className="py-16 text-center">
         <div className="w-10 h-10 border-4 border-[#C17832]/20 border-t-[#C17832] rounded-full animate-spin mx-auto mb-3" />
         <p className="text-sm text-[#6B5B4E]">Opening your document room…</p>
+      </div>
+    );
+  }
+
+  if (loadError) {
+    return (
+      <div className="py-16 text-center">
+        <p className="text-sm text-[#6B5B4E]">
+          We couldn’t load your documents just now. Please refresh — if it keeps happening, email{" "}
+          <a href="mailto:zachariah@availablelaw.com" className="text-[#C17832] underline">
+            zachariah@availablelaw.com
+          </a>
+          .
+        </p>
       </div>
     );
   }

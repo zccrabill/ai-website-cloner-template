@@ -27,6 +27,7 @@ export default function EngagementCertification() {
   const [cert, setCert] = useState<Certification | null>(null);
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
+  const [printError, setPrintError] = useState("");
 
   const orgId = ref?.orgId;
 
@@ -65,8 +66,14 @@ export default function EngagementCertification() {
 
   const printCertificate = () => {
     if (!cert) return;
+    setPrintError("");
     const w = window.open("", "_blank");
-    if (!w) return;
+    if (!w) {
+      setPrintError(
+        "Your browser blocked the certificate window. Allow pop-ups for availablelaw.com, then try again."
+      );
+      return;
+    }
     w.document.write(`<!doctype html><html><head><meta charset="utf-8" />
 <title>${cert.certificate_number}</title>
 <style>
@@ -177,6 +184,7 @@ export default function EngagementCertification() {
           <Download className="w-4 h-4" />
           Download your certificate
         </button>
+        {printError && <p className="text-xs text-red-600 mt-3">{printError}</p>}
       </div>
 
       {/* Marketing kit */}

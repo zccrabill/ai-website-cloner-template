@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { useEngagementRef } from "@/lib/useEngagementRef";
+import { openEngagementFile } from "@/lib/download";
 import { Award, FileText, Download, Loader2 } from "lucide-react";
 
 interface Deliverable {
@@ -27,6 +28,8 @@ export default function EngagementDeliverables() {
   const [items, setItems] = useState<Deliverable[]>([]);
   const [loading, setLoading] = useState(true);
   const [downloadingId, setDownloadingId] = useState<string | null>(null);
+  const [downloadError, setDownloadError] = useState("");
+  const [loadError, setLoadError] = useState(false);
 
   const engagementId = ref?.engagementId;
 
@@ -34,30 +37,33 @@ export default function EngagementDeliverables() {
     if (!engagementId) return;
     // RLS only returns released deliverables to clients — drafts never leave
     // the database for non-admins.
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from("deliverables")
       .select("id, title, description, storage_path, released_at")
       .eq("engagement_id", engagementId)
-      .order("released_at", { ascending: false });
+      .order("released_at", { ascending: false, nullsFirst: false });
+    if (error) {
+      setLoadError(true);
+      setLoading(false);
+      return;
+    }
+    setLoadError(false);
     setItems((data as Deliverable[]) ?? []);
     setLoading(false);
   }, [engagementId]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     load();
   }, [load]);
 
   const handleDownload = async (d: Deliverable) => {
     if (!d.storage_path) return;
     setDownloadingId(d.id);
-    try {
-      const { data, error } = await supabase.storage
-        .from("engagement-docs")
-        .createSignedUrl(d.storage_path, 60);
-      if (!error && data?.signedUrl) window.open(data.signedUrl, "_blank");
-    } finally {
-      setDownloadingId(null);
-    }
+    setDownloadError("");
+    const { ok } = await openEngagementFile(d.storage_path);
+    if (!ok) setDownloadError("Couldn’t open that file — please try again, or contact your attorney.");
+    setDownloadingId(null);
   };
 
   if (refLoading || loading) {
@@ -65,6 +71,20 @@ export default function EngagementDeliverables() {
       <div className="py-16 text-center">
         <div className="w-10 h-10 border-4 border-[#C17832]/20 border-t-[#C17832] rounded-full animate-spin mx-auto mb-3" />
         <p className="text-sm text-[#6B5B4E]">Opening your library…</p>
+      </div>
+    );
+  }
+
+  if (loadError) {
+    return (
+      <div className="py-16 text-center">
+        <p className="text-sm text-[#6B5B4E]">
+          We couldn’t load your deliverables just now. Please refresh — if it keeps happening, email{" "}
+          <a href="mailto:zachariah@availablelaw.com" className="text-[#C17832] underline">
+            zachariah@availablelaw.com
+          </a>
+          .
+        </p>
       </div>
     );
   }
@@ -80,6 +100,12 @@ export default function EngagementDeliverables() {
           Each work product, released as it is completed — yours to keep and download anytime.
         </p>
       </div>
+
+      {downloadError && (
+        <div className="mb-4 px-4 py-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">
+          {downloadError}
+        </div>
+      )}
 
       {items.length === 0 ? (
         <div className="bg-white border border-[#1F1810]/10 rounded-lg shadow-[0_2px_8px_rgb(31_24_16/0.06)] p-10 text-center">
