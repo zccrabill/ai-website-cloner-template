@@ -83,7 +83,7 @@ export default function EngagementCertification() {
   .frame { flex: 1; border: 2px solid #C17832; border-radius: 8px; padding: 0.5in 0.7in;
            display: flex; flex-direction: column; align-items: center; text-align: center;
            background: #FAF8F5; }
-  img { width: 130px; height: 130px; }
+  img { width: 260px; height: 260px; }
   .kicker { letter-spacing: .35em; text-transform: uppercase; font-size: 11px; color: #C17832; margin: 10px 0 4px; }
   h1 { font-size: 30px; margin: 4px 0 14px; }
   .firm { font-size: 26px; font-weight: bold; margin: 6px 0; }
@@ -168,7 +168,7 @@ export default function EngagementCertification() {
     <div>
       {/* Celebration */}
       <div className="mb-8 text-center bg-gradient-to-b from-[#C17832]/8 to-transparent rounded-2xl border border-[#C17832]/20 shadow-[0_2px_8px_rgb(31_24_16/0.06)] p-8">
-        <Image src="/images/faiir-logo.png" alt="FAIIR Certified seal" width={120} height={120} className="object-contain mx-auto mb-4" />
+        <Image src="/images/faiir-logo.png" alt="FAIIR Certified seal" width={240} height={240} className="object-contain mx-auto mb-4" />
         <p className="text-[10px] font-semibold tracking-[0.25em] uppercase text-[#C17832] mb-2 flex items-center justify-center gap-1.5">
           <Sparkles className="w-3.5 h-3.5" /> FAIIR Certified · {year}
         </p>
