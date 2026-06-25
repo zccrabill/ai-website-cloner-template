@@ -8,6 +8,7 @@ import {
   SITE_URL,
   blogPostingSchema,
   breadcrumbSchema,
+  faqPageSchema,
   DEFAULT_OG_IMAGE,
 } from "@/lib/seo";
 import ColoradoAiAct2026Article from "@/content/blog/colorado-ai-act-2026";
@@ -19,6 +20,10 @@ import AiLiabilityInsuranceCoverageArticle from "@/content/blog/ai-liability-ins
 import WhenSmallBusinessNeedsLawyerArticle from "@/content/blog/when-small-business-needs-lawyer";
 import ColoradoLlcOperatingAgreementArticle from "@/content/blog/colorado-llc-operating-agreement";
 import HowToChooseBusinessAttorneyColoradoArticle from "@/content/blog/how-to-choose-business-attorney-colorado";
+import SubscriptionLegalServicesArticle from "@/content/blog/subscription-legal-services-small-business";
+import AiBusinessConsultingVsLegalCounselArticle from "@/content/blog/ai-business-consulting-vs-legal-counsel";
+import SmallBusinessLawyerCostArticle from "@/content/blog/small-business-lawyer-cost-colorado";
+import AiSmallBusinessLegalChecklistArticle from "@/content/blog/ai-small-business-legal-checklist-2026";
 
 interface PostMeta {
   title: string;
@@ -27,6 +32,10 @@ interface PostMeta {
   isoDateModified?: string; // ISO 8601 last update; falls back to isoDate
   author: string;
   excerpt: string;
+  // Optional FAQ pairs. When present, a FAQPage JSON-LD block is emitted so the
+  // post is eligible for Google AI Overviews / "People Also Ask" and LLM answer
+  // engines. Keep these in sync with the visible FAQ section in the article body.
+  faqs?: Array<{ question: string; answer: string }>;
 }
 
 // Slug → rendered article body. Each component is a collection of typography
@@ -44,6 +53,10 @@ const postContent: Record<string, ReactNode> = {
   "when-small-business-needs-lawyer": <WhenSmallBusinessNeedsLawyerArticle />,
   "colorado-llc-operating-agreement": <ColoradoLlcOperatingAgreementArticle />,
   "how-to-choose-business-attorney-colorado": <HowToChooseBusinessAttorneyColoradoArticle />,
+  "subscription-legal-services-small-business": <SubscriptionLegalServicesArticle />,
+  "ai-business-consulting-vs-legal-counsel": <AiBusinessConsultingVsLegalCounselArticle />,
+  "small-business-lawyer-cost-colorado": <SmallBusinessLawyerCostArticle />,
+  "ai-small-business-legal-checklist-2026": <AiSmallBusinessLegalChecklistArticle />,
 };
 
 const postMetadata: Record<string, PostMeta> = {
@@ -122,6 +135,126 @@ const postMetadata: Record<string, PostMeta> = {
     excerpt:
       "Choosing a Colorado small-business attorney is more than checking credentials. Here are the seven practical criteria — pricing model, response time, industry fit, and more — that predict whether an attorney will actually be useful to your business.",
   },
+  "subscription-legal-services-small-business": {
+    title: "Subscription Legal Services for Small Business: How Flat-Rate Legal Plans Actually Work",
+    date: "June 25, 2026",
+    isoDate: "2026-06-25",
+    author: "Zachariah Crabill, JD",
+    excerpt:
+      "Subscription legal services replace the unpredictable hourly bill with a flat monthly fee for the legal work a small business actually uses — contracts, document review, and quick attorney questions. Here's how the model works, what it costs, and how to tell whether it fits your business.",
+    faqs: [
+      {
+        question: "What are subscription legal services?",
+        answer:
+          "Subscription legal services are a flat-fee model where a law firm provides a defined bundle of legal work — contract drafting and review, quick attorney questions, and consultations — for a predictable monthly or annual price, instead of billing by the hour.",
+      },
+      {
+        question: "How much do subscription legal services cost?",
+        answer:
+          "Plans for small businesses commonly run from around $50 to a few hundred dollars a month, scaling with how much attorney work is included. Available Law's tiers are $0 (Explore), $50 (Build), $150 (Grow), and $300 (Lead) per month, with two months free on annual billing.",
+      },
+      {
+        question: "Is a legal subscription cheaper than hiring a lawyer hourly?",
+        answer:
+          "For a business with ongoing, routine legal needs, almost always — and more importantly, it is predictable. A single hourly matter can cost more than a year of a subscription. For a one-time transaction with no follow-on work, a flat-fee project may be cheaper.",
+      },
+      {
+        question: "Do I still get a real attorney with a subscription plan?",
+        answer:
+          "Yes. A legitimate subscription firm pairs you with a licensed attorney who reviews your work and is accountable for it. AI may speed up the drafting, but a barred attorney should be reviewing every deliverable before it reaches you.",
+      },
+    ],
+  },
+  "ai-business-consulting-vs-legal-counsel": {
+    title: "AI Business Consulting vs. AI Legal Counsel: What Your Small Business Actually Needs",
+    date: "June 25, 2026",
+    isoDate: "2026-06-25",
+    author: "Zachariah Crabill, JD",
+    excerpt:
+      "“AI consultant” and “AI lawyer” solve different problems — one helps you adopt AI, the other keeps that adoption legal. Here's where AI business consulting ends, where legal counsel begins, and how to cover both without two enterprise retainers.",
+    faqs: [
+      {
+        question: "What is the difference between an AI consultant and an AI lawyer?",
+        answer:
+          "An AI consultant helps you choose, build, and adopt AI tools and measure their impact. An AI lawyer handles the legal side — vendor contracts, regulatory compliance, liability, and privacy — and is the only one who can give you binding legal advice for your specific situation.",
+      },
+      {
+        question: "Do I need a lawyer to use AI in my small business?",
+        answer:
+          "Not to try a tool, but you do before AI starts influencing decisions about real people, before you sign a significant AI vendor contract, and before you operate in a regulated area covered by laws like the Colorado AI Act.",
+      },
+      {
+        question: "Can an AI consultant help with Colorado AI Act compliance?",
+        answer:
+          "A consultant can help operate a compliance program, but the program must be designed against the statute's legal duties by an attorney. Determining whether you are a covered deployer and what you owe is a legal judgment, not a strategy question.",
+      },
+      {
+        question: "What is AI governance, and who owns it?",
+        answer:
+          "AI governance is the set of policies, controls, and documentation that make your AI use defensible. An attorney should design it to the legal standard, and the business operates it day to day. FAIIR is Available Law's attorney-led framework for this.",
+      },
+    ],
+  },
+  "small-business-lawyer-cost-colorado": {
+    title: "How Much Does a Small Business Lawyer Cost in 2026? Hourly, Flat-Fee, and Subscription Compared",
+    date: "June 25, 2026",
+    isoDate: "2026-06-25",
+    author: "Zachariah Crabill, JD",
+    excerpt:
+      "Small business legal costs range from a couple hundred dollars for a single document to five-figure bills for an ongoing dispute. Here's a plain breakdown of the four ways lawyers charge — hourly, flat-fee, retainer, and subscription — and how to estimate your annual legal spend.",
+    faqs: [
+      {
+        question: "How much does a small business lawyer cost?",
+        answer:
+          "It depends on the pricing model. Hourly rates for small business attorneys commonly run from a few hundred dollars an hour up, with specialized and big-firm rates higher. Flat fees apply to defined projects. Subscription plans for ongoing needs commonly run about $50 to $300 a month.",
+      },
+      {
+        question: "Is it cheaper to pay a lawyer hourly or on a flat fee?",
+        answer:
+          "For a single, well-defined task, a flat fee is usually cheaper and safer because the price is fixed up front. For ongoing needs, a flat monthly subscription typically beats both hourly and repeated flat-fee projects.",
+      },
+      {
+        question: "What is a typical retainer for a small business lawyer?",
+        answer:
+          "It depends which kind. A classic security retainer is a prepaid balance billed against at the firm's hourly rate. A subscription retainer is a flat monthly fee — commonly $50 to a few hundred dollars for small businesses — for a defined bundle of ongoing work.",
+      },
+      {
+        question: "How can a $50/month plan include real attorney work?",
+        answer:
+          "Because an AI legal assistant does the drafting and research, and the licensed attorney spends their time on review and judgment instead of typing. That leverage lets one attorney serve more clients well at a lower price without leaving the loop.",
+      },
+    ],
+  },
+  "ai-small-business-legal-checklist-2026": {
+    title: "Using AI in Your Small Business: A 2026 Legal Checklist",
+    date: "June 25, 2026",
+    isoDate: "2026-06-25",
+    author: "Zachariah Crabill, JD",
+    excerpt:
+      "Adopting AI tools is easy; staying on the right side of the law while you do it is the part most small businesses skip. This 2026 checklist walks through the legal questions to answer before and after you roll out AI — from vendor contracts and data privacy to the Colorado AI Act.",
+    faqs: [
+      {
+        question: "Is it legal to use AI in my business?",
+        answer:
+          "Yes — using AI is legal. What is regulated is how you use it: whether you protect personal data, what your vendor contracts say, and whether AI is influencing consequential decisions about real people in ways that trigger laws like the Colorado AI Act.",
+      },
+      {
+        question: "Do small businesses need an AI policy?",
+        answer:
+          "Practically, yes. A short written AI acceptable use policy — which tools are approved, what data is off-limits, and when humans must review output — is the cheapest risk reduction available, and 'we had no policy' is a weak position after an incident.",
+      },
+      {
+        question: "What is the most common legal mistake small businesses make with AI?",
+        answer:
+          "Putting confidential or personal data into an AI tool that may retain or train on it, without checking the vendor's terms first. It is easy to do, hard to undo, and can create privacy, confidentiality, and compliance problems at once.",
+      },
+      {
+        question: "Does the Colorado AI Act apply to my small business?",
+        answer:
+          "It applies if you deploy automated decision-making technology that materially influences a consequential decision — in employment, housing, lending, insurance, healthcare, education, or government services. The free AI Act readiness checker gives you a fast answer.",
+      },
+    ],
+  },
 };
 
 export function generateStaticParams() {
@@ -191,25 +324,30 @@ export default async function BlogPostPage({
     );
   }
 
+  // Build the structured-data graph for this post. FAQ schema is appended only
+  // when the post defines faqs, so older posts emit exactly what they did before.
+  const jsonLd: Array<Record<string, unknown>> = [
+    blogPostingSchema({
+      slug,
+      title: post.title,
+      description: post.excerpt,
+      datePublished: post.isoDate,
+      dateModified: post.isoDateModified ?? post.isoDate,
+      authorName: post.author,
+    }),
+    breadcrumbSchema([
+      { name: "Home", url: "/" },
+      { name: "Blog", url: "/blog" },
+      { name: post.title, url: `/blog/${slug}` },
+    ]),
+  ];
+  if (post.faqs && post.faqs.length > 0) {
+    jsonLd.push(faqPageSchema(post.faqs));
+  }
+
   return (
     <>
-      <JsonLd
-        data={[
-          blogPostingSchema({
-            slug,
-            title: post.title,
-            description: post.excerpt,
-            datePublished: post.isoDate,
-            dateModified: post.isoDateModified ?? post.isoDate,
-            authorName: post.author,
-          }),
-          breadcrumbSchema([
-            { name: "Home", url: "/" },
-            { name: "Blog", url: "/blog" },
-            { name: post.title, url: `/blog/${slug}` },
-          ]),
-        ]}
-      />
+      <JsonLd data={jsonLd} />
       <Header />
       <main className="bg-[#FAF8F5] min-h-screen">
         {/* Back link */}

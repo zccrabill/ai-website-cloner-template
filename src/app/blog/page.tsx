@@ -27,6 +27,34 @@ interface BlogPost {
 
 const blogPosts: BlogPost[] = [
   {
+    slug: "subscription-legal-services-small-business",
+    title: "Subscription Legal Services for Small Business: How Flat-Rate Legal Plans Actually Work",
+    date: "June 25, 2026",
+    excerpt:
+      "Subscription legal services replace the unpredictable hourly bill with a flat monthly fee for the legal work a small business actually uses. How the model works, what it costs, and whether it fits your business.",
+  },
+  {
+    slug: "ai-business-consulting-vs-legal-counsel",
+    title: "AI Business Consulting vs. AI Legal Counsel: What Your Small Business Actually Needs",
+    date: "June 25, 2026",
+    excerpt:
+      "An AI consultant helps you adopt AI; an AI lawyer keeps it legal. Where consulting ends, where legal counsel begins, and how to cover both without two enterprise retainers.",
+  },
+  {
+    slug: "small-business-lawyer-cost-colorado",
+    title: "How Much Does a Small Business Lawyer Cost in 2026?",
+    date: "June 25, 2026",
+    excerpt:
+      "A plain breakdown of the four ways lawyers charge — hourly, flat-fee, retainer, and subscription — what each actually costs, and how to estimate your annual legal spend before you commit.",
+  },
+  {
+    slug: "ai-small-business-legal-checklist-2026",
+    title: "Using AI in Your Small Business: A 2026 Legal Checklist",
+    date: "June 25, 2026",
+    excerpt:
+      "Adopting AI is easy; staying on the right side of the law is the part most businesses skip. An eight-step checklist — vendor contracts, data privacy, AI policy, and the Colorado AI Act.",
+  },
+  {
     slug: "colorado-ai-act-rewrite-2026-smb-impact",
     title: "Colorado Just Rewrote Its AI Law — What It Means for Your Small Business",
     date: "May 22, 2026 (Updated June 10, 2026)",
