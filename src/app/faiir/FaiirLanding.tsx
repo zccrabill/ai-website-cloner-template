@@ -1133,8 +1133,8 @@ function FinalCta() {
         <Image
           src="/images/faiir-logo.png"
           alt="FAIIR"
-          width={72}
-          height={72}
+          width={216}
+          height={216}
           className="object-contain mx-auto mb-8"
         />
         <h2

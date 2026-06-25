@@ -15,6 +15,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
+import { openEngagementFile } from "@/lib/download";
 import DashboardShell from "@/components/DashboardShell";
 import {
   Briefcase,
@@ -79,6 +80,15 @@ interface Deliverable {
   status: DeliverableStatus;
   released_at: string | null;
 }
+interface EngagementMember {
+  email: string;
+  role: string;
+  status: string;
+  joined: boolean;
+  invited_at: string | null;
+  accepted_at: string | null;
+  last_sign_in_at: string | null;
+}
 
 const ENGAGEMENT_STATUSES: EngagementStatus[] = ["draft", "invited", "active", "closed"];
 const PHASE_STATUSES: { value: PhaseStatus; label: string }[] = [
@@ -94,6 +104,15 @@ function fee(cents: number | null) {
 function shortDate(iso: string | null) {
   if (!iso) return "";
   return new Date(iso).toLocaleDateString("en-US", { month: "short", day: "numeric" });
+}
+function dateTime(iso: string | null) {
+  if (!iso) return "";
+  return new Date(iso).toLocaleString("en-US", {
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+  });
 }
 
 export default function EngagementsPage() {
@@ -207,6 +226,9 @@ export default function EngagementsPage() {
                     <p className="text-xs text-[#6B5B4E] truncate">
                       {r.title} · {fee(r.fee_cents)} · {r.contact_email ?? "no contact"}
                     </p>
+                    <p className="text-[10px] text-[#A89279]">
+                      Last activity {shortDate(r.last_activity_at)}
+                    </p>
                   </div>
                   <div className="hidden sm:flex items-center gap-5 flex-shrink-0 text-center">
                     <Metric value={`${r.phases_complete}/${r.phases_total}`} label="phases" />
@@ -281,21 +303,24 @@ function ManagePanel({
   const [docs, setDocs] = useState<DocCard[]>([]);
   const [notes, setNotes] = useState<Note[]>([]);
   const [deliverables, setDeliverables] = useState<Deliverable[]>([]);
+  const [members, setMembers] = useState<EngagementMember[]>([]);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
   const [panelError, setPanelError] = useState<string | null>(null);
 
   const loadDetail = useCallback(async () => {
-    const [p, d, n, dl] = await Promise.all([
+    const [p, d, n, dl, m] = await Promise.all([
       supabase.from("engagement_phases").select("id, position, title, status").eq("engagement_id", row.id).order("position"),
       supabase.from("engagement_documents").select("id, label, description, state, storage_path, uploaded_at").eq("engagement_id", row.id).order("position"),
       supabase.from("engagement_status_notes").select("id, body, author, posted_at").eq("engagement_id", row.id).order("posted_at", { ascending: false }),
       supabase.from("deliverables").select("id, title, description, status, released_at").eq("engagement_id", row.id).order("created_at", { ascending: false }),
+      supabase.rpc("admin_list_engagement_members", { p_engagement_id: row.id }),
     ]);
     setPhases((p.data as Phase[]) ?? []);
     setDocs((d.data as DocCard[]) ?? []);
     setNotes((n.data as Note[]) ?? []);
     setDeliverables((dl.data as Deliverable[]) ?? []);
+    setMembers((m.data as EngagementMember[]) ?? []);
     setLoading(false);
   }, [row.id]);
 
@@ -399,6 +424,46 @@ function ManagePanel({
             </div>
           ) : (
             <>
+              {/* Client access — who holds a seat and whether they've logged in */}
+              <Block title="Client access">
+                <ul className="space-y-2">
+                  {members.map((m) => (
+                    <li
+                      key={m.email}
+                      className="flex items-center gap-3 bg-white border border-[#1F1810]/10 rounded-lg shadow-[0_2px_8px_rgb(31_24_16/0.06)] p-3"
+                    >
+                      {m.joined ? (
+                        <CheckCircle2 className="w-4 h-4 text-[#7A8B6F] flex-shrink-0" />
+                      ) : (
+                        <Circle className="w-4 h-4 text-[#A89279]/60 flex-shrink-0" />
+                      )}
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm font-medium text-[#1F1810] truncate">{m.email}</p>
+                        <p className="text-[10px] text-[#A89279] capitalize">{m.role}</p>
+                      </div>
+                      <div className="text-right flex-shrink-0">
+                        {m.joined ? (
+                          <>
+                            <p className="text-[10px] font-semibold text-[#7A8B6F] uppercase tracking-wider">Joined</p>
+                            {m.last_sign_in_at && (
+                              <p className="text-[10px] text-[#A89279]">last seen {dateTime(m.last_sign_in_at)}</p>
+                            )}
+                          </>
+                        ) : (
+                          <>
+                            <p className="text-[10px] font-semibold text-amber-600 uppercase tracking-wider">Not joined yet</p>
+                            <p className="text-[10px] text-[#A89279]">invited {shortDate(m.invited_at)}</p>
+                          </>
+                        )}
+                      </div>
+                    </li>
+                  ))}
+                  {members.length === 0 && (
+                    <li className="text-xs text-[#A89279]">No seats on this engagement yet.</li>
+                  )}
+                </ul>
+              </Block>
+
               {/* Phases */}
               <Block title="Phase tracker">
                 <ul className="space-y-2">
@@ -524,14 +589,8 @@ function DocRow({ doc, busy, run }: { doc: DocCard; busy: boolean; run: RunFn })
   const download = async () => {
     if (!doc.storage_path) return;
     setDownloading(true);
-    try {
-      const { data, error } = await supabase.storage
-        .from("engagement-docs")
-        .createSignedUrl(doc.storage_path, 60);
-      if (!error && data?.signedUrl) window.open(data.signedUrl, "_blank");
-    } finally {
-      setDownloading(false);
-    }
+    await openEngagementFile(doc.storage_path);
+    setDownloading(false);
   };
 
   return (

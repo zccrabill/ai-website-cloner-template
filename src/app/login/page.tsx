@@ -192,8 +192,8 @@ export default function LoginPage() {
               <Image
                 src={invited ? "/images/faiir-logo.png" : "/images/logo-arrow.png"}
                 alt={invited ? "FAIIR — Foundation of AI Integrity & Regulation" : "Av{ai}lable Law"}
-                width={invited ? 64 : 56}
-                height={invited ? 64 : 56}
+                width={invited ? 144 : 56}
+                height={invited ? 144 : 56}
                 className="object-contain"
               />
             </div>
