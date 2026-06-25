@@ -187,11 +187,13 @@ export default function LoginPage() {
         <div className="w-full max-w-md">
           <div className="bg-white border border-[#1F1810]/8 rounded-2xl p-8">
             <div className="flex justify-center mb-8">
+              {/* FAIIR invitees (arriving via ?signup=1) get the FAIIR seal on
+                  their workspace card; everyone else keeps the Available Law mark. */}
               <Image
-                src="/images/logo-arrow.png"
-                alt="Av{ai}lable Law"
-                width={56}
-                height={56}
+                src={invited ? "/images/faiir-logo.png" : "/images/logo-arrow.png"}
+                alt={invited ? "FAIIR — Foundation of AI Integrity & Regulation" : "Av{ai}lable Law"}
+                width={invited ? 64 : 56}
+                height={invited ? 64 : 56}
                 className="object-contain"
               />
             </div>
