@@ -24,6 +24,10 @@ import SubscriptionLegalServicesArticle from "@/content/blog/subscription-legal-
 import AiBusinessConsultingVsLegalCounselArticle from "@/content/blog/ai-business-consulting-vs-legal-counsel";
 import SmallBusinessLawyerCostArticle from "@/content/blog/small-business-lawyer-cost-colorado";
 import AiSmallBusinessLegalChecklistArticle from "@/content/blog/ai-small-business-legal-checklist-2026";
+import ColoradoAiActInEffect2026Article from "@/content/blog/colorado-ai-act-in-effect-2026";
+import ColoradoAiRulesPublicComment2026Article from "@/content/blog/colorado-ai-rules-public-comment-2026";
+import AiHiringToolsColoradoLawArticle from "@/content/blog/ai-hiring-tools-colorado-law";
+import ColoradoChatbotLawArticle from "@/content/blog/colorado-chatbot-law-hb26-1263";
 
 interface PostMeta {
   title: string;
@@ -57,9 +61,133 @@ const postContent: Record<string, ReactNode> = {
   "ai-business-consulting-vs-legal-counsel": <AiBusinessConsultingVsLegalCounselArticle />,
   "small-business-lawyer-cost-colorado": <SmallBusinessLawyerCostArticle />,
   "ai-small-business-legal-checklist-2026": <AiSmallBusinessLegalChecklistArticle />,
+  "colorado-ai-act-in-effect-2026": <ColoradoAiActInEffect2026Article />,
+  "colorado-ai-rules-public-comment-2026": <ColoradoAiRulesPublicComment2026Article />,
+  "ai-hiring-tools-colorado-law": <AiHiringToolsColoradoLawArticle />,
+  "colorado-chatbot-law-hb26-1263": <ColoradoChatbotLawArticle />,
 };
 
 const postMetadata: Record<string, PostMeta> = {
+  "colorado-ai-act-in-effect-2026": {
+    title: "Is the Colorado AI Act in Effect? The July 2026 Status Check for Businesses",
+    date: "July 1, 2026",
+    isoDate: "2026-07-01",
+    author: "Zachariah Crabill, JD",
+    excerpt:
+      "As of June 30, 2026, the original Colorado AI Act (SB 24-205) is technically on the books — with enforcement suspended by a federal court order in xAI v. Weiser while the replacement law, SB 26-189, waits for January 1, 2027. Here's what's actually in effect, what's actually enforced, and what Colorado businesses should do with the gap.",
+    faqs: [
+      {
+        question: "Is the Colorado AI Act in effect right now?",
+        answer:
+          "Technically yes — the original act (SB 24-205) took effect June 30, 2026. But enforcement is suspended by a federal court order in xAI v. Weiser, and the act will be repealed and replaced by SB 26-189 on January 1, 2027.",
+      },
+      {
+        question: "Can my business be fined under the Colorado AI Act in 2026?",
+        answer:
+          "Not while the enforcement pause holds. The Attorney General — the only party who can enforce the act — has agreed in court not to enforce or investigate while xAI's constitutional challenge is pending, with a 14-day protective buffer after the court rules. There is no private right of action.",
+      },
+      {
+        question: "Should I wait until 2027 to think about Colorado AI Act compliance?",
+        answer:
+          "No. The SB 26-189 duties — pre-use notice, adverse-outcome notice, human review, data access, and recordkeeping — apply to decisions made on or after January 1, 2027, and they require an inventory, vendor conversations, and process changes that take months, not days.",
+      },
+      {
+        question: "What is the difference between SB 24-205 and SB 26-189?",
+        answer:
+          "SB 24-205 (2024) was a broad algorithmic-discrimination law with risk-management and impact-assessment duties. SB 26-189 (2026) replaces it with a narrower disclosure-and-human-review framework for automated decision-making technology, drops the legal-services category, and takes effect January 1, 2027.",
+      },
+    ],
+  },
+  "colorado-ai-rules-public-comment-2026": {
+    title: "Colorado Is Writing Its AI Rules Right Now — How to Weigh In Before July 13",
+    date: "July 1, 2026",
+    isoDate: "2026-07-01",
+    author: "Zachariah Crabill, JD",
+    excerpt:
+      "On June 23, 2026, the Colorado Attorney General opened public comment on the rules that will implement the new ADMT Act and Chatbot Safety Act — including the definition of 'materially influence' that decides which businesses are covered. Comments close July 13. Here's what's at stake and how to submit a comment that gets used.",
+    faqs: [
+      {
+        question: "What is the deadline to comment on Colorado's AI rules?",
+        answer:
+          "The current pre-rulemaking comment window, opened June 23, 2026, runs through July 13, 2026, via the Attorney General's online form at coag.gov/ai. Formal rulemaking follows, with additional notice, written comment, and at least one public hearing before rules are finalized by January 1, 2027.",
+      },
+      {
+        question: "What does 'materially influence' mean under SB 26-189?",
+        answer:
+          "The statute does not fully define it — that is the point of the rulemaking. It is the threshold that decides whether AI involved in a consequential decision makes you a covered deployer. The Attorney General is expected to clarify the definition with presumptions and illustrative examples.",
+      },
+      {
+        question: "Do Colorado's AI rules cover chatbots too?",
+        answer:
+          "Yes. The same rulemaking covers the Chatbot Safety Act (HB 26-1263), which takes effect January 1, 2027 and imposes disclosure, self-harm protocol, minor-protection, and annual reporting duties on operators of conversational AI services.",
+      },
+      {
+        question: "Do I need a lawyer to submit a rulemaking comment?",
+        answer:
+          "No. A public comment is a letter, not a legal brief — a specific description of how the rules would land on your real business is exactly what regulators need. An attorney can help frame a sensitive fact pattern or file on your behalf.",
+      },
+    ],
+  },
+  "ai-hiring-tools-colorado-law": {
+    title: "AI Hiring Tools and Colorado Law: What Businesses Must Do Before January 1, 2027",
+    date: "July 1, 2026",
+    isoDate: "2026-07-01",
+    author: "Zachariah Crabill, JD",
+    excerpt:
+      "Résumé screeners, applicant ranking, screening chatbots, video-interview scoring — employment is the Colorado AI Act category small businesses trip over most, usually through software features they never chose. What's legal, what changes January 1, 2027, and the four-step playbook to run now.",
+    faqs: [
+      {
+        question: "Is it legal to use AI to screen résumés in Colorado?",
+        answer:
+          "Yes. But starting January 1, 2027, if the AI materially influences hiring decisions, the Colorado AI Act requires a pre-use notice to candidates, a 30-day notice after adverse outcomes, meaningful human review, data access and correction, and three years of records. Anti-discrimination law applies to AI-driven screening today.",
+      },
+      {
+        question: "Does the Colorado AI Act apply to my applicant tracking system?",
+        answer:
+          "It depends on whether the ATS's AI features materially influence your hiring decisions — a threshold the Attorney General is defining in rulemaking due by January 1, 2027. When in doubt, inventory the feature and treat it as potentially covered.",
+      },
+      {
+        question: "Do I have to tell candidates I use AI in hiring?",
+        answer:
+          "From January 1, 2027, yes — covered deployers owe a clear and conspicuous pre-use notice before the AI is used, plus a notice within 30 days when AI contributes to an adverse decision.",
+      },
+      {
+        question: "Can my business be sued if an AI hiring tool is biased?",
+        answer:
+          "The Colorado AI Act has no private right of action — only the Attorney General enforces it. But a biased hiring outcome can support ordinary discrimination claims under Title VII and the Colorado Anti-Discrimination Act, which individuals can bring. The act preserves that liability and voids indemnity for your own discriminatory conduct.",
+      },
+    ],
+  },
+  "colorado-chatbot-law-hb26-1263": {
+    title: "Colorado's New AI Chatbot Law: What HB 26-1263 Means for Businesses",
+    date: "July 1, 2026",
+    isoDate: "2026-07-01",
+    author: "Zachariah Crabill, JD",
+    excerpt:
+      "Colorado just became the first state to regulate AI chatbots. The Chatbot Safety Act (HB 26-1263), signed May 29, 2026 and effective January 1, 2027, requires operators to disclose the AI, protect minors, run self-harm protocols — and never market a bot as the equivalent of a licensed professional. Here's who counts as an 'operator' and what every business with a chatbot should do.",
+    faqs: [
+      {
+        question: "What is Colorado's new chatbot law?",
+        answer:
+          "HB 26-1263, the Chatbot Safety Act, signed May 29, 2026 and effective January 1, 2027. It requires operators of public conversational AI services to disclose that the AI is AI, run a self-harm response protocol, estimate user age and protect minors, report annually to the Attorney General, and never present the bot as equivalent to a licensed professional.",
+      },
+      {
+        question: "Does the chatbot law apply to the support widget on my website?",
+        answer:
+          "Probably not directly — the act targets those who develop and make publicly available a conversational AI service. A business embedding a vendor's support bot is likely the operator's customer, not the operator. The boundary will be sharpened in the Attorney General's rulemaking, and you should confirm your vendor complies either way.",
+      },
+      {
+        question: "Can I market my chatbot as an 'AI lawyer' or 'AI doctor'?",
+        answer:
+          "Colorado's chatbot act prohibits operators from stating that a bot's output is provided by, endorsed by, or equivalent to a licensed or certified professional's services. Even outside the act, that kind of claim risks consumer-protection and unauthorized-practice problems.",
+      },
+      {
+        question: "When do Colorado's chatbot rules take effect?",
+        answer:
+          "The operator duties apply beginning January 1, 2027 — the same day as Colorado's ADMT Act. The Attorney General's implementing rulemaking is underway now, with a public comment window through July 13, 2026.",
+      },
+    ],
+  },
   "5-ai-vendor-contract-clauses": {
     title: "5 AI Vendor Contract Clauses Your Company Is Missing",
     date: "April 7, 2026",

@@ -27,6 +27,34 @@ interface BlogPost {
 
 const blogPosts: BlogPost[] = [
   {
+    slug: "colorado-ai-act-in-effect-2026",
+    title: "Is the Colorado AI Act in Effect? The July 2026 Status Check for Businesses",
+    date: "July 1, 2026",
+    excerpt:
+      "As of June 30, the original Colorado AI Act is technically on the books — with enforcement frozen by a federal court while the replacement waits for January 1, 2027. What's actually in effect, what's actually enforced, and what to do with the gap.",
+  },
+  {
+    slug: "colorado-ai-rules-public-comment-2026",
+    title: "Colorado Is Writing Its AI Rules Right Now — How to Weigh In Before July 13",
+    date: "July 1, 2026",
+    excerpt:
+      "The Attorney General opened public comment on the rules that will define 'materially influence' — and decide which businesses the AI Act covers. Comments close July 13. What's at stake and how to write a comment that gets used.",
+  },
+  {
+    slug: "ai-hiring-tools-colorado-law",
+    title: "AI Hiring Tools and Colorado Law: What Businesses Must Do Before January 1, 2027",
+    date: "July 1, 2026",
+    excerpt:
+      "Résumé screeners, applicant ranking, screening chatbots — employment is the Colorado AI Act category small businesses trip over most, usually through software features they never chose. What's legal, what changes in 2027, and the playbook to run now.",
+  },
+  {
+    slug: "colorado-chatbot-law-hb26-1263",
+    title: "Colorado's New AI Chatbot Law: What HB 26-1263 Means for Businesses",
+    date: "July 1, 2026",
+    excerpt:
+      "Colorado is the first state to regulate AI chatbots. Disclosure duties, minor protections, self-harm protocols, and a ban on marketing your bot as a licensed professional — who counts as an 'operator,' and what every business with a chatbot should do.",
+  },
+  {
     slug: "subscription-legal-services-small-business",
     title: "Subscription Legal Services for Small Business: How Flat-Rate Legal Plans Actually Work",
     date: "June 25, 2026",

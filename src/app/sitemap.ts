@@ -16,6 +16,10 @@ export const dynamic = "force-static";
 // we hand to Google's sitemap; it should equal the later of the two so crawlers
 // know when to recrawl.
 const BLOG_POSTS: Array<{ slug: string; isoDate: string; lastMod?: string }> = [
+  { slug: "colorado-ai-act-in-effect-2026", isoDate: "2026-07-01" },
+  { slug: "colorado-ai-rules-public-comment-2026", isoDate: "2026-07-01" },
+  { slug: "ai-hiring-tools-colorado-law", isoDate: "2026-07-01" },
+  { slug: "colorado-chatbot-law-hb26-1263", isoDate: "2026-07-01" },
   { slug: "subscription-legal-services-small-business", isoDate: "2026-06-25" },
   { slug: "ai-business-consulting-vs-legal-counsel", isoDate: "2026-06-25" },
   { slug: "small-business-lawyer-cost-colorado", isoDate: "2026-06-25" },
@@ -52,6 +56,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: now,
       changeFrequency: "monthly",
       priority: 0.9,
+    },
+    {
+      url: `${SITE_URL}/ylab`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.8,
+    },
+    {
+      url: `${SITE_URL}/sidebar`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.8,
     },
     {
       url: `${SITE_URL}/blog`,
