@@ -281,6 +281,16 @@ export default async function CityPage({
                 About the attorney
               </Link>
             </div>
+            <p className="text-[#6B5B4E] text-sm mt-8">
+              Teen founder in {city.city} — or the parent of one? See{" "}
+              <Link
+                href="/ylab"
+                className="text-[#C17832] underline hover:text-[#D4893F]"
+              >
+                YLab, our legal membership for teen entrepreneurs
+              </Link>
+              .
+            </p>
           </div>
         </section>
       </main>

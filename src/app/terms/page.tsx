@@ -2,6 +2,7 @@
 // Linked from the iOS app's Account tab.
 
 import type { Metadata } from "next";
+import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { SITE_URL } from "@/lib/seo";
@@ -85,7 +86,7 @@ export default function TermsPage() {
           <Section title="Membership tiers and billing">
             <p>
               Tiers, pricing, and monthly attorney-task allotments are listed at{" "}
-              <a href="/#pricing" className="text-[#C17832] underline">availablelaw.com/#pricing</a>.
+              <Link href="/#pricing" className="text-[#C17832] underline">availablelaw.com/#pricing</Link>.
               Subscriptions are billed through Stripe monthly or annually and
               renew automatically until canceled. You can cancel anytime from
               your account page; cancellation is effective at the end of the

@@ -15,9 +15,9 @@ export const dynamic = "force-static";
 const PAGE_URL = `${SITE_URL}/ylab`;
 // Root layout applies the "%s | Available Law" title template, so do NOT
 // repeat the brand suffix here (it would double to "… | Available Law | Available Law").
-const TITLE = "YLab — Youth Leadership & Business";
+const TITLE = "YLab: Legal Help for Teen Entrepreneurs in Colorado";
 const DESCRIPTION =
-  "YLab is a youth-led legal and business lab for teen entrepreneurs — real legal backup on a discounted membership, a podcast for the next generation of founders, and a teen-led push to change Colorado law so under-18s can form LLCs and sign contracts. Attorney-guided by Zachariah Crabill.";
+  "Affordable legal help for teen entrepreneurs in Colorado — attorney-backed YLab membership from $40/month, a podcast for young founders, and a push to change the law so under-18s can form LLCs.";
 
 export const metadata: Metadata = {
   title: TITLE,

@@ -427,7 +427,12 @@ export const HOMEPAGE_FAQS: Array<{ question: string; answer: string }> = [
   {
     question: "How much does Available Law cost?",
     answer:
-      "Available Law offers four flat-rate subscription tiers: Explore is free and gives access to Ava's self-serve tools, Build is $50/month and includes 1 attorney task, Grow is $150/month and includes 2 attorney tasks, and Lead is $300/month and includes 3 attorney tasks.",
+      "Available Law offers four flat-rate subscription tiers: Explore is free and gives access to Ava's self-serve tools, Build is $50/month and includes 1 attorney task, Grow is $150/month and includes 2 attorney tasks, and Lead is $300/month and includes 3 attorney tasks. Annual billing includes two months free, which works out to $42/month for Build, $125/month for Grow, and $250/month for Lead.",
+  },
+  {
+    question: "Does Available Law offer legal help for teen entrepreneurs?",
+    answer:
+      "Yes — through YLab, Available Law's youth-led legal and business lab for teen entrepreneurs (roughly ages 13–17). YLab mirrors the regular memberships at a 20% youth discount: Build is $40/month and Grow is $120/month, each including monthly attorney work plus Ava AI legal chat. Because minors' contracts are generally voidable in Colorado, a parent or guardian holds the account. YLab also includes a podcast for young founders and a teen-led campaign to change Colorado law so under-18s can form LLCs and sign enforceable contracts.",
   },
   {
     question: "Is Ava an AI lawyer?",

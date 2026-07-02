@@ -73,8 +73,9 @@ export default function YLabLanding({ faqs }: YLabLandingProps) {
             </div>
 
             <h1 className="font-heading text-4xl md:text-6xl leading-[1.05] mb-6">
-              The next generation of founders
-              <br className="hidden md:block" /> shouldn&apos;t have to wait until 18.
+              The next generation of founders{" "}
+              <br className="hidden md:block" />
+              shouldn&apos;t have to wait until 18.
             </h1>
 
             <p className="text-base md:text-xl text-[#6B5B4E] leading-relaxed max-w-[680px] mx-auto mb-9">
