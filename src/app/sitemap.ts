@@ -16,6 +16,7 @@ export const dynamic = "force-static";
 // we hand to Google's sitemap; it should equal the later of the two so crawlers
 // know when to recrawl.
 const BLOG_POSTS: Array<{ slug: string; isoDate: string; lastMod?: string }> = [
+  { slug: "can-a-minor-start-a-business-in-colorado", isoDate: "2026-07-07" },
   { slug: "colorado-ai-act-in-effect-2026", isoDate: "2026-07-01" },
   { slug: "colorado-ai-rules-public-comment-2026", isoDate: "2026-07-01" },
   { slug: "ai-hiring-tools-colorado-law", isoDate: "2026-07-01" },

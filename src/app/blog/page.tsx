@@ -27,6 +27,13 @@ interface BlogPost {
 
 const blogPosts: BlogPost[] = [
   {
+    slug: "can-a-minor-start-a-business-in-colorado",
+    title: "Can a Minor Start a Business in Colorado? The Complete Legal Guide",
+    date: "July 7, 2026",
+    excerpt:
+      "Colorado lets minors hustle but not incorporate: LLC organizers must be 18, minors' contracts are voidable, and the occasional-business law only covers 84 days a year. The walls teen founders hit — and the structures that actually work.",
+  },
+  {
     slug: "colorado-ai-act-in-effect-2026",
     title: "Is the Colorado AI Act in Effect? The July 2026 Status Check for Businesses",
     date: "July 1, 2026",

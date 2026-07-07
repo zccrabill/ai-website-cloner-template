@@ -28,6 +28,7 @@ import ColoradoAiActInEffect2026Article from "@/content/blog/colorado-ai-act-in-
 import ColoradoAiRulesPublicComment2026Article from "@/content/blog/colorado-ai-rules-public-comment-2026";
 import AiHiringToolsColoradoLawArticle from "@/content/blog/ai-hiring-tools-colorado-law";
 import ColoradoChatbotLawArticle from "@/content/blog/colorado-chatbot-law-hb26-1263";
+import CanAMinorStartABusinessInColoradoArticle from "@/content/blog/can-a-minor-start-a-business-in-colorado";
 
 interface PostMeta {
   title: string;
@@ -65,9 +66,45 @@ const postContent: Record<string, ReactNode> = {
   "colorado-ai-rules-public-comment-2026": <ColoradoAiRulesPublicComment2026Article />,
   "ai-hiring-tools-colorado-law": <AiHiringToolsColoradoLawArticle />,
   "colorado-chatbot-law-hb26-1263": <ColoradoChatbotLawArticle />,
+  "can-a-minor-start-a-business-in-colorado": <CanAMinorStartABusinessInColoradoArticle />,
 };
 
 const postMetadata: Record<string, PostMeta> = {
+  "can-a-minor-start-a-business-in-colorado": {
+    title: "Can a Minor Start a Business in Colorado? The Complete Legal Guide",
+    date: "July 7, 2026",
+    isoDate: "2026-07-07",
+    author: "Zachariah Crabill, JD",
+    excerpt:
+      "Colorado lets minors hustle but not incorporate: LLC organizers must be 18 (C.R.S. § 7-80-203), minors' contracts are voidable, and the occasional-business law (SB19-103) only covers 84 days a year. A Colorado attorney's guide to the walls teen founders hit — and the structures that actually work.",
+    faqs: [
+      {
+        question: "Can a minor own an LLC in Colorado?",
+        answer:
+          "Yes. Colorado law restricts who may organize an LLC — the organizer must be 18 or older under C.R.S. § 7-80-203 — but nothing prevents a minor from being a member (owner). The standard structure is a parent or guardian acting as organizer with the teen named as a member.",
+      },
+      {
+        question: "Can a teenager sign a binding contract in Colorado?",
+        answer:
+          "Generally no. Colorado sets the age of competence to contract at 18 (C.R.S. § 13-22-101), and contracts signed by a minor are voidable at the minor's option. In practice counterparties require an adult to sign or co-sign.",
+      },
+      {
+        question: "How old do you have to be to start a business in Colorado?",
+        answer:
+          "There is no minimum age to operate a business in Colorado, and SB19-103 (2019) bars local governments from requiring a license or permit for a business a minor operates on an occasional basis — no more than 84 days in a calendar year. Forming an LLC or corporation, however, requires an organizer or incorporator who is at least 18.",
+      },
+      {
+        question: "Does a teen have to pay taxes on business income?",
+        answer:
+          "Yes. Net self-employment earnings of $400 or more in a year generally trigger a federal filing requirement and self-employment tax, regardless of the teen's age or dependent status.",
+      },
+      {
+        question: "What is the most affordable way for a teen entrepreneur to get legal help in Colorado?",
+        answer:
+          "YLab, Available Law's program for teen founders, offers the firm's attorney-backed subscription at a 20% youth discount — Build is $40/month and Grow is $120/month — with a parent or guardian holding the account. Each month includes attorney work such as a reviewed document or a 30-minute consult.",
+      },
+    ],
+  },
   "colorado-ai-act-in-effect-2026": {
     title: "Is the Colorado AI Act in Effect? The July 2026 Status Check for Businesses",
     date: "July 1, 2026",
