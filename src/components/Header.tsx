@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
-import { ShieldCheck, FlaskConical } from "lucide-react";
+import { ShieldCheck, FlaskConical, HeartHandshake } from "lucide-react";
 import AnnouncementBanner from "@/components/AnnouncementBanner";
 
 export default function Header() {
@@ -127,6 +127,24 @@ export default function Header() {
               YLab
             </span>
           </Link>
+          {/* Sidebar — the attorney community. Icon-only like YLab; the
+              heart-handshake reads "connection + care" and avoids being
+              mistaken for the Ava chat bubble. Tooltip names it. */}
+          <Link
+            href="/sidebar"
+            aria-label="Sidebar — a community for attorneys"
+            title="Sidebar"
+            className="group relative flex items-center justify-center text-[#C17832] hover:text-[#A9652A] transition-colors"
+          >
+            <HeartHandshake
+              className="w-[1.15rem] h-[1.15rem] transition-transform duration-200 group-hover:scale-110 group-hover:rotate-6"
+              strokeWidth={1.75}
+              aria-hidden="true"
+            />
+            <span className="absolute top-full mt-2 left-1/2 -translate-x-1/2 px-2 py-1 bg-[#1F1810] text-white text-[10px] font-medium rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+              Sidebar
+            </span>
+          </Link>
         </nav>
 
         {/* Right side: CTA buttons (desktop) */}
@@ -209,6 +227,18 @@ export default function Header() {
                 aria-hidden="true"
               />
               YLab
+            </Link>
+            <Link
+              href="/sidebar"
+              onClick={() => setMobileMenuOpen(false)}
+              className="flex items-center gap-2 text-[#6B5B4E] hover:text-[#1F1810] transition-colors text-sm"
+            >
+              <HeartHandshake
+                className="w-4 h-4 text-[#C17832]"
+                strokeWidth={1.75}
+                aria-hidden="true"
+              />
+              Sidebar
             </Link>
             <hr className="border-[#1F1810]/8 my-2" />
             <Link

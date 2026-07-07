@@ -21,6 +21,11 @@
 // rolling-24h rate limit is enforced server-side (members keyed by user_id,
 // anonymous visitors by hashed IP) with a global circuit breaker. Anonymous +
 // free Explore traffic runs on Haiku; paid tiers run on Sonnet.
+//
+// COMMUNITY WAITLIST (added v24): Ava knows the Sidebar (attorney community)
+// and YLab (teen founders) programs, captures waitlist signups via
+// [WAITLIST: {...}] tokens → public.waitlist_signups + notification email,
+// and carries a mental-health safety block (988 / COLAP) for Sidebar traffic.
 
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient, SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
@@ -105,6 +110,8 @@ FORMATTING — IMPORTANT:
   - Plans / upgrading: [see our plans](https://availablelaw.com/#pricing)
   - Signing in: [sign in](https://availablelaw.com/login)
   - Homepage: [availablelaw.com](https://availablelaw.com)
+  - Sidebar attorney community: [Sidebar](https://availablelaw.com/sidebar)
+  - YLab teen founders: [YLab](https://availablelaw.com/ylab)
   So instead of "upgrade at availablelaw.com/#pricing", write "you can [upgrade your plan](https://availablelaw.com/#pricing)".
 - A simple dash-bullet list is fine when you are genuinely listing options (for example, the membership plans). Keep the bullet text plain — no bold inside it. Example: "- Build — $50/mo, 1 attorney item per month".
 - No emoji.
@@ -141,6 +148,26 @@ You MUST emit all three tokens whenever ANY of the following are true:
 5. You have at least 4 substantive pieces of information about the matter and the client has stopped volunteering new details.
 
 DO NOT emit the tokens on your first greeting, or when the client has only said "hi" or "yes" or similar one-word responses. Never invent details — if a field is unclear, keep asking questions instead of forcing the handoff.
+
+COMMUNITY PROGRAMS — SIDEBAR AND YLAB
+Available Law runs two community initiatives. Know them cold, because their pages send people to you:
+
+1. Sidebar ([Sidebar](https://availablelaw.com/sidebar)) — a FREE community for attorneys. In a courtroom a sidebar is the conversation away from the jury; this is that for the profession: small recurring virtual peer circles (6–8 attorneys), casual in-person gatherings along Colorado's Front Range, and an open conversation — on podcasts and beyond — about the mental-health weight of practicing law. Founded by Zachariah, who speaks openly about his own hardest seasons in the profession. It costs nothing, it is not a client-development funnel, joining creates no attorney-client relationship, and it is NOT therapy or crisis care. Attorneys anywhere can join a virtual circle; gatherings are Colorado-based.
+
+2. YLab ([YLab](https://availablelaw.com/ylab)) — Youth Leadership & Business, a lab for teen entrepreneurs (roughly 13–17): a discounted legal membership mirroring the regular tiers at 20% off (Build $40/mo, Grow $120/mo — a parent or guardian signs up and holds the account since a minor's contract is voidable under current Colorado law), a podcast, and a youth-led push to change Colorado law so under-18 founders can form LLCs and sign enforceable contracts. Currently in founding-waitlist mode.
+
+WAITLIST CAPTURE — SIDEBAR AND YLAB
+When someone wants to join Sidebar or YLab (a circle, the gatherings, the podcast, the founding waitlist), your job is to capture their signup, not to run legal intake:
+- Gather, one question at a time: their name and email. For Sidebar, also ask what draws them (peer circle, gatherings, sharing their story / podcast) and, if it comes up naturally, where they practice or their career stage. For YLab, ask whether you're talking to the teen or the parent/guardian.
+- Once you have a real name AND a real email address, append this single-line token at the very end of your message:
+[WAITLIST: {"program":"sidebar","name":"Jane Smith","email":"jane@example.com","interest":"peer circle","note":"solo family-law attorney in Denver, 8 years in"}]
+- "program" must be exactly "sidebar" or "ylab". "interest" and "note" are optional — include what you actually learned, nothing invented.
+- Emit the token ONCE per signup, and NEVER without a real name and email the person gave you themselves.
+- In the visible part of that same reply, confirm they're on the list and that Zachariah will reach out personally.
+- Waitlist signups are free for everyone, on any plan or no plan. Do NOT emit [READY_FOR_REVIEW] for a waitlist signup, and do not pitch memberships to Sidebar folks — Sidebar is not a sales channel.
+
+MENTAL-HEALTH SAFETY — IMPORTANT
+Because of Sidebar, attorneys may open up to you about burnout, depression, drinking, or worse. If anyone expresses hopelessness, thoughts of self-harm, or suicide: drop whatever flow you were in. Respond like a human first — brief, warm, no scripts. Then point them to call or text 988 (the Suicide & Crisis Lifeline), and if they're a legal professional, to the [Colorado Lawyer Assistance Program](https://www.coloradolap.org) — free and confidential, built for lawyers. Say plainly that you're an AI and not a crisis counselor, but that these people are, and that reaching out is worth doing today. Never treat that moment as intake, never pivot to a sales point, never lecture.
 
 Available Law serves Colorado small businesses, startups, and individuals. Tiers: Explore (free), Build, Grow, Lead. Keep replies short — usually well under 120 words unless the client explicitly asks for depth.`;
 
@@ -179,6 +206,14 @@ interface PendingQuestion {
   text: string;
   options: string[];
   allow_custom: boolean;
+}
+
+interface WaitlistSignup {
+  program: "sidebar" | "ylab";
+  name: string;
+  email: string;
+  interest?: string;
+  note?: string;
 }
 
 /** Standard response body used for rate-limit refusals — same shape the UI
@@ -378,7 +413,14 @@ Deno.serve(async (req: Request) => {
 
   const parsed = parseMatterTokens(assistantText);
   const pending = extractPendingQuestion(parsed.cleanText);
-  const cleanText = pending.cleanText;
+  const waitlist = extractWaitlistToken(pending.cleanText);
+  const cleanText = waitlist.cleanText;
+
+  // Community waitlist capture (Sidebar / YLab). Fail-open: a malformed token
+  // or a DB/email hiccup never breaks the chat reply the visitor sees.
+  if (waitlist.signup && serviceClient) {
+    await persistWaitlistSignup(serviceClient, waitlist.signup, uid);
+  }
 
   // Defense-in-depth: if Ava mistakenly emits [READY_FOR_REVIEW] for a
   // free-tier client, strip the flag so we don't create a draft. The attorney
@@ -718,6 +760,131 @@ function extractPendingQuestion(
 
   const cleanText = text.replace(/\[ASK:\s*\{[\s\S]+?\}\s*\]/i, "").trim();
   return { cleanText, question: parsed };
+}
+
+function extractWaitlistToken(
+  text: string
+): { cleanText: string; signup: WaitlistSignup | null } {
+  const match = text.match(/\[WAITLIST:\s*(\{[\s\S]+?\})\s*\]/i);
+  if (!match) return { cleanText: text, signup: null };
+
+  let signup: WaitlistSignup | null = null;
+  try {
+    const raw = JSON.parse(match[1]);
+    const program = String(raw?.program ?? "").toLowerCase();
+    const name = String(raw?.name ?? "").trim();
+    const email = String(raw?.email ?? "").trim();
+    // Only accept well-formed signups; a hallucinated or partial token is
+    // stripped from the reply but not persisted.
+    if (
+      (program === "sidebar" || program === "ylab") &&
+      name.length > 1 &&
+      /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+    ) {
+      signup = {
+        program,
+        name: name.slice(0, 120),
+        email: email.slice(0, 254),
+        interest: raw?.interest ? String(raw.interest).slice(0, 200) : undefined,
+        note: raw?.note ? String(raw.note).slice(0, 1000) : undefined,
+      };
+    } else {
+      console.warn("waitlist token rejected", { program, hasName: !!name, email });
+    }
+  } catch (e) {
+    console.warn("failed to parse [WAITLIST] block", e);
+  }
+
+  const cleanText = text
+    .replace(/\[WAITLIST:\s*\{[\s\S]+?\}\s*\]/gi, "")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+  return { cleanText, signup };
+}
+
+/** Insert the signup row and email Zachariah. Both steps fail-open. */
+async function persistWaitlistSignup(
+  serviceClient: SupabaseClient,
+  signup: WaitlistSignup,
+  uid: string | null
+): Promise<void> {
+  try {
+    const { error } = await serviceClient.from("waitlist_signups").insert({
+      program: signup.program,
+      name: signup.name,
+      email: signup.email,
+      interest: signup.interest ?? null,
+      note: signup.note ?? null,
+      user_id: uid,
+      source: "ava",
+    });
+    if (error) console.error("waitlist insert failed", error);
+  } catch (e) {
+    console.error("waitlist persistence failed", e);
+  }
+
+  // Notification email — same Resend account notify-event uses. Skipped
+  // silently if the secret is absent; the DB row is the source of truth.
+  const resendKey = Deno.env.get("RESEND_API_KEY");
+  if (!resendKey) return;
+  const programLabel = signup.program === "sidebar" ? "Sidebar" : "YLab";
+  // The Sidebar WhatsApp invite is PRIVATE — it goes only in this admin email
+  // so Zachariah can send it personally. Never expose it to Ava or the site
+  // (public invite links get scraped and bot-joined). Rotate via the
+  // SIDEBAR_WHATSAPP_INVITE secret if the link is ever compromised.
+  const sidebarInvite =
+    Deno.env.get("SIDEBAR_WHATSAPP_INVITE") ??
+    "https://chat.whatsapp.com/Gztz1qNVACKI1591eFBh80";
+  const firstName = signup.name.split(/\s+/)[0];
+  try {
+    const res = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        Authorization: `Bearer ${resendKey}`,
+      },
+      body: JSON.stringify({
+        from:
+          Deno.env.get("NOTIFY_FROM_FIRM") ??
+          "Available Law <noreply@availablelaw.com>",
+        to: Deno.env.get("NOTIFY_ADMIN_EMAIL") ?? "zachariah@availablelaw.com",
+        subject: `New ${programLabel} waitlist signup — ${signup.name}`,
+        text: [
+          `Ava just captured a ${programLabel} waitlist signup.`,
+          ``,
+          `Name:     ${signup.name}`,
+          `Email:    ${signup.email}`,
+          `Interest: ${signup.interest ?? "—"}`,
+          `Note:     ${signup.note ?? "—"}`,
+          ``,
+          ...(signup.program === "sidebar"
+            ? [
+                `Copy-paste welcome reply (send from your inbox to ${signup.email}):`,
+                `----------------------------------------------------------------`,
+                `Subject: Welcome to Sidebar`,
+                ``,
+                `Hi ${firstName} — Zachariah here. Thanks for raising your hand for Sidebar; you're on the founding list.`,
+                ``,
+                `First thing: the private WhatsApp group where the community hangs out day-to-day. It's invite-only on purpose, so please keep the link off social:`,
+                sidebarInvite,
+                ``,
+                `I'll follow up personally as your peer circle comes together. Glad you're here.`,
+                ``,
+                `— Zachariah`,
+                `----------------------------------------------------------------`,
+                ``,
+              ]
+            : []),
+          `All signups: select * from waitlist_signups order by created_at desc;`,
+        ].join("\n"),
+      }),
+    });
+    if (!res.ok) {
+      console.error("waitlist notify email failed", res.status, await res.text());
+    }
+  } catch (e) {
+    console.error("waitlist notify email errored", e);
+  }
 }
 
 function parseMatterTokens(text: string): {
