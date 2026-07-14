@@ -4,12 +4,15 @@ import { useCallback, useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { Heart, Check, Loader2 } from "lucide-react";
 
-// The built-in close-of-engagement marketing asks, shown on the Certification
-// page once a cert is issued: (1) a testimonial, (2) permission to post it —
-// named or anonymous, the client's choice, (3) permission to list the firm on
-// the site as FAIIR-certified. Entirely optional and revocable: re-saving with
-// different choices overwrites the prior consent (latest choice governs).
-// Writes go through save_marketing_preferences (member-only SECURITY DEFINER).
+// The built-in close-of-engagement marketing asks: (1) a testimonial, (2)
+// permission to post it — named or anonymous, the client's choice, (3)
+// permission to list the firm on the site as FAIIR-certified. Shown on the
+// Certification page once a cert is issued, and on the Overview page when an
+// engagement closes without a certification component — there the directory
+// ask is hidden (certified={false}) because "FAIIR-certified" wouldn't be
+// true. Entirely optional and revocable: re-saving with different choices
+// overwrites the prior consent (latest choice governs). Writes go through
+// save_marketing_preferences (member-only SECURITY DEFINER).
 
 type Display = "undecided" | "named" | "anonymous" | "none";
 
@@ -22,9 +25,11 @@ interface ConsentRow {
 export default function ShareTheWin({
   engagementId,
   firmName,
+  certified = true,
 }: {
   engagementId: string;
   firmName: string;
+  certified?: boolean;
 }) {
   const [testimonial, setTestimonial] = useState("");
   const [display, setDisplay] = useState<Display>("undecided");
@@ -144,18 +149,20 @@ export default function ShareTheWin({
         ))}
       </div>
 
-      <label className="flex items-start gap-3 p-3 rounded-lg border border-[#1F1810]/10 hover:border-[#C17832]/30 cursor-pointer transition-colors mb-4">
-        <input
-          type="checkbox"
-          checked={directory}
-          onChange={(e) => setDirectory(e.target.checked)}
-          className="mt-0.5 w-4 h-4 accent-[#C17832] shrink-0"
-        />
-        <span className="text-[13px] text-[#4a4036] leading-relaxed">
-          You may list <span className="font-semibold text-[#1F1810]">{firmName}</span> by name on
-          availablelaw.com as a FAIIR-certified firm.
-        </span>
-      </label>
+      {certified && (
+        <label className="flex items-start gap-3 p-3 rounded-lg border border-[#1F1810]/10 hover:border-[#C17832]/30 cursor-pointer transition-colors mb-4">
+          <input
+            type="checkbox"
+            checked={directory}
+            onChange={(e) => setDirectory(e.target.checked)}
+            className="mt-0.5 w-4 h-4 accent-[#C17832] shrink-0"
+          />
+          <span className="text-[13px] text-[#4a4036] leading-relaxed">
+            You may list <span className="font-semibold text-[#1F1810]">{firmName}</span> by name on
+            availablelaw.com as a FAIIR-certified firm.
+          </span>
+        </label>
+      )}
 
       {wantsToShare && testimonial.trim().length < 10 && (
         <p className="text-[11px] text-amber-700 mb-3">

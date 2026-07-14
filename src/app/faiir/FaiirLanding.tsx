@@ -19,6 +19,7 @@ import {
   Mail,
 } from "lucide-react";
 import FaiirIntakeForm from "@/components/FaiirIntakeForm";
+import FaiirSocialProof from "./FaiirSocialProof";
 
 interface Faq {
   question: string;
@@ -257,6 +258,10 @@ export default function FaiirLanding({ faqs }: FaiirLandingProps) {
       <PillarsSection />
       <PricingSection />
       <ProcessSection />
+      {/* Consent-gated: renders nothing until a client has opted in via the
+          portal's "Share the win" card (and, for the firm strip, holds an
+          active certification). */}
+      <FaiirSocialProof />
       <MidCheckerCta />
       <FaqSection faqs={faqs} />
       <FinalCta />

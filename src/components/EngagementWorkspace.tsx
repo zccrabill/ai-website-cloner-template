@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
+import ShareTheWin from "@/components/ShareTheWin";
 import {
   ShieldCheck,
   FolderLock,
@@ -95,6 +96,7 @@ export default function EngagementWorkspace({ orgId }: { orgId: string }) {
   const [deliverables, setDeliverables] = useState<Deliverable[]>([]);
   const [notes, setNotes] = useState<Note[]>([]);
   const [firstName, setFirstName] = useState<string>("");
+  const [certified, setCertified] = useState(false);
   const [loading, setLoading] = useState(true);
 
   const load = useCallback(async () => {
@@ -122,7 +124,7 @@ export default function EngagementWorkspace({ orgId }: { orgId: string }) {
     setFirstName(fullName ? fullName.trim().split(/\s+/)[0] : "");
 
     if (eng) {
-      const [phasesRes, docsRes, delivRes, notesRes] = await Promise.all([
+      const [phasesRes, docsRes, delivRes, notesRes, certRes] = await Promise.all([
         supabase
           .from("engagement_phases")
           .select("position, title, status, completed_at")
@@ -142,11 +144,19 @@ export default function EngagementWorkspace({ orgId }: { orgId: string }) {
           .eq("engagement_id", eng.id)
           .order("posted_at", { ascending: false })
           .limit(5),
+        supabase
+          .from("faiir_certifications")
+          .select("id")
+          .eq("org_id", orgId)
+          .eq("status", "active")
+          .limit(1)
+          .maybeSingle(),
       ]);
       setPhases((phasesRes.data as Phase[]) ?? []);
       setDocs((docsRes.data as Doc[]) ?? []);
       setDeliverables((delivRes.data as Deliverable[]) ?? []);
       setNotes((notesRes.data as Note[]) ?? []);
+      setCertified(Boolean(certRes.data));
     }
     setLoading(false);
   }, [orgId]);
@@ -330,6 +340,21 @@ export default function EngagementWorkspace({ orgId }: { orgId: string }) {
           </div>
         )}
       </div>
+
+      {/* Close-of-engagement asks. Certified firms get the Share-the-win card
+          on the Certification page at the cert reveal; an engagement that
+          closes without a certification component gets it here instead, with
+          the FAIIR-certified directory ask hidden because it doesn't apply. */}
+      {engagement.status === "closed" && !certified && (
+        <div className="mb-6">
+          <h3 className="text-sm font-semibold text-[#1F1810] mb-3">Before you go</h3>
+          <ShareTheWin
+            engagementId={engagement.id}
+            firmName={org?.name ?? "your firm"}
+            certified={false}
+          />
+        </div>
+      )}
 
       {/* Quick links */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
