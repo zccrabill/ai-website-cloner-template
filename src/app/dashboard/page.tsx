@@ -2,10 +2,12 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import DashboardShell from "@/components/DashboardShell";
 import AdminDashboard from "@/components/AdminDashboard";
 import EngagementWorkspace from "@/components/EngagementWorkspace";
 import { supabase } from "@/lib/supabase";
+import { hasPendingAgreement } from "@/lib/engagementAgreement";
 import { getTier, OVERAGE_PRICE_PER_PAGE_USD } from "@/lib/tiers";
 import {
   FileCheck,
@@ -19,6 +21,7 @@ import {
 type Role = "member" | "admin" | "attorney" | null;
 
 export default function DashboardPage() {
+  const router = useRouter();
   // Role drives which view we render. null = still resolving.
   // 'member' (or any non-staff value) gets the existing member dashboard.
   // 'admin' / 'attorney' get the firm-operations view.
@@ -80,6 +83,20 @@ export default function DashboardPage() {
       .maybeSingle();
 
     if (seat?.org_id) {
+      // Before showing the workspace, gate on an unsigned engagement agreement:
+      // a client who hasn't signed is sent to the focused signing screen. Keep
+      // role null so the SMB widgets never flash while we redirect.
+      const { data: eng } = await supabase
+        .from("engagements")
+        .select("id, engagement_letter_signed_at")
+        .eq("org_id", seat.org_id)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      if (eng && (await hasPendingAgreement(eng.id, eng.engagement_letter_signed_at ?? null))) {
+        router.replace("/dashboard/agreement");
+        return;
+      }
       setEngagementOrgId(seat.org_id);
       setRole(memberRole);
       return;
@@ -110,7 +127,7 @@ export default function DashboardPage() {
     setWorkItemsUsed(
       typeof usageRes.data === "number" ? usageRes.data : 0
     );
-  }, []);
+  }, [router]);
 
   useEffect(() => {
     // loadDashboard awaits getSession before touching state, so all setState

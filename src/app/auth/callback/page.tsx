@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
+import { hasPendingAgreement } from "@/lib/engagementAgreement";
 
 export default function AuthCallbackPage() {
   const router = useRouter();
@@ -37,6 +38,19 @@ export default function AuthCallbackPage() {
             .maybeSingle();
 
           if (seat) {
+            // First stop for an engagement client who hasn't signed yet is the
+            // in-portal agreement — set a password, agree, and they're in.
+            const { data: eng } = await supabase
+              .from("engagements")
+              .select("id, engagement_letter_signed_at")
+              .eq("org_id", seat.org_id)
+              .order("created_at", { ascending: false })
+              .limit(1)
+              .maybeSingle();
+            if (eng && (await hasPendingAgreement(eng.id, eng.engagement_letter_signed_at ?? null))) {
+              router.push("/dashboard/agreement");
+              return;
+            }
             router.push("/dashboard");
             return;
           }
