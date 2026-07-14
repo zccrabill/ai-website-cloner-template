@@ -79,6 +79,7 @@ interface Deliverable {
   description: string | null;
   status: DeliverableStatus;
   released_at: string | null;
+  storage_path: string | null;
 }
 interface EngagementMember {
   email: string;
@@ -313,7 +314,7 @@ function ManagePanel({
       supabase.from("engagement_phases").select("id, position, title, status").eq("engagement_id", row.id).order("position"),
       supabase.from("engagement_documents").select("id, label, description, state, storage_path, uploaded_at").eq("engagement_id", row.id).order("position"),
       supabase.from("engagement_status_notes").select("id, body, author, posted_at").eq("engagement_id", row.id).order("posted_at", { ascending: false }),
-      supabase.from("deliverables").select("id, title, description, status, released_at").eq("engagement_id", row.id).order("created_at", { ascending: false }),
+      supabase.from("deliverables").select("id, title, description, status, released_at, storage_path").eq("engagement_id", row.id).order("created_at", { ascending: false }),
       supabase.rpc("admin_list_engagement_members", { p_engagement_id: row.id }),
     ]);
     setPhases((p.data as Phase[]) ?? []);
@@ -536,17 +537,63 @@ function ManagePanel({
                           {dl.status === "released"
                             ? `Released ${shortDate(dl.released_at)} — client can see this`
                             : "Draft — hidden from client"}
+                          {!dl.storage_path && (
+                            <span className="text-amber-600 font-medium"> · No file attached</span>
+                          )}
                         </p>
                       </div>
+                      {dl.storage_path && (
+                        <button
+                          type="button"
+                          disabled={busy}
+                          onClick={() => void openEngagementFile(dl.storage_path!)}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-[#1F1810]/15 text-[#1F1810] rounded-lg text-xs font-medium hover:border-[#C17832]/50 hover:text-[#C17832] transition-colors disabled:opacity-50"
+                        >
+                          View
+                        </button>
+                      )}
+                      <label className={`inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-[#1F1810]/15 text-[#1F1810] rounded-lg text-xs font-medium hover:border-[#C17832]/50 hover:text-[#C17832] transition-colors cursor-pointer ${busy ? "opacity-50 pointer-events-none" : ""}`}>
+                        {dl.storage_path ? "Replace file" : "Attach file"}
+                        <input
+                          type="file"
+                          className="hidden"
+                          disabled={busy}
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            e.target.value = "";
+                            if (!file) return;
+                            // Path MUST start with the engagement id — client read
+                            // access is scoped to <engagement_id>/... by storage RLS.
+                            const path = `${row.id}/deliverables/${dl.id}/${Date.now()}-${file.name}`;
+                            void run(async () => {
+                              const up = await supabase.storage
+                                .from("engagement-docs")
+                                .upload(path, file, { upsert: false });
+                              if (up.error) return up;
+                              return supabase
+                                .from("deliverables")
+                                .update({ storage_path: path })
+                                .eq("id", dl.id);
+                            });
+                          }}
+                        />
+                      </label>
                       {dl.status === "draft" && (
                         <button
                           type="button"
                           disabled={busy}
-                          onClick={() =>
-                            run(() =>
-                              supabase.rpc("admin_set_deliverable_released", { p_deliverable_id: dl.id })
+                          onClick={() => {
+                            if (
+                              !dl.storage_path &&
+                              !window.confirm(
+                                "This deliverable has no file attached — the client will see the card but have nothing to download. Release anyway?"
+                              )
                             )
-                          }
+                              return;
+                            void run(() =>
+                              supabase.rpc("admin_set_deliverable_released", { p_deliverable_id: dl.id })
+                            );
+                          }}
                           className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#C17832] text-white rounded-lg text-xs font-medium hover:bg-[#A8621F] transition-colors disabled:opacity-50"
                         >
                           <Send className="w-3 h-3" />
@@ -676,6 +723,7 @@ function AddDocForm({ engagementId, busy, run }: { engagementId: string; busy: b
 
 function PostNoteForm({ engagementId, busy, run }: { engagementId: string; busy: boolean; run: RunFn }) {
   const [body, setBody] = useState("");
+  const [notify, setNotify] = useState(false);
   return (
     <div className="space-y-2">
       <textarea
@@ -685,22 +733,37 @@ function PostNoteForm({ engagementId, busy, run }: { engagementId: string; busy:
         placeholder="Post a short note in your voice — the client sees this on their workspace."
         className="w-full px-3 py-2 bg-white border border-[#1F1810]/10 rounded-lg text-sm focus:outline-none focus:border-[#C17832]/50"
       />
-      <button
-        type="button"
-        disabled={busy || !body.trim()}
-        onClick={() =>
-          run(() =>
-            supabase.rpc("admin_post_status_note", {
-              p_engagement_id: engagementId,
-              p_body: body,
+      <div className="flex items-center justify-between gap-2">
+        <label className="flex items-center gap-1.5 text-xs text-[#6B5B4E] cursor-pointer select-none">
+          <input
+            type="checkbox"
+            checked={notify}
+            onChange={(e) => setNotify(e.target.checked)}
+            className="rounded border-[#1F1810]/20 text-[#C17832] focus:ring-[#C17832]/40"
+          />
+          Email the client this note
+        </label>
+        <button
+          type="button"
+          disabled={busy || !body.trim()}
+          onClick={() =>
+            run(() =>
+              supabase.rpc("admin_post_status_note", {
+                p_engagement_id: engagementId,
+                p_body: body,
+                p_notify: notify,
+              })
+            ).then(() => {
+              setBody("");
+              setNotify(false);
             })
-          ).then(() => setBody(""))
-        }
-        className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#1F1810] text-white rounded-lg text-xs font-medium hover:bg-[#C17832] transition-colors disabled:opacity-50"
-      >
-        <Send className="w-3.5 h-3.5" />
-        Post note
-      </button>
+          }
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#1F1810] text-white rounded-lg text-xs font-medium hover:bg-[#C17832] transition-colors disabled:opacity-50"
+        >
+          <Send className="w-3.5 h-3.5" />
+          Post note
+        </button>
+      </div>
     </div>
   );
 }
