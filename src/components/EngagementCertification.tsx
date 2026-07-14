@@ -5,6 +5,7 @@ import Image from "next/image";
 import { supabase } from "@/lib/supabase";
 import { useEngagementRef } from "@/lib/useEngagementRef";
 import { downloadCertificatePdf } from "@/lib/certificatePdf";
+import ShareTheWin from "@/components/ShareTheWin";
 import { Download, Copy, Check, ShieldCheck, Sparkles, Lock, Megaphone, Code } from "lucide-react";
 
 interface Certification {
@@ -261,7 +262,14 @@ export default function EngagementCertification() {
           </ul>
         </div>
 
-        {/* 5. For your web team — embed, demoted into a disclosure */}
+        {/* 5. Share the win — testimonial + marketing permissions (built into
+            every engagement's close: the ask happens here, at the celebration
+            moment, and the consent record lands in the DB) */}
+        {ref?.engagementId && (
+          <ShareTheWin engagementId={ref.engagementId} firmName={cert.firm_name} />
+        )}
+
+        {/* 6. For your web team — embed, demoted into a disclosure */}
         <details className="bg-white border border-[#1F1810]/10 rounded-lg shadow-[0_2px_8px_rgb(31_24_16/0.06)] p-5">
           <summary className="text-sm font-semibold text-[#1F1810] cursor-pointer flex items-center gap-2">
             <Code className="w-4 h-4 text-[#A89279]" />
