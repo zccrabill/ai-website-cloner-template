@@ -994,10 +994,20 @@ function ComplianceTab({
             comments).
           </li>
           <li>
-            <strong>Court orders:</strong> several D. Colo. judges maintain
-            AI-certification standing orders and sanctions for unverified
-            citations are now routine — check the assigned judge&apos;s
-            practice standards on every new matter and at reassignment.
+            <strong>D. Colo. AI standing orders (verified 7/2026):</strong>{" "}
+            Judge Wang — AI certification in <em>every filing</em> (eff.
+            12/1/2025); Judge Crews — certification in every substantive
+            motion, response &amp; reply (eff. 1/1/2026); Mag. Judge Prose —
+            certification per her 10/2024 order (consent vs. referral scope);
+            Mag. Judge Dominguez Braswell — guidance only, no certification.
+            No district-wide rule and no Colorado state-court or 10th Cir.
+            certification rule found — but always check the assigned judge&apos;s
+            practice standards at assignment and reassignment.
+          </li>
+          <li>
+            <strong>Colorado watch item:</strong> the Supreme Court&apos;s Legal
+            Technology Advisory Committee is due to propose statewide AI
+            guidance by Oct. 1, 2026 — recheck this card then.
           </li>
         </ul>
       </div>

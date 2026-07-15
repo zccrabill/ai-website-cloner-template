@@ -36,7 +36,9 @@ export interface DeadlineRule {
   /** "after" counts forward from the trigger; "before" counts backward. */
   direction: "after" | "before";
   /**
-   * Whether C.R.C.P. 6(e) / FRCP 6(d) mail-service days can apply. Only
+   * Whether FRCP 6(d) mail-service days can apply (federal only — C.R.C.P.
+   * 6(e) was REPEALED eff. 2012-01-01; Colorado state court gets no +3 for
+   * mail or e-service, and federal e-service lost its +3 in 2016). Only
    * meaningful for "after" periods that run from service.
    */
   serviceExtension?: boolean;
@@ -163,7 +165,7 @@ export function computeDeadline(opts: {
     due = addDays(triggerDate, rule.direction === "after" ? total : -total);
     steps.push(
       `${days} days ${rule.direction} ${triggerDate}` +
-        (mailDays ? ` + ${mailDays} days for service by mail (C.R.C.P. 6(e) / FRCP 6(d))` : "")
+        (mailDays ? ` + ${mailDays} days for service by mail (FRCP 6(d))` : "")
     );
   }
 
@@ -196,13 +198,22 @@ export const DEADLINE_RULES: DeadlineRule[] = [
     trigger: "Service of the summons and complaint",
     days: 21,
     direction: "after",
-    serviceExtension: true,
+    note: "No +3-day mail extension — C.R.C.P. 6(e) was repealed effective 2012. 35 days if served outside Colorado or by publication (12(a)(2)).",
+  },
+  {
+    id: "co_answer_out_of_state",
+    jurisdiction: "co_state",
+    name: "Answer — service outside Colorado / by publication",
+    ruleRef: "C.R.C.P. 12(a)(2)",
+    trigger: "Service of process",
+    days: 35,
+    direction: "after",
   },
   {
     id: "co_answer_after_denial",
     jurisdiction: "co_state",
     name: "Answer after Rule 12 motion denied",
-    ruleRef: "C.R.C.P. 12(a)",
+    ruleRef: "C.R.C.P. 12(a)(1)(A)",
     trigger: "Notice of the court's denial of the Rule 12 motion",
     days: 14,
     direction: "after",
@@ -215,15 +226,45 @@ export const DEADLINE_RULES: DeadlineRule[] = [
     trigger: "Filing of the motion",
     days: 21,
     direction: "after",
+    note: "Drops to 14 days if the motion was filed 42 days or less before trial.",
   },
   {
     id: "co_motion_reply",
     jurisdiction: "co_state",
-    name: "Reply in support of a motion",
+    name: "Reply in support of a motion (non-Rule 56)",
     ruleRef: "C.R.C.P. 121 § 1-15(1)(c)",
-    trigger: "Filing of the response",
+    trigger: "Filing of the responsive brief",
+    days: 7,
+    direction: "after",
+    note: "7 days for ordinary motions; Rule 56 replies get 14 days (use the summary-judgment reply entry).",
+  },
+  {
+    id: "co_sj_reply",
+    jurisdiction: "co_state",
+    name: "Reply in support of a Rule 56 motion",
+    ruleRef: "C.R.C.P. 121 § 1-15(1)(c)",
+    trigger: "Filing of the responsive brief",
     days: 14,
     direction: "after",
+  },
+  {
+    id: "co_discovery_responses",
+    jurisdiction: "co_state",
+    name: "Responses to interrogatories / RFPs / RFAs",
+    ruleRef: "C.R.C.P. 33, 34, 36",
+    trigger: "Service of the discovery requests",
+    days: 35,
+    direction: "after",
+  },
+  {
+    id: "co_amend_join",
+    jurisdiction: "co_state",
+    name: "Amend pleadings / join parties (latest)",
+    ruleRef: "C.R.C.P. 16(b)(8)",
+    trigger: "Case at issue",
+    days: 105,
+    direction: "after",
+    note: "15 weeks after at-issue (2015 amendment; the older 119-day figure is superseded). The CMO controls if it sets a different date.",
   },
   {
     id: "co_initial_disclosures",
@@ -285,10 +326,48 @@ export const DEADLINE_RULES: DeadlineRule[] = [
     id: "co_summary_judgment",
     jurisdiction: "co_state",
     name: "Summary judgment motion (latest filing)",
-    ruleRef: "C.R.C.P. 56(c)",
+    ruleRef: "C.R.C.P. 56(c) / 16(c)",
     trigger: "Trial date",
     days: 91,
     direction: "before",
+    note: "13 weeks before trial; a cross-motion may be filed up to 70 days (10 weeks) before trial.",
+  },
+  {
+    id: "co_sj_cross",
+    jurisdiction: "co_state",
+    name: "Cross-motion for summary judgment (latest filing)",
+    ruleRef: "C.R.C.P. 56(c)",
+    trigger: "Trial date",
+    days: 70,
+    direction: "before",
+  },
+  {
+    id: "co_cre702",
+    jurisdiction: "co_state",
+    name: "C.R.E. 702 motions (latest filing)",
+    ruleRef: "C.R.C.P. 16(c)",
+    trigger: "Trial date",
+    days: 70,
+    direction: "before",
+  },
+  {
+    id: "co_motions_in_limine",
+    jurisdiction: "co_state",
+    name: "Pretrial motions / motions in limine (latest filing)",
+    ruleRef: "C.R.C.P. 16(c)",
+    trigger: "Trial date",
+    days: 35,
+    direction: "before",
+  },
+  {
+    id: "co_posttrial_59",
+    jurisdiction: "co_state",
+    name: "Post-trial motion (C.R.C.P. 59)",
+    ruleRef: "C.R.C.P. 59(a)",
+    trigger: "Entry of judgment",
+    days: 14,
+    direction: "after",
+    note: "An undecided Rule 59 motion is deemed denied 63 days after filing (59(j)); the appeal clock runs from that date.",
   },
   {
     id: "co_notice_of_appeal",
@@ -349,23 +428,24 @@ export const DEADLINE_RULES: DeadlineRule[] = [
     days: 21,
     direction: "after",
     serviceExtension: true,
-    note: "60 days if service was waived under Rule 4(d); 60/90-day periods apply to the United States.",
+    note: "United States / its agencies / officers: 60 days (12(a)(2)-(3)). Waived service: 60 days after the waiver request was sent (90 if sent outside the U.S.). Mail service adds 3 days (6(d)); electronic service adds nothing.",
   },
   {
     id: "fed_motion_response",
     jurisdiction: "d_colo",
     name: "Response to a motion",
     ruleRef: "D.C.COLO.LCivR 7.1(d)",
-    trigger: "Filing of the motion",
+    trigger: "Service of the motion",
     days: 21,
     direction: "after",
+    note: "Runs from SERVICE of the motion (unlike C.R.C.P. 121 § 1-15, which runs from filing).",
   },
   {
     id: "fed_motion_reply",
     jurisdiction: "d_colo",
     name: "Reply in support of a motion",
     ruleRef: "D.C.COLO.LCivR 7.1(d)",
-    trigger: "Filing of the response",
+    trigger: "Service of the response",
     days: 14,
     direction: "after",
   },
