@@ -739,6 +739,29 @@ function DeadlinesTab({
 // Drafts tab
 // ---------------------------------------------------------------------------
 
+/**
+ * Sample AI-use certification per the verified D. Colo. standing orders
+ * (Wang 12/2025 — every filing; Crews 1/2026 — substantive motions; Prose
+ * 10/2024). Two-prong form: no-AI, or AI-with-human-verification. SAMPLE
+ * LANGUAGE ONLY — always conform it to the assigned judge's current order
+ * before filing.
+ */
+function aiCertificationText(matter: Matter, d: Draft): string {
+  const judge = matter.judge?.trim() || "[ASSIGNED JUDGE]";
+  const header =
+    "CERTIFICATION REGARDING THE USE OF GENERATIVE ARTIFICIAL INTELLIGENCE\n\n";
+  if (d.ai_assisted) {
+    return (
+      header +
+      `Pursuant to the standing order of ${judge} regarding the use of generative artificial intelligence in court filings, the undersigned certifies that portions of this document were drafted with the assistance of a generative artificial intelligence tool. The undersigned personally reviewed the entire document for accuracy, and every citation to legal authority contained herein has been verified against the official source as citing an actual, existing case, statute, rule, or other authority, and not fictitious authority. The undersigned assumes full responsibility for the contents of this filing.`
+    );
+  }
+  return (
+    header +
+    `Pursuant to the standing order of ${judge} regarding the use of generative artificial intelligence in court filings, the undersigned certifies that no portion of this document was drafted by generative artificial intelligence.`
+  );
+}
+
 function DraftsTab({
   matter,
   drafts,
@@ -887,17 +910,35 @@ function DraftsTab({
                     : ""}
                 </p>
               </div>
-              <select
-                value={d.status}
-                onChange={(e) => setStatus(d, e.target.value as DraftStatus)}
-                className="px-2 py-1 border border-[#1F1810]/10 rounded-lg text-xs bg-white shrink-0"
-              >
-                {DRAFT_STATUSES.map((s) => (
-                  <option key={s.value} value={s.value}>
-                    {s.label}
-                  </option>
-                ))}
-              </select>
+              <div className="flex items-center gap-2 shrink-0">
+                <button
+                  onClick={() => {
+                    void navigator.clipboard
+                      .writeText(aiCertificationText(matter, d))
+                      .then(() =>
+                        alert(
+                          "AI certification copied (sample language — conform it to the assigned judge's current standing order before filing).\n\nD. Colo.: Wang requires it in EVERY filing; Crews in substantive motions/responses/replies; Prose per her 10/2024 order."
+                        )
+                      );
+                  }}
+                  title="Copy an AI-use certification block for this document"
+                  className="flex items-center gap-1 px-2 py-1 text-[11px] font-medium text-[#6B5B4E] border border-[#1F1810]/10 rounded hover:border-[#C17832]/40 hover:text-[#C17832] transition-colors"
+                >
+                  <Copy className="w-3 h-3" />
+                  AI cert
+                </button>
+                <select
+                  value={d.status}
+                  onChange={(e) => setStatus(d, e.target.value as DraftStatus)}
+                  className="px-2 py-1 border border-[#1F1810]/10 rounded-lg text-xs bg-white"
+                >
+                  {DRAFT_STATUSES.map((s) => (
+                    <option key={s.value} value={s.value}>
+                      {s.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
             {d.ai_assisted && !d.attorney_reviewed_at && (
               <div className="mt-2 flex items-center justify-between gap-2 bg-[#C17832]/[0.06] rounded-lg px-3 py-2">

@@ -11,6 +11,8 @@
  *   - faiir.intake_received → notify Zachariah
  *   - status_note.posted    → notify the engagement's client seat(s) with the
  *                             attorney's note + a CTA to their workspace.
+ *   - deliverable.released  → notify the engagement's client seat(s) that a
+ *                             deliverable is ready in their workspace.
  *
  * Request shape:
  *   { event_type, user_id?, member_email?, data? }
@@ -56,7 +58,8 @@ type EventType =
   | "draft.sent"
   | "checkout.paid"
   | "faiir.intake_received"
-  | "status_note.posted";
+  | "status_note.posted"
+  | "deliverable.released";
 
 interface IncomingPayload {
   event_type: EventType;
@@ -348,6 +351,72 @@ async function statusNotePostedSpec(payload: IncomingPayload): Promise<EmailSpec
   };
 }
 
+// deliverable.released — emails the engagement's client seat(s) that a new
+// deliverable is visible in their workspace. Deliverable is fetched by id
+// (source of truth), so the request only needs { engagement_id, deliverable_id }.
+async function deliverableReleasedSpec(payload: IncomingPayload): Promise<EmailSpec | null> {
+  const d = payload.data ?? {};
+  const engagementId = typeof d.engagement_id === "string" ? d.engagement_id : null;
+  const deliverableId = typeof d.deliverable_id === "string" ? d.deliverable_id : null;
+  if (!engagementId || !deliverableId) {
+    console.error("[notify-event] deliverable.released missing engagement_id/deliverable_id");
+    return null;
+  }
+  const { data: deliverable } = await supabase
+    .from("deliverables")
+    .select("title, description, status")
+    .eq("id", deliverableId)
+    .maybeSingle();
+  if (!deliverable || deliverable.status !== "released") {
+    console.error(`[notify-event] deliverable.released ${deliverableId} not found or not released`);
+    return null;
+  }
+  const { data: eng } = await supabase
+    .from("engagements")
+    .select("title, org_id")
+    .eq("id", engagementId)
+    .maybeSingle();
+  if (!eng?.org_id) {
+    console.error(`[notify-event] deliverable.released engagement ${engagementId} has no org`);
+    return null;
+  }
+  const { data: members } = await supabase
+    .from("org_members")
+    .select("email, status")
+    .eq("org_id", eng.org_id)
+    .in("status", ["active", "invited"]);
+  const emails = (members ?? [])
+    .map((m) => (m as { email?: string }).email)
+    .filter((e): e is string => typeof e === "string" && e.length > 0);
+  if (emails.length === 0) {
+    console.error(`[notify-event] deliverable.released no recipients for org ${eng.org_id}`);
+    return null;
+  }
+  const title = escapeHtml(deliverable.title);
+  const description = deliverable.description
+    ? `<p style="color:#6B5B4E;font-size:14px;line-height:1.6;margin-bottom:20px;">${escapeHtml(deliverable.description)}</p>`
+    : "";
+  const body = `
+    <p style="color:#3F2A1A;font-size:16px;line-height:1.7;margin-bottom:12px;">A new deliverable is ready in your workspace:</p>
+    <div style="background:#FAF8F5;border:1px solid rgba(31,24,16,0.08);border-radius:12px;padding:20px;margin-bottom:16px;">
+      <p style="color:#1F1810;font-size:15px;font-weight:600;margin:0;">${title}</p>
+    </div>
+    ${description}
+    <p style="margin:24px 0;">
+      <a href="${escapeHtml(DASHBOARD_URL)}/deliverables" style="display:inline-block;background:#1F1810;color:white;text-decoration:none;padding:12px 20px;border-radius:8px;font-size:14px;font-weight:600;">View your deliverable →</a>
+    </p>
+    <p style="color:#6B5B4E;font-size:14px;line-height:1.6;margin-top:24px;">Reply with any questions — it goes straight to me.</p>
+    <p style="margin-top:24px;color:#1F1810;">— Zachariah Crabill<br/><span style="color:#A89279;font-size:13px;">Founder &amp; Attorney, Available Law</span></p>
+  `;
+  return {
+    from: FROM_ZACHARIAH,
+    to: emails,
+    reply_to: ADMIN_EMAIL,
+    subject: `Your deliverable is ready: ${deliverable.title} — Available Law`,
+    html: shell("A new deliverable is ready", body),
+  };
+}
+
 /* -------------------------------------------------------------------------- */
 /* Dispatcher                                                                 */
 /* -------------------------------------------------------------------------- */
@@ -375,6 +444,8 @@ async function buildEmail(payload: IncomingPayload): Promise<EmailSpec | null> {
       return faiirIntakeReceivedTemplate(payload);
     case "status_note.posted":
       return await statusNotePostedSpec(payload);
+    case "deliverable.released":
+      return await deliverableReleasedSpec(payload);
     default:
       console.warn("[notify-event] unknown event_type:", payload.event_type);
       return null;

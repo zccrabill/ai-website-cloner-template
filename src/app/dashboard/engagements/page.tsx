@@ -30,6 +30,7 @@ import {
   FileText,
   Send,
   Mail,
+  BadgeCheck,
 } from "lucide-react";
 
 type EngagementStatus = "draft" | "invited" | "active" | "closed";
@@ -80,6 +81,14 @@ interface Deliverable {
   status: DeliverableStatus;
   released_at: string | null;
   storage_path: string | null;
+}
+interface Certification {
+  id: string;
+  certificate_number: string;
+  tier: string;
+  issued_at: string;
+  expires_at: string;
+  status: string;
 }
 interface EngagementMember {
   email: string;
@@ -305,25 +314,28 @@ function ManagePanel({
   const [notes, setNotes] = useState<Note[]>([]);
   const [deliverables, setDeliverables] = useState<Deliverable[]>([]);
   const [members, setMembers] = useState<EngagementMember[]>([]);
+  const [certs, setCerts] = useState<Certification[]>([]);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
   const [panelError, setPanelError] = useState<string | null>(null);
 
   const loadDetail = useCallback(async () => {
-    const [p, d, n, dl, m] = await Promise.all([
+    const [p, d, n, dl, m, c] = await Promise.all([
       supabase.from("engagement_phases").select("id, position, title, status").eq("engagement_id", row.id).order("position"),
       supabase.from("engagement_documents").select("id, label, description, state, storage_path, uploaded_at").eq("engagement_id", row.id).order("position"),
       supabase.from("engagement_status_notes").select("id, body, author, posted_at").eq("engagement_id", row.id).order("posted_at", { ascending: false }),
       supabase.from("deliverables").select("id, title, description, status, released_at, storage_path").eq("engagement_id", row.id).order("created_at", { ascending: false }),
       supabase.rpc("admin_list_engagement_members", { p_engagement_id: row.id }),
+      supabase.from("faiir_certifications").select("id, certificate_number, tier, issued_at, expires_at, status").eq("org_id", row.org_id).order("issued_at", { ascending: false }),
     ]);
     setPhases((p.data as Phase[]) ?? []);
     setDocs((d.data as DocCard[]) ?? []);
     setNotes((n.data as Note[]) ?? []);
     setDeliverables((dl.data as Deliverable[]) ?? []);
     setMembers((m.data as EngagementMember[]) ?? []);
+    setCerts((c.data as Certification[]) ?? []);
     setLoading(false);
-  }, [row.id]);
+  }, [row.id, row.org_id]);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -590,8 +602,14 @@ function ManagePanel({
                               )
                             )
                               return;
+                            const notify = window.confirm(
+                              "Email the client that this deliverable is ready?\n\nOK — release and send the notification email.\nCancel — release silently (no email)."
+                            );
                             void run(() =>
-                              supabase.rpc("admin_set_deliverable_released", { p_deliverable_id: dl.id })
+                              supabase.rpc("admin_set_deliverable_released", {
+                                p_deliverable_id: dl.id,
+                                p_notify: notify,
+                              })
                             );
                           }}
                           className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#C17832] text-white rounded-lg text-xs font-medium hover:bg-[#A8621F] transition-colors disabled:opacity-50"
@@ -607,6 +625,39 @@ function ManagePanel({
                   )}
                 </ul>
                 <AddDeliverableForm engagementId={row.id} busy={busy} run={run} />
+              </Block>
+
+              {/* Certification */}
+              <Block title="Certification">
+                <ul className="space-y-2 mb-3">
+                  {certs.map((c) => {
+                    const expired = new Date(c.expires_at) < new Date();
+                    return (
+                      <li key={c.id} className="flex items-center gap-3 bg-white border border-[#1F1810]/10 rounded-lg shadow-[0_2px_8px_rgb(31_24_16/0.06)] p-3">
+                        <BadgeCheck className={`w-4 h-4 flex-shrink-0 ${c.status === "active" && !expired ? "text-[#7A8B6F]" : "text-[#A89279]"}`} />
+                        <div className="min-w-0 flex-1">
+                          <p className="text-sm font-medium text-[#1F1810]">{c.certificate_number}</p>
+                          <p className="text-[10px] text-[#A89279]">
+                            {c.tier} · issued {shortDate(c.issued_at)} · {expired ? "expired" : "expires"} {shortDate(c.expires_at)}
+                            {c.status !== "active" && ` · ${c.status}`}
+                          </p>
+                        </div>
+                      </li>
+                    );
+                  })}
+                  {certs.length === 0 && (
+                    <li className="text-xs text-[#A89279]">
+                      No certification issued yet — the client&apos;s Certification page shows the locked anticipation state.
+                    </li>
+                  )}
+                </ul>
+                <IssueCertificationForm
+                  orgId={row.org_id}
+                  engagementId={row.id}
+                  defaultFirmName={row.org_name}
+                  busy={busy}
+                  run={run}
+                />
               </Block>
             </>
           )}
@@ -772,6 +823,7 @@ function AddDeliverableForm({ engagementId, busy, run }: { engagementId: string;
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [releaseNow, setReleaseNow] = useState(false);
+  const [notifyNow, setNotifyNow] = useState(false);
   return (
     <div className="bg-white border border-dashed border-[#1F1810]/15 rounded-lg p-3 space-y-2">
       <input
@@ -789,37 +841,179 @@ function AddDeliverableForm({ engagementId, busy, run }: { engagementId: string;
         className="w-full px-3 py-2 bg-white border border-[#1F1810]/10 rounded-lg text-xs focus:outline-none focus:border-[#C17832]/50"
       />
       <div className="flex items-center justify-between">
-        <label className="inline-flex items-center gap-2 text-xs text-[#6B5B4E] cursor-pointer">
-          <input
-            type="checkbox"
-            checked={releaseNow}
-            onChange={(e) => setReleaseNow(e.target.checked)}
-            className="accent-[#C17832]"
-          />
-          Release to client now
-        </label>
+        <div className="flex items-center gap-4">
+          <label className="inline-flex items-center gap-2 text-xs text-[#6B5B4E] cursor-pointer">
+            <input
+              type="checkbox"
+              checked={releaseNow}
+              onChange={(e) => {
+                setReleaseNow(e.target.checked);
+                if (!e.target.checked) setNotifyNow(false);
+              }}
+              className="accent-[#C17832]"
+            />
+            Release to client now
+          </label>
+          {releaseNow && (
+            <label className="inline-flex items-center gap-2 text-xs text-[#6B5B4E] cursor-pointer">
+              <input
+                type="checkbox"
+                checked={notifyNow}
+                onChange={(e) => setNotifyNow(e.target.checked)}
+                className="accent-[#C17832]"
+              />
+              Email the client
+            </label>
+          )}
+        </div>
         <button
           type="button"
           disabled={busy || !title.trim()}
           onClick={() =>
-            run(() =>
-              supabase.rpc("admin_add_deliverable", {
+            run(async () => {
+              // Releasing WITH notification is a two-step: stage first, then
+              // release through admin_set_deliverable_released so the same
+              // notify rail fires as for the standalone Release button.
+              if (releaseNow && notifyNow) {
+                const added = await supabase.rpc("admin_add_deliverable", {
+                  p_engagement_id: engagementId,
+                  p_title: title,
+                  p_description: description || null,
+                  p_phase_id: null,
+                  p_release: false,
+                });
+                if (added.error) return added;
+                const id = (added.data as { id?: string } | null)?.id;
+                if (!id) return { error: { message: "Deliverable created but no id returned — release it manually." } };
+                return supabase.rpc("admin_set_deliverable_released", {
+                  p_deliverable_id: id,
+                  p_notify: true,
+                });
+              }
+              return supabase.rpc("admin_add_deliverable", {
                 p_engagement_id: engagementId,
                 p_title: title,
                 p_description: description || null,
                 p_phase_id: null,
                 p_release: releaseNow,
-              })
-            ).then(() => {
+              });
+            }).then(() => {
               setTitle("");
               setDescription("");
               setReleaseNow(false);
+              setNotifyNow(false);
             })
           }
           className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#1F1810] text-white rounded-lg text-xs font-medium hover:bg-[#C17832] transition-colors disabled:opacity-50"
         >
           <Plus className="w-3.5 h-3.5" />
           Add
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function IssueCertificationForm({
+  orgId,
+  engagementId,
+  defaultFirmName,
+  busy,
+  run,
+}: {
+  orgId: string;
+  engagementId: string;
+  defaultFirmName: string;
+  busy: boolean;
+  run: RunFn;
+}) {
+  const [open, setOpen] = useState(false);
+  const [firmName, setFirmName] = useState(defaultFirmName);
+  const [tier, setTier] = useState("FAIIR Starter Assessment");
+  const [months, setMonths] = useState(12);
+
+  if (!open) {
+    return (
+      <button
+        type="button"
+        disabled={busy}
+        onClick={() => setOpen(true)}
+        className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-[#7A8B6F]/40 text-[#7A8B6F] rounded-lg text-xs font-medium hover:bg-[#7A8B6F]/10 transition-colors disabled:opacity-50"
+      >
+        <BadgeCheck className="w-3.5 h-3.5" />
+        Issue certification…
+      </button>
+    );
+  }
+
+  return (
+    <div className="bg-white border border-dashed border-[#7A8B6F]/40 rounded-lg p-3 space-y-2">
+      <p className="text-[11px] text-[#6B5B4E]">
+        The firm name appears on the certificate exactly as entered (use the
+        legal entity name if that&apos;s what the deliverable should show).
+        Number is auto-assigned (FAIIR-YYYY-NNNN).
+      </p>
+      <input
+        type="text"
+        value={firmName}
+        onChange={(e) => setFirmName(e.target.value)}
+        placeholder="Firm name as it should appear on the certificate"
+        className="w-full px-3 py-2 bg-white border border-[#1F1810]/10 rounded-lg text-sm focus:outline-none focus:border-[#7A8B6F]/50"
+      />
+      <div className="flex items-center gap-2">
+        <input
+          type="text"
+          value={tier}
+          onChange={(e) => setTier(e.target.value)}
+          placeholder="Tier (e.g. FAIIR Starter Assessment)"
+          className="flex-1 px-3 py-2 bg-white border border-[#1F1810]/10 rounded-lg text-xs focus:outline-none focus:border-[#7A8B6F]/50"
+        />
+        <label className="inline-flex items-center gap-1.5 text-xs text-[#6B5B4E]">
+          Valid
+          <input
+            type="number"
+            min={1}
+            max={36}
+            value={months}
+            onChange={(e) => setMonths(Math.max(1, Math.min(36, Number(e.target.value) || 12)))}
+            className="w-14 px-2 py-2 bg-white border border-[#1F1810]/10 rounded-lg text-xs focus:outline-none focus:border-[#7A8B6F]/50"
+          />
+          mo
+        </label>
+      </div>
+      <div className="flex items-center justify-end gap-2">
+        <button
+          type="button"
+          disabled={busy}
+          onClick={() => setOpen(false)}
+          className="px-3 py-1.5 text-xs font-medium text-[#6B5B4E] hover:text-[#1F1810] transition-colors"
+        >
+          Cancel
+        </button>
+        <button
+          type="button"
+          disabled={busy || !firmName.trim() || !tier.trim()}
+          onClick={() => {
+            if (
+              !window.confirm(
+                `Issue the certification to "${firmName.trim()}"?\n\nThe client's Certification page unlocks immediately — they can download the certificate PDF and share kit as soon as this succeeds.`
+              )
+            )
+              return;
+            void run(() =>
+              supabase.rpc("admin_issue_certification", {
+                p_org_id: orgId,
+                p_engagement_id: engagementId,
+                p_firm_name: firmName.trim(),
+                p_tier: tier.trim(),
+                p_valid_months: months,
+              })
+            ).then(() => setOpen(false));
+          }}
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#7A8B6F] text-white rounded-lg text-xs font-medium hover:bg-[#66755D] transition-colors disabled:opacity-50"
+        >
+          <BadgeCheck className="w-3.5 h-3.5" />
+          Issue certification
         </button>
       </div>
     </div>
