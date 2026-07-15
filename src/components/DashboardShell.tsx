@@ -23,6 +23,7 @@ import {
   Award,
   ListChecks,
   BadgeCheck,
+  Scale,
 } from "lucide-react";
 
 interface UserData {
@@ -52,11 +53,29 @@ const sidebarItems: {
   { icon: User, label: "My Account", href: "/dashboard/account" },
 ];
 
-const adminItems = [
-  { icon: Users, label: "Clients", href: "/dashboard/clients" },
-  { icon: Briefcase, label: "Engagements", href: "/dashboard/engagements" },
-  { icon: ShieldCheck, label: "Review Queue", href: "/dashboard/review" },
-  { icon: Activity, label: "AI Usage", href: "/dashboard/usage" },
+// Attorney nav, grouped by venture so it's obvious which business each
+// surface belongs to: Available Law (the firm — its clients, litigation
+// matters, and the Ava product's oversight surfaces) vs. FAIIR (the AI
+// consulting practice and its engagement workspaces).
+const adminSections: {
+  heading: string;
+  items: { icon: typeof LayoutDashboard; label: string; href: string }[];
+}[] = [
+  {
+    heading: "Available Law · Firm",
+    items: [
+      { icon: Users, label: "Firm Clients", href: "/dashboard/clients" },
+      { icon: Scale, label: "Litigation Matters", href: "/dashboard/litigation" },
+      { icon: ShieldCheck, label: "Ava — Review Queue", href: "/dashboard/review" },
+      { icon: Activity, label: "Ava — AI Usage", href: "/dashboard/usage" },
+    ],
+  },
+  {
+    heading: "FAIIR · Consulting",
+    items: [
+      { icon: Briefcase, label: "FAIIR Engagements", href: "/dashboard/engagements" },
+    ],
+  },
 ];
 
 // FAIIR engagement clients get their own portal nav: their workspace is the
@@ -250,31 +269,35 @@ export default function DashboardShell({
               );
             })}
 
-          {isAdmin && (
-            <div className="pt-4 mt-4 border-t border-[#1F1810]/8">
-              <p className="px-4 mb-2 text-[10px] font-semibold text-[#A89279] uppercase tracking-widest">
-                Attorney
-              </p>
-              {adminItems.map((item) => {
-                const IconComponent = item.icon;
-                const isActive = pathname === item.href;
-                return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all ${
-                      isActive
-                        ? "bg-[#7A8B6F]/10 text-[#7A8B6F] border border-[#7A8B6F]/20"
-                        : "text-[#6B5B4E] hover:bg-[#F5F0EB] hover:text-[#1F1810]"
-                    }`}
-                  >
-                    <IconComponent className="w-5 h-5" />
-                    <span>{item.label}</span>
-                  </Link>
-                );
-              })}
-            </div>
-          )}
+          {isAdmin &&
+            adminSections.map((section) => (
+              <div
+                key={section.heading}
+                className="pt-4 mt-4 border-t border-[#1F1810]/8"
+              >
+                <p className="px-4 mb-2 text-[10px] font-semibold text-[#A89279] uppercase tracking-widest">
+                  {section.heading}
+                </p>
+                {section.items.map((item) => {
+                  const IconComponent = item.icon;
+                  const isActive = pathname === item.href;
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all ${
+                        isActive
+                          ? "bg-[#7A8B6F]/10 text-[#7A8B6F] border border-[#7A8B6F]/20"
+                          : "text-[#6B5B4E] hover:bg-[#F5F0EB] hover:text-[#1F1810]"
+                      }`}
+                    >
+                      <IconComponent className="w-5 h-5" />
+                      <span>{item.label}</span>
+                    </Link>
+                  );
+                })}
+              </div>
+            ))}
         </nav>
 
         <div className="p-4 border-t border-[#1F1810]/8">
