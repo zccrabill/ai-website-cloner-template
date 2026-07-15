@@ -58,6 +58,11 @@ export default function ReviewQueuePage() {
   const [attorneyNotes, setAttorneyNotes] = useState("");
   const [savingAction, setSavingAction] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  // Exhibit B attestation gate: the DB blocks status='sent' unless an
+  // attestation matching the current draft_content hash exists, so Approve &
+  // Send opens this modal instead of releasing directly.
+  const [showAttest, setShowAttest] = useState(false);
+  const [attestChecked, setAttestChecked] = useState(false);
   // Client usage snapshot for the currently opened draft. Loaded lazily
   // when the attorney clicks into a draft so we can show an overage banner
   // and tag the resulting usage_event correctly.
@@ -175,6 +180,8 @@ export default function ReviewQueuePage() {
     setAttorneyNotes("");
     setClientUsage(null);
     setPageCount(1);
+    setShowAttest(false);
+    setAttestChecked(false);
   };
 
   const saveDraft = async () => {
@@ -205,13 +212,38 @@ export default function ReviewQueuePage() {
     const {
       data: { session },
     } = await supabase.auth.getSession();
-    const now = new Date().toISOString();
-    const { error: upErr } = await supabase
+
+    // 1. Persist the reviewed content exactly as attested — the DB gate
+    //    compares the attestation hash against the row's current content.
+    const { error: saveErr } = await supabase
       .from("drafts")
       .update({
         draft_content: editedContent,
         attorney_notes: attorneyNotes,
         attorney_id: session?.user?.id ?? null,
+      })
+      .eq("id", selectedDraft.id);
+    if (saveErr) {
+      setSavingAction(null);
+      setError(saveErr.message);
+      return;
+    }
+
+    // 2. Record the Exhibit B attestation (server-side hash of saved content).
+    const { error: attErr } = await supabase.rpc("attest_draft", {
+      p_draft_id: selectedDraft.id,
+    });
+    if (attErr) {
+      setSavingAction(null);
+      setError(`Attestation failed — draft not sent: ${attErr.message}`);
+      return;
+    }
+
+    // 3. Release. The drafts_release_gate trigger verifies the attestation.
+    const now = new Date().toISOString();
+    const { error: upErr } = await supabase
+      .from("drafts")
+      .update({
         status: "sent",
         reviewed_at: now,
         sent_at: now,
@@ -688,23 +720,100 @@ export default function ReviewQueuePage() {
                     {savingAction === "saving" ? "Saving…" : "Save Edits"}
                   </button>
                   <button
-                    onClick={approveAndSend}
+                    onClick={() => {
+                      setAttestChecked(false);
+                      setShowAttest(true);
+                    }}
                     disabled={!!savingAction}
                     className="px-5 py-2.5 bg-[#7A8B6F] text-white rounded-lg text-sm font-medium hover:bg-[#1F1810] transition-all inline-flex items-center gap-2 disabled:opacity-50"
                   >
-                    {savingAction === "sending" ? (
-                      <>
-                        <Loader2 className="w-4 h-4 animate-spin" /> Sending…
-                      </>
-                    ) : (
-                      <>
-                        <Send className="w-4 h-4" /> Approve &amp; Send
-                      </>
-                    )}
+                    <Send className="w-4 h-4" /> Approve &amp; Send
                   </button>
                 </div>
               </div>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* Attorney Review Attestation (Exhibit B) — recorded via attest_draft()
+          with a server-side hash of the saved content; the database refuses
+          the release without it. */}
+      {selectedDraft && showAttest && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-[#1F1810]/70 backdrop-blur-sm">
+          <div className="bg-[#FAF8F5] rounded-2xl shadow-2xl w-full max-w-lg p-6">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 rounded-xl bg-[#7A8B6F]/15 flex items-center justify-center flex-shrink-0">
+                <ShieldCheck className="w-5 h-5 text-[#7A8B6F]" />
+              </div>
+              <div>
+                <h3 className="text-lg font-heading text-[#1F1810]">
+                  Attorney Review Attestation
+                </h3>
+                <p className="text-xs text-[#6B5B4E]">
+                  Recorded with timestamp and document hash before release.
+                </p>
+              </div>
+            </div>
+
+            <div className="bg-white border border-[#1F1810]/10 rounded-lg p-4 text-sm text-[#1F1810] space-y-2 mb-4">
+              <p>I attest that:</p>
+              <ol className="list-decimal pl-5 space-y-1 text-[#3D3226]">
+                <li>I have reviewed this document in its entirety;</li>
+                <li>
+                  I have verified every citation to legal authority in it
+                  against an official source, and verified factual assertions
+                  against the source documents, as the firm&apos;s Generative
+                  AI Use &amp; Verification Policy requires;
+                </li>
+                <li>
+                  I have exercised my independent professional judgment as to
+                  its content and its suitability for this client&apos;s
+                  matter; and
+                </li>
+                <li>
+                  I take professional responsibility for this document as the
+                  Responsible Attorney.
+                </li>
+              </ol>
+            </div>
+
+            <label className="flex items-start gap-3 mb-5 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={attestChecked}
+                onChange={(e) => setAttestChecked(e.target.checked)}
+                className="mt-0.5 w-4 h-4 accent-[#7A8B6F]"
+              />
+              <span className="text-sm font-medium text-[#1F1810]">
+                I so attest.
+              </span>
+            </label>
+
+            <div className="flex items-center justify-end gap-2">
+              <button
+                onClick={() => setShowAttest(false)}
+                disabled={!!savingAction}
+                className="px-4 py-2.5 text-sm text-[#6B5B4E] hover:text-[#1F1810] font-medium disabled:opacity-50"
+              >
+                Back to review
+              </button>
+              <button
+                onClick={approveAndSend}
+                disabled={!attestChecked || !!savingAction}
+                className="px-5 py-2.5 bg-[#7A8B6F] text-white rounded-lg text-sm font-medium hover:bg-[#1F1810] transition-all inline-flex items-center gap-2 disabled:opacity-50"
+              >
+                {savingAction === "sending" ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" /> Sending…
+                  </>
+                ) : (
+                  <>
+                    <Send className="w-4 h-4" /> Attest &amp; Send
+                  </>
+                )}
+              </button>
+            </div>
           </div>
         </div>
       )}
