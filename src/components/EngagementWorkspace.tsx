@@ -347,7 +347,7 @@ export default function EngagementWorkspace({ orgId }: { orgId: string }) {
           the FAIIR-certified directory ask hidden because it doesn't apply. */}
       {engagement.status === "closed" && !certified && (
         <div className="mb-6">
-          <h3 className="text-sm font-semibold text-[#1F1810] mb-3">Before you go</h3>
+          <h3 className="text-sm font-semibold text-[#1F1810] mb-3">As we wrap up</h3>
           <ShareTheWin
             engagementId={engagement.id}
             firmName={org?.name ?? "your firm"}

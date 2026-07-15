@@ -106,30 +106,48 @@ export default function EngagementCertification() {
   }
 
   // ---- Not yet certified: the anticipation state ----
+  // An engagement can also CLOSE without a certification component (e.g. a
+  // policy-only engagement). Promising a cert "at the finish line" would be
+  // wrong there — the finish line has passed — so the copy becomes an honest
+  // open door instead.
   if (!cert) {
+    const wrapped = ref?.status === "closed";
     return (
       <div>
         <div className="mb-8">
           <p className="text-[10px] font-semibold tracking-[0.2em] uppercase text-[#C17832] mb-2">
             FAIIR Certification
           </p>
-          <h2 className="text-3xl font-bold text-[#1F1810] mb-1">Your certification</h2>
-          <p className="text-[#6B5B4E]">Earned on completion of your assessment — here is what is waiting.</p>
+          <h2 className="text-3xl font-bold text-[#1F1810] mb-1">
+            {wrapped ? "Certification — an open door" : "Your certification"}
+          </h2>
+          <p className="text-[#6B5B4E]">
+            {wrapped
+              ? "Your engagement completed without a certification component — here is what it would add."
+              : "Earned on completion of your assessment — here is what is waiting."}
+          </p>
         </div>
 
         <div className="bg-white border border-[#1F1810]/10 rounded-2xl shadow-[0_2px_8px_rgb(31_24_16/0.06)] p-10 text-center">
           <div className="relative inline-block mb-5">
             <Image src="/images/faiir-logo.png" alt="FAIIR seal" width={120} height={120} className="object-contain opacity-30 grayscale" />
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="w-10 h-10 rounded-full bg-white/80 border border-[#1F1810]/10 flex items-center justify-center">
-                <Lock className="w-5 h-5 text-[#A89279]" />
+            {!wrapped && (
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="w-10 h-10 rounded-full bg-white/80 border border-[#1F1810]/10 flex items-center justify-center">
+                  <Lock className="w-5 h-5 text-[#A89279]" />
+                </div>
               </div>
-            </div>
+            )}
           </div>
-          <h3 className="text-lg font-semibold text-[#1F1810]">Certification unlocks at the finish line</h3>
+          <h3 className="text-lg font-semibold text-[#1F1810]">
+            {wrapped
+              ? "Earned through a FAIIR Assessment"
+              : "Certification unlocks at the finish line"}
+          </h3>
           <p className="text-sm text-[#6B5B4E] mt-2 max-w-md mx-auto">
-            When your engagement completes and your attorney issues your certification, this page becomes your
-            certificate, your seal, and a kit to share it — all here.
+            {wrapped
+              ? `An independent assessment of how ${ref?.orgName || "your firm"} governs and uses AI — data handling, integrity, and responsible-use practices. If you'd like to pursue it, just ask: your attorney will walk you through exactly what's involved.`
+              : "When your engagement completes and your attorney issues your certification, this page becomes your certificate, your seal, and a kit to share it — all here."}
           </p>
           <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-3 max-w-xl mx-auto text-left">
             <Perk icon={ShieldCheck} title="A certificate" body="Firm-specific, dated, attorney-signed." />

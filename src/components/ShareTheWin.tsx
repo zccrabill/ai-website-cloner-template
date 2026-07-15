@@ -91,7 +91,7 @@ export default function ShareTheWin({
     {
       value: "anonymous",
       label: "Share it anonymously",
-      detail: 'Posted as, e.g., "a Colorado defense firm."',
+      detail: 'Posted as, e.g., "a Colorado law firm" — nothing that identifies you.',
     },
     {
       value: "none",
