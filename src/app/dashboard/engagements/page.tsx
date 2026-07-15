@@ -338,7 +338,7 @@ function ManagePanel({
   }, [row.id, row.org_id]);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
+     
     loadDetail();
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
