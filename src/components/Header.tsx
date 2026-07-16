@@ -53,18 +53,18 @@ export default function Header() {
           <Link
             href="/faiir"
             className="group relative flex items-center justify-center"
-            aria-label="FAIIR Certification — learn more"
-            title="FAIIR Certification — Click to learn more"
+            aria-label="FAIIR — the AI compliance standard by Available Law. Learn more"
+            title="FAIIR — the AI compliance standard by Available Law"
           >
             <Image
               src="/images/faiir-logo.png"
-              alt="FAIIR Certified"
+              alt="FAIIR — Foundation for AI Integrity & Regulation"
               width={36}
               height={36}
               className="object-contain transition-transform duration-200 group-hover:scale-110 group-hover:rotate-3"
             />
             <span className="absolute top-full mt-2 left-1/2 -translate-x-1/2 px-2 py-1 bg-[#1F1810] text-white text-[10px] font-medium rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-              FAIIR Certified
+              The FAIIR Standard
             </span>
           </Link>
         </div>

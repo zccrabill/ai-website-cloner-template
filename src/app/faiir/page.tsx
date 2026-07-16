@@ -50,7 +50,12 @@ const FAIIR_FAQS = [
   {
     question: "What is FAIIR certification?",
     answer:
-      "FAIIR — the Foundation for AI Integrity & Regulation — is a compliance framework for businesses that use automated decision-making technology (ADMT) in consequential decisions. A FAIIR-certified business has completed an attorney-led audit of its ADMT inventory, pre-use and adverse-outcome notices, meaningful human-review process, vendor documentation, and recordkeeping, and maintains those standards through ongoing monitoring. FAIIR is built around the duties imposed on deployers by Colorado Senate Bill 26-189 (the Colorado AI Act, signed May 14, 2026 and effective January 1, 2027).",
+      "FAIIR — the Foundation for AI Integrity & Regulation — is a professional compliance standard for how businesses use AI, organized into five pillars (Fitness for purpose, Accountability, Integrity of data, Informed use, and Risk management) with 41 documented pass/fail controls. A FAIIR-certified business has been assessed against that standard by a licensed attorney — covering its ADMT inventory, pre-use and adverse-outcome notices, meaningful human-review process, vendor documentation, and recordkeeping — and maintains it through ongoing monitoring. For Colorado businesses, the assessment maps each pillar to the duties imposed on deployers by Senate Bill 26-189 (the Colorado AI Act, signed May 14, 2026 and effective January 1, 2027).",
+  },
+  {
+    question: "What is the FAIIR framework benchmarked against?",
+    answer:
+      "FAIIR is designed to be complementary to the standards and laws shaping AI governance. It operationalizes the NIST AI Risk Management Framework at small-business scale, maps its pillars to the disclosure, human-review, and recordkeeping duties in Colorado SB 26-189 and the wider U.S. state AI-law patchwork, aligns with the EU AI Act's disclosure and content-labeling obligations, and covers AI-specific ground that SOC 2 and ISO/IEC 42001 don't reach. Certification is not a government approval or a guarantee of compliance — it is attorney-led, evidence-based, documented proof of reasonable care, renewed annually.",
   },
   {
     question: "Who needs FAIIR certification?",

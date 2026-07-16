@@ -74,7 +74,7 @@ export default function HeroSection() {
 
             {/* Subtitle */}
             <p className="text-lg text-[#6B5B4E] max-w-md leading-relaxed">
-              Available Law is a Colorado-licensed, FAIIR-certified virtual law firm serving small businesses on a flat monthly subscription. Contracts, succession planning, AI vendor review, and Colorado AI Act (SB 26-189) compliance &mdash; on a subscription, not a stopwatch.
+              Available Law is a Colorado-licensed virtual law firm &mdash; and the firm behind the FAIIR AI compliance standard &mdash; serving small businesses on a flat monthly subscription. Contracts, succession planning, AI vendor review, and Colorado AI Act (SB 26-189) compliance &mdash; on a subscription, not a stopwatch.
             </p>
 
             {/* CTAs */}

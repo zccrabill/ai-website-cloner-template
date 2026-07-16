@@ -300,6 +300,12 @@ function FaiirHeader() {
           </div>
         </Link>
         <nav className="flex items-center gap-6 text-sm">
+          <Link
+            href="/faiir/framework"
+            className="hidden md:inline text-[#6B5B4E] hover:text-[#1F1810] transition-colors"
+          >
+            The framework
+          </Link>
           <a
             href="#pricing"
             className="hidden md:inline text-[#6B5B4E] hover:text-[#1F1810] transition-colors"
@@ -509,14 +515,22 @@ function WhatIsFaiir() {
           FAIIR is an attorney-led compliance certification{" "}
           <span className="italic text-[#F2B870]">built for Colorado businesses</span>.
         </h2>
-        <p className="text-lg text-white/70 leading-relaxed max-w-2xl mx-auto">
-          A FAIIR-certified business has completed a structured audit of its
-          ADMT inventory, consumer notices, meaningful human-review process,
-          vendor documentation, and recordkeeping — and maintains those
-          standards through ongoing monitoring. Certification is delivered
-          by a Colorado-licensed attorney, so the work product is legal
-          analysis, not a generic audit checklist.
+        <p className="text-lg text-white/70 leading-relaxed max-w-2xl mx-auto mb-5">
+          FAIIR organizes responsible AI use into five pillars — Fitness for
+          purpose, Accountability, Integrity of data, Informed use, and Risk
+          management — with 41 documented pass/fail controls underneath. A
+          FAIIR-certified business has been assessed against that standard by
+          a licensed attorney, mapped to the specific duties SB 26-189
+          imposes, and maintains it through ongoing monitoring. The work
+          product is legal analysis, not a generic audit checklist.
         </p>
+        <Link
+          href="/faiir/framework"
+          className="inline-flex items-center gap-2 text-[#F2B870] hover:text-white text-sm font-medium underline underline-offset-4 decoration-[#F2B870]/50 hover:decoration-white transition-colors"
+        >
+          Read the full framework — the five pillars, in plain language
+          <ArrowRight className="w-4 h-4" />
+        </Link>
       </div>
     </section>
   );
@@ -529,24 +543,38 @@ function WhatIsFaiir() {
 function PillarsSection() {
   const pillars = [
     {
-      icon: FileSearch,
-      title: "Pre-use &amp; adverse-outcome notices",
-      body: "A clear and conspicuous public notice that ADMT is used, plus a templated 30-day adverse-outcome notice that meets every statutory content requirement.",
+      icon: ClipboardCheck,
+      title: "Fitness for purpose",
+      question: "Is this AI actually suited to the task you're using it for?",
+      body: "A register of every AI system in use, what each is authorized for, and what it must never be used for. Under SB 26-189, this is where covered-ADMT classification and plain-language system reviews live.",
     },
     {
-      icon: ClipboardCheck,
-      title: "ADMT system reviews",
-      body: "Plain-language reviews for every covered ADMT, refreshed when the system materially changes. Covers purpose, data inputs, known limitations, and the basis for the covered-ADMT classification.",
+      icon: Scale,
+      title: "Accountability",
+      question:
+        "When something goes wrong, who owns it — and was that decided in advance?",
+      body: "A named AI officer, a decision log, and vendor contracts reviewed against the statute's developer-documentation duties — so you know who indemnifies you before you need them to.",
+    },
+    {
+      icon: FileSearch,
+      title: "Integrity of data",
+      question:
+        "What goes into the AI, where does it go, and how long does it live there?",
+      body: "Written rules on what data may enter which tool, training-data opt-outs configured, and retention terms documented. The pillar most businesses fail first.",
     },
     {
       icon: Users,
-      title: "Meaningful human review",
-      body: "Named reviewers with authority and training, a documented workflow, and access to the developer documentation reviewers need to second-guess an adverse outcome instead of rubber-stamping it.",
+      title: "Informed use",
+      question:
+        "Do your employees and customers actually know what's going on?",
+      body: "An acknowledged AI use policy, documented training, and the disclosures SB 26-189 makes mandatory: pre-use notices and templated 30-day adverse-outcome notices, backed by meaningful human review.",
     },
     {
       icon: ShieldCheck,
-      title: "Vendor docs &amp; recordkeeping",
-      body: "ADMT vendor contracts reviewed against SB 26-189's developer-documentation duties, plus a 3-year recordkeeping framework that survives an AG cure notice.",
+      title: "Risk management",
+      question:
+        "If it goes wrong, will you know, contain it, and be able to prove what you did?",
+      body: "A risk register, an incident playbook, and a 3-year recordkeeping framework that survives an AG cure notice. This is where carriers and regulators actually look.",
     },
   ];
 
@@ -555,14 +583,19 @@ function PillarsSection() {
       <div className="max-w-[1200px] mx-auto px-6">
         <div className="max-w-2xl mx-auto text-center mb-14">
           <p className="text-xs font-semibold text-[#C17832] uppercase tracking-widest mb-3">
-            What the Assessment Covers
+            The Framework
           </p>
           <h2
-            className="text-3xl md:text-4xl text-[#1F1810] leading-tight"
+            className="text-3xl md:text-4xl text-[#1F1810] leading-tight mb-4"
             style={{ fontFamily: "'Playfair Display', serif", fontWeight: 400 }}
           >
-            Four pillars of FAIIR compliance.
+            The five pillars of FAIIR.
           </h2>
+          <p className="text-[#6B5B4E] leading-relaxed">
+            F-A-I-I-R: every assessment scores your business against the same
+            five pillars, mapped to the specific duties Colorado&rsquo;s AI
+            Act imposes.
+          </p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           {pillars.map((pillar) => {
@@ -576,17 +609,47 @@ function PillarsSection() {
                   <Icon className="w-5 h-5 text-[#C17832]" />
                 </div>
                 <h3
-                  className="text-xl text-[#1F1810] mb-3"
+                  className="text-xl text-[#1F1810] mb-2"
                   style={{ fontFamily: "'Playfair Display', serif", fontWeight: 400 }}
-                  dangerouslySetInnerHTML={{ __html: pillar.title }}
-                />
-                <p
-                  className="text-sm text-[#6B5B4E] leading-relaxed"
-                  dangerouslySetInnerHTML={{ __html: pillar.body }}
-                />
+                >
+                  {pillar.title}
+                </h3>
+                <p className="text-[13px] font-medium text-[#C17832] italic mb-3">
+                  &ldquo;{pillar.question}&rdquo;
+                </p>
+                <p className="text-sm text-[#6B5B4E] leading-relaxed">
+                  {pillar.body}
+                </p>
               </div>
             );
           })}
+          {/* Sixth cell links to the full framework so the 5-card grid
+              stays balanced on two columns. */}
+          <Link
+            href="/faiir/framework"
+            className="group bg-[#1F1810] rounded-2xl p-7 flex flex-col justify-between hover:bg-[#2A2015] transition-all"
+          >
+            <div>
+              <p className="text-xs font-semibold text-[#F2B870] uppercase tracking-widest mb-3">
+                Go deeper
+              </p>
+              <h3
+                className="text-xl text-white mb-2"
+                style={{ fontFamily: "'Playfair Display', serif", fontWeight: 400 }}
+              >
+                Read the full framework.
+              </h3>
+              <p className="text-sm text-white/60 leading-relaxed">
+                All five pillars in plain language — the 41 pass/fail
+                controls, what a certification letter does (and
+                doesn&rsquo;t) mean, and what FAIIR is benchmarked against.
+              </p>
+            </div>
+            <span className="mt-5 inline-flex items-center gap-2 text-sm font-medium text-[#F2B870] group-hover:text-white transition-colors">
+              Explore the standard
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+            </span>
+          </Link>
         </div>
       </div>
     </section>
@@ -1199,6 +1262,12 @@ function FaiirFooter() {
           , a Colorado-licensed virtual law firm.
         </p>
         <div className="flex items-center gap-5">
+          <Link
+            href="/faiir/framework"
+            className="hover:text-[#1F1810] transition-colors"
+          >
+            The framework
+          </Link>
           <Link
             href="/ai-act-checker"
             className="hover:text-[#1F1810] transition-colors"
