@@ -14,7 +14,7 @@ export const dynamic = "force-static";
 const PAGE_URL = `${SITE_URL}/faiir/framework`;
 const TITLE = "The FAIIR Framework — Five Pillars, 41 Controls";
 const DESCRIPTION =
-  "FAIIR (Foundation for AI Integrity & Regulation) is an attorney-led AI compliance standard for small and midsize businesses: five pillars, 41 pass/fail controls, benchmarked to the NIST AI Risk Management Framework and mapped to Colorado SB 26-189.";
+  "FAIIR (Foundation of AI Integrity & Regulation) is an attorney-led AI compliance standard for small and midsize businesses: five pillars, 41 pass/fail controls, benchmarked to the NIST AI Risk Management Framework and mapped to Colorado SB 26-189.";
 
 export const metadata: Metadata = {
   title: TITLE,

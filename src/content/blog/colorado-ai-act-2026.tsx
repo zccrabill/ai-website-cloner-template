@@ -448,7 +448,7 @@ export default function ColoradoAiAct2026Article() {
       <P>
         Available Law built{" "}
         <InlineLink href="/faiir">
-          FAIIR — the Foundation for AI Integrity &amp; Regulation
+          FAIIR — the Foundation of AI Integrity &amp; Regulation
         </InlineLink>{" "}
         specifically to get Colorado businesses through this statute without
         paying big-firm rates. If your business is running covered ADMT in

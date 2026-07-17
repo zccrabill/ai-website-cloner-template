@@ -506,7 +506,7 @@ function WhatIsFaiir() {
       <div className="max-w-[1000px] mx-auto px-6 text-center">
         <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#C17832]/15 border border-[#C17832]/30 text-[#F2B870] text-xs font-semibold uppercase tracking-widest mb-6">
           <ShieldCheck className="w-3.5 h-3.5" />
-          Foundation for AI Integrity &amp; Regulation
+          Foundation of AI Integrity &amp; Regulation
         </div>
         <h2
           className="text-4xl md:text-5xl leading-tight mb-6"
@@ -1251,7 +1251,7 @@ function FaiirFooter() {
     <footer className="bg-[#FAF8F5] border-t border-[#1F1810]/10 py-10">
       <div className="max-w-[1200px] mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-[#A89279]">
         <p className="text-center md:text-left leading-relaxed">
-          FAIIR — Foundation for AI Integrity &amp; Regulation. Certification
+          FAIIR — Foundation of AI Integrity &amp; Regulation. Certification
           work delivered by{" "}
           <Link
             href="/"

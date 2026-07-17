@@ -57,7 +57,7 @@ export default function FaiirSection() {
             <div className="absolute inset-0 bg-[#C17832]/20 rounded-full blur-2xl scale-150" />
             <Image
               src="/images/faiir-logo.png"
-              alt="FAIIR — Foundation for AI Integrity & Regulation"
+              alt="FAIIR — Foundation of AI Integrity & Regulation"
               width={120}
               height={120}
               className="relative object-contain drop-shadow-lg"
@@ -72,7 +72,7 @@ export default function FaiirSection() {
           <p className="text-lg text-[#6B5B4E] max-w-2xl leading-relaxed">
             FAIIR — the{" "}
             <span className="font-semibold text-[#1F1810]">
-              Foundation for AI Integrity &amp; Regulation
+              Foundation of AI Integrity &amp; Regulation
             </span>{" "}
             — is the AI compliance standard Available Law developed and
             maintains: five pillars, 41 documented pass/fail controls,

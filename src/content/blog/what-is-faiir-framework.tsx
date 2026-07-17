@@ -31,7 +31,7 @@ export default function WhatIsFaiirFrameworkArticle() {
   return (
     <>
       <Lead>
-        FAIIR is the <Strong>Foundation for AI Integrity &amp;
+        FAIIR is the <Strong>Foundation of AI Integrity &amp;
         Regulation</Strong> — the compliance framework we built at
         Available Law around five pillars:{" "}
         <Strong>Fitness&nbsp;for&nbsp;Purpose, Accountability,

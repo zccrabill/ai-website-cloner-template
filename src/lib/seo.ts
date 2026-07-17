@@ -28,7 +28,7 @@ export const SITE_DESCRIPTION =
  * can quote it cleanly.
  */
 export const SITE_DESCRIPTION_LONG =
-  "Available Law is a Colorado-licensed, FAIIR-certified virtual law firm serving small businesses on a flat monthly subscription. It handles contracts, business succession planning, AI vendor review, and Colorado AI Act (SB 26-189) compliance through four subscription tiers — Explore, Build, Grow, and Lead — without billable hours. Available Law is also the home of FAIIR, the Foundation for AI Integrity & Regulation, an AI certification framework for the Colorado AI Act.";
+  "Available Law is a Colorado-licensed, FAIIR-certified virtual law firm serving small businesses on a flat monthly subscription. It handles contracts, business succession planning, AI vendor review, and Colorado AI Act (SB 26-189) compliance through four subscription tiers — Explore, Build, Grow, and Lead — without billable hours. Available Law is also the home of FAIIR, the Foundation of AI Integrity & Regulation, an AI certification framework for the Colorado AI Act.";
 export const CONTACT_EMAIL = "zachariah@availablelaw.com";
 export const FOUNDER_NAME = "Zachariah Crabill";
 export const FOUNDER_CREDENTIAL = "JD";
@@ -271,7 +271,7 @@ export function personSchema() {
     honorificSuffix: FOUNDER_CREDENTIAL,
     jobTitle: "Founder & Attorney",
     description:
-      "Zachariah Crabill is a Colorado-licensed attorney and the founder of Available Law, LLC. He built FAIIR — the Foundation for AI Integrity & Regulation — a compliance certification framework for the Colorado AI Act. He writes and speaks regularly on artificial intelligence law, the Colorado AI Act (SB 26-189), and how small businesses can build defensible AI governance programs without a big-firm budget.",
+      "Zachariah Crabill is a Colorado-licensed attorney and the founder of Available Law, LLC. He built FAIIR — the Foundation of AI Integrity & Regulation — a compliance certification framework for the Colorado AI Act. He writes and speaks regularly on artificial intelligence law, the Colorado AI Act (SB 26-189), and how small businesses can build defensible AI governance programs without a big-firm budget.",
     url: FOUNDER_URL,
     image: `${SITE_URL}/images/logo-transparent.png`,
     worksFor: { "@id": `${SITE_URL}/#organization` },
@@ -417,7 +417,7 @@ export const HOMEPAGE_FAQS: Array<{ question: string; answer: string }> = [
   {
     question: "What is FAIIR?",
     answer:
-      "FAIIR stands for the Foundation for AI Integrity & Regulation — an AI certification framework created by Available Law to help businesses audit their AI systems for compliance with the Colorado AI Act and emerging state AI laws. FAIIR includes an initial attorney-led assessment, a written certification letter, and ongoing compliance monitoring.",
+      "FAIIR stands for the Foundation of AI Integrity & Regulation — an AI certification framework created by Available Law to help businesses audit their AI systems for compliance with the Colorado AI Act and emerging state AI laws. FAIIR includes an initial attorney-led assessment, a written certification letter, and ongoing compliance monitoring.",
   },
   {
     question: "Does Available Law serve clients outside Colorado?",

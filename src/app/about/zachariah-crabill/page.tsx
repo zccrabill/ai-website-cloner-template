@@ -131,7 +131,7 @@ export default function AboutZachariahPage() {
               and the documentation regulators will ask for when enforcement
               begins on January 1, 2027. He built{" "}
               <Link href="/faiir" className="text-[#C17832] hover:text-[#D4893F] underline">
-                FAIIR — the Foundation for AI Integrity &amp; Regulation
+                FAIIR — the Foundation of AI Integrity &amp; Regulation
               </Link>{" "}
               as a structured, attorney-led framework for getting Colorado
               businesses through the statute with defensible, dated work
@@ -228,7 +228,7 @@ export default function AboutZachariahPage() {
               {[
                 "Colorado AI Act (SB 26-189) compliance",
                 "AI governance and ADMT compliance programs",
-                "FAIIR — Foundation for AI Integrity & Regulation",
+                "FAIIR — Foundation of AI Integrity & Regulation",
                 "AI vendor contract review and negotiation",
                 "Business succession planning and buy-sell agreements",
                 "Technology contracts",

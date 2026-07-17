@@ -101,7 +101,7 @@ const blogPosts: BlogPost[] = [
     title: "What Is the FAIIR Framework? AI Compliance for Colorado Businesses",
     date: "April 11, 2026",
     excerpt:
-      "FAIIR is the Foundation for AI Integrity & Regulation — five pillars (Fitness for Purpose, Accountability, Integrity of Data, Informed Use, Risk Management) built to help Colorado businesses meet the Colorado AI Act and the wider AI-regulation patchwork.",
+      "FAIIR is the Foundation of AI Integrity & Regulation — five pillars (Fitness for Purpose, Accountability, Integrity of Data, Informed Use, Risk Management) built to help Colorado businesses meet the Colorado AI Act and the wider AI-regulation patchwork.",
   },
   {
     slug: "ai-liability-insurance-coverage",

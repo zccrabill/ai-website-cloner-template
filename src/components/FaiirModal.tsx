@@ -95,7 +95,7 @@ export function FaiirModal({ isOpen, onClose }: FaiirModalProps) {
                 FAIIR AI Certification
               </h2>
               <p className="text-gray-400 text-sm">
-                Foundation for AI Integrity &amp; Regulation
+                Foundation of AI Integrity &amp; Regulation
               </p>
             </div>
 

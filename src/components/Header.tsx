@@ -58,7 +58,7 @@ export default function Header() {
           >
             <Image
               src="/images/faiir-logo.png"
-              alt="FAIIR — Foundation for AI Integrity & Regulation"
+              alt="FAIIR — Foundation of AI Integrity & Regulation"
               width={36}
               height={36}
               className="object-contain transition-transform duration-200 group-hover:scale-110 group-hover:rotate-3"

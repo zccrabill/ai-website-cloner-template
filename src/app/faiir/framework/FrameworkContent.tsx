@@ -260,7 +260,7 @@ function FrameworkFooter() {
     <footer className="bg-[#FAF8F5] border-t border-[#1F1810]/10 py-10">
       <div className="max-w-[1200px] mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-[#A89279]">
         <p className="text-center md:text-left leading-relaxed">
-          FAIIR — Foundation for AI Integrity &amp; Regulation. A trademark of{" "}
+          FAIIR — Foundation of AI Integrity &amp; Regulation. A trademark of{" "}
           <Link
             href="/"
             className="underline decoration-[#A89279]/50 hover:text-[#1F1810] hover:decoration-[#1F1810] transition-colors"
@@ -307,7 +307,7 @@ function Hero() {
         <div className="max-w-3xl mx-auto text-center">
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#C17832]/10 border border-[#C17832]/30 text-[#C17832] text-xs font-semibold uppercase tracking-widest mb-6">
             <ShieldCheck className="w-3.5 h-3.5" />
-            Foundation for AI Integrity &amp; Regulation
+            Foundation of AI Integrity &amp; Regulation
           </div>
           <h1
             className="text-[44px] md:text-[60px] leading-[1.05] text-[#1F1810] mb-6"
