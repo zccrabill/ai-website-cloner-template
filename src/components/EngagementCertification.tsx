@@ -56,7 +56,7 @@ export default function EngagementCertification() {
   const year = cert ? new Date(cert.issued_at).getFullYear() : new Date().getFullYear();
 
   const linkedinPost = cert
-    ? `${cert.firm_name} is now FAIIR Certified. 🛡️\n\nWe completed an independent assessment of how our firm governs and uses AI — data handling, integrity, and responsible-use practices — conducted by Available Law.\n\nFor our clients, it means we hold our AI use to a real standard, and we keep it current through annual review.\n\nLearn what FAIIR certification involves: ${DIRECTORY_URL}\n\n#LegalTech #AIGovernance #FAIIRCertified`
+    ? `${cert.firm_name} is now FAIIR Certified. 🛡️\n\nWe completed an independent assessment of how our firm governs and uses AI — data handling, integrity, and responsible-use practices — conducted by FAIIR, LLC.\n\nFor our clients, it means we hold our AI use to a real standard, and we keep it current through annual review.\n\nLearn what FAIIR certification involves: ${DIRECTORY_URL}\n\n#LegalTech #AIGovernance #FAIIRCertified`
     : "";
 
   const signatureLine = cert
@@ -261,7 +261,7 @@ export default function EngagementCertification() {
           <p className="text-sm font-semibold text-[#1F1810] mb-3">Approved language</p>
           <ul className="space-y-2 text-sm text-[#1F1810]">
             <Approved>{`FAIIR Certified — ${year}`}</Approved>
-            <Approved>Completed an independent AI governance assessment by Available Law</Approved>
+            <Approved>Completed an independent AI governance assessment by FAIIR, LLC</Approved>
             <Approved>Reviewed for AI integrity, data handling, and regulation readiness</Approved>
           </ul>
         </div>

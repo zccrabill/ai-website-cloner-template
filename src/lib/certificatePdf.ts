@@ -89,7 +89,7 @@ export async function downloadCertificatePdf(
   doc.setFont("times", "normal");
   doc.setFontSize(12);
   doc.setTextColor(74, 64, 54);
-  const body = `has completed the ${cert.tier}, an independent review of the firm's artificial-intelligence governance, data handling, and use practices, conducted by Available Law.`;
+  const body = `has completed the ${cert.tier}, an independent review of the firm's artificial-intelligence governance, data handling, and use practices, conducted by FAIIR, LLC.`;
   const lines = doc.splitTextToSize(body, 560);
   doc.text(lines, cx, 320, { align: "center", lineHeightFactor: 1.5 });
 
@@ -101,7 +101,7 @@ export async function downloadCertificatePdf(
   doc.setFont("times", "normal");
   doc.setFontSize(9);
   doc.setTextColor(107, 91, 78);
-  doc.text("Attorney & Founder, Available Law · Colorado Bar #56783", 72, 562);
+  doc.text("Managing Member, FAIIR, LLC", 72, 562);
 
   doc.setFont("times", "bold");
   doc.setFontSize(10);

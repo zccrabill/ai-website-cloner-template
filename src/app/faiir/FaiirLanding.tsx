@@ -1251,8 +1251,8 @@ function FaiirFooter() {
     <footer className="bg-[#FAF8F5] border-t border-[#1F1810]/10 py-10">
       <div className="max-w-[1200px] mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-[#A89279]">
         <p className="text-center md:text-left leading-relaxed">
-          FAIIR — Foundation of AI Integrity &amp; Regulation. Certification
-          work delivered by{" "}
+          FAIIR — Foundation of AI Integrity &amp; Regulation, a standard
+          maintained by FAIIR, LLC. Legal services delivered by{" "}
           <Link
             href="/"
             className="underline decoration-[#A89279]/50 hover:text-[#1F1810] hover:decoration-[#1F1810] transition-colors"

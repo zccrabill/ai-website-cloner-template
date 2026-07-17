@@ -260,7 +260,8 @@ function FrameworkFooter() {
     <footer className="bg-[#FAF8F5] border-t border-[#1F1810]/10 py-10">
       <div className="max-w-[1200px] mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-[#A89279]">
         <p className="text-center md:text-left leading-relaxed">
-          FAIIR — Foundation of AI Integrity &amp; Regulation. A trademark of{" "}
+          FAIIR — Foundation of AI Integrity &amp; Regulation. A trademark of
+          FAIIR, LLC. Legal services delivered by{" "}
           <Link
             href="/"
             className="underline decoration-[#A89279]/50 hover:text-[#1F1810] hover:decoration-[#1F1810] transition-colors"
@@ -376,11 +377,11 @@ function WhatFaiirIs() {
           </p>
           <p className="text-lg text-white/70 leading-relaxed">
             FAIIR is not a law. It is a professional standard — the way SOC 2
-            codified trust for software companies. It was developed and is
-            maintained by Available Law, a Colorado-licensed law firm, so
-            every certification is attorney-led legal analysis, not a generic
-            audit checklist. Five pillars, {TOTAL_CONTROLS} controls, each
-            with a pass/fail bar.
+            codified trust for software companies. It was developed by
+            Available Law, a Colorado-licensed law firm, and is maintained by
+            FAIIR, LLC, so every certification is attorney-led analysis, not
+            a generic audit checklist. Five pillars, {TOTAL_CONTROLS}{" "}
+            controls, each with a pass/fail bar.
           </p>
         </div>
       </div>
