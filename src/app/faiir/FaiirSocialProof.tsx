@@ -107,8 +107,9 @@ export function FaiirSocialProofView({
             </div>
             <p className="text-[11px] text-[#A89279] mt-4 max-w-xl">
               Firms appear here with their written permission, while their certification is
-              current. FAIIR certification reflects an attorney-led, point-in-time assessment
-              against the FAIIR standard — not a guarantee of compliance or a regulatory approval.
+              current. FAIIR certification reflects an independent, point-in-time assessment
+              against the FAIIR standard by FAIIR, LLC — not legal advice, a guarantee of
+              compliance, or a regulatory approval.
             </p>
           </div>
         )}

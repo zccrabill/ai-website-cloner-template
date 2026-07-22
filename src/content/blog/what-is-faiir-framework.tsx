@@ -32,8 +32,9 @@ export default function WhatIsFaiirFrameworkArticle() {
     <>
       <Lead>
         FAIIR is the <Strong>Foundation of AI Integrity &amp;
-        Regulation</Strong> — the compliance framework we built at
-        Available Law around five pillars:{" "}
+        Regulation</Strong> — a compliance framework created by our founder
+        and now maintained as an independent standard by FAIIR, LLC, built
+        around five pillars:{" "}
         <Strong>Fitness&nbsp;for&nbsp;Purpose, Accountability,
         Integrity&nbsp;of&nbsp;Data, Informed&nbsp;Use,</Strong> and{" "}
         <Strong>Risk&nbsp;Management</Strong>. It exists to help Colorado
@@ -260,9 +261,9 @@ export default function WhatIsFaiirFrameworkArticle() {
           in-house AI counsel
         </LI>
         <LI>
-          <Strong>Attorney-delivered</Strong> — every assessment is
-          conducted by a licensed Colorado attorney, not a software tool
-          or a compliance vendor selling certifications
+          <Strong>Evidence-based</Strong> — every assessment is conducted
+          against published pass/fail controls with documented evidence,
+          not a rubber-stamp badge from a software tool
         </LI>
         <LI>
           <Strong>Actionable</Strong> — the output is a remediation plan

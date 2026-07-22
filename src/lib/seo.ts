@@ -221,6 +221,7 @@ export function serviceSchema(params: {
   price?: string;
   priceCurrency?: string;
   offerDescription?: string;
+  provider?: Record<string, unknown>;
 }) {
   return {
     "@context": "https://schema.org",
@@ -230,7 +231,7 @@ export function serviceSchema(params: {
     description: params.description,
     url: params.url,
     serviceType: params.serviceType,
-    provider: { "@id": `${SITE_URL}/#organization` },
+    provider: params.provider ?? { "@id": `${SITE_URL}/#organization` },
     areaServed: {
       "@type": "State",
       name: JURISDICTION,
@@ -417,12 +418,12 @@ export const HOMEPAGE_FAQS: Array<{ question: string; answer: string }> = [
   {
     question: "What is FAIIR?",
     answer:
-      "FAIIR stands for the Foundation of AI Integrity & Regulation — an AI certification framework created by Available Law to help businesses audit their AI systems for compliance with the Colorado AI Act and emerging state AI laws. FAIIR includes an initial attorney-led assessment, a written certification letter, and ongoing compliance monitoring.",
+      "FAIIR stands for the Foundation of AI Integrity & Regulation — an independent AI certification standard maintained by FAIIR, LLC that helps businesses audit their AI systems for compliance with the Colorado AI Act and emerging state AI laws. FAIIR includes an initial readiness assessment, a written certification letter, and ongoing compliance monitoring. Available Law is a separate Colorado law firm that provides legal services supporting certification; it is FAIIR-certified itself.",
   },
   {
     question: "Does Available Law serve clients outside Colorado?",
     answer:
-      "Available Law's attorneys are licensed in Colorado and primarily serve Colorado businesses. Some FAIIR compliance work can support multi-state companies headquartered in Colorado.",
+      "Available Law's attorneys are licensed in Colorado and primarily serve Colorado businesses. Some AI compliance work can support multi-state companies headquartered in Colorado.",
   },
   {
     question: "How much does Available Law cost?",

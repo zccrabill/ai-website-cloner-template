@@ -194,9 +194,9 @@ export default function AiSmallBusinessLegalChecklistArticle() {
         <InlineLink href="/#pricing">flat-rate subscription plans</InlineLink>{" "}
         ($50 to $300 a month) include AI vendor contract review and Colorado AI
         Act guidance, and{" "}
-        <InlineLink href="/faiir">FAIIR certification</InlineLink> gives
-        businesses that want a full, attorney-led governance program a structured
-        way to get there. An AI assistant does the heavy lifting; a licensed
+        <InlineLink href="/faiir">FAIIR certification</InlineLink> — an
+        independent standard from FAIIR, LLC — gives businesses that want a
+        full governance program a structured way to get there. An AI assistant does the heavy lifting; a licensed
         Colorado attorney reviews everything before it reaches you.
       </P>
 

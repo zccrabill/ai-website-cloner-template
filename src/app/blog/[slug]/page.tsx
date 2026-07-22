@@ -356,7 +356,7 @@ const postMetadata: Record<string, PostMeta> = {
       {
         question: "What is AI governance, and who owns it?",
         answer:
-          "AI governance is the set of policies, controls, and documentation that make your AI use defensible. An attorney should design it to the legal standard, and the business operates it day to day. FAIIR is Available Law's attorney-led framework for this.",
+          "AI governance is the set of policies, controls, and documentation that make your AI use defensible. An attorney should design it to the legal standard, and the business operates it day to day. FAIIR — an independent standard from FAIIR, LLC — is a certification framework for this, and Available Law provides the supporting legal work.",
       },
     ],
   },

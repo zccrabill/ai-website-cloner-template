@@ -260,8 +260,9 @@ function FrameworkFooter() {
     <footer className="bg-[#FAF8F5] border-t border-[#1F1810]/10 py-10">
       <div className="max-w-[1200px] mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-[#A89279]">
         <p className="text-center md:text-left leading-relaxed">
-          FAIIR — Foundation of AI Integrity &amp; Regulation. A trademark of
-          FAIIR, LLC. Legal services delivered by{" "}
+          FAIIR — Foundation of AI Integrity &amp; Regulation. An independent
+          standard from FAIIR, LLC, which is not a law firm; certification is
+          not legal advice. Legal services are provided separately by{" "}
           <Link
             href="/"
             className="underline decoration-[#A89279]/50 hover:text-[#1F1810] hover:decoration-[#1F1810] transition-colors"
@@ -377,11 +378,11 @@ function WhatFaiirIs() {
           </p>
           <p className="text-lg text-white/70 leading-relaxed">
             FAIIR is not a law. It is a professional standard — the way SOC 2
-            codified trust for software companies. It was developed by
-            Available Law, a Colorado-licensed law firm, and is maintained by
-            FAIIR, LLC, so every certification is attorney-led analysis, not
-            a generic audit checklist. Five pillars, {TOTAL_CONTROLS}{" "}
-            controls, each with a pass/fail bar.
+            codified trust for software companies. It is owned and maintained
+            by FAIIR, LLC, an independent compliance company, and every
+            certification is an evidence-based assessment against published
+            controls, not a generic audit checklist. Five pillars,{" "}
+            {TOTAL_CONTROLS} controls, each with a pass/fail bar.
           </p>
         </div>
       </div>
@@ -571,7 +572,7 @@ function WhatCertificationMeans() {
             A certification letter is a specific, limited claim.
           </h2>
           <p className="text-[#6B5B4E] leading-relaxed">
-            A FAIIR certification letter reflects an attorney-led assessment
+            A FAIIR certification letter reflects an independent assessment
             of your organization&rsquo;s practices against the
             framework&rsquo;s defined controls, based on evidence you submit.
             It is annual and firm-specific — never lifetime, never
@@ -727,8 +728,8 @@ function FinalCta() {
         </h2>
         <p className="text-[#6B5B4E] mb-8 max-w-xl mx-auto leading-relaxed">
           The free self-check scores you against the five pillars in about
-          ten minutes. When you&rsquo;re ready for the real thing, an
-          attorney-led assessment starts with a free 30-minute discovery
+          ten minutes. When you&rsquo;re ready for the real thing, a full
+          certification assessment starts with a free 30-minute discovery
           call.
         </p>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">

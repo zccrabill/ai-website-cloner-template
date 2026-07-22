@@ -147,10 +147,10 @@ export default function EngagementCertification() {
           <p className="text-sm text-[#6B5B4E] mt-2 max-w-md mx-auto">
             {wrapped
               ? `An independent assessment of how ${ref?.orgName || "your firm"} governs and uses AI — data handling, integrity, and responsible-use practices. If you'd like to pursue it, just ask: your attorney will walk you through exactly what's involved.`
-              : "When your engagement completes and your attorney issues your certification, this page becomes your certificate, your seal, and a kit to share it — all here."}
+              : "When your engagement completes and FAIIR, LLC issues your certification, this page becomes your certificate, your seal, and a kit to share it — all here."}
           </p>
           <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-3 max-w-xl mx-auto text-left">
-            <Perk icon={ShieldCheck} title="A certificate" body="Firm-specific, dated, attorney-signed." />
+            <Perk icon={ShieldCheck} title="A certificate" body="Firm-specific, dated, signed by FAIIR, LLC." />
             <Perk icon={Sparkles} title="Your seal" body="Display it on your site, linked back to your listing." />
             <Perk icon={Download} title="A share kit" body="Approved language and the honest boundaries." />
           </div>

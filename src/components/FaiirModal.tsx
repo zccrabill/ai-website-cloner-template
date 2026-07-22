@@ -101,10 +101,11 @@ export function FaiirModal({ isOpen, onClose }: FaiirModalProps) {
 
             {/* Description */}
             <p className="text-gray-300 text-base leading-relaxed mb-8 font-sans">
-              The FAIIR certification program provides organizations with a structured,
-              independent pathway to demonstrate that their AI policies, data handling
-              practices, and attorney oversight frameworks meet the standards established
-              by Colorado law and federal guidelines.
+              The FAIIR certification program — from FAIIR, LLC, an independent
+              compliance company — provides organizations with a structured
+              pathway to demonstrate that their AI policies, data handling
+              practices, and human-oversight frameworks meet the standards
+              established by Colorado law and federal guidelines.
             </p>
 
             {/* Key Points Section */}

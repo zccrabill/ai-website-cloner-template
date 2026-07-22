@@ -191,11 +191,11 @@ export default function AiBusinessConsultingVsLegalCounselArticle() {
 
       <P>
         That is exactly the gap FAIIR was built to fill. FAIIR — the Foundation
-        for AI Integrity &amp; Regulation — is Available Law&apos;s
-        attorney-led AI certification framework. Its five pillars (Fitness for
+        for AI Integrity &amp; Regulation — is an independent AI certification
+        framework maintained by FAIIR, LLC. Its five pillars (Fitness for
         Purpose, Accountability, Integrity of Data, Informed Use, and Risk
         Management) turn the Colorado AI Act&apos;s duties into a concrete set
-        of controls, with a licensed attorney standing behind the assessment.
+        of controls, with documented evidence standing behind the assessment.
         You can read{" "}
         <InlineLink href="/blog/what-is-faiir-framework">
           what the FAIIR framework is and how it works
@@ -283,8 +283,10 @@ export default function AiBusinessConsultingVsLegalCounselArticle() {
         AI governance is the set of policies, controls, and documentation that
         make your AI use defensible. It sits between strategy and law: an
         attorney should design it to the legal standard, and the business —
-        often with consultant help — operates it day to day. FAIIR is Available
-        Law&apos;s attorney-led framework for exactly this.
+        often with consultant help — operates it day to day. FAIIR — an
+        independent standard from FAIIR, LLC — is a certification framework
+        for exactly this, with Available Law providing the supporting legal
+        work.
       </P>
 
       <H2>The bottom line</H2>

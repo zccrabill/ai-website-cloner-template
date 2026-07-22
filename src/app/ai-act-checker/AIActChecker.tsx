@@ -707,8 +707,8 @@ function ResultsScreen({
           Want help closing these gaps?
         </h3>
         <p className="text-[15px] text-[#E5DCD1] leading-relaxed mb-6 max-w-[520px] mx-auto">
-          A FAIIR assessment from Available Law turns this report into a
-          written, attorney-led compliance program — typically in 4–6 weeks.
+          A FAIIR assessment turns this report into a written,
+          certification-ready compliance program — typically in 4–6 weeks.
         </p>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
           <Link

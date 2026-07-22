@@ -14,10 +14,11 @@ export const dynamic = "force-static";
 const PAGE_URL = `${SITE_URL}/faiir/framework`;
 const TITLE = "The FAIIR Framework — Five Pillars, 41 Controls";
 const DESCRIPTION =
-  "FAIIR (Foundation of AI Integrity & Regulation) is an attorney-led AI compliance standard for small and midsize businesses: five pillars, 41 pass/fail controls, benchmarked to the NIST AI Risk Management Framework and mapped to Colorado SB 26-189.";
+  "FAIIR (Foundation of AI Integrity & Regulation) is an independent AI compliance standard for small and midsize businesses from FAIIR, LLC: five pillars, 41 pass/fail controls, benchmarked to the NIST AI Risk Management Framework and mapped to Colorado SB 26-189.";
 
 export const metadata: Metadata = {
-  title: TITLE,
+  // Absolute title: FAIIR is a separate entity, so skip the "| Available Law" template.
+  title: { absolute: TITLE },
   description: DESCRIPTION,
   alternates: { canonical: PAGE_URL },
   openGraph: {
@@ -54,7 +55,7 @@ const FRAMEWORK_FAQS = [
   {
     question: "What does a FAIIR certification letter actually mean?",
     answer:
-      "A FAIIR certification letter reflects an attorney-led assessment of an organization's practices against the framework's defined controls, based on evidence the organization submits. It is annual and firm-specific — never lifetime, never transferable. It is not a government approval or a guarantee of regulatory compliance; it is documented proof of reasonable care, the same way a SOC 2 report doesn't make a system unbreachable but shows security was taken seriously.",
+      "A FAIIR certification letter reflects an independent assessment of an organization's practices against the framework's defined controls, based on evidence the organization submits. It is annual and firm-specific — never lifetime, never transferable. It is not a government approval or a guarantee of regulatory compliance; it is documented proof of reasonable care, the same way a SOC 2 report doesn't make a system unbreachable but shows security was taken seriously.",
   },
   {
     question: "What is FAIIR benchmarked against?",

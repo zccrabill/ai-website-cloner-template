@@ -15,10 +15,19 @@ export const dynamic = "force-static";
 const PAGE_URL = `${SITE_URL}/faiir`;
 const TITLE = "FAIIR Certification — Colorado AI Act Compliance Framework";
 const DESCRIPTION =
-  "FAIIR is the attorney-led AI compliance certification for Colorado businesses. Tiered fixed-fee assessments from $2,500, ongoing membership from $49/month, and an annual re-certification audit to maintain Colorado AI Act readiness.";
+  "FAIIR is the independent AI compliance certification for Colorado businesses, from FAIIR, LLC. Tiered fixed-fee assessments from $2,500, ongoing membership from $49/month, and an annual re-certification audit to maintain Colorado AI Act readiness.";
+
+const FAIIR_LLC_PROVIDER = {
+  "@type": "Organization",
+  name: "FAIIR, LLC",
+  url: PAGE_URL,
+  description:
+    "FAIIR, LLC is an independent AI compliance certification company. It maintains the FAIIR standard (Foundation of AI Integrity & Regulation) and certifies businesses against it. FAIIR, LLC is not a law firm.",
+};
 
 export const metadata: Metadata = {
-  title: TITLE,
+  // Absolute title: FAIIR is a separate entity, so skip the "| Available Law" template.
+  title: { absolute: TITLE },
   description: DESCRIPTION,
   alternates: { canonical: PAGE_URL },
   openGraph: {
@@ -50,12 +59,12 @@ const FAIIR_FAQS = [
   {
     question: "What is FAIIR certification?",
     answer:
-      "FAIIR — the Foundation of AI Integrity & Regulation — is a professional compliance standard for how businesses use AI, organized into five pillars (Fitness for purpose, Accountability, Integrity of data, Informed use, and Risk management) with 41 documented pass/fail controls. A FAIIR-certified business has been assessed against that standard by a licensed attorney — covering its ADMT inventory, pre-use and adverse-outcome notices, meaningful human-review process, vendor documentation, and recordkeeping — and maintains it through ongoing monitoring. For Colorado businesses, the assessment maps each pillar to the duties imposed on deployers by Senate Bill 26-189 (the Colorado AI Act, signed May 14, 2026 and effective January 1, 2027).",
+      "FAIIR — the Foundation of AI Integrity & Regulation — is a professional compliance standard for how businesses use AI, organized into five pillars (Fitness for purpose, Accountability, Integrity of data, Informed use, and Risk management) with 41 documented pass/fail controls. A FAIIR-certified business has been assessed against that standard by FAIIR, LLC, an independent compliance company — covering its ADMT inventory, pre-use and adverse-outcome notices, meaningful human-review process, vendor documentation, and recordkeeping — and maintains it through ongoing monitoring. For Colorado businesses, the assessment maps each pillar to the duties imposed on deployers by Senate Bill 26-189 (the Colorado AI Act, signed May 14, 2026 and effective January 1, 2027).",
   },
   {
     question: "What is the FAIIR framework benchmarked against?",
     answer:
-      "FAIIR is designed to be complementary to the standards and laws shaping AI governance. It operationalizes the NIST AI Risk Management Framework at small-business scale, maps its pillars to the disclosure, human-review, and recordkeeping duties in Colorado SB 26-189 and the wider U.S. state AI-law patchwork, aligns with the EU AI Act's disclosure and content-labeling obligations, and covers AI-specific ground that SOC 2 and ISO/IEC 42001 don't reach. Certification is not a government approval or a guarantee of compliance — it is attorney-led, evidence-based, documented proof of reasonable care, renewed annually.",
+      "FAIIR is designed to be complementary to the standards and laws shaping AI governance. It operationalizes the NIST AI Risk Management Framework at small-business scale, maps its pillars to the disclosure, human-review, and recordkeeping duties in Colorado SB 26-189 and the wider U.S. state AI-law patchwork, aligns with the EU AI Act's disclosure and content-labeling obligations, and covers AI-specific ground that SOC 2 and ISO/IEC 42001 don't reach. Certification is not a government approval or a guarantee of compliance — it is independent, evidence-based, documented proof of reasonable care, renewed annually.",
   },
   {
     question: "Who needs FAIIR certification?",
@@ -75,7 +84,7 @@ const FAIIR_FAQS = [
   {
     question: "Is FAIIR a legally required certification?",
     answer:
-      "No. The Colorado AI Act itself does not require any third-party certification. However, the statute does require deployers of covered ADMT to post pre-use notices, send 30-day adverse-outcome notices, provide meaningful human review, and maintain three years of records. FAIIR certification is a structured way to meet those statutory duties and to demonstrate good-faith compliance during the Attorney General's 60-day cure window. FAIIR is delivered by a Colorado-licensed attorney, so the work product is attorney-prepared legal analysis, not a generic audit.",
+      "No. The Colorado AI Act itself does not require any third-party certification. However, the statute does require deployers of covered ADMT to post pre-use notices, send 30-day adverse-outcome notices, provide meaningful human review, and maintain three years of records. FAIIR certification is a structured way to meet those statutory duties and to demonstrate good-faith compliance during the Attorney General's 60-day cure window. FAIIR certification is provided by FAIIR, LLC, an independent compliance company — it is not legal advice and does not create an attorney-client relationship. Businesses that need legal advice on their specific obligations can separately engage Available Law, LLC, a Colorado-licensed law firm.",
   },
   {
     question: "What happens after I book a discovery call?",
@@ -97,24 +106,26 @@ export default function FaiirPage() {
           serviceSchema({
             name: "FAIIR Compliance Assessment",
             description:
-              "Attorney-led Colorado AI Act (SB 26-189) readiness assessment covering ADMT inventory, pre-use and adverse-outcome notices, meaningful human review, developer documentation, vendor contracts, and recordkeeping. Delivered by a Colorado-licensed attorney. Offered in three tiers: Starter ($2,500, 1–2 systems), Professional ($5,000, 3–5 systems), and Enterprise (from $15,000, multi-business-unit).",
+              "Independent Colorado AI Act (SB 26-189) readiness assessment against the FAIIR standard, covering ADMT inventory, pre-use and adverse-outcome notices, meaningful human review, developer documentation, vendor contracts, and recordkeeping. Provided by FAIIR, LLC, an independent compliance company. Offered in three tiers: Starter ($2,500, 1–2 systems), Professional ($5,000, 3–5 systems), and Enterprise (from $15,000, multi-business-unit).",
             url: PAGE_URL,
             serviceType: "AI Compliance Certification",
             price: "2500",
             priceCurrency: "USD",
             offerDescription:
               "Starter tier starts at $2,500. Professional $5,000. Enterprise from $15,000. Fixed fee confirmed after a free 30-minute discovery call.",
+            provider: FAIIR_LLC_PROVIDER,
           }),
           serviceSchema({
             name: "FAIIR Compliance Membership",
             description:
-              "Monthly Colorado AI Act compliance support for businesses maintaining FAIIR readiness. Offered in three tiers — Standard ($49/month), Plus ($149/month, includes annual re-certification audit), and Enterprise (custom, from $499/month). All tiers include attorney Q&A, regulatory update briefings, recordkeeping templates, and Ava AI legal assistant access. Annual billing saves ~17%.",
+              "Monthly Colorado AI Act compliance support for businesses maintaining FAIIR readiness. Offered in three tiers — Standard ($49/month), Plus ($149/month, includes annual re-certification audit), and Enterprise (custom, from $499/month). All tiers include regulatory update briefings, recordkeeping templates, Ava AI assistant access, and attorney Q&A provided by Available Law, LLC, a separate Colorado law firm. Annual billing saves ~17%.",
             url: `${PAGE_URL}#membership`,
             serviceType: "AI Compliance Subscription",
             price: "49",
             priceCurrency: "USD",
             offerDescription:
               "Standard $49/mo, Plus $149/mo, Enterprise from $499/mo. Cancel anytime on monthly; annual plans save ~17%.",
+            provider: FAIIR_LLC_PROVIDER,
           }),
           faqPageSchema(FAIIR_FAQS),
           breadcrumbSchema(BREADCRUMBS),

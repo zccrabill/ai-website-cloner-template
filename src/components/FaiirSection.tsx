@@ -64,7 +64,7 @@ export default function FaiirSection() {
             />
           </div>
           <p className="text-sm font-semibold text-[#C17832] uppercase tracking-widest mb-4">
-            The Standard We Wrote — and Hold Ourselves To
+            The Standard We Hold Ourselves To
           </p>
           <h2 className="text-4xl md:text-5xl font-heading text-[#1F1810] mb-6 max-w-3xl leading-tight">
             FAIIR — proof your business uses AI responsibly
@@ -74,10 +74,11 @@ export default function FaiirSection() {
             <span className="font-semibold text-[#1F1810]">
               Foundation of AI Integrity &amp; Regulation
             </span>{" "}
-            — is the AI compliance standard Available Law developed and
-            maintains: five pillars, 41 documented pass/fail controls,
-            assessed by a licensed attorney. We run our own practice on the
-            same standard we certify clients under.
+            — is an independent AI compliance standard from FAIIR, LLC: five
+            pillars, 41 documented pass/fail controls. We run our own
+            practice on the FAIIR standard, and we handle the legal side of
+            getting certified — deployer notices, vendor contracts, and
+            Colorado AI Act counsel.
           </p>
         </div>
 
@@ -141,7 +142,7 @@ export default function FaiirSection() {
             <p className="text-sm text-white/70 max-w-xl leading-relaxed">
               &ldquo;Show me how you use AI — and the paper that proves
               you&rsquo;re doing it responsibly.&rdquo; A FAIIR certification
-              is a structured, attorney-led way to answer it once, in
+              is a structured, independent way to answer it once, in
               writing, instead of scrambling at every renewal and
               questionnaire.
             </p>

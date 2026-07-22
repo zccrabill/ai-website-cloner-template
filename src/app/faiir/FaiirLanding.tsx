@@ -98,7 +98,7 @@ const ASSESSMENT_TIERS: AssessmentTier[] = [
       "Fixed fee for 1–2 in-scope ADMT systems, single business unit. Scoped on a free 30-min discovery call.",
     badge: "Start here",
     features: [
-      "Attorney-led ADMT inventory and covered-ADMT classification (up to 2 systems)",
+      "ADMT inventory and covered-ADMT classification (up to 2 systems)",
       "Written system review (1 per covered ADMT)",
       "Gap analysis mapped to SB 26-189 duties",
       "Draft pre-use notice and 30-day adverse-outcome notice templates",
@@ -147,7 +147,7 @@ const ASSESSMENT_TIERS: AssessmentTier[] = [
       "Everything in Professional, plus:",
       "Unlimited ADMT system reviews and vendor reviews",
       "Multi-business-unit scoping and notice rollout",
-      "Dedicated engagement attorney",
+      "Dedicated engagement lead",
       "Custom disparate-impact working sessions with your data team",
       "Expert-witness-quality documentation",
       "White-glove delivery: 4–6 weeks",
@@ -381,7 +381,7 @@ function Hero() {
             <span className="italic text-[#C17832]">Prove your business is ready.</span>
           </h1>
           <p className="text-lg md:text-xl text-[#6B5B4E] leading-relaxed mb-10 max-w-2xl mx-auto">
-            FAIIR is the attorney-led compliance certification for businesses
+            FAIIR is the independent compliance certification for businesses
             deploying covered ADMT in Colorado. One assessment, one written
             report, ongoing monitoring — built around the disclosure and
             human-review duties in Senate Bill 26-189.
@@ -415,7 +415,7 @@ function Hero() {
             Not ready for a call? Send us a message instead
           </button>
           <p className="mt-6 text-xs text-[#A89279] uppercase tracking-widest">
-            Free 30-min scoping call · Fixed-fee engagement · Colorado-licensed attorney
+            Free 30-min scoping call · Fixed-fee engagement · Independent standard
           </p>
         </div>
       </div>
@@ -512,17 +512,18 @@ function WhatIsFaiir() {
           className="text-4xl md:text-5xl leading-tight mb-6"
           style={{ fontFamily: "'Playfair Display', serif", fontWeight: 400 }}
         >
-          FAIIR is an attorney-led compliance certification{" "}
+          FAIIR is an independent compliance certification{" "}
           <span className="italic text-[#F2B870]">built for Colorado businesses</span>.
         </h2>
         <p className="text-lg text-white/70 leading-relaxed max-w-2xl mx-auto mb-5">
           FAIIR organizes responsible AI use into five pillars — Fitness for
           purpose, Accountability, Integrity of data, Informed use, and Risk
           management — with 41 documented pass/fail controls underneath. A
-          FAIIR-certified business has been assessed against that standard by
-          a licensed attorney, mapped to the specific duties SB 26-189
-          imposes, and maintains it through ongoing monitoring. The work
-          product is legal analysis, not a generic audit checklist.
+          FAIIR-certified business has been assessed against that published
+          standard by FAIIR, LLC, mapped to the specific duties SB 26-189
+          imposes, and maintains it through ongoing monitoring. The
+          deliverable is documented, evidence-based proof of reasonable care
+          — not a generic audit checklist.
         </p>
         <Link
           href="/faiir/framework"
@@ -682,9 +683,9 @@ function PricingSection() {
             One assessment. Ongoing peace of mind.
           </h2>
           <p className="text-[#6B5B4E] leading-relaxed">
-            Start with a one-time, fixed-fee attorney audit. Stay certified
-            with an ongoing membership. Three sizes of each — pick what fits
-            the AI you actually run.
+            Start with a one-time, fixed-fee readiness assessment. Stay
+            certified with an ongoing membership. Three sizes of each — pick
+            what fits the AI you actually run.
           </p>
         </div>
 
@@ -784,6 +785,18 @@ function PricingSection() {
         {/* Re-certification audit — distinct from membership.
             Mirrors ISO/SOC convention; bundled free for Plus/Enterprise. */}
         <RecertCallout />
+
+        {/* Entity + legal-services disclosure */}
+        <p className="mt-8 max-w-3xl mx-auto text-center text-xs text-[#A89279] leading-relaxed">
+          FAIIR certification assessments and memberships are provided by
+          FAIIR, LLC, an independent compliance company. FAIIR, LLC is not a
+          law firm; certification is not legal advice and does not create an
+          attorney-client relationship. Membership benefits described as
+          attorney services — including attorney Q&amp;A, quarterly attorney
+          reviews, and dedicated-attorney support — are legal services
+          provided by Available Law, LLC, a separate Colorado-licensed law
+          firm, under its own engagement agreement.
+        </p>
       </div>
     </section>
   );
@@ -995,7 +1008,7 @@ function RecertCallout() {
         </p>
         <p className="text-[15px] text-[#1F1810] leading-relaxed">
           <span className="font-semibold">${RECERT_FEE_USD.toLocaleString()}/year</span>{" "}
-          attorney-led review to keep your FAIIR letter current after Year 1.
+          structured review to keep your FAIIR letter current after Year 1.
           Lighter touch than the full assessment, focused on what changed.
           <span className="text-[#6B5B4E]">
             {" "}
@@ -1045,7 +1058,7 @@ function ProcessSection() {
     {
       n: "05",
       title: "Certification &amp; ongoing monitoring",
-      body: "Written FAIIR certification letter and final report. Optional ongoing membership keeps policies current, tracks regulatory changes, and provides on-call attorney access.",
+      body: "Written FAIIR certification letter and final report. Optional ongoing membership keeps policies current, tracks regulatory changes, and includes attorney Q&A delivered by Available Law, LLC under a separate engagement.",
     },
   ];
 
@@ -1243,7 +1256,7 @@ function FinalCta() {
 }
 
 /* ------------------------------------------------------------------ */
-/* Footer — subtly credits Available Law as the delivery firm          */
+/* Footer — FAIIR, LLC entity disclosure + Available Law legal credit  */
 /* ------------------------------------------------------------------ */
 
 function FaiirFooter() {
@@ -1251,8 +1264,10 @@ function FaiirFooter() {
     <footer className="bg-[#FAF8F5] border-t border-[#1F1810]/10 py-10">
       <div className="max-w-[1200px] mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-[#A89279]">
         <p className="text-center md:text-left leading-relaxed">
-          FAIIR — Foundation of AI Integrity &amp; Regulation, a standard
-          maintained by FAIIR, LLC. Legal services delivered by{" "}
+          FAIIR — Foundation of AI Integrity &amp; Regulation, an independent
+          standard and certification program from FAIIR, LLC. FAIIR, LLC is
+          not a law firm, and certification is not legal advice. Legal
+          services are provided separately by{" "}
           <Link
             href="/"
             className="underline decoration-[#A89279]/50 hover:text-[#1F1810] hover:decoration-[#1F1810] transition-colors"

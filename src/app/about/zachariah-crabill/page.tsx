@@ -133,9 +133,9 @@ export default function AboutZachariahPage() {
               <Link href="/faiir" className="text-[#C17832] hover:text-[#D4893F] underline">
                 FAIIR — the Foundation of AI Integrity &amp; Regulation
               </Link>{" "}
-              as a structured, attorney-led framework for getting Colorado
-              businesses through the statute with defensible, dated work
-              product.
+              as a structured framework for getting Colorado businesses
+              through the statute with defensible, dated work product — now
+              maintained as an independent standard by FAIIR, LLC.
             </p>
 
             <p>

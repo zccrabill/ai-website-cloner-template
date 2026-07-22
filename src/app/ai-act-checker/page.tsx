@@ -45,7 +45,7 @@ const CHECKER_FAQS = [
   {
     question: "Is this a substitute for legal advice?",
     answer:
-      "No. The Readiness Checker is an educational tool. It is not legal advice and does not create an attorney-client relationship with Available Law. For an enforceable compliance opinion, schedule a FAIIR assessment with an Available Law attorney.",
+      "No. The Readiness Checker is an educational tool. It is not legal advice and does not create an attorney-client relationship with Available Law. For a formal certification, schedule a FAIIR assessment with FAIIR, LLC — and for legal advice on your specific obligations, engage Available Law, a Colorado-licensed law firm.",
   },
   {
     question: "Who built this?",

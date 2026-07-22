@@ -382,7 +382,7 @@ export function scoreAssessment(
 
   const summary =
     rag === "green"
-      ? "Your business has the core elements of an ADMT compliance program in place. The remaining work is mostly maintenance, notice-language refinement, and periodic monitoring. Our FAIIR certification can formalize what you already have and give you a defensible certificate to show customers, partners, and regulators."
+      ? "Your business has the core elements of an ADMT compliance program in place. The remaining work is mostly maintenance, notice-language refinement, and periodic monitoring. FAIIR certification — an independent standard from FAIIR, LLC — can formalize what you already have and give you a defensible certificate to show customers, partners, and regulators."
       : rag === "amber"
         ? "You have some of the pieces but not a cohesive program. Colorado SB 26-189 takes effect January 1, 2027 and the disclosure-based framework is much faster to stand up than the prior law's risk-management regime — typically 3–6 weeks. A FAIIR assessment will prioritize which gaps to close first and give you a written roadmap."
         : "You are running ADMT in ways that the new Colorado AI Act regulates, without the notices, human-review process, or documentation the statute requires. This is a material legal and reputational risk. A FAIIR assessment is the fastest way to get organized and build the missing pieces before the January 1, 2027 effective date.";

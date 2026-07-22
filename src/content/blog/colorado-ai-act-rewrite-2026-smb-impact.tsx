@@ -344,7 +344,7 @@ export default function ColoradoAiActRewrite2026SmbImpactArticle() {
           free readiness checker
         </InlineLink>{" "}
         will produce a prioritized gap list mapped to the new framework.
-        And if you want a fixed-fee, attorney-led assessment of your
+        And if you want a fixed-fee, independent assessment of your
         ADMT footprint, that is what{" "}
         <InlineLink href="/faiir">FAIIR certification</InlineLink> is
         for.
