@@ -58,6 +58,7 @@ const PRACTICE_AREAS = [
   "Business Succession",
   "Real Estate",
   "Business/LLC",
+  "Demand Letter",
   "Other",
 ];
 
@@ -355,10 +356,17 @@ Deno.serve(async (req: Request) => {
         .filter((c) => CHIP_OPTIONS.includes(c))
         .slice(0, CHIP_OPTIONS.length)
     : [];
-  const practiceArea =
+  // "Other" lets the client type what the matter was; the free text (capped,
+  // trimmed) replaces the literal "Other" everywhere downstream — storage,
+  // the draft prompt, and the public display label.
+  let practiceArea =
     typeof body.practice_area === "string" && PRACTICE_AREAS.includes(body.practice_area)
       ? body.practice_area
       : null;
+  if (practiceArea === "Other") {
+    const custom = cleanString(body.practice_area_other, 80);
+    practiceArea = custom || "Other";
+  }
 
   /* ---- action: draft ---------------------------------------------------- */
   if (body.action === "draft") {

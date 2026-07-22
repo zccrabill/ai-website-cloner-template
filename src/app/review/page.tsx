@@ -34,6 +34,7 @@ const PRACTICE_AREAS = [
   "Business Succession",
   "Real Estate",
   "Business/LLC",
+  "Demand Letter",
   "Other",
 ];
 
@@ -124,6 +125,9 @@ export default function ReviewPage() {
   const [hoverRating, setHoverRating] = useState(0);
   const [chips, setChips] = useState<string[]>([]);
   const [practiceArea, setPracticeArea] = useState<string | null>(null);
+  // Free-text matter description, shown when "Other" is selected. The server
+  // substitutes it for the literal "Other" in storage and display.
+  const [practiceAreaOther, setPracticeAreaOther] = useState("");
 
   // Step 3. showPaths controls the "Write my own / Draft it for me" chooser;
   // once a path is picked the textarea takes over (and stays if they go back).
@@ -160,6 +164,7 @@ export default function ReviewPage() {
           rating,
           chips,
           practice_area: practiceArea,
+          practice_area_other: practiceAreaOther.trim() || null,
         },
       });
       if (error || !data?.draft) {
@@ -188,6 +193,7 @@ export default function ReviewPage() {
           rating,
           chips,
           practice_area: practiceArea,
+          practice_area_other: practiceAreaOther.trim() || null,
           review_text: reviewText.trim(),
           ai_drafting_used: aiDraft !== null,
           ai_draft_text: aiDraft,
@@ -211,6 +217,12 @@ export default function ReviewPage() {
       setSubmitting(false);
     }
   };
+
+  // What the matter label will actually read — the custom "Other" text wins.
+  const effectivePracticeArea =
+    practiceArea === "Other" && practiceAreaOther.trim()
+      ? practiceAreaOther.trim()
+      : practiceArea;
 
   const displayName =
     consentLevel !== null
@@ -357,6 +369,23 @@ export default function ReviewPage() {
                   );
                 })}
               </div>
+              {practiceArea === "Other" && (
+                <div className="mt-3">
+                  <label htmlFor="practice-area-other" className="sr-only">
+                    What did we help you with?
+                  </label>
+                  <input
+                    id="practice-area-other"
+                    type="text"
+                    value={practiceAreaOther}
+                    onChange={(e) => setPracticeAreaOther(e.target.value)}
+                    maxLength={80}
+                    autoFocus
+                    placeholder="Tell us in a few words — e.g. Contract Dispute"
+                    className="w-full bg-white border border-[#1F1810]/15 rounded-xl px-4 py-3 text-[#1F1810] text-sm placeholder:text-[#A89279] focus:border-[#C17832] focus:outline-none focus:ring-2 focus:ring-[#C17832]/20"
+                  />
+                </div>
+              )}
             </fieldset>
           </section>
         )}
@@ -590,9 +619,9 @@ export default function ReviewPage() {
                 {reviewText.trim()}
               </blockquote>
               <p className="text-sm font-semibold text-[#1F1810]">{displayName}</p>
-              {practiceArea && (
+              {effectivePracticeArea && (
                 <p className="text-xs text-[#A89279] uppercase tracking-wider mt-1">
-                  {practiceArea}
+                  {effectivePracticeArea}
                 </p>
               )}
             </div>
@@ -631,11 +660,34 @@ export default function ReviewPage() {
             <p className="text-[#6B5B4E] leading-relaxed max-w-[400px] mx-auto mb-10">
               It means a lot that you took the time.
             </p>
+
+            {/* Membership CTA — the natural next step for a client who just
+                had a good one-off experience. */}
+            <div className="bg-white border border-[#1F1810]/8 rounded-2xl shadow-sm p-6 max-w-[400px] mx-auto mb-8 text-left">
+              <p className="text-xs font-semibold text-[#C17832] uppercase tracking-widest mb-2">
+                Keep a lawyer in your corner
+              </p>
+              <h2 className="text-xl font-heading text-[#1F1810] mb-2">
+                Legal help on a subscription, not a stopwatch.
+              </h2>
+              <p className="text-sm text-[#6B5B4E] leading-relaxed mb-5">
+                Contracts, quick questions, document reviews — Available Law
+                memberships give your business ongoing counsel for a flat
+                monthly price. No hourly billing, no surprise invoices.
+              </p>
+              <Link
+                href="/#pricing"
+                className="block w-full text-center px-6 py-3 rounded-xl text-sm font-semibold bg-[#1F1810] text-white hover:bg-[#C17832] transition-colors"
+              >
+                See membership plans
+              </Link>
+            </div>
+
             <Link
               href="/"
               className="text-sm text-[#A89279] hover:text-[#C17832] transition-colors underline underline-offset-4"
             >
-              availablelaw.com
+              or just visit availablelaw.com
             </Link>
           </section>
         )}
