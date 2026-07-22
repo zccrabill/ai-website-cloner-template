@@ -26,6 +26,11 @@
 // and YLab (teen founders) programs, captures waitlist signups via
 // [WAITLIST: {...}] tokens → public.waitlist_signups + notification email,
 // and carries a mental-health safety block (988 / COLAP) for Sidebar traffic.
+// v25: Sidebar signup notifications include a copy-paste welcome reply with
+// the private WhatsApp invite (admin email only — never exposed to Ava).
+// v26: FAIIR reframed as an independent standard from FAIIR, LLC (separate
+// entity, not a law firm) — Ava must never call it Available Law's own or
+// attorney-led.
 
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient, SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
