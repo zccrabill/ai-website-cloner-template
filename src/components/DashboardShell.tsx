@@ -24,6 +24,7 @@ import {
   ListChecks,
   BadgeCheck,
   Scale,
+  Star,
 } from "lucide-react";
 
 interface UserData {
@@ -67,6 +68,7 @@ const adminSections: {
       { icon: Users, label: "Firm Clients", href: "/dashboard/clients" },
       { icon: Scale, label: "Litigation Matters", href: "/dashboard/litigation" },
       { icon: ShieldCheck, label: "Ava — Review Queue", href: "/dashboard/review" },
+      { icon: Star, label: "Client Reviews", href: "/dashboard/reviews" },
       { icon: Activity, label: "Ava — AI Usage", href: "/dashboard/usage" },
     ],
   },

@@ -1,13 +1,25 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Star, ChevronLeft, ChevronRight } from "lucide-react";
+import { supabase } from "@/lib/supabase";
 
 interface Review {
   rating: number;
   matter: string;
   quote: string;
   author: string;
+}
+
+// Shape returned by the get_published_reviews RPC — approved rows from the
+// /review collection flow, display fields only.
+interface PublishedReview {
+  id: string;
+  rating: number;
+  practice_area: string | null;
+  display_name: string;
+  review_text: string;
+  approved_at: string;
 }
 
 const REVIEWS: Review[] = [
@@ -111,11 +123,37 @@ const REVIEWS: Review[] = [
 
 export default function TestimonialsSection() {
   const [index, setIndex] = useState(0);
+  // Approved reviews from the /review flow render ahead of the hardcoded
+  // historical set. Fetch failures fall back silently to the static list.
+  const [reviews, setReviews] = useState<Review[]>(REVIEWS);
 
-  const next = () => setIndex((i) => (i + 1) % REVIEWS.length);
-  const prev = () => setIndex((i) => (i - 1 + REVIEWS.length) % REVIEWS.length);
+  useEffect(() => {
+    let cancelled = false;
+    const load = async () => {
+      try {
+        const { data, error } = await supabase.rpc("get_published_reviews");
+        if (error || !Array.isArray(data) || data.length === 0) return;
+        const published: Review[] = (data as PublishedReview[]).map((r) => ({
+          rating: r.rating,
+          matter: r.practice_area ?? "Client Review",
+          quote: r.review_text,
+          author: r.display_name,
+        }));
+        if (!cancelled) setReviews([...published, ...REVIEWS]);
+      } catch {
+        // Static list already rendered — nothing to do.
+      }
+    };
+    load();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
-  const review = REVIEWS[index];
+  const next = () => setIndex((i) => (i + 1) % reviews.length);
+  const prev = () => setIndex((i) => (i - 1 + reviews.length) % reviews.length);
+
+  const review = reviews[index];
 
   return (
     <section
@@ -140,7 +178,10 @@ export default function TestimonialsSection() {
             ))}
           </div>
           <span className="text-sm text-[#6B5B4E]">
-            5.0 average · {REVIEWS.length} verified reviews
+            {(
+              reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
+            ).toFixed(1)}{" "}
+            average · {reviews.length} verified reviews
           </span>
         </div>
 
@@ -193,7 +234,7 @@ export default function TestimonialsSection() {
                   <ChevronLeft className="w-4 h-4" />
                 </button>
                 <span className="text-xs text-[#A89279] tabular-nums">
-                  {index + 1} / {REVIEWS.length}
+                  {index + 1} / {reviews.length}
                 </span>
                 <button
                   onClick={next}
@@ -209,7 +250,7 @@ export default function TestimonialsSection() {
 
         {/* Pagination dots */}
         <div className="flex gap-1.5">
-          {REVIEWS.map((_, i) => (
+          {reviews.map((_, i) => (
             <button
               key={i}
               onClick={() => setIndex(i)}

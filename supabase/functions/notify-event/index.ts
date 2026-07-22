@@ -13,6 +13,8 @@
  *                             attorney's note + a CTA to their workspace.
  *   - deliverable.released  → notify the engagement's client seat(s) that a
  *                             deliverable is ready in their workspace.
+ *   - review.submitted      → notify Zachariah that a client submitted a
+ *                             review at /review (lands pending approval).
  *
  * Request shape:
  *   { event_type, user_id?, member_email?, data? }
@@ -59,7 +61,8 @@ type EventType =
   | "checkout.paid"
   | "faiir.intake_received"
   | "status_note.posted"
-  | "deliverable.released";
+  | "deliverable.released"
+  | "review.submitted";
 
 interface IncomingPayload {
   event_type: EventType;
@@ -417,6 +420,52 @@ async function deliverableReleasedSpec(payload: IncomingPayload): Promise<EmailS
   };
 }
 
+// review.submitted — notify Zachariah that a client submitted a review via
+// the public /review flow. Reviews land pending, so the CTA points at the
+// approval queue rather than the public site.
+function reviewSubmittedTemplate(payload: IncomingPayload): EmailSpec {
+  const d = payload.data ?? {};
+  const rating = typeof d.rating === "number" ? d.rating : 0;
+  const stars = "★".repeat(Math.max(0, Math.min(5, rating))) +
+    "☆".repeat(Math.max(0, 5 - Math.max(0, Math.min(5, rating))));
+  const chips = Array.isArray(d.chips)
+    ? (d.chips as unknown[]).map((c) => escapeHtml(c)).join(" · ")
+    : "";
+  const consentLabels: Record<string, string> = {
+    full: "Publish with full name and business",
+    first_initial: "Publish with first name + last initial",
+    anonymous: "Publish anonymously",
+    private: "Do NOT publish — private feedback only",
+  };
+  const consentLevel = typeof d.consent_level === "string" ? d.consent_level : "";
+  const body = `
+    <p style="color:#6B5B4E;font-size:14px;line-height:1.6;margin-bottom:20px;">A client just submitted a review. It's pending — nothing publishes until you approve it.</p>
+    <div style="background:#FAF8F5;border:1px solid rgba(31,24,16,0.08);border-radius:12px;padding:20px;margin-bottom:16px;">
+      ${row("Rating", `<span style="color:#C17832;font-size:16px;letter-spacing:2px;">${stars}</span> (${rating}/5)`)}
+      ${row("Name", `${escapeHtml(d.first_name)} ${escapeHtml(d.last_name)}`)}
+      ${d.business_name ? row("Business", escapeHtml(d.business_name)) : ""}
+      ${d.practice_area ? row("Practice area", escapeHtml(d.practice_area)) : ""}
+      ${chips ? row("Highlights", chips) : ""}
+      ${row("Consent", escapeHtml(consentLabels[consentLevel] ?? consentLevel))}
+      ${row("Will display as", escapeHtml(d.display_name))}
+      ${row("AI drafting used", d.ai_drafting_used ? "Yes (original draft stored)" : "No")}
+    </div>
+    <div style="background:#FAF8F5;border:1px solid rgba(31,24,16,0.08);border-radius:12px;padding:20px;margin-bottom:16px;">
+      <h3 style="font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#A89279;margin:0 0 8px;">Review text</h3>
+      <p style="margin:0;color:#1F1810;font-size:14px;line-height:1.6;white-space:pre-wrap;">${escapeHtml(d.review_text)}</p>
+    </div>
+    <p style="margin:24px 0 0;">
+      <a href="${escapeHtml(DASHBOARD_URL)}/reviews" style="display:inline-block;background:#1F1810;color:white;text-decoration:none;padding:10px 18px;border-radius:8px;font-size:14px;font-weight:600;">Review &amp; approve →</a>
+    </p>
+  `;
+  return {
+    from: FROM_FIRM,
+    to: ADMIN_EMAIL,
+    subject: `New client review (${rating}/5): ${d.first_name ?? ""} ${d.last_name ?? ""}`.trim(),
+    html: shell("New client review submitted", body),
+  };
+}
+
 /* -------------------------------------------------------------------------- */
 /* Dispatcher                                                                 */
 /* -------------------------------------------------------------------------- */
@@ -446,6 +495,8 @@ async function buildEmail(payload: IncomingPayload): Promise<EmailSpec | null> {
       return await statusNotePostedSpec(payload);
     case "deliverable.released":
       return await deliverableReleasedSpec(payload);
+    case "review.submitted":
+      return reviewSubmittedTemplate(payload);
     default:
       console.warn("[notify-event] unknown event_type:", payload.event_type);
       return null;
