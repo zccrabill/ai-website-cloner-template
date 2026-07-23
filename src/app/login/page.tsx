@@ -311,6 +311,26 @@ export default function LoginPage() {
             </div>
           </div>
 
+          <div className="mt-8 flex flex-col items-center gap-3">
+            <p className="text-xs text-[#6B5B4E]">
+              Your law firm, in your pocket.
+            </p>
+            <a
+              href="https://apps.apple.com/us/app/available-law/id6790504530"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="transition-opacity hover:opacity-80"
+              aria-label="Download the Available Law app on the App Store"
+            >
+              <Image
+                src="/images/app-store-badge.svg"
+                alt="Download on the App Store"
+                width={120}
+                height={40}
+              />
+            </a>
+          </div>
+
           <p className="text-center text-xs text-[#A89279] mt-8">
             Protected by Cloudflare Turnstile. Your data is encrypted at rest and in transit.
           </p>

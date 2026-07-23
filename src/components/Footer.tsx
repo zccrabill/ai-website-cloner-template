@@ -1,5 +1,9 @@
 import Link from "next/link";
+import Image from "next/image";
 import FooterTerminal from "@/components/FooterTerminal";
+
+/** App Store product page for the Available Law iOS app (live 2026-07-22). */
+export const APP_STORE_URL = "https://apps.apple.com/us/app/available-law/id6790504530";
 
 export default function Footer() {
   return (
@@ -17,6 +21,20 @@ export default function Footer() {
           <p className="text-xs text-[#A89279] mt-4">
             Based in Colorado Springs &middot; Serving the Front Range
           </p>
+          <a
+            href={APP_STORE_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-block mt-6 transition-opacity hover:opacity-80"
+            aria-label="Download the Available Law app on the App Store"
+          >
+            <Image
+              src="/images/app-store-badge.svg"
+              alt="Download on the App Store"
+              width={120}
+              height={40}
+            />
+          </a>
         </div>
 
         {/* Navigation Column */}
