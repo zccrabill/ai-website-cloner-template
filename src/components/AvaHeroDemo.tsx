@@ -431,7 +431,7 @@ export default function AvaHeroDemo() {
       {/* iPhone chassis — the demo IS the App Store app, so it plays inside
           a phone. Chassis is pure CSS (bezel + screen + Dynamic Island +
           status bar + home indicator); the chat inside is unchanged. */}
-      <div className="mx-auto w-[320px] sm:w-[344px]">
+      <div className="relative mx-auto w-[320px] sm:w-[344px]">
         <div className="relative bg-[#1F1810] rounded-[52px] p-[10px] shadow-[0_30px_80px_rgba(31,24,16,0.28)]">
           {/* Side buttons (cosmetic) */}
           <span className="absolute -left-[2px] top-24 w-[3px] h-8 rounded-l bg-[#1F1810]" aria-hidden />
@@ -477,8 +477,8 @@ export default function AvaHeroDemo() {
                   </p>
                   <p className="text-[10px] text-[#A89279] leading-tight truncate">
                     The <span className="text-[#C17832]">{"{"}</span>ai
-                    <span className="text-[#C17832]">{"}"}</span> in Available
-                    Law &middot; online
+                    <span className="text-[#C17832]">{"}"}</span>
+                    {" in Available Law"}
                   </p>
                 </div>
               </div>
@@ -567,6 +567,40 @@ export default function AvaHeroDemo() {
             </div>
           </div>
         </div>
+
+        {/* Floating Attorney-verified badge — appears only during the
+            delivery scenario, fades in/out with the scenario transition,
+            and gently floats to keep the hero feeling alive. Lives inside
+            the phone-width wrapper so it hugs the device's upper-right
+            edge like an iOS notification, at every viewport width. */}
+        <div
+          className={`absolute top-24 -right-4 z-20 flex bg-white px-3.5 py-2.5 rounded-xl shadow-[0_10px_30px_rgba(31,24,16,0.12)] border border-[#F5F0EB] items-center gap-2 transition-opacity duration-500 ${
+            scenario.kind === "delivery" && phase !== "fade-out"
+              ? "opacity-100"
+              : "opacity-0 pointer-events-none"
+          }`}
+          style={{
+            animation:
+              scenario.kind === "delivery" && !prefersReduced
+                ? "avaFloat 3.6s ease-in-out infinite"
+                : "none",
+          }}
+          aria-hidden={scenario.kind !== "delivery"}
+        >
+          <span className="relative flex items-center justify-center">
+            <span
+              className="absolute w-3.5 h-3.5 rounded-full bg-[#7A8B6F]/35"
+              style={{
+                animation: !prefersReduced ? "avaPulse 1.8s ease-in-out infinite" : "none",
+              }}
+              aria-hidden
+            />
+            <span className="relative w-2 h-2 rounded-full bg-[#7A8B6F] shadow-[0_0_8px_rgba(122,139,111,0.7)]" />
+          </span>
+          <span className="text-xs font-semibold text-[#1F1810]">
+            Attorney-verified
+          </span>
+        </div>
       </div>
 
       {/* Scenario progress dots */}
@@ -605,41 +639,6 @@ export default function AvaHeroDemo() {
           This isn&apos;t a mockup — Ava is live in the{" "}
           <span className="font-semibold text-[#1F1810]">Available Law app</span>.
         </p>
-      </div>
-
-      {/* Floating Attorney-verified badge — appears only during the delivery
-          scenario, fades in/out with the scenario transition, and gently
-          floats up and down to keep the hero feeling alive.
-          Anchored beside the phone's upper-right edge, like an iOS
-          notification hovering off the device — clear of the header pill,
-          the transcript, and the App Store row below. */}
-      <div
-        className={`absolute top-24 right-0 sm:right-2 lg:-right-2 z-20 flex bg-white px-3.5 py-2.5 rounded-xl shadow-[0_10px_30px_rgba(31,24,16,0.12)] border border-[#F5F0EB] items-center gap-2 transition-opacity duration-500 ${
-          scenario.kind === "delivery" && phase !== "fade-out"
-            ? "opacity-100"
-            : "opacity-0 pointer-events-none"
-        }`}
-        style={{
-          animation:
-            scenario.kind === "delivery" && !prefersReduced
-              ? "avaFloat 3.6s ease-in-out infinite"
-              : "none",
-        }}
-        aria-hidden={scenario.kind !== "delivery"}
-      >
-        <span className="relative flex items-center justify-center">
-          <span
-            className="absolute w-3.5 h-3.5 rounded-full bg-[#7A8B6F]/35"
-            style={{
-              animation: !prefersReduced ? "avaPulse 1.8s ease-in-out infinite" : "none",
-            }}
-            aria-hidden
-          />
-          <span className="relative w-2 h-2 rounded-full bg-[#7A8B6F] shadow-[0_0_8px_rgba(122,139,111,0.7)]" />
-        </span>
-        <span className="text-xs font-semibold text-[#1F1810]">
-          Attorney-verified
-        </span>
       </div>
 
       {/* Component-scoped keyframes. Live here (not globals.css) so this demo
