@@ -16,21 +16,23 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import AvaFloatingWidget from "@/components/AvaFloatingWidget";
 import WebsiteIntakeForm from "@/components/WebsiteIntakeForm";
+import AvailableWordmark from "@/components/AvailableWordmark";
 import {
-  SITECRAFT_HERO,
-  SITECRAFT_VALUE_PROPS,
-  SITECRAFT_PROCESS,
-  SITECRAFT_PACKAGES,
-  SITECRAFT_CARE_PLAN,
-  SITECRAFT_FAQS,
-  SITECRAFT_FULL_NAME,
-} from "@/lib/sitecraft";
+  WEBDEV_HERO,
+  WEBDEV_VALUE_PROPS,
+  WEBDEV_PROCESS,
+  WEBDEV_PACKAGES,
+  WEBDEV_CARE_PLAN,
+  WEBDEV_FAQS,
+  WEBDEV_SUFFIX,
+  WEBDEV_NAME,
+} from "@/lib/webdev";
 
 // One icon per value prop, in order. Kept here (not in the config) because
 // icons are a presentation detail of this page, not offering content.
 const VALUE_PROP_ICONS: LucideIcon[] = [Sparkles, Wand2, Rocket, KeyRound];
 
-export default function SitecraftLanding() {
+export default function WebdevLanding() {
   const [intakeOpen, setIntakeOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
 
@@ -54,17 +56,18 @@ export default function SitecraftLanding() {
           <div className="max-w-[920px] mx-auto px-6 pt-20 pb-16 text-center">
             <div className="inline-flex items-center gap-2 rounded-full border border-[#C17832]/30 bg-white/60 px-4 py-1.5 mb-7">
               <Sparkles className="w-4 h-4 text-[#C17832]" />
-              <span className="text-xs font-semibold uppercase tracking-[0.14em] text-[#6B5B4E]">
-                {SITECRAFT_HERO.eyebrow}
-              </span>
+              <AvailableWordmark
+                suffix={WEBDEV_SUFFIX}
+                className="text-xs font-semibold uppercase tracking-[0.14em] text-[#6B5B4E]"
+              />
             </div>
 
             <h1 className="font-heading text-4xl md:text-6xl leading-[1.05] mb-6 whitespace-pre-line">
-              {SITECRAFT_HERO.headline}
+              {WEBDEV_HERO.headline}
             </h1>
 
             <p className="text-lg text-[#6B5B4E] max-w-2xl mx-auto leading-relaxed mb-9">
-              {SITECRAFT_HERO.subhead}
+              {WEBDEV_HERO.subhead}
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
@@ -73,14 +76,14 @@ export default function SitecraftLanding() {
                 onClick={openIntake}
                 className="group inline-flex items-center gap-2 px-7 py-3.5 bg-[#1F1810] text-white rounded-full text-sm font-medium hover:bg-[#C17832] transition-all"
               >
-                {SITECRAFT_HERO.primaryCta}
+                {WEBDEV_HERO.primaryCta}
                 <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
               </button>
               <a
                 href="#how"
                 className="inline-flex items-center gap-2 px-7 py-3.5 bg-white border border-[#1F1810]/10 text-[#1F1810] rounded-full text-sm font-medium hover:border-[#C17832]/40 transition-all"
               >
-                {SITECRAFT_HERO.secondaryCta}
+                {WEBDEV_HERO.secondaryCta}
               </a>
             </div>
           </div>
@@ -93,7 +96,7 @@ export default function SitecraftLanding() {
           <div className="max-w-7xl mx-auto px-6">
             <div className="mb-14 text-center lg:text-left">
               <p className="text-sm font-medium text-[#C17832] tracking-widest uppercase mb-3">
-                Why Sitecraft
+                Why work with us
               </p>
               <h2 className="font-heading text-4xl lg:text-5xl text-[#1F1810] mb-4 leading-tight">
                 A great website, without the agency headache
@@ -106,7 +109,7 @@ export default function SitecraftLanding() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {SITECRAFT_VALUE_PROPS.map((prop, i) => {
+              {WEBDEV_VALUE_PROPS.map((prop, i) => {
                 const Icon = VALUE_PROP_ICONS[i % VALUE_PROP_ICONS.length];
                 return (
                   <div
@@ -149,7 +152,7 @@ export default function SitecraftLanding() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {SITECRAFT_PROCESS.map((step) => (
+              {WEBDEV_PROCESS.map((step) => (
                 <div
                   key={step.number}
                   className="bg-white border border-[#EDE5DB] rounded-2xl p-7"
@@ -188,7 +191,7 @@ export default function SitecraftLanding() {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
-              {SITECRAFT_PACKAGES.map((pkg) => (
+              {WEBDEV_PACKAGES.map((pkg) => (
                 <div
                   key={pkg.key}
                   className={`relative flex flex-col rounded-[20px] p-8 border transition-all duration-300 ${
@@ -265,12 +268,12 @@ export default function SitecraftLanding() {
               ))}
             </div>
 
-            {SITECRAFT_CARE_PLAN && (
+            {WEBDEV_CARE_PLAN && (
               <p className="text-center text-sm text-[#6B5B4E] mt-8 max-w-2xl mx-auto">
                 <span className="font-semibold text-[#1F1810]">
-                  {SITECRAFT_CARE_PLAN.price}
+                  {WEBDEV_CARE_PLAN.price}
                 </span>{" "}
-                — {SITECRAFT_CARE_PLAN.description}
+                — {WEBDEV_CARE_PLAN.description}
               </p>
             )}
           </div>
@@ -291,7 +294,7 @@ export default function SitecraftLanding() {
             </div>
 
             <div className="flex flex-col gap-3">
-              {SITECRAFT_FAQS.map((faq, i) => {
+              {WEBDEV_FAQS.map((faq, i) => {
                 const open = openFaq === i;
                 return (
                   <div
@@ -356,9 +359,9 @@ export default function SitecraftLanding() {
       <Footer />
       <AvaFloatingWidget />
 
-      {/* Screen-reader-only brand name anchor for context; visually the
-          header already carries the Available Law identity. */}
-      <span className="sr-only">{SITECRAFT_FULL_NAME}</span>
+      {/* Screen-reader-only plain-text brand name for context; the visual
+          wordmark above carries the {ai} device. */}
+      <span className="sr-only">{WEBDEV_NAME}</span>
 
       <WebsiteIntakeForm isOpen={intakeOpen} onClose={() => setIntakeOpen(false)} />
     </>

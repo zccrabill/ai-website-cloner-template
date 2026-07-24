@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { ShieldCheck, FlaskConical, HeartHandshake, LayoutTemplate } from "lucide-react";
 import AnnouncementBanner from "@/components/AnnouncementBanner";
+import AvailableWordmark from "@/components/AvailableWordmark";
 
 export default function Header() {
   const [scrolled, setScrolled] = useState(false);
@@ -127,12 +128,13 @@ export default function Header() {
               Sidebar
             </span>
           </Link>
-          {/* Sitecraft — website design & build. Icon-only like YLab/Sidebar;
-              the layout-template glyph reads "web page." Tooltip names it. */}
+          {/* Available Webdev — website design & build. Icon-only like
+              YLab/Sidebar; the layout-template glyph reads "web page."
+              Tooltip names it. */}
           <Link
-            href="/sitecraft"
-            aria-label="Sitecraft — website design & build"
-            title="Sitecraft"
+            href="/webdev"
+            aria-label="Available Webdev — website design & build"
+            title="Available Webdev"
             className="group relative flex items-center justify-center text-[#C17832] hover:text-[#A9652A] transition-colors"
           >
             <LayoutTemplate
@@ -141,7 +143,7 @@ export default function Header() {
               aria-hidden="true"
             />
             <span className="absolute top-full mt-2 left-1/2 -translate-x-1/2 px-2 py-1 bg-[#1F1810] text-white text-[10px] font-medium rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-              Sitecraft
+              Available Webdev
             </span>
           </Link>
         </nav>
@@ -240,7 +242,7 @@ export default function Header() {
               Sidebar
             </Link>
             <Link
-              href="/sitecraft"
+              href="/webdev"
               onClick={() => setMobileMenuOpen(false)}
               className="flex items-center gap-2 text-[#6B5B4E] hover:text-[#1F1810] transition-colors text-sm"
             >
@@ -249,7 +251,7 @@ export default function Header() {
                 strokeWidth={1.75}
                 aria-hidden="true"
               />
-              Sitecraft — Websites
+              <AvailableWordmark suffix="Webdev" /> — Websites
             </Link>
             <hr className="border-[#1F1810]/8 my-2" />
             <Link

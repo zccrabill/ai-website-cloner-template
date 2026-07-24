@@ -5,7 +5,7 @@ import FeaturedInSection from "@/components/FeaturedInSection";
 import SolutionsSection from "@/components/SolutionsSection";
 import HowItWorksSection from "@/components/HowItWorksSection";
 import FaiirSection from "@/components/FaiirSection";
-import SitecraftSection from "@/components/SitecraftSection";
+import WebdevSection from "@/components/WebdevSection";
 import PricingSection from "@/components/PricingSection";
 import PracticeSnapshotSection from "@/components/PracticeSnapshotSection";
 import TestimonialsSection from "@/components/TestimonialsSection";
@@ -40,7 +40,7 @@ export default function Home() {
 
         <Reveal><FaiirSection /></Reveal>
 
-        <Reveal><SitecraftSection /></Reveal>
+        <Reveal><WebdevSection /></Reveal>
 
         <div id="pricing">
           <Reveal><PricingSection /></Reveal>

@@ -1,5 +1,5 @@
--- Sitecraft website-build project briefs, captured by the public /sitecraft
--- landing page intake form (WebsiteIntakeForm.tsx).
+-- Available Webdev website-build project briefs, captured by the public
+-- /webdev landing page intake form (WebsiteIntakeForm.tsx).
 --
 -- Follows the faiir_intakes lead-capture pattern: anonymous visitors may
 -- INSERT a brief, but only admins may read them back. The client does a
@@ -23,13 +23,13 @@ create table if not exists public.website_intakes (
   budget text,
   timeline text,
   notes text,
-  source text not null default 'sitecraft_landing',
+  source text not null default 'webdev_landing',
   status text not null default 'new'
     check (status in ('new', 'contacted', 'scoped', 'won', 'closed'))
 );
 
 comment on table public.website_intakes is
-  'Website-build project briefs from the public /sitecraft (Sitecraft) landing form. Anonymous INSERT allowed; SELECT/UPDATE admin-only. Notifies the firm via notify-event (website.intake_received).';
+  'Website-build project briefs from the public /webdev (Available Webdev) landing form. Anonymous INSERT allowed; SELECT/UPDATE admin-only. Notifies the firm via notify-event (website.intake_received).';
 
 alter table public.website_intakes enable row level security;
 

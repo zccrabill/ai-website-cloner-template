@@ -1,8 +1,8 @@
 "use client";
 
 /**
- * WebsiteIntakeForm — modal project brief for Sitecraft (website design &
- * build) landing visitors.
+ * WebsiteIntakeForm — modal project brief for Available Webdev (website
+ * design & build) landing visitors.
  *
  * Inserts into public.website_intakes (schema:
  * supabase/migrations/…_website_intakes.sql) and fires a
@@ -17,7 +17,7 @@
  * Law palette (cream + brown + #C17832 orange).
  *
  * All option lists (project types, industries, budget, timeline) come from
- * src/lib/sitecraft.ts so this component never needs editing to change them.
+ * src/lib/webdev.ts so this component never needs editing to change them.
  */
 
 import { useEffect, useState } from "react";
@@ -28,7 +28,7 @@ import {
   INDUSTRY_OPTIONS,
   BUDGET_OPTIONS,
   TIMELINE_OPTIONS,
-} from "@/lib/sitecraft";
+} from "@/lib/webdev";
 
 interface WebsiteIntakeFormProps {
   isOpen: boolean;

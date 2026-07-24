@@ -1,36 +1,44 @@
 /**
- * Sitecraft — the website design & build offering from Available Law.
+ * Available Webdev — the website design & build offering from Available Law.
+ *
+ * Branded to match the parent: the "Av{ai}lable" wordmark (see
+ * AvailableWordmark.tsx) wraps the "ai" in orange braces, and "Webdev" is
+ * appended plain. In visual surfaces the name is rendered via
+ * <AvailableWordmark suffix="Webdev" />; in plain-text contexts (SEO titles,
+ * email subjects, alt text) use WEBDEV_NAME below.
  *
  * ── EDIT THIS FILE TO CUSTOMIZE THE OFFERING ──────────────────────────────
- * Everything customer-facing about Sitecraft lives here: the name, the
- * positioning copy, the packages/pricing, the process steps, the FAQ, and
- * the option lists used by the intake form (project types, budgets,
+ * Everything customer-facing about Available Webdev lives here: the name,
+ * the positioning copy, the packages/pricing, the process steps, the FAQ,
+ * and the option lists used by the intake form (project types, budgets,
  * timelines, industries). The landing page, homepage section, and intake
  * form all read from these constants, so changing a package price or
- * renaming the brand is a one-file edit — no component surgery required.
+ * renaming the brand is a one-file edit.
  *
  * The positioning deliberately mirrors how Available Law pitches its legal
  * work: AI does the heavy lifting underneath, and a real expert makes the
  * result great. Same story, applied to websites instead of contracts.
  */
 
-/** Brand name for the offering. Rename here and it updates everywhere. */
-export const SITECRAFT_NAME = "Sitecraft";
-/** How the brand reads in full, umbrella'd under Available Law. */
-export const SITECRAFT_FULL_NAME = "Sitecraft by Available Law";
+/** Plain-text brand name (SEO, email, alt text). For visual surfaces render
+ *  <AvailableWordmark suffix={WEBDEV_SUFFIX} /> to get the {ai} braces. */
+export const WEBDEV_NAME = "Available Webdev";
+/** The descriptor appended after the Av{ai}lable wordmark. */
+export const WEBDEV_SUFFIX = "Webdev";
+/** Short label for tight spots (nav tooltip, chips). */
+export const WEBDEV_SHORT = "Webdev";
 /** Route the landing page lives at. If you change this, update the nav +
- *  footer links and the SEO canonical in src/app/sitecraft/page.tsx. */
-export const SITECRAFT_PATH = "/sitecraft";
+ *  footer links and the SEO canonical in src/app/webdev/page.tsx. */
+export const WEBDEV_PATH = "/webdev";
 
 /** Short tagline used in eyebrows / nav tooltips. */
-export const SITECRAFT_TAGLINE = "Websites, done for you";
+export const WEBDEV_TAGLINE = "Websites, done for you";
 
-/** Hero headline + subhead. */
-export const SITECRAFT_HERO = {
-  eyebrow: "Sitecraft · Websites by Available Law",
+/** Hero copy. The brand wordmark is rendered by the page, not stored here. */
+export const WEBDEV_HERO = {
   headline: "You know your business.\nWe'll build the website it deserves.",
   subhead:
-    "Most small businesses know they need a great website — they just don't have the time, the tools, or the design eye to build one. That's the gap we close. We design and build beautiful, custom sites fast, with AI doing the heavy lifting and a real builder making every pixel right.",
+    "Most small businesses know they need a great website — they just don't have the time, the tools, or the design eye to build one. That's the gap we close. Available Webdev designs and builds beautiful, custom sites fast, with AI doing the heavy lifting and a real builder making every pixel right.",
   primaryCta: "Start your project",
   secondaryCta: "See how it works",
 } as const;
@@ -41,7 +49,7 @@ export interface ValueProp {
 }
 
 /** The "why us" grid. Kept to four so the section stays tight. */
-export const SITECRAFT_VALUE_PROPS: ValueProp[] = [
+export const WEBDEV_VALUE_PROPS: ValueProp[] = [
   {
     title: "Custom, not a template",
     description:
@@ -71,7 +79,7 @@ export interface ProcessStep {
 }
 
 /** How-it-works steps. */
-export const SITECRAFT_PROCESS: ProcessStep[] = [
+export const WEBDEV_PROCESS: ProcessStep[] = [
   {
     number: "01",
     title: "Tell us about your business",
@@ -115,7 +123,7 @@ export interface Package {
  * the page. Prices are intentionally "from / starting at" so a project can
  * be scoped up on the intake call. Currency is USD.
  */
-export const SITECRAFT_PACKAGES: Package[] = [
+export const WEBDEV_PACKAGES: Package[] = [
   {
     key: "launch",
     name: "Launch",
@@ -166,23 +174,22 @@ export const SITECRAFT_PACKAGES: Package[] = [
 
 /** Optional recurring care plan mentioned on the page. Edit or set to null
  *  to hide the care-plan mention. */
-export const SITECRAFT_CARE_PLAN: { price: string; description: string } | null =
-  {
-    price: "$99/mo",
-    description:
-      "Optional care plan: hosting, security, small content updates, and edits handled for you — so the site never goes stale.",
-  };
+export const WEBDEV_CARE_PLAN: { price: string; description: string } | null = {
+  price: "$99/mo",
+  description:
+    "Optional care plan: hosting, security, small content updates, and edits handled for you — so the site never goes stale.",
+};
 
 export interface Faq {
   question: string;
   answer: string;
 }
 
-export const SITECRAFT_FAQS: Faq[] = [
+export const WEBDEV_FAQS: Faq[] = [
   {
     question: "Do I need to know anything technical?",
     answer:
-      "Not a thing. That's the whole point of Sitecraft. You tell us about your business in plain language, and we handle the design, the writing, the build, and the launch. If you can fill out a short form, you can get a great website.",
+      "Not a thing. That's the whole point of Available Webdev. You tell us about your business in plain language, and we handle the design, the writing, the build, and the launch. If you can fill out a short form, you can get a great website.",
   },
   {
     question: "How long does it take?",
@@ -207,7 +214,7 @@ export const SITECRAFT_FAQS: Faq[] = [
   {
     question: "How is this related to Available Law?",
     answer:
-      "Sitecraft is a service from Available Law — the same AI-first team, applied to websites instead of legal work. If you're already an Available Law client, it's a natural add-on; if you're not, you don't need to be to work with us on a site.",
+      "Available Webdev is a service from Available Law — the same AI-first team, applied to websites instead of legal work. If you're already an Available Law client, it's a natural add-on; if you're not, you don't need to be to work with us on a site.",
   },
 ];
 

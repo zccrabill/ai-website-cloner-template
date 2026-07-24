@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import SitecraftLanding from "./SitecraftLanding";
+import WebdevLanding from "./WebdevLanding";
 import JsonLd from "@/components/JsonLd";
 import {
   SITE_URL,
@@ -8,17 +8,17 @@ import {
   faqPageSchema,
   serviceSchema,
 } from "@/lib/seo";
-import { SITECRAFT_FAQS, SITECRAFT_NAME } from "@/lib/sitecraft";
+import { WEBDEV_FAQS, WEBDEV_NAME } from "@/lib/webdev";
 
 // Required by Next 16 when next.config.js uses `output: "export"`.
 export const dynamic = "force-static";
 
-const PAGE_URL = `${SITE_URL}/sitecraft`;
+const PAGE_URL = `${SITE_URL}/webdev`;
 // Root layout applies the "%s | Available Law" title template, so do NOT
 // repeat the brand suffix here.
-const TITLE = "Sitecraft: Custom Website Design & Build for Small Business";
+const TITLE = "Available Webdev: Custom Website Design & Build for Small Business";
 const DESCRIPTION =
-  "Sitecraft by Available Law designs and builds beautiful, custom small-business websites — fast, AI-first, and done for you. Launch sites from $1,500. You own everything.";
+  "Available Webdev by Available Law designs and builds beautiful, custom small-business websites — fast, AI-first, and done for you. Launch sites from $1,500. You own everything.";
 
 export const metadata: Metadata = {
   title: TITLE,
@@ -51,16 +51,16 @@ export const metadata: Metadata = {
 
 const BREADCRUMBS = [
   { name: "Home", url: "/" },
-  { name: SITECRAFT_NAME, url: "/sitecraft" },
+  { name: WEBDEV_NAME, url: "/webdev" },
 ];
 
-export default function SitecraftPage() {
+export default function WebdevPage() {
   return (
     <>
       <JsonLd
         data={[
           serviceSchema({
-            name: "Sitecraft — Website Design & Development",
+            name: "Available Webdev — Website Design & Development",
             description:
               "Custom website design and development from Available Law. Beautiful, mobile-first small-business websites built AI-first and done for you — from one-page Launch sites to multi-page Business sites and custom e-commerce. Clients own the site, domain, and accounts.",
             url: `${PAGE_URL}#packages`,
@@ -70,11 +70,11 @@ export default function SitecraftPage() {
             offerDescription:
               "Launch (one-page) sites from $1,500, Business (multi-page) sites from $3,500, and custom e-commerce/web apps scoped to the project.",
           }),
-          faqPageSchema(SITECRAFT_FAQS),
+          faqPageSchema(WEBDEV_FAQS),
           breadcrumbSchema(BREADCRUMBS),
         ]}
       />
-      <SitecraftLanding />
+      <WebdevLanding />
     </>
   );
 }
