@@ -5,6 +5,7 @@ import FeaturedInSection from "@/components/FeaturedInSection";
 import SolutionsSection from "@/components/SolutionsSection";
 import HowItWorksSection from "@/components/HowItWorksSection";
 import FaiirSection from "@/components/FaiirSection";
+import SitecraftSection from "@/components/SitecraftSection";
 import PricingSection from "@/components/PricingSection";
 import PracticeSnapshotSection from "@/components/PracticeSnapshotSection";
 import TestimonialsSection from "@/components/TestimonialsSection";
@@ -38,6 +39,8 @@ export default function Home() {
         </div>
 
         <Reveal><FaiirSection /></Reveal>
+
+        <Reveal><SitecraftSection /></Reveal>
 
         <div id="pricing">
           <Reveal><PricingSection /></Reveal>

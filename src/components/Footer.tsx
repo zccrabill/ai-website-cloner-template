@@ -75,6 +75,7 @@ export default function Footer() {
             {[
               { label: "Colorado AI Act Checker", href: "/ai-act-checker" },
               { label: "FAIIR Certification", href: "/faiir" },
+              { label: "Sitecraft — Website Build", href: "/sitecraft" },
               { label: "AI Contract Review", href: "/#solutions" },
               { label: "AI Liability Audits", href: "/#solutions" },
               { label: "Fractional GC", href: "/#solutions" },
