@@ -3,7 +3,9 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { ShieldCheck, FlaskConical, HeartHandshake, LayoutTemplate } from "lucide-react";
+import { ShieldCheck, FlaskConical, HeartHandshake, LayoutTemplate, Smartphone } from "lucide-react";
+import Image from "next/image";
+import { APP_STORE_URL } from "@/components/Footer";
 import AnnouncementBanner from "@/components/AnnouncementBanner";
 import AvailableWordmark from "@/components/AvailableWordmark";
 import { WEBDEV_NAME, WEBDEV_PATH, WEBDEV_SUFFIX } from "@/lib/webdev";
@@ -151,6 +153,19 @@ export default function Header() {
 
         {/* Right side: CTA buttons (desktop) */}
         <div className="hidden md:flex items-center gap-3">
+          {/* Available Law iOS app — a headline feature, so it sits in the
+              CTA cluster rather than the icon nav. Outlined pill keeps the
+              two filled pills (FAIIR, Member Login) dominant while still
+              reading as a first-class action. Opens the App Store listing. */}
+          <a
+            href={APP_STORE_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-1.5 px-5 py-2 border border-[#1F1810]/20 text-[#1F1810] rounded-full text-sm font-medium hover:border-[#1F1810] hover:bg-[#1F1810] hover:text-white transition-colors"
+          >
+            <Smartphone className="w-4 h-4" />
+            Get the App
+          </a>
           <Link
             href="/faiir"
             className="flex items-center gap-1.5 px-5 py-2 bg-[#C17832] text-white rounded-full text-sm font-medium hover:bg-[#A9652A] transition-colors"
@@ -255,6 +270,23 @@ export default function Header() {
               <AvailableWordmark suffix={WEBDEV_SUFFIX} /> — Websites &amp; Apps
             </Link>
             <hr className="border-[#1F1810]/8 my-2" />
+            {/* App first in the CTA stack — headline feature on mobile,
+                where visitors can install it right now. Real badge, not a
+                text link. */}
+            <a
+              href={APP_STORE_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex justify-center transition-opacity hover:opacity-80"
+              aria-label="Download the Available Law app on the App Store"
+            >
+              <Image
+                src="/images/app-store-badge.svg"
+                alt="Download on the App Store"
+                width={135}
+                height={45}
+              />
+            </a>
             <Link
               href="/faiir"
               onClick={() => setMobileMenuOpen(false)}
