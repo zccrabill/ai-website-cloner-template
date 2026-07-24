@@ -3,8 +3,12 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { ShieldCheck, FlaskConical, HeartHandshake } from "lucide-react";
+import { ShieldCheck, FlaskConical, HeartHandshake, LayoutTemplate, Smartphone } from "lucide-react";
+import Image from "next/image";
+import { APP_STORE_URL } from "@/components/Footer";
 import AnnouncementBanner from "@/components/AnnouncementBanner";
+import AvailableWordmark from "@/components/AvailableWordmark";
+import { WEBDEV_NAME, WEBDEV_PATH, WEBDEV_SUFFIX } from "@/lib/webdev";
 
 export default function Header() {
   const [scrolled, setScrolled] = useState(false);
@@ -127,10 +131,41 @@ export default function Header() {
               Sidebar
             </span>
           </Link>
+          {/* Available Webflow — website & app design/build. Icon-only like
+              YLab/Sidebar; the layout-template glyph reads "web page."
+              Tooltip names it. Name/path come from the webdev config. */}
+          <Link
+            href={WEBDEV_PATH}
+            aria-label={`${WEBDEV_NAME} — website & app design/build`}
+            title={WEBDEV_NAME}
+            className="group relative flex items-center justify-center text-[#C17832] hover:text-[#A9652A] transition-colors"
+          >
+            <LayoutTemplate
+              className="w-[1.15rem] h-[1.15rem] transition-transform duration-200 group-hover:scale-110"
+              strokeWidth={1.75}
+              aria-hidden="true"
+            />
+            <span className="absolute top-full mt-2 left-1/2 -translate-x-1/2 px-2 py-1 bg-[#1F1810] text-white text-[10px] font-medium rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+              {WEBDEV_NAME}
+            </span>
+          </Link>
         </nav>
 
         {/* Right side: CTA buttons (desktop) */}
         <div className="hidden md:flex items-center gap-3">
+          {/* Available Law iOS app — a headline feature, so it sits in the
+              CTA cluster rather than the icon nav. Outlined pill keeps the
+              two filled pills (FAIIR, Member Login) dominant while still
+              reading as a first-class action. Opens the App Store listing. */}
+          <a
+            href={APP_STORE_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-1.5 px-5 py-2 border border-[#1F1810]/20 text-[#1F1810] rounded-full text-sm font-medium hover:border-[#1F1810] hover:bg-[#1F1810] hover:text-white transition-colors"
+          >
+            <Smartphone className="w-4 h-4" />
+            Get the App
+          </a>
           <Link
             href="/faiir"
             className="flex items-center gap-1.5 px-5 py-2 bg-[#C17832] text-white rounded-full text-sm font-medium hover:bg-[#A9652A] transition-colors"
@@ -222,7 +257,36 @@ export default function Header() {
               />
               Sidebar
             </Link>
+            <Link
+              href={WEBDEV_PATH}
+              onClick={() => setMobileMenuOpen(false)}
+              className="flex items-center gap-2 text-[#6B5B4E] hover:text-[#1F1810] transition-colors text-sm"
+            >
+              <LayoutTemplate
+                className="w-4 h-4 text-[#C17832]"
+                strokeWidth={1.75}
+                aria-hidden="true"
+              />
+              <AvailableWordmark suffix={WEBDEV_SUFFIX} /> — Websites &amp; Apps
+            </Link>
             <hr className="border-[#1F1810]/8 my-2" />
+            {/* App first in the CTA stack — headline feature on mobile,
+                where visitors can install it right now. Real badge, not a
+                text link. */}
+            <a
+              href={APP_STORE_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex justify-center transition-opacity hover:opacity-80"
+              aria-label="Download the Available Law app on the App Store"
+            >
+              <Image
+                src="/images/app-store-badge.svg"
+                alt="Download on the App Store"
+                width={135}
+                height={45}
+              />
+            </a>
             <Link
               href="/faiir"
               onClick={() => setMobileMenuOpen(false)}

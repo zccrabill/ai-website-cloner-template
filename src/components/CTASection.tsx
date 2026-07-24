@@ -1,4 +1,6 @@
 import Link from "next/link";
+import Image from "next/image";
+import { APP_STORE_URL } from "@/components/Footer";
 
 export default function CTASection() {
   return (
@@ -29,13 +31,33 @@ export default function CTASection() {
           Join for free. No credit card. No commitment. Just smarter legal support from day one.
         </p>
 
-        {/* CTA Button */}
-        <Link
-          href="/login"
-          className="inline-block px-8 py-4 bg-[#1F1810] text-white font-medium rounded-full transition-all duration-300 hover:bg-[#C17832] focus:outline-none focus:ring-2 focus:ring-[#C17832] focus:ring-offset-2 focus:ring-offset-[#FAF8F5]"
-        >
-          Get Started Free →
-        </Link>
+        {/* CTA Button + App Store badge — two ways in, same firm. */}
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-5">
+          <Link
+            href="/login"
+            className="inline-block px-8 py-4 bg-[#1F1810] text-white font-medium rounded-full transition-all duration-300 hover:bg-[#C17832] focus:outline-none focus:ring-2 focus:ring-[#C17832] focus:ring-offset-2 focus:ring-offset-[#FAF8F5]"
+          >
+            Get Started Free →
+          </Link>
+          <a
+            href={APP_STORE_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="transition-opacity hover:opacity-80"
+            aria-label="Download the Available Law app on the App Store"
+          >
+            <Image
+              src="/images/app-store-badge.svg"
+              alt="Download on the App Store"
+              width={135}
+              height={45}
+            />
+          </a>
+        </div>
+        <p className="text-xs text-[#A89279] mt-5">
+          Or take us with you — Ava and your matters live in the Available Law
+          app.
+        </p>
       </div>
     </section>
   );

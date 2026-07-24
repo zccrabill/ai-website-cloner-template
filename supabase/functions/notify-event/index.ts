@@ -9,6 +9,7 @@
  *   - draft.sent            → notify the member
  *   - checkout.paid         → notify Zachariah
  *   - faiir.intake_received → notify Zachariah
+ *   - website.intake_received → notify Zachariah (Available Webflow project brief)
  *   - status_note.posted    → notify the engagement's client seat(s) with the
  *                             attorney's note + a CTA to their workspace.
  *   - deliverable.released  → notify the engagement's client seat(s) that a
@@ -60,6 +61,7 @@ type EventType =
   | "draft.sent"
   | "checkout.paid"
   | "faiir.intake_received"
+  | "website.intake_received"
   | "status_note.posted"
   | "deliverable.released"
   | "review.submitted";
@@ -267,6 +269,40 @@ function faiirIntakeReceivedTemplate(payload: IncomingPayload): EmailSpec {
     reply_to: typeof senderEmail === "string" ? senderEmail : undefined,
     subject: `New FAIIR intake: ${fullName} — ${senderEmail}`,
     html: shell("New FAIIR intake", body),
+  };
+}
+
+// website.intake_received — an Available Webflow project brief came in via
+// the /webdev landing form. Emails Zachariah the details with the visitor's
+// email as reply-to so a response is one click away.
+function websiteIntakeReceivedTemplate(payload: IncomingPayload): EmailSpec {
+  const d = payload.data ?? {};
+  const senderEmail = payload.member_email ?? (d.email as string) ?? "—";
+  const fullName = escapeHtml(d.full_name ?? "(name not provided)");
+  const projectTypes = Array.isArray(d.project_types)
+    ? (d.project_types as unknown[]).map((s) => escapeHtml(s)).join(", ")
+    : "—";
+  const body = `
+    <p style="color:#6B5B4E;font-size:14px;line-height:1.6;margin-bottom:20px;">A new Available Webflow project brief just came in via the /webdev landing page.</p>
+    <div style="background:#FAF8F5;border:1px solid rgba(31,24,16,0.08);border-radius:12px;padding:20px;margin-bottom:16px;">
+      ${row("Name", fullName)}
+      ${row("Email", `<a href="mailto:${escapeHtml(senderEmail)}" style="color:#C17832;">${escapeHtml(senderEmail)}</a>`)}
+      ${d.phone ? row("Phone", escapeHtml(d.phone)) : ""}
+      ${d.company ? row("Business", escapeHtml(d.company)) : ""}
+      ${d.website_url ? row("Current site", escapeHtml(d.website_url)) : ""}
+      ${d.industry ? row("Industry", escapeHtml(d.industry)) : ""}
+      ${projectTypes !== "—" ? row("Wants", projectTypes) : ""}
+      ${d.budget ? row("Budget", escapeHtml(d.budget)) : ""}
+      ${d.timeline ? row("Timeline", escapeHtml(d.timeline)) : ""}
+    </div>
+    ${d.notes ? `<div style="background:#FAF8F5;border:1px solid rgba(31,24,16,0.08);border-radius:12px;padding:20px;margin-bottom:16px;"><h3 style="font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#A89279;margin:0 0 8px;">About the business</h3><p style="margin:0;color:#1F1810;font-size:14px;line-height:1.6;white-space:pre-wrap;">${escapeHtml(d.notes)}</p></div>` : ""}
+  `;
+  return {
+    from: FROM_FIRM,
+    to: ADMIN_EMAIL,
+    reply_to: typeof senderEmail === "string" ? senderEmail : undefined,
+    subject: `New Available Webflow brief: ${fullName} — ${senderEmail}`,
+    html: shell("New Available Webflow project brief", body),
   };
 }
 
@@ -491,6 +527,8 @@ async function buildEmail(payload: IncomingPayload): Promise<EmailSpec | null> {
       return checkoutPaidTemplate(payload);
     case "faiir.intake_received":
       return faiirIntakeReceivedTemplate(payload);
+    case "website.intake_received":
+      return websiteIntakeReceivedTemplate(payload);
     case "status_note.posted":
       return await statusNotePostedSpec(payload);
     case "deliverable.released":
