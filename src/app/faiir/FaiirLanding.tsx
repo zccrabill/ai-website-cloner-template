@@ -36,18 +36,20 @@ const DISCOVERY_CALL_URL =
   "https://calendly.com/availablelaw/free-faiir-discovery-call";
 
 // Stripe Payment Links for the Standard membership tier (existing, live).
-// Higher tiers (Plus, Enterprise) route to the discovery call until new
-// Stripe Payment Links are created — see TODOs below.
 const STANDARD_MEMBERSHIP_URL_MONTHLY =
   "https://buy.stripe.com/6oU3cvggQ30Ffz50J6cMM0d";
 const STANDARD_MEMBERSHIP_URL_ANNUAL =
   "https://buy.stripe.com/bJe9ATaWw6cRev12RecMM0e";
 
-// TODO: Create Stripe Payment Links for Plus monthly + annual and drop them
-// here. Until then, Plus tier CTAs route to the discovery call so the page
-// doesn't ship broken URLs.
-const PLUS_MEMBERSHIP_URL_MONTHLY = DISCOVERY_CALL_URL;
-const PLUS_MEMBERSHIP_URL_ANNUAL = DISCOVERY_CALL_URL;
+// Stripe Payment Links for the Plus membership tier. Set in Netlify env vars
+// at build time (NEXT_PUBLIC_* is inlined). Once the founder creates the Plus
+// monthly/annual Payment Links in Stripe, set these env vars and the CTAs pick
+// them up with no code change. Until then each falls back to the discovery
+// call, so the page never ships a broken URL.
+const PLUS_MEMBERSHIP_URL_MONTHLY =
+  process.env.NEXT_PUBLIC_STRIPE_PLUS_URL_MONTHLY || DISCOVERY_CALL_URL;
+const PLUS_MEMBERSHIP_URL_ANNUAL =
+  process.env.NEXT_PUBLIC_STRIPE_PLUS_URL_ANNUAL || DISCOVERY_CALL_URL;
 
 type MembershipCycle = "monthly" | "annual";
 
