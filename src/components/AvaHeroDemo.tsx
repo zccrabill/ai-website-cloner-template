@@ -1,6 +1,8 @@
 /**
- * AvaHeroDemo — auto-playing chat demo that replaces the static card
- * showcase on the homepage hero.
+ * AvaHeroDemo — auto-playing chat demo on the homepage hero, rendered
+ * inside a CSS iPhone chassis to showcase the Available Law App Store app.
+ * The phone is pure presentation; the scripted chat state machine below is
+ * unchanged and portable.
  *
  * A three-act narrative cycles on loop:
  *   1. Lease intake    — client brings a lease question; Ava triages
@@ -30,7 +32,10 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
+import AvaMark from "@/components/AvaMark";
+import { APP_STORE_URL } from "@/components/Footer";
 
 // ----------------------------------------------------------------------------
 // Scenarios — keep these tight. The hero shouldn't feel like an essay.
@@ -423,45 +428,94 @@ export default function AvaHeroDemo() {
         opacity: phase === "fade-out" ? 0 : 1,
       }}
     >
-      {/* Chat frame */}
-      <div className="bg-[#FAF8F5] rounded-[28px] border border-[#1F1810]/8 shadow-[0_20px_50px_rgba(31,24,16,0.08)] overflow-hidden">
-        {/* Chat header */}
-        <div className="flex items-center justify-between px-5 py-4 border-b border-[#1F1810]/6 bg-white">
-          <div className="flex items-center gap-3">
-            <div className="relative w-8 h-8 rounded-full bg-gradient-to-br from-[#D4893F] to-[#C17832] flex items-center justify-center">
-              <span className="text-white text-xs font-heading font-bold">A</span>
-              <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-[#7A8B6F] border-2 border-white" />
-            </div>
-            <div>
-              <p className="text-sm font-semibold text-[#1F1810] leading-tight">
-                Ava
-              </p>
-              <p className="text-[11px] text-[#A89279] leading-tight">
-                Your legal intake assistant
-              </p>
-            </div>
-          </div>
-          <div
-            className="flex items-center gap-2 px-2.5 py-1 rounded-full bg-[#F5F0EB] text-[10px] font-semibold text-[#8a5022] uppercase tracking-wider"
-            aria-live="polite"
-          >
-            {scenario.topic}
-          </div>
-        </div>
+      {/* iPhone chassis — the demo IS the App Store app, so it plays inside
+          a phone. Chassis is pure CSS (bezel + screen + Dynamic Island +
+          status bar + home indicator); the chat inside is unchanged. */}
+      <div className="mx-auto w-[320px] sm:w-[344px]">
+        <div className="relative bg-[#1F1810] rounded-[52px] p-[10px] shadow-[0_30px_80px_rgba(31,24,16,0.28)]">
+          {/* Side buttons (cosmetic) */}
+          <span className="absolute -left-[2px] top-24 w-[3px] h-8 rounded-l bg-[#1F1810]" aria-hidden />
+          <span className="absolute -left-[2px] top-36 w-[3px] h-12 rounded-l bg-[#1F1810]" aria-hidden />
+          <span className="absolute -right-[2px] top-28 w-[3px] h-16 rounded-r bg-[#1F1810]" aria-hidden />
 
-        {/* Transcript */}
-        <div
-          ref={transcriptRef}
-          className="px-5 py-6 h-[340px] overflow-y-auto flex flex-col gap-3 bg-gradient-to-b from-[#FAF8F5] to-[#F5F0EB]/40"
-          aria-live="polite"
-          aria-atomic="false"
-        >
-          {/* Date divider (cosmetic) */}
-          <div className="flex justify-center">
-            <span className="text-[10px] text-[#A89279] uppercase tracking-widest">
-              Today
-            </span>
-          </div>
+          <div className="relative bg-white rounded-[42px] overflow-hidden">
+            {/* Status bar + Dynamic Island */}
+            <div className="relative flex items-center justify-between px-8 pt-3.5 pb-1.5 bg-white">
+              <span className="text-[12px] font-semibold text-[#1F1810] tracking-tight">
+                9:41
+              </span>
+              <span
+                className="absolute left-1/2 -translate-x-1/2 top-2.5 w-[88px] h-[24px] bg-[#1F1810] rounded-full"
+                aria-hidden
+              />
+              <span className="flex items-center gap-1.5 text-[#1F1810]" aria-hidden>
+                {/* Signal */}
+                <svg className="w-4 h-3" viewBox="0 0 16 12" fill="currentColor">
+                  <rect x="0" y="8" width="3" height="4" rx="0.8" />
+                  <rect x="4.5" y="5.5" width="3" height="6.5" rx="0.8" />
+                  <rect x="9" y="3" width="3" height="9" rx="0.8" />
+                  <rect x="13" y="0.5" width="3" height="11.5" rx="0.8" opacity="0.35" />
+                </svg>
+                {/* Battery */}
+                <svg className="w-6 h-3" viewBox="0 0 25 12" fill="none">
+                  <rect x="0.5" y="0.5" width="21" height="11" rx="3" stroke="currentColor" opacity="0.4" />
+                  <rect x="2" y="2" width="15" height="8" rx="1.6" fill="currentColor" />
+                  <path d="M23 4v4c1.1-.3 1.8-1.1 1.8-2S24.1 4.3 23 4z" fill="currentColor" opacity="0.4" />
+                </svg>
+              </span>
+            </div>
+
+            {/* App header — Ava's identity is the {ai} monogram, never a
+                human face (we sell AI disclosure; our own AI stays visibly
+                an AI). Personality lives in the copy. */}
+            <div className="flex items-center justify-between gap-2 px-4 py-3 border-b border-[#1F1810]/6 bg-white">
+              <div className="flex items-center gap-2.5 min-w-0">
+                <AvaMark size={34} presence />
+                <div className="min-w-0">
+                  <p className="text-sm font-semibold text-[#1F1810] leading-tight">
+                    Ava
+                  </p>
+                  <p className="text-[10px] text-[#A89279] leading-tight truncate">
+                    The <span className="text-[#C17832]">{"{"}</span>ai
+                    <span className="text-[#C17832]">{"}"}</span> in Available
+                    Law &middot; online
+                  </p>
+                </div>
+              </div>
+              <div
+                className="flex-shrink-0 max-w-[45%] px-2.5 py-1 rounded-full bg-[#F5F0EB] text-[9px] font-semibold text-[#8a5022] uppercase tracking-wider truncate"
+                aria-live="polite"
+              >
+                {scenario.topic}
+              </div>
+            </div>
+
+            {/* Transcript */}
+            <div
+              ref={transcriptRef}
+              className="px-4 py-5 h-[400px] overflow-y-auto flex flex-col gap-3 bg-gradient-to-b from-[#FAF8F5] to-[#F5F0EB]/40"
+              aria-live="polite"
+              aria-atomic="false"
+            >
+              {/* Date divider (cosmetic) */}
+              <div className="flex justify-center">
+                <span className="text-[10px] text-[#A89279] uppercase tracking-widest">
+                  Today
+                </span>
+              </div>
+
+              {/* Ava's standing greeting — static across scenarios. Her one
+                  line of personality: warm, plainspoken, and honest that
+                  she's the AI in the brand name. */}
+              <div className="flex justify-start">
+                <div className="max-w-[90%] px-4 py-3 bg-white border border-[#1F1810]/8 rounded-2xl rounded-bl-sm shadow-sm">
+                  <p className="text-sm leading-relaxed text-[#1F1810]">
+                    Hey — I&apos;m Ava, the{" "}
+                    <span className="text-[#C17832] font-semibold">{"{"}ai{"}"}</span>{" "}
+                    in Available Law. What&apos;s going on in your business?
+                  </p>
+                </div>
+              </div>
 
           {/* User message — always shown (typing or complete) */}
           {userProgress > 0 && (
@@ -485,31 +539,38 @@ export default function AvaHeroDemo() {
           )}
         </div>
 
-        {/* Footer / composer */}
-        <div className="px-5 py-4 border-t border-[#1F1810]/6 bg-white flex items-center gap-3">
-          <div className="flex-1 px-4 py-2.5 rounded-full bg-[#F5F0EB] text-xs text-[#A89279]">
-            Ask Ava anything about your business...
-          </div>
-          <div className="w-9 h-9 rounded-full bg-[#D4893F] flex items-center justify-center text-white shadow-sm">
-            <svg
-              className="w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M5 12h14M13 6l6 6-6 6"
-              />
-            </svg>
+            {/* Footer / composer */}
+            <div className="px-4 py-3 border-t border-[#1F1810]/6 bg-white flex items-center gap-2.5">
+              <div className="flex-1 px-4 py-2.5 rounded-full bg-[#F5F0EB] text-xs text-[#A89279] truncate">
+                Ask Ava anything about your business...
+              </div>
+              <div className="flex-shrink-0 w-9 h-9 rounded-full bg-[#D4893F] flex items-center justify-center text-white shadow-sm">
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M5 12h14M13 6l6 6-6 6"
+                  />
+                </svg>
+              </div>
+            </div>
+
+            {/* Home indicator */}
+            <div className="flex justify-center pt-1 pb-2.5 bg-white">
+              <span className="w-28 h-1 rounded-full bg-[#1F1810]/80" aria-hidden />
+            </div>
           </div>
         </div>
       </div>
 
       {/* Scenario progress dots */}
-      <div className="flex items-center justify-center gap-2 mt-6">
+      <div className="flex items-center justify-center gap-2 mt-5">
         {SCENARIOS.map((_, i) => (
           <span
             key={i}
@@ -523,15 +584,37 @@ export default function AvaHeroDemo() {
         ))}
       </div>
 
+      {/* App Store proof line — the demo above is the actual app experience,
+          and the app is live. Badge links to the listing. */}
+      <div className="flex items-center justify-center gap-3 mt-4">
+        <a
+          href={APP_STORE_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex-shrink-0 transition-opacity hover:opacity-80"
+          aria-label="Download the Available Law app on the App Store"
+        >
+          <Image
+            src="/images/app-store-badge.svg"
+            alt="Download on the App Store"
+            width={108}
+            height={36}
+          />
+        </a>
+        <p className="text-xs text-[#6B5B4E] leading-snug max-w-[190px]">
+          This isn&apos;t a mockup — Ava is live in the{" "}
+          <span className="font-semibold text-[#1F1810]">Available Law app</span>.
+        </p>
+      </div>
+
       {/* Floating Attorney-verified badge — appears only during the delivery
           scenario, fades in/out with the scenario transition, and gently
           floats up and down to keep the hero feeling alive.
-          Anchored to the bottom-right of the wrapper (below the chat card,
-          at the progress-dots row) so it doesn't occlude the chat header's
-          topic pill or any transcript content. The progress dots are
-          center-aligned, leaving the right side empty for the badge. */}
+          Anchored beside the phone's upper-right edge, like an iOS
+          notification hovering off the device — clear of the header pill,
+          the transcript, and the App Store row below. */}
       <div
-        className={`absolute bottom-0 right-4 z-20 flex bg-white px-3.5 py-2.5 rounded-xl shadow-[0_10px_30px_rgba(31,24,16,0.12)] border border-[#F5F0EB] items-center gap-2 transition-opacity duration-500 ${
+        className={`absolute top-24 right-0 sm:right-2 lg:-right-2 z-20 flex bg-white px-3.5 py-2.5 rounded-xl shadow-[0_10px_30px_rgba(31,24,16,0.12)] border border-[#F5F0EB] items-center gap-2 transition-opacity duration-500 ${
           scenario.kind === "delivery" && phase !== "fade-out"
             ? "opacity-100"
             : "opacity-0 pointer-events-none"

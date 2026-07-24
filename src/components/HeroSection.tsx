@@ -1,7 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import AvaHeroDemo from "./AvaHeroDemo";
+import { APP_STORE_URL } from "@/components/Footer";
 
 export default function HeroSection() {
   // Animations start immediately on mount. There's no server/client divergence
@@ -92,6 +94,31 @@ export default function HeroSection() {
               >
                 See Solutions
               </Link>
+            </div>
+
+            {/* App launch line — the phone demo on the right is the app;
+                this is where the visitor's eye lands to go get it. */}
+            <div className="flex items-center gap-3 pt-2">
+              <a
+                href={APP_STORE_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-shrink-0 transition-opacity hover:opacity-80"
+                aria-label="Download the Available Law app on the App Store"
+              >
+                <Image
+                  src="/images/app-store-badge.svg"
+                  alt="Download on the App Store"
+                  width={120}
+                  height={40}
+                />
+              </a>
+              <p className="text-sm text-[#6B5B4E] leading-snug">
+                <span className="font-semibold text-[#1F1810]">
+                  Your law firm, in your pocket.
+                </span>{" "}
+                Now on the App Store.
+              </p>
             </div>
           </div>
 
