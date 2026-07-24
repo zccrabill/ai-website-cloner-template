@@ -4,7 +4,7 @@ import AvailableWordmark from "@/components/AvailableWordmark";
 import { WEBDEV_PATH, WEBDEV_SUFFIX, WEBDEV_VALUE_PROPS } from "@/lib/webdev";
 
 /**
- * Homepage band for Available Webdev — the website design & build offering.
+ * Homepage band for Available Webflow — the website design & build offering.
  * Sits on the homepage as a cross-link to the full /webdev landing page,
  * matching the treatment FaiirSection gives the FAIIR offering.
  *
@@ -38,9 +38,9 @@ export default function WebdevSection() {
             <p className="text-lg text-white/70 leading-relaxed mb-8 max-w-xl">
               A lot of business owners know they need a great website — they
               just don&apos;t have the time or the tools to build one. So we
-              added it as a service. Beautiful, custom sites, built fast with
-              AI, done for you. Same team, same AI-first approach behind
-              Available Law.
+              added it as a service. Beautiful, custom sites — and full iOS
+              apps shipped to the App Store — built fast with AI, done for
+              you. Same team, same AI-first approach behind Available Law.
             </p>
             <Link
               href={WEBDEV_PATH}

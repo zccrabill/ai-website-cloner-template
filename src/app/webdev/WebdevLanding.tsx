@@ -7,13 +7,15 @@ import {
   Plus,
   Minus,
   Sparkles,
+  Smartphone,
   Wand2,
   Rocket,
   KeyRound,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
+import Image from "next/image";
 import Header from "@/components/Header";
-import Footer from "@/components/Footer";
+import Footer, { APP_STORE_URL } from "@/components/Footer";
 import AvaFloatingWidget from "@/components/AvaFloatingWidget";
 import WebsiteIntakeForm from "@/components/WebsiteIntakeForm";
 import AvailableWordmark from "@/components/AvailableWordmark";
@@ -23,6 +25,7 @@ import {
   WEBDEV_PROCESS,
   WEBDEV_PACKAGES,
   WEBDEV_CARE_PLAN,
+  WEBDEV_APP_OFFER,
   WEBDEV_FAQS,
   WEBDEV_SUFFIX,
   WEBDEV_NAME,
@@ -276,6 +279,68 @@ export default function WebdevLanding() {
                 — {WEBDEV_CARE_PLAN.description}
               </p>
             )}
+          </div>
+        </section>
+
+        {/* ---------------------------------------------------------------- */}
+        {/* Web + iOS app spotlight (part of the Custom tier)                */}
+        {/* ---------------------------------------------------------------- */}
+        <section id="app" className="w-full pb-20 lg:pb-28 scroll-mt-20">
+          <div className="max-w-7xl mx-auto px-6">
+            <div className="bg-[#1F1810] rounded-3xl p-10 md:p-14 grid grid-cols-1 lg:grid-cols-[3fr_2fr] gap-10 items-center">
+              <div>
+                <div className="inline-flex items-center gap-2 rounded-full border border-[#C17832]/40 bg-white/5 px-4 py-1.5 mb-6">
+                  <Smartphone className="w-4 h-4 text-[#F2B870]" />
+                  <span className="text-xs font-semibold uppercase tracking-[0.14em] text-white/70">
+                    {WEBDEV_APP_OFFER.eyebrow}
+                  </span>
+                </div>
+                <h2 className="font-heading text-3xl md:text-4xl text-white mb-4 leading-tight">
+                  {WEBDEV_APP_OFFER.headline}
+                </h2>
+                <p className="text-white/70 leading-relaxed mb-7 max-w-2xl">
+                  {WEBDEV_APP_OFFER.description}
+                </p>
+                <div className="flex flex-wrap items-center gap-4">
+                  <button
+                    type="button"
+                    onClick={openIntake}
+                    className="group inline-flex items-center gap-2 px-7 py-3.5 bg-[#C17832] text-white rounded-full text-sm font-medium hover:bg-white hover:text-[#1F1810] transition-all"
+                  >
+                    {WEBDEV_APP_OFFER.cta}
+                    <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
+                  </button>
+                  {/* Proof, not promise: the Available Law app is live today. */}
+                  <a
+                    href={APP_STORE_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="transition-opacity hover:opacity-80"
+                    aria-label="See the Available Law app on the App Store — built by this team"
+                  >
+                    <Image
+                      src="/images/app-store-badge.svg"
+                      alt="Available Law on the App Store"
+                      width={120}
+                      height={40}
+                    />
+                  </a>
+                </div>
+              </div>
+              <ul className="flex flex-col gap-4">
+                {WEBDEV_APP_OFFER.bullets.map((bullet) => (
+                  <li
+                    key={bullet}
+                    className="flex items-start gap-3 bg-white/[0.04] border border-white/10 rounded-2xl px-5 py-4"
+                  >
+                    <Check className="w-4 h-4 text-[#F2B870] flex-shrink-0 mt-0.5" />
+                    <span className="text-sm text-white/80 leading-relaxed">
+                      {bullet}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
         </section>
 

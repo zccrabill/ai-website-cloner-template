@@ -9,7 +9,7 @@
  *   - draft.sent            → notify the member
  *   - checkout.paid         → notify Zachariah
  *   - faiir.intake_received → notify Zachariah
- *   - website.intake_received → notify Zachariah (Available Webdev project brief)
+ *   - website.intake_received → notify Zachariah (Available Webflow project brief)
  *   - status_note.posted    → notify the engagement's client seat(s) with the
  *                             attorney's note + a CTA to their workspace.
  *   - deliverable.released  → notify the engagement's client seat(s) that a
@@ -272,7 +272,7 @@ function faiirIntakeReceivedTemplate(payload: IncomingPayload): EmailSpec {
   };
 }
 
-// website.intake_received — an Available Webdev project brief came in via
+// website.intake_received — an Available Webflow project brief came in via
 // the /webdev landing form. Emails Zachariah the details with the visitor's
 // email as reply-to so a response is one click away.
 function websiteIntakeReceivedTemplate(payload: IncomingPayload): EmailSpec {
@@ -283,7 +283,7 @@ function websiteIntakeReceivedTemplate(payload: IncomingPayload): EmailSpec {
     ? (d.project_types as unknown[]).map((s) => escapeHtml(s)).join(", ")
     : "—";
   const body = `
-    <p style="color:#6B5B4E;font-size:14px;line-height:1.6;margin-bottom:20px;">A new Available Webdev project brief just came in via the /webdev landing page.</p>
+    <p style="color:#6B5B4E;font-size:14px;line-height:1.6;margin-bottom:20px;">A new Available Webflow project brief just came in via the /webdev landing page.</p>
     <div style="background:#FAF8F5;border:1px solid rgba(31,24,16,0.08);border-radius:12px;padding:20px;margin-bottom:16px;">
       ${row("Name", fullName)}
       ${row("Email", `<a href="mailto:${escapeHtml(senderEmail)}" style="color:#C17832;">${escapeHtml(senderEmail)}</a>`)}
@@ -301,8 +301,8 @@ function websiteIntakeReceivedTemplate(payload: IncomingPayload): EmailSpec {
     from: FROM_FIRM,
     to: ADMIN_EMAIL,
     reply_to: typeof senderEmail === "string" ? senderEmail : undefined,
-    subject: `New Available Webdev brief: ${fullName} — ${senderEmail}`,
-    html: shell("New Available Webdev project brief", body),
+    subject: `New Available Webflow brief: ${fullName} — ${senderEmail}`,
+    html: shell("New Available Webflow project brief", body),
   };
 }
 

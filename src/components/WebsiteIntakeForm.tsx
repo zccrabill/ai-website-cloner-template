@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * WebsiteIntakeForm — modal project brief for Available Webdev (website
+ * WebsiteIntakeForm — modal project brief for Available Webflow (website
  * design & build) landing visitors.
  *
  * Inserts into public.website_intakes (schema:

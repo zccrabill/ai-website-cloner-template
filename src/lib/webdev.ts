@@ -1,14 +1,16 @@
 /**
- * Available Webdev — the website design & build offering from Available Law.
+ * Available Webflow — the website & app design/build offering from
+ * Available Law. (Constants keep the WEBDEV_ prefix and the route stays
+ * /webdev so a brand-name change never touches identifiers or URLs.)
  *
  * Branded to match the parent: the "Av{ai}lable" wordmark (see
- * AvailableWordmark.tsx) wraps the "ai" in orange braces, and "Webdev" is
+ * AvailableWordmark.tsx) wraps the "ai" in orange braces, and the suffix is
  * appended plain. In visual surfaces the name is rendered via
- * <AvailableWordmark suffix="Webdev" />; in plain-text contexts (SEO titles,
- * email subjects, alt text) use WEBDEV_NAME below.
+ * <AvailableWordmark suffix={WEBDEV_SUFFIX} />; in plain-text contexts (SEO
+ * titles, email subjects, alt text) use WEBDEV_NAME below.
  *
  * ── EDIT THIS FILE TO CUSTOMIZE THE OFFERING ──────────────────────────────
- * Everything customer-facing about Available Webdev lives here: the name,
+ * Everything customer-facing about the offering lives here: the name,
  * the positioning copy, the packages/pricing, the process steps, the FAQ,
  * and the option lists used by the intake form (project types, budgets,
  * timelines, industries). The landing page, homepage section, and intake
@@ -21,14 +23,19 @@
  */
 
 /** Plain-text brand name (SEO, email, alt text). For visual surfaces render
- *  <AvailableWordmark suffix={WEBDEV_SUFFIX} /> to get the {ai} braces. */
-export const WEBDEV_NAME = "Available Webdev";
+ *  <AvailableWordmark suffix={WEBDEV_SUFFIX} /> to get the {ai} braces.
+ *  ⚠️ "Webflow" is also the name of webflow.com, a large website-builder
+ *  company — Zachariah chose it knowingly ("for now"). If it ever needs to
+ *  change, edit NAME/SUFFIX/SHORT here; the route stays /webdev on purpose
+ *  so a rename never breaks URLs. */
+export const WEBDEV_NAME = "Available Webflow";
 /** The descriptor appended after the Av{ai}lable wordmark. */
-export const WEBDEV_SUFFIX = "Webdev";
+export const WEBDEV_SUFFIX = "Webflow";
 /** Short label for tight spots (nav tooltip, chips). */
-export const WEBDEV_SHORT = "Webdev";
-/** Route the landing page lives at. If you change this, update the nav +
- *  footer links and the SEO canonical in src/app/webdev/page.tsx. */
+export const WEBDEV_SHORT = "Webflow";
+/** Route the landing page lives at. Deliberately /webdev (not the brand
+ *  word) so the URL survives any future rename. If you change this, update
+ *  the nav + footer links and the SEO canonical in src/app/webdev/page.tsx. */
 export const WEBDEV_PATH = "/webdev";
 
 /** Short tagline used in eyebrows / nav tooltips. */
@@ -36,9 +43,9 @@ export const WEBDEV_TAGLINE = "Websites, done for you";
 
 /** Hero copy. The brand wordmark is rendered by the page, not stored here. */
 export const WEBDEV_HERO = {
-  headline: "You know your business.\nWe'll build the website it deserves.",
+  headline: "From idea to launched.\nIt just flows.",
   subhead:
-    "Most small businesses know they need a great website — they just don't have the time, the tools, or the design eye to build one. That's the gap we close. Available Webdev designs and builds beautiful, custom sites fast, with AI doing the heavy lifting and a real builder making every pixel right.",
+    "Most business owners know they need a great website — they just don't have the time, the tools, or the design eye to build one. That's the gap we close. Tell us the idea, and Available Webflow carries it straight through design, build, and launch — AI does the heavy lifting, a real builder makes every pixel right.",
   primaryCta: "Start your project",
   secondaryCta: "See how it works",
 } as const;
@@ -164,13 +171,34 @@ export const WEBDEV_PACKAGES: Package[] = [
     features: [
       "Online store / e-commerce",
       "Booking, portals, or custom features",
+      "Full-spec iOS app — built & shipped to the App Store",
       "Integrations (payments, CRM, etc.)",
-      "Multi-page + custom functionality",
       "Scoped and quoted after a quick call",
       "Ongoing partnership available",
     ],
   },
 ];
+
+/**
+ * The web + app spotlight — the headline capability inside the Custom tier.
+ * A full-spec iOS app is too big to sit as a fourth pricing column next to a
+ * $1,500 landing page, so it gets its own section on the landing page
+ * instead. The credibility hook is real: Zachariah has shipped two apps to
+ * the App Store, including the Available Law app (linked from the footer).
+ */
+export const WEBDEV_APP_OFFER = {
+  eyebrow: "The full stack",
+  headline: "Custom web + a real iOS app",
+  description:
+    "Some businesses outgrow a website. When yours does, we take the same idea-to-execution flow all the way to the App Store: a full-spec iOS app, designed, built, submitted, and shipped. We've done it twice for ourselves — including the Available Law app you can download today — so you're working with a team that has actually been through Apple's review process, not one promising to figure it out.",
+  bullets: [
+    "Full-spec iOS app, designed and built end to end",
+    "App Store submission and review handled for you",
+    "Your website and app share one brand, one backend",
+    "Proven: two apps already live on the App Store",
+  ],
+  cta: "Talk about web + app",
+} as const;
 
 /** Optional recurring care plan mentioned on the page. Edit or set to null
  *  to hide the care-plan mention. */
@@ -189,7 +217,7 @@ export const WEBDEV_FAQS: Faq[] = [
   {
     question: "Do I need to know anything technical?",
     answer:
-      "Not a thing. That's the whole point of Available Webdev. You tell us about your business in plain language, and we handle the design, the writing, the build, and the launch. If you can fill out a short form, you can get a great website.",
+      "Not a thing. That's the whole point of Available Webflow. You tell us about your business in plain language, and we handle the design, the writing, the build, and the launch. If you can fill out a short form, you can get a great website.",
   },
   {
     question: "How long does it take?",
@@ -212,9 +240,14 @@ export const WEBDEV_FAQS: Faq[] = [
       "We handle all the technical setup — hosting, your domain, SSL, analytics — and put it in accounts you own. If you already have a domain, we'll connect it. If you don't, we'll help you get one.",
   },
   {
+    question: "Can you build an iOS app too?",
+    answer:
+      "Yes — and unlike most web shops, we've actually shipped. Two of our own apps are live on the App Store today, including the Available Law app. A full-spec app build is part of the Custom tier: we design it, build it, handle Apple's submission and review process, and launch it under your account so you own it outright. Most app projects pair with a website so your brand and backend stay unified.",
+  },
+  {
     question: "How is this related to Available Law?",
     answer:
-      "Available Webdev is a service from Available Law — the same AI-first team, applied to websites instead of legal work. If you're already an Available Law client, it's a natural add-on; if you're not, you don't need to be to work with us on a site.",
+      "Available Webflow is a service from Available Law — the same AI-first team, applied to websites and apps instead of legal work. If you're already an Available Law client, it's a natural add-on; if you're not, you don't need to be to work with us on a site.",
   },
 ];
 
@@ -231,6 +264,7 @@ export const PROJECT_TYPE_OPTIONS: { value: string; label: string }[] = [
   { value: "landing_page", label: "Landing page / one-pager" },
   { value: "ecommerce", label: "Online store / e-commerce" },
   { value: "web_app", label: "Web app / custom features" },
+  { value: "ios_app", label: "iOS app (App Store)" },
   { value: "maintenance", label: "Ongoing updates & care" },
   { value: "not_sure", label: "Not sure yet" },
 ];
